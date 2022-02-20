@@ -1,20 +1,35 @@
 package com.imashnake.animite
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import com.imashnake.animite.ui.theme.AnimiteTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
+private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val apolloClient = ApolloClient.Builder()
+            .serverUrl("https://graphql.anilist.co/")
+            .build()
+
+        // TODO:
+        //  See how printing a list of these entries would work; handle errors.
+        //  Make better use of [coroutines](https://kotlinlang.org/docs/coroutines-guide.html)
+        GlobalScope.launch(Dispatchers.IO) {
+            val response = apolloClient.query(ExampleQuery(id = Optional.presentIfNotNull(1))).execute()
+            Log.d(TAG, response.data.toString())
+        }
+
         setContent {
             AnimiteTheme {
                 Text("Hello")
