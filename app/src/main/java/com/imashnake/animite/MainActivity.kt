@@ -18,6 +18,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setContent {
+            AnimiteTheme {
+                Text("Hello")
+            }
+        }
+
         val apolloClient = ApolloClient.Builder()
             .serverUrl("https://graphql.anilist.co/")
             .build()
@@ -34,10 +40,7 @@ class MainActivity : ComponentActivity() {
             Log.d(TAG, response.data?.media?.title?.romaji.toString())
         }
 
-        setContent {
-            AnimiteTheme {
-                Text("Hello")
-            }
-        }
+        // Coroutines playground
+
     }
 }
