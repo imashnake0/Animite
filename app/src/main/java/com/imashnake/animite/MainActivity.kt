@@ -28,6 +28,10 @@ class MainActivity : ComponentActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             val response = apolloClient.query(ExampleQuery(id = Optional.presentIfNotNull(1))).execute()
             Log.d(TAG, response.data.toString())
+            Log.d(TAG, response.data?.media?.id.toString())
+            Log.d(TAG, response.data?.media?.title?.english.toString())
+            Log.d(TAG, response.data?.media?.title?.native.toString())
+            Log.d(TAG, response.data?.media?.title?.romaji.toString())
         }
 
         setContent {
