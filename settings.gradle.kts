@@ -1,5 +1,3 @@
-// TODO: Migrate to Kotlin DSL.
-
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -17,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Animite"
-include ':app'
+include(":app")
