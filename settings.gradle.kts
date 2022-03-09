@@ -1,4 +1,4 @@
-// TODO: Migrate to Kotlin DSL.
+@file:Suppress("SpellCheckingInspection")
 
 pluginManagement {
     repositories {
@@ -17,4 +17,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Animite"
-include ':app'
+include(":app")
