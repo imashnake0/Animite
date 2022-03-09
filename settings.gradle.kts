@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
