@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application") version "7.1.0" apply false
-    id("com.android.library") version "7.1.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.6.10" apply false
+    id("com.android.application") apply false
+    id("com.android.library") apply false
+    id("org.jetbrains.kotlin.android") apply false
 }
 
 tasks.register("clean", Delete::class) {
