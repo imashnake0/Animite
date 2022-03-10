@@ -12,6 +12,10 @@ plugins {
     id("de.fayard.refreshVersions") version "0.40.1"
 }
 
+refreshVersions {
+    extraArtifactVersionKeyRules(file("custom-version-alias-rules.txt"))
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
