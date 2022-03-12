@@ -43,6 +43,7 @@ android {
     }
 
     composeOptions {
+        // TODO: Extract the version from versions.properties using `versionFor()`.
         kotlinCompilerExtensionVersion = "1.1.1"
     }
 
@@ -57,6 +58,16 @@ apollo {
     packageName.set("com.imashnake.animite")
 }
 
+// TODO:
+//  This is a temporary workaround, remove this once Apollo Kotlin 3.1.1 is out, see:
+//  https://github.com/jmfayard/refreshVersions/issues/507.
+
+tasks.configureEach {
+    if (name == "checkApolloVersions") {
+        enabled = false
+    }
+}
+
 dependencies {
     implementation(AndroidX.core.ktx)
     implementation(AndroidX.compose.ui)
@@ -67,6 +78,9 @@ dependencies {
 
     // Apollo Kotlin
     implementation("com.apollographql.apollo3:apollo-runtime:_")
+
+    // Glide (Temporary)
+    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
 
     // Kotlin coroutines TODO: BoM?
     implementation(KotlinX.coroutines.android)
