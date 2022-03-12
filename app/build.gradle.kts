@@ -43,6 +43,7 @@ android {
     }
 
     composeOptions {
+        // TODO: Extract the version from versions.properties using `versionFor()`.
         kotlinCompilerExtensionVersion = "1.1.1"
     }
 
@@ -77,6 +78,9 @@ dependencies {
 
     // Apollo Kotlin
     implementation("com.apollographql.apollo3:apollo-runtime:_")
+
+    // Glide (Temporary)
+    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
 
     // Kotlin coroutines TODO: BoM?
     implementation(KotlinX.coroutines.android)

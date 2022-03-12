@@ -9,6 +9,10 @@ query ExampleListQuery($id: Int, $page: Int, $perPage: Int, $search: String) {
     }
     media (id: $id, search: $search) {
       id
+      coverImage {
+        extraLarge
+        large
+      }
       title {
         romaji
         english
