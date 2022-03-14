@@ -61,7 +61,6 @@ apollo {
 // TODO:
 //  This is a temporary workaround, remove this once Apollo Kotlin 3.1.1 is out, see:
 //  https://github.com/jmfayard/refreshVersions/issues/507.
-
 tasks.configureEach {
     if (name == "checkApolloVersions") {
         enabled = false
@@ -70,8 +69,12 @@ tasks.configureEach {
 
 dependencies {
     implementation(AndroidX.core.ktx)
+
+    // Compose
     implementation(AndroidX.compose.ui)
     implementation(AndroidX.compose.material)
+    implementation(AndroidX.compose.material3)
+    implementation(AndroidX.compose.runtime)
     implementation(AndroidX.compose.ui.toolingPreview)
     implementation(AndroidX.lifecycle.runtimeKtx)
     implementation(AndroidX.activity.compose)
