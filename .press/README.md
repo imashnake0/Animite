@@ -1,0 +1,1 @@
+Press uses files in this directory for storing meta-data of your synced notes. They are auto-generated and shouldn't be modified. If you run into any issues with syncing of notes, feel free to file a [bug report here](https://github.com/saket/press/issues) and attach [sync logs](sync_log.txt) after removing/redacting any private info.
