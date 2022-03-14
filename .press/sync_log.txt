@@ -1,0 +1,182 @@
+Syncing notes with 'Pixel 5' on Mon, 14 Mar 2022 04:44:15 UTC
+Resetting to sha1: 1e90421 (Setup syncing on 'Pixel 5').
+Syncing for the first time. Backing up notes to 'press-notes-backup-1647233056670' branch.
+ • welcome_to_press.md (id=e731d56f-8db6-4351-a05e-8df27d5086f0)
+ • markdown_guide.md (id=8f4192fd-38cf-4c15-8ac7-028d15fe5fc3)
+ • untitled_note.md (id=e961805e-f96e-4430-b235-017a059d2990)
+Pulled upstream. Moved head from 1e90421 - Setup syncing on 'Pixel 5' to 47fbd5d - Setup syncing on 'Pixel 5'.
+
+Pulled changes (47):
+ • Add(path=.gitignore)
+ • Add(path=README.md)
+ • Add(path=app/.gitignore)
+ • Add(path=app/build.gradle.kts)
+ • Add(path=app/proguard-rules.pro)
+ • Add(path=app/src/androidTest/java/com/imashnake/animite/ExampleInstrumentedTest.kt)
+ • Add(path=app/src/main/AndroidManifest.xml)
+ • Add(path=app/src/main/graphql/com/imashnake/animite/ExampleQuery.graphql)
+ • Add(path=app/src/main/graphql/com/imashnake/animite/schema.graphqls)
+ • Add(path=app/src/main/java/com/imashnake/animite/MainActivity.kt)
+ • Add(path=app/src/main/java/com/imashnake/animite/data/README.md)
+ • Add(path=app/src/main/java/com/imashnake/animite/data/repos/README.md)
+ • Add(path=app/src/main/java/com/imashnake/animite/data/sauce/README.md)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/README.md)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/elements/README.md)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/state/README.md)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/theme/Color.kt)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/theme/Shape.kt)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/theme/Theme.kt)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/theme/Type.kt)
+ • Add(path=app/src/main/res/drawable-v24/ic_launcher_foreground.xml)
+ • Add(path=app/src/main/res/drawable/ic_launcher_background.xml)
+ • Add(path=app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml)
+ • Add(path=app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml)
+ • Add(path=app/src/main/res/mipmap-hdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-hdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/mipmap-mdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-mdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/mipmap-xhdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/mipmap-xxhdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/values/colors.xml)
+ • Add(path=app/src/main/res/values/strings.xml)
+ • Add(path=app/src/main/res/values/themes.xml)
+ • Add(path=app/src/test/java/com/imashnake/animite/ExampleUnitTest.kt)
+ • Add(path=build.gradle.kts)
+ • Add(path=custom-version-alias-rules.txt)
+ • Add(path=gradle.properties)
+ • Add(path=gradle/wrapper/gradle-wrapper.jar)
+ • Add(path=gradle/wrapper/gradle-wrapper.properties)
+ • Add(path=gradlew)
+ • Add(path=gradlew.bat)
+ • Add(path=settings.gradle.kts)
+ • Add(path=versions.properties)
+
+Processing commits from null to 47fbd5d
+ • 467fa6e - Initial commit
+ • 94b65d3 - Created `README.md`
+ • d660bd3 - Added internet permission
+ • d74dac1 - Cleaned up `MainActivity`
+ • f4c82f6 - Added Apollo Kotlin
+ • 373cd8c - Cleaned up build files
+ • 9168fdd - Remove Apollo SDK on master
+ • 6b73b03 - Added GraphQL schema
+ • a3a6123 - Added `ExampleQuery.graphql`
+ • 2fa96c1 - Fixed build errors
+ • 150328b - Created Apollo client
+ • af92f8d - Example logger
+ • 53f5aca - Merge pull request #1 from imashnake0/graphql-apollo
+ • 17fcef3 - Added back Apollo
+ • 58f0364 - Added more response Logs
+ • 72d3803 - Set up coroutines playground
+ • 3cf9386 - Added `Lifecycle` dependency
+ • 46a0a6c - Updated Compose
+ • fa6fb62 - Added `ExampleListQuery`
+ • aa9b618 - Displayed queried list of animes
+ • 144ff2a - Added new lines
+ • dc07bd4 - Merge pull request #2 from imashnake0/kotlin-coroutines
+ • 9608964 - Removed `ext` block
+ • 1f2e082 - Migrated root level build file to Kotlin DSL
+ • c3f7039 - Migrated app level build file to Kotlin DSL
+ • 73731a7 - Migrated `settings.gradle` to Kotlin DSL
+ • 67f3ffe - Suppressed spelling checks
+ • 0f4c310 - Merge pull request #3 from imashnake0/kotlin-dsl
+ • d8cdd03 - Integrated with refreshVersions
+ • 16fa7f9 - Ran `refreshVersions`
+ • 3eaea6d - Added custom version alias rule
+ • 0b1595a - Merge pull request #4 from imashnake0/refreshversions-plugin
+ • 800974c - Fixed Apollo Kotlin error
+ • 4a9085a - Added images to anime list
+ • 4a76e39 - Created UI and data layers
+ • d031fb5 - Moved GraphQL files into sauce
+ • 155bb8f - Revert "Moved GraphQL files into sauce"
+ • 75c3009 - Merge pull request #5 from imashnake0/architecture-tree
+ • 47fbd5d - Setup syncing on 'Pixel 5'
+
+Syncing changes (48)
+ • Add(path=.gitignore)
+ • Add(path=.press/README.md)
+ • Add(path=README.md)
+   creating new note for README.md with id=41809a2c-5ad8-4fd6-b327-0762986b8b34
+ • Add(path=app/.gitignore)
+ • Add(path=app/build.gradle.kts)
+ • Add(path=app/proguard-rules.pro)
+ • Add(path=app/src/androidTest/java/com/imashnake/animite/ExampleInstrumentedTest.kt)
+ • Add(path=app/src/main/AndroidManifest.xml)
+ • Add(path=app/src/main/graphql/com/imashnake/animite/ExampleQuery.graphql)
+ • Add(path=app/src/main/graphql/com/imashnake/animite/schema.graphqls)
+ • Add(path=app/src/main/java/com/imashnake/animite/MainActivity.kt)
+ • Add(path=app/src/main/java/com/imashnake/animite/data/README.md)
+   creating new note for app/src/main/java/com/imashnake/animite/data/README.md with id=80a043ba-3b15-4cc8-822c-8d72479359a7
+ • Add(path=app/src/main/java/com/imashnake/animite/data/repos/README.md)
+   creating new note for app/src/main/java/com/imashnake/animite/data/repos/README.md with id=135b8675-23ca-4811-9961-b29d9b20a957
+ • Add(path=app/src/main/java/com/imashnake/animite/data/sauce/README.md)
+   creating new note for app/src/main/java/com/imashnake/animite/data/sauce/README.md with id=45e31ea3-92e2-4d26-b279-b8815610b62a
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/README.md)
+   creating new note for app/src/main/java/com/imashnake/animite/ui/README.md with id=4c5fdc2d-8711-4f13-83ce-cbc4da98e94c
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/elements/README.md)
+   creating new note for app/src/main/java/com/imashnake/animite/ui/elements/README.md with id=e3a6144e-07d6-4491-9c00-d23aeee4ba40
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/state/README.md)
+   creating new note for app/src/main/java/com/imashnake/animite/ui/state/README.md with id=aaec12c0-7197-4a93-a7ba-3b73b21051da
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/theme/Color.kt)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/theme/Shape.kt)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/theme/Theme.kt)
+ • Add(path=app/src/main/java/com/imashnake/animite/ui/theme/Type.kt)
+ • Add(path=app/src/main/res/drawable-v24/ic_launcher_foreground.xml)
+ • Add(path=app/src/main/res/drawable/ic_launcher_background.xml)
+ • Add(path=app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml)
+ • Add(path=app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml)
+ • Add(path=app/src/main/res/mipmap-hdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-hdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/mipmap-mdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-mdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/mipmap-xhdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/mipmap-xxhdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp)
+ • Add(path=app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp)
+ • Add(path=app/src/main/res/values/colors.xml)
+ • Add(path=app/src/main/res/values/strings.xml)
+ • Add(path=app/src/main/res/values/themes.xml)
+ • Add(path=app/src/test/java/com/imashnake/animite/ExampleUnitTest.kt)
+ • Add(path=build.gradle.kts)
+ • Add(path=custom-version-alias-rules.txt)
+ • Add(path=gradle.properties)
+ • Add(path=gradle/wrapper/gradle-wrapper.jar)
+ • Add(path=gradle/wrapper/gradle-wrapper.properties)
+ • Add(path=gradlew)
+ • Add(path=gradlew.bat)
+ • Add(path=settings.gradle.kts)
+ • Add(path=versions.properties)
+
+Committing unsynced notes (3):
+ • welcome_to_press.md (id=e731d56f-8db6-4351-a05e-8df27d5086f0)
+   picking local copy and discarding remote (if any)
+ • markdown_guide.md (id=8f4192fd-38cf-4c15-8ac7-028d15fe5fc3)
+   picking local copy and discarding remote (if any)
+ • untitled_note.md (id=e961805e-f96e-4430-b235-017a059d2990)
+   picking local copy and discarding remote (if any)
+
+Processing commits from 5e54e66 to a0f73e4
+ • 5e54e66 - Create new file name records
+ • 9dab743 - Update 'welcome_to_press.md'
+ • a3ce0e5 - Update 'markdown_guide.md'
+ • a0f73e4 - Update 'untitled_note.md'
+
+Syncing changes (6)
+ • Add(path=.press/registers/markdown_guide.meta)
+ • Add(path=.press/registers/untitled_note.meta)
+ • Add(path=.press/registers/welcome_to_press.meta)
+ • Add(path=markdown_guide.md)
+   skipping markdown_guide.md (already saved)
+ • Add(path=untitled_note.md)
+   skipping untitled_note.md (already saved)
+ • Add(path=welcome_to_press.md)
+   skipping welcome_to_press.md (already saved)
+
+Pushing changes
+Wrapping up sync (before push) on Mon, 14 Mar 2022 04:44:20 UTC
