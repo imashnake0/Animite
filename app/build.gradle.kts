@@ -79,8 +79,8 @@ dependencies {
     // Apollo Kotlin
     implementation("com.apollographql.apollo3:apollo-runtime:_")
 
-    // Glide (Temporary)
-    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+    // Coil
+    implementation(COIL.compose)
 
     // Kotlin coroutines TODO: BoM?
     implementation(KotlinX.coroutines.android)
