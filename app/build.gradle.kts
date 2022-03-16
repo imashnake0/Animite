@@ -61,7 +61,6 @@ apollo {
 // TODO:
 //  This is a temporary workaround, remove this once Apollo Kotlin 3.1.1 is out, see:
 //  https://github.com/jmfayard/refreshVersions/issues/507.
-
 tasks.configureEach {
     if (name == "checkApolloVersions") {
         enabled = false
@@ -69,24 +68,27 @@ tasks.configureEach {
 }
 
 dependencies {
-    implementation(AndroidX.core.ktx)
-    implementation(AndroidX.compose.ui)
-    implementation(AndroidX.compose.material)
-    implementation(AndroidX.compose.ui.toolingPreview)
-    implementation(AndroidX.lifecycle.runtimeKtx)
+    // AndroidX
     implementation(AndroidX.activity.compose)
+    implementation(AndroidX.core.ktx)
+    implementation(AndroidX.lifecycle.runtimeKtx)
+
+    // Compose
+    implementation(AndroidX.compose.material)
+    implementation(AndroidX.compose.material3)
+    implementation(AndroidX.compose.runtime)
+    implementation(AndroidX.compose.ui)
+    implementation(AndroidX.compose.ui.toolingPreview)
 
     // Apollo Kotlin
     implementation("com.apollographql.apollo3:apollo-runtime:_")
 
-    // Glide (Temporary)
-    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+    // Coil
+    implementation(COIL.compose)
 
     // Kotlin coroutines TODO: BoM?
     implementation(KotlinX.coroutines.android)
     implementation(KotlinX.coroutines.core)
-
-    implementation(AndroidX.lifecycle.runtimeKtx)
 
     testImplementation(Testing.junit4)
 
