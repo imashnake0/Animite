@@ -68,16 +68,17 @@ tasks.configureEach {
 }
 
 dependencies {
+    // AndroidX
+    implementation(AndroidX.activity.compose)
     implementation(AndroidX.core.ktx)
+    implementation(AndroidX.lifecycle.runtimeKtx)
 
     // Compose
-    implementation(AndroidX.compose.ui)
     implementation(AndroidX.compose.material)
     implementation(AndroidX.compose.material3)
     implementation(AndroidX.compose.runtime)
+    implementation(AndroidX.compose.ui)
     implementation(AndroidX.compose.ui.toolingPreview)
-    implementation(AndroidX.lifecycle.runtimeKtx)
-    implementation(AndroidX.activity.compose)
 
     // Apollo Kotlin
     implementation("com.apollographql.apollo3:apollo-runtime:_")
@@ -88,8 +89,6 @@ dependencies {
     // Kotlin coroutines TODO: BoM?
     implementation(KotlinX.coroutines.android)
     implementation(KotlinX.coroutines.core)
-
-    implementation(AndroidX.lifecycle.runtimeKtx)
 
     testImplementation(Testing.junit4)
 
