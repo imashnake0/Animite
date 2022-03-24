@@ -154,6 +154,7 @@ class MainActivity : ComponentActivity() {
 }
 
 /*
+TODO: Move this to `Home`.
 @Composable
 fun AnimeList(animeList: MutableList<ExampleListQuery.Medium?>) {
     Column(
