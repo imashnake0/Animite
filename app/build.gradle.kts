@@ -1,5 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
+import de.fayard.refreshVersions.core.versionFor
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -43,8 +45,7 @@ android {
     }
 
     composeOptions {
-        // TODO: Extract the version from versions.properties using `versionFor()`.
-        kotlinCompilerExtensionVersion = "1.1.1"
+        kotlinCompilerExtensionVersion = versionFor(AndroidX.compose.compiler)
     }
 
     packagingOptions {
