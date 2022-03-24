@@ -72,6 +72,7 @@ dependencies {
     implementation(AndroidX.activity.compose)
     implementation(AndroidX.core.ktx)
     implementation(AndroidX.lifecycle.runtimeKtx)
+    implementation(AndroidX.navigation.compose)
 
     // Compose
     implementation(AndroidX.compose.material)
@@ -89,6 +90,9 @@ dependencies {
     // Kotlin coroutines TODO: BoM?
     implementation(KotlinX.coroutines.android)
     implementation(KotlinX.coroutines.core)
+
+    // Kotlin
+    implementation(kotlin("reflect"))
 
     testImplementation(Testing.junit4)
 

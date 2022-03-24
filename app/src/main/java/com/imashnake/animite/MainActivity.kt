@@ -4,9 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -15,15 +14,23 @@ import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
-import coil.compose.AsyncImage
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
+import com.imashnake.animite.ui.elements.Home
+import com.imashnake.animite.ui.elements.Profile
+import com.imashnake.animite.ui.elements.RSlash
+import com.imashnake.animite.dev.internal.Path
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,52 +68,84 @@ class MainActivity : ComponentActivity() {
                 }
 
                 setContent {
-                    Box {
-                        AnimeList(animeList)
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        // AnimeList(animeList)
 
-                        NavigationBar(Modifier.align(Alignment.BottomCenter)) {
-                            var selectedItem by remember { mutableStateOf(0) }
-                            val pages = listOf("Subreddit", "Home", "Profile")
+                        val navController = rememberNavController()
 
-                            pages.forEachIndexed { index, item ->
+                        // TODO: Does it make sense to use dependency injection here?
+                        // We iterate through the list in this order.
+                        val paths = listOf(
+                            Path.RSlash,
+                            Path.Home,
+                            Path.Profile
+                        )
+
+                        Log.d(TAG, Path.numberOfPaths.toString())
+
+                        NavHost(
+                            navController = navController,
+                            startDestination = "home",
+                            modifier = Modifier.align(Alignment.TopCenter)
+                        ) {
+                            composable(Path.Home.route) { Home() }
+                            composable(Path.Profile.route) { Profile() }
+                            composable(Path.RSlash.route) { RSlash() }
+                        }
+
+                        NavigationBar(
+                            modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                        ) {
+                            val navBackStackEntry by navController.currentBackStackEntryAsState()
+                            val currentDestination = navBackStackEntry?.destination
+
+                            paths.forEachIndexed { index, item ->
                                 NavigationBarItem(
                                     icon = {
                                         when (index) {
                                             0 -> {
                                                 Icon(
-                                                    Icons.Rounded.List,
-                                                    contentDescription = item
+                                                    imageVector = Icons.Rounded.List,
+                                                    contentDescription = stringResource(id = item.stringRes)
                                                 )
                                             }
                                             1 -> {
                                                 Icon(
-                                                    Icons.Rounded.Home,
-                                                    contentDescription = item
+                                                    imageVector = Icons.Rounded.Home,
+                                                    contentDescription = stringResource(id = item.stringRes)
                                                 )
                                             }
                                             2 -> {
                                                 Icon(
-                                                    Icons.Rounded.Person,
-                                                    contentDescription = item
+                                                    imageVector = Icons.Rounded.Person,
+                                                    contentDescription = stringResource(id = item.stringRes)
                                                 )
                                             }
                                         }
                                     },
 
                                     label = {
-                                        Text(item)
+                                        Text(stringResource(id = item.stringRes))
                                     },
 
-                                    selected = selectedItem == index,
+                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
 
                                     onClick = {
-                                        selectedItem = index
                                         Log.d(TAG, "index: $index; item: $item")
-                                    }
+
+                                        navController.navigate(item.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    },
                                 )
-                                // Spaghett
                             }
                         }
+                        // Spaghett
                     }
                 }
             }
@@ -114,6 +153,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/*
+TODO: Move this to `Home`.
 @Composable
 fun AnimeList(animeList: MutableList<ExampleListQuery.Medium?>) {
     Column(
@@ -141,3 +182,4 @@ fun AnimeList(animeList: MutableList<ExampleListQuery.Medium?>) {
         }
     }
 }
+*/
