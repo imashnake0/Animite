@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
                 setContent {
                     Box {
                         AnimeList(animeList)
+                        // AnimeList(animeList)
 
                         NavigationBar(Modifier.align(Alignment.BottomCenter)) {
                             var selectedItem by remember { mutableStateOf(0) }
@@ -114,6 +115,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/*
 @Composable
 fun AnimeList(animeList: MutableList<ExampleListQuery.Medium?>) {
     Column(
@@ -141,3 +143,4 @@ fun AnimeList(animeList: MutableList<ExampleListQuery.Medium?>) {
         }
     }
 }
+*/
