@@ -46,30 +46,18 @@ class MainActivity : ComponentActivity() {
             .serverUrl("https://graphql.anilist.co/")
             .build()
 
+        // Example Anime: "Sono Bisque Doll wa Koi wo Suru"; ID: 132405.
         lifecycleScope.launch(Dispatchers.IO) {
             val response =
                 apolloClient.query(
-                    ExampleListQuery(
-                        search = Optional.presentIfNotNull("Attack On Titan"),
-                        perPage = Optional.presentIfNotNull(20)
+                    AnimeQuery(
+                        id = Optional.presentIfNotNull(132405)
                     )
                 ).execute()
 
             withContext(Dispatchers.Main) {
-                fun animeAtIndex(index: Int): ExampleListQuery.Medium? {
-                    return response.data?.page?.media?.get(index)
-                }
-
-                val animeList = mutableListOf<ExampleListQuery.Medium?>()
-
-                for (i in 0..19) {
-                    animeList.add(animeAtIndex(i))
-                    Log.d(TAG, animeAtIndex(i)?.title?.native ?: "Null bro")
-                }
-
                 setContent {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        // AnimeList(animeList)
 
                         val navController = rememberNavController()
 
