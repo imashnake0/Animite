@@ -25,136 +25,118 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.Optional
+import com.imashnake.animite.data.repos.AnimeRepository
+import com.imashnake.animite.data.sauce.AnimeNetworkSource
+import com.imashnake.animite.data.sauce.ApolloAnimeApi
+import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.Home
 import com.imashnake.animite.ui.elements.Profile
 import com.imashnake.animite.ui.elements.RSlash
-import com.imashnake.animite.dev.internal.Path
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val TAG = "MainActivity"
 
-// TODO: Separate logic and UI using proper app architecture.
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val apolloClient = ApolloClient.Builder()
-            .serverUrl("https://graphql.anilist.co/")
-            .build()
-
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch{
             val response =
-                apolloClient.query(
-                    ExampleListQuery(
-                        search = Optional.presentIfNotNull("Attack On Titan"),
-                        perPage = Optional.presentIfNotNull(20)
-                    )
-                ).execute()
+                AnimeRepository(AnimeNetworkSource(ApolloAnimeApi(), Dispatchers.IO))
+                    .fetchAnime()
 
-            withContext(Dispatchers.Main) {
-                fun animeAtIndex(index: Int): ExampleListQuery.Medium? {
-                    return response.data?.page?.media?.get(index)
+            Log.d(TAG, response?.id.toString())
+            Log.d(TAG, response?.type.toString())
+            Log.d(TAG, response?.title.toString())
+            Log.d(TAG, response?.coverImage?.large.toString())
+            Log.d(TAG, response?.coverImage?.extraLarge.toString())
+
+        }
+
+        setContent {
+            Box(modifier = Modifier.fillMaxSize()) {
+
+                val navController = rememberNavController()
+
+                // We iterate through the list in this order.
+                val paths = listOf(
+                    Path.RSlash,
+                    Path.Home,
+                    Path.Profile
+                )
+
+                Log.d(TAG, Path.numberOfPaths.toString())
+
+                NavHost(
+                    navController = navController,
+                    startDestination = "home",
+                    modifier = Modifier.align(Alignment.TopCenter)
+                ) {
+                    composable(Path.Home.route) { Home() }
+                    composable(Path.Profile.route) { Profile() }
+                    composable(Path.RSlash.route) { RSlash() }
                 }
 
-                val animeList = mutableListOf<ExampleListQuery.Medium?>()
+                NavigationBar(
+                    modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                ) {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
 
-                for (i in 0..19) {
-                    animeList.add(animeAtIndex(i))
-                    Log.d(TAG, animeAtIndex(i)?.title?.native ?: "Null bro")
-                }
+                    paths.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            icon = {
+                                when (index) {
+                                    0 -> {
+                                        Icon(
+                                            imageVector = Icons.Rounded.List,
+                                            contentDescription = stringResource(id = item.stringRes)
+                                        )
+                                    }
+                                    1 -> {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Home,
+                                            contentDescription = stringResource(id = item.stringRes)
+                                        )
+                                    }
+                                    2 -> {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Person,
+                                            contentDescription = stringResource(id = item.stringRes)
+                                        )
+                                    }
+                                }
+                            },
 
-                setContent {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        // AnimeList(animeList)
+                            label = {
+                                Text(stringResource(id = item.stringRes))
+                            },
 
-                        val navController = rememberNavController()
+                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
 
-                        // TODO: Does it make sense to use dependency injection here?
-                        // We iterate through the list in this order.
-                        val paths = listOf(
-                            Path.RSlash,
-                            Path.Home,
-                            Path.Profile
+                            onClick = {
+                                Log.d(TAG, "index: $index; item: $item")
+
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
                         )
-
-                        Log.d(TAG, Path.numberOfPaths.toString())
-
-                        NavHost(
-                            navController = navController,
-                            startDestination = "home",
-                            modifier = Modifier.align(Alignment.TopCenter)
-                        ) {
-                            composable(Path.Home.route) { Home() }
-                            composable(Path.Profile.route) { Profile() }
-                            composable(Path.RSlash.route) { RSlash() }
-                        }
-
-                        NavigationBar(
-                            modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                        ) {
-                            val navBackStackEntry by navController.currentBackStackEntryAsState()
-                            val currentDestination = navBackStackEntry?.destination
-
-                            paths.forEachIndexed { index, item ->
-                                NavigationBarItem(
-                                    icon = {
-                                        when (index) {
-                                            0 -> {
-                                                Icon(
-                                                    imageVector = Icons.Rounded.List,
-                                                    contentDescription = stringResource(id = item.stringRes)
-                                                )
-                                            }
-                                            1 -> {
-                                                Icon(
-                                                    imageVector = Icons.Rounded.Home,
-                                                    contentDescription = stringResource(id = item.stringRes)
-                                                )
-                                            }
-                                            2 -> {
-                                                Icon(
-                                                    imageVector = Icons.Rounded.Person,
-                                                    contentDescription = stringResource(id = item.stringRes)
-                                                )
-                                            }
-                                        }
-                                    },
-
-                                    label = {
-                                        Text(stringResource(id = item.stringRes))
-                                    },
-
-                                    selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-
-                                    onClick = {
-                                        Log.d(TAG, "index: $index; item: $item")
-
-                                        navController.navigate(item.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    },
-                                )
-                            }
-                        }
-                        // Spaghett
                     }
                 }
+                // Spaghett
             }
         }
     }
 }
 
 /*
-TODO: Move this to `Home`.
 @Composable
 fun AnimeList(animeList: MutableList<ExampleListQuery.Medium?>) {
     Column(
