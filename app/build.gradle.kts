@@ -59,15 +59,6 @@ apollo {
     packageName.set("com.imashnake.animite")
 }
 
-// TODO:
-//  This is a temporary workaround, remove this once Apollo Kotlin 3.1.1 is out, see:
-//  https://github.com/jmfayard/refreshVersions/issues/507.
-tasks.configureEach {
-    if (name == "checkApolloVersions") {
-        enabled = false
-    }
-}
-
 dependencies {
     // AndroidX
     implementation(AndroidX.activity.compose)
