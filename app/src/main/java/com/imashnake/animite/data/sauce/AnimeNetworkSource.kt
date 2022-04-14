@@ -11,8 +11,8 @@ class AnimeNetworkSource(
     private val animeApi: AnimeApi,
     private val dispatcher: CoroutineDispatcher
 ) {
-    suspend fun fetchAnime(): AnimeQuery.Media? =
+    suspend fun fetchAnime(id: Int): AnimeQuery.Media? =
         withContext(dispatcher) {
-            animeApi.fetchAnime()
+            animeApi.fetchAnime(id)
         }
 }
