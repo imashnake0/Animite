@@ -6,6 +6,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.apollographql.apollo3")
+    kotlin("kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -85,6 +87,10 @@ dependencies {
 
     // Kotlin
     implementation(kotlin("reflect"))
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.41")
+    kapt("com.google.dagger:hilt-android-compiler:2.41")
 
     testImplementation(Testing.junit4)
 
