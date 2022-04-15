@@ -1,4 +1,4 @@
-package com.imashnake.animite
+package com.imashnake.animite.ui
 
 import android.os.Bundle
 import android.util.Log
