@@ -17,10 +17,7 @@ import com.imashnake.animite.AnimiteApplication
 import com.imashnake.animite.ui.state.HomeViewModel
 
 /**
- * TODO:
- *  - Kdoc.
- *  - This doesn't work as expected since there is a disconnect between `AnimeRepository` and
- *  `AnimeNetworkSource` (and others) because dependencies are not injected properly.
+ * TODO: Kdoc.
  */
 @Composable
 fun Home(

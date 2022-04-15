@@ -1,6 +1,5 @@
 package com.imashnake.animite.ui.state
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,7 +28,6 @@ class HomeViewModel(
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             try {
-                // Only adding a single anime for the sake of simplicity.
                 val animeList = mutableListOf<AnimeQuery.Media?>()
                 animeList.add(animeRepository.fetchAnime(id))
                 uiState = uiState.copy(animeList = animeList)
