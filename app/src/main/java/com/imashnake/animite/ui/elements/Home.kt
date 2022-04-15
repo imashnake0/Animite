@@ -24,7 +24,7 @@ fun Home(
     viewModel: HomeViewModel = viewModel(factory = AnimiteApplication().container.homeViewModelFactory)
 ) {
     viewModel.run {
-        addAnime(132405)
+        addAnimes(1, 5, 6, 7, 132405)
     }
 
     val animeList = viewModel.uiState.animeList

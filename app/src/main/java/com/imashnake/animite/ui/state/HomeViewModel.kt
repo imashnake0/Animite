@@ -24,12 +24,14 @@ class HomeViewModel(
     // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
 
-    fun addAnime(id: Int) {
+    fun addAnimes(vararg id: Int) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             try {
                 val animeList = mutableListOf<AnimeQuery.Media?>()
-                animeList.add(animeRepository.fetchAnime(id))
+                for (i in id) {
+                    animeList.add(animeRepository.fetchAnime(i))
+                }
                 uiState = uiState.copy(animeList = animeList)
             } catch (ioe: IOException) {
                 TODO()
