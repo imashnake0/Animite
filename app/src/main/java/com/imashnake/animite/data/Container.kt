@@ -15,5 +15,3 @@ class Container {
 
     val homeViewModelFactory = HomeViewModelFactory(animeRepository)
 }
-
-
