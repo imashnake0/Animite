@@ -5,9 +5,7 @@ import com.imashnake.animite.AnimeQuery
 import com.imashnake.animite.AnimeQuery.Media
 
 /**
- * TODO:
- *  * Kdoc.
- *  * Un-hardcode id.
+ * TODO: Kdoc.
  *
  * Example:
  *
@@ -15,10 +13,10 @@ import com.imashnake.animite.AnimeQuery.Media
  * **ID:** 132405.
  */
 class ApolloAnimeApi : AnimeApi {
-    override suspend fun fetchAnime(): Media? {
+    override suspend fun fetchAnime(id: Int): Media? {
         return client
             .query(
-                AnimeQuery(id = Optional.presentIfNotNull(132405))
+                AnimeQuery(id = Optional.presentIfNotNull(id))
             )
             .execute().data?.media
     }

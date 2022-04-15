@@ -9,6 +9,6 @@ import com.imashnake.animite.data.sauce.AnimeNetworkSource
 class AnimeRepository(
     private val animeNetworkSource: AnimeNetworkSource
 ) {
-    suspend fun fetchAnime(): AnimeQuery.Media? =
-        animeNetworkSource.fetchAnime()
+    suspend fun fetchAnime(id: Int): AnimeQuery.Media? =
+        animeNetworkSource.fetchAnime(id)
 }

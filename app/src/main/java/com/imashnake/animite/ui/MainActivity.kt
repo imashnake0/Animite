@@ -1,4 +1,4 @@
-package com.imashnake.animite
+package com.imashnake.animite.ui
 
 import android.os.Bundle
 import android.util.Log
@@ -18,41 +18,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.imashnake.animite.data.repos.AnimeRepository
-import com.imashnake.animite.data.sauce.AnimeNetworkSource
-import com.imashnake.animite.data.sauce.ApolloAnimeApi
 import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.Home
 import com.imashnake.animite.ui.elements.Profile
 import com.imashnake.animite.ui.elements.RSlash
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        lifecycleScope.launch{
-            val response =
-                AnimeRepository(AnimeNetworkSource(ApolloAnimeApi(), Dispatchers.IO))
-                    .fetchAnime()
-
-            Log.d(TAG, response?.id.toString())
-            Log.d(TAG, response?.type.toString())
-            Log.d(TAG, response?.title.toString())
-            Log.d(TAG, response?.coverImage?.large.toString())
-            Log.d(TAG, response?.coverImage?.extraLarge.toString())
-
-        }
 
         setContent {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -80,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
                 NavigationBar(
                     modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter)
                 ) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination

@@ -6,5 +6,5 @@ import com.imashnake.animite.AnimeQuery.Media
  * TODO: Kdoc.
  */
 interface AnimeApi {
-    suspend fun fetchAnime(): Media?
+    suspend fun fetchAnime(id: Int): Media?
 }
