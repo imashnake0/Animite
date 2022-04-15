@@ -32,7 +32,10 @@ fun Home(
     if (animeList.isNotEmpty()) {
         AnimeList(animeList = animeList)
     } else {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
             CircularProgressIndicator()
         }
     }
