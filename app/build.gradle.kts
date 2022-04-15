@@ -89,8 +89,8 @@ dependencies {
     implementation(kotlin("reflect"))
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.41")
-    kapt("com.google.dagger:hilt-android-compiler:2.41")
+    implementation(Google.dagger.hilt.android)
+    kapt(Google.dagger.hilt.android.compiler)
 
     testImplementation(Testing.junit4)
 
