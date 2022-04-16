@@ -45,8 +45,6 @@ fun Home(
 fun AnimeList(animeList: List<AnimeQuery.Media?>) {
     LazyColumn(
         modifier = Modifier
-            // The verticalScroll must be commented, the app crashes otherwise.
-            //.verticalScroll(rememberScrollState())
             // TODO: This is a hack, understand how layouts work and un-hardcode this.
             .padding(bottom = 80.dp)
             .fillMaxSize()
