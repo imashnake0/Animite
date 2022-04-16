@@ -1,8 +1,8 @@
 package com.imashnake.animite.ui.elements
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,37 +43,38 @@ fun Home(
 
 @Composable
 fun AnimeList(animeList: List<AnimeQuery.Media?>) {
-    Column(
+    LazyColumn(
         modifier = Modifier
-            .verticalScroll(rememberScrollState())
+            // The verticalScroll must be commented, the app crashes otherwise.
+            //.verticalScroll(rememberScrollState())
             // TODO: This is a hack, understand how layouts work and un-hardcode this.
             .padding(bottom = 80.dp)
             .fillMaxSize()
     ) {
-        for (i in animeList.indices) {
+        items(animeList) { anime ->
             Row {
                 AsyncImage(
-                    model = animeList[i]?.coverImage?.large,
-                    contentDescription = animeList[i]?.title?.native,
+                    model = anime?.coverImage?.large,
+                    contentDescription = anime?.title?.native,
                     modifier = Modifier
                 )
                 Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                     Text(
-                        text = (animeList[i]?.title?.english ?: "Null bro"),
+                        text = (anime?.title?.english ?: "Null bro"),
                         modifier = Modifier
                             .padding(6.dp)
                             .absolutePadding(left = 30.dp),
                         fontSize = 16.sp
                     )
                     Text(
-                        text = (animeList[i]?.title?.romaji ?: "Null bro"),
+                        text = (anime?.title?.romaji ?: "Null bro"),
                         modifier = Modifier
                             .padding(6.dp)
                             .absolutePadding(left = 30.dp),
                         fontSize = 16.sp
                     )
                     Text(
-                        text = (animeList[i]?.title?.native ?: "Null bro"),
+                        text = (anime?.title?.native ?: "Null bro"),
                         modifier = Modifier
                             .padding(6.dp)
                             .absolutePadding(left = 30.dp),
