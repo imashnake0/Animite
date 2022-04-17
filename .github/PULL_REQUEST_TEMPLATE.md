@@ -1,7 +1,7 @@
 [comment]: # (Replace [ ] with [x].)
 - [ ] Read `CONTRIBUTING.md`.
 
-[comment]: # (Replace this line with a description, include links to relevant documentation.)
+[comment]: # (Replace this comment with a description. Include links to relevant documentation.)
 
 **Summary of changes:**
 
