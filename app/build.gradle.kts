@@ -61,6 +61,10 @@ apollo {
     packageName.set("com.imashnake.animite")
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     // AndroidX
     implementation(AndroidX.activity.compose)
