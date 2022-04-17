@@ -1,5 +1,5 @@
 [comment]: # (Replace [ ] with [x].)
-- [ ] Read `CONTRIBUTING.md`.
+- [ ] Read [`CONTRIBUTING.md`](https://github.com/imashnake0/Animite/blob/be53ba4561c8ff20f588fb348965f208e301b6b8/CONTRIBUTING.md).
 
 [comment]: # (Replace this comment with a description. Include links to relevant documentation.)
 
