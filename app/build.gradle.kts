@@ -94,6 +94,7 @@ dependencies {
 
     // Hilt
     implementation(Google.dagger.hilt.android)
+    implementation(AndroidX.hilt.navigationCompose)
     kapt(Google.dagger.hilt.compiler)
 
     testImplementation(Testing.junit4)
