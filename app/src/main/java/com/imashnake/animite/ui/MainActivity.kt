@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -28,9 +29,11 @@ import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.Home
 import com.imashnake.animite.ui.elements.Profile
 import com.imashnake.animite.ui.elements.RSlash
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MainActivity"
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +57,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = "home",
                     modifier = Modifier.align(Alignment.TopCenter)
                 ) {
-                    composable(Path.Home.route) { Home() }
+                    composable(Path.Home.route) { Home(hiltViewModel()) }
                     composable(Path.Profile.route) { Profile() }
                     composable(Path.RSlash.route) { RSlash() }
                 }

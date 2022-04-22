@@ -8,14 +8,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.AnimeQuery
 import com.imashnake.animite.data.repos.AnimeRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.IOException
+import javax.inject.Inject
 
 /**
  * TODO: Kdoc.
  */
-class HomeViewModel(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
     private val animeRepository: AnimeRepository
 ): ViewModel() {
     var uiState by mutableStateOf(HomeUiState())

@@ -21,7 +21,7 @@ import com.imashnake.animite.ui.state.HomeViewModel
  */
 @Composable
 fun Home(
-    viewModel: HomeViewModel = viewModel(factory = AnimiteApplication().container.homeViewModelFactory)
+    viewModel: HomeViewModel = viewModel()
 ) {
     viewModel.run {
         addAnimes(1, 5, 6, 7, 132405)
