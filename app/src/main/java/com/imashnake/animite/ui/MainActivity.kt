@@ -114,38 +114,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-                // Spaghett
             }
         }
     }
 }
-
-/*
-@Composable
-fun AnimeList(animeList: MutableList<ExampleListQuery.Medium?>) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            // TODO: This is a hack, understand how layouts work and un-hardcode this.
-            .padding(bottom = 80.dp)
-    ) {
-        for (i in 0..19) {
-            Row {
-                AsyncImage(
-                    model = animeList[i]?.coverImage?.large,
-                    contentDescription = animeList[i]?.title?.native,
-                    modifier = Modifier
-                )
-                Text(
-                    text = (animeList[i]?.title?.native ?: "Null bro"),
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.CenterVertically)
-                        .absolutePadding(left = 30.dp),
-                    fontSize = 16.sp
-                )
-            }
-        }
-    }
-}
-*/

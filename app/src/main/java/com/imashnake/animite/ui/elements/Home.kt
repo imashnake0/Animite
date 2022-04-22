@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.AnimeQuery
-import com.imashnake.animite.AnimiteApplication
 import com.imashnake.animite.ui.state.HomeViewModel
 
 /**

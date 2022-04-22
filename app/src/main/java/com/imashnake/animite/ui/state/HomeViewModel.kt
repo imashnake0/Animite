@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.AnimeQuery
 import com.imashnake.animite.data.repos.AnimeRepository
@@ -40,15 +39,5 @@ class HomeViewModel @Inject constructor(
                 TODO()
             }
         }
-    }
-}
-
-/**
- * TODO: Kdoc.
- */
-class HomeViewModelFactory(private val animeRepository: AnimeRepository): ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        return HomeViewModel(animeRepository) as T
     }
 }
