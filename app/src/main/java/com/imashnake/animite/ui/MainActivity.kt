@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -28,9 +29,11 @@ import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.Home
 import com.imashnake.animite.ui.elements.Profile
 import com.imashnake.animite.ui.elements.RSlash
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MainActivity"
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +57,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = "home",
                     modifier = Modifier.align(Alignment.TopCenter)
                 ) {
-                    composable(Path.Home.route) { Home() }
+                    composable(Path.Home.route) { Home(hiltViewModel()) }
                     composable(Path.Profile.route) { Profile() }
                     composable(Path.RSlash.route) { RSlash() }
                 }
@@ -111,38 +114,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-                // Spaghett
             }
         }
     }
 }
-
-/*
-@Composable
-fun AnimeList(animeList: MutableList<ExampleListQuery.Medium?>) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            // TODO: This is a hack, understand how layouts work and un-hardcode this.
-            .padding(bottom = 80.dp)
-    ) {
-        for (i in 0..19) {
-            Row {
-                AsyncImage(
-                    model = animeList[i]?.coverImage?.large,
-                    contentDescription = animeList[i]?.title?.native,
-                    modifier = Modifier
-                )
-                Text(
-                    text = (animeList[i]?.title?.native ?: "Null bro"),
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .align(Alignment.CenterVertically)
-                        .absolutePadding(left = 30.dp),
-                    fontSize = 16.sp
-                )
-            }
-        }
-    }
-}
-*/

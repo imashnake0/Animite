@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.AnimeQuery
-import com.imashnake.animite.AnimiteApplication
 import com.imashnake.animite.ui.state.HomeViewModel
 
 /**
@@ -21,7 +20,7 @@ import com.imashnake.animite.ui.state.HomeViewModel
  */
 @Composable
 fun Home(
-    viewModel: HomeViewModel = viewModel(factory = AnimiteApplication().container.homeViewModelFactory)
+    viewModel: HomeViewModel = viewModel()
 ) {
     viewModel.run {
         addAnimes(1, 5, 6, 7, 132405)

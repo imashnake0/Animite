@@ -1,11 +1,10 @@
 package com.imashnake.animite
 
 import android.app.Application
-import com.imashnake.animite.data.Container
+import dagger.hilt.android.HiltAndroidApp
 
 /**
  * TODO: Kdoc.
  */
-class AnimiteApplication: Application() {
-    val container = Container()
-}
+@HiltAndroidApp
+class AnimiteApplication: Application()

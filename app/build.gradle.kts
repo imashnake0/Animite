@@ -6,6 +6,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.apollographql.apollo3")
+    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
 }
 
 android {
@@ -59,6 +61,10 @@ apollo {
     packageName.set("com.imashnake.animite")
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     // AndroidX
     implementation(AndroidX.activity.compose)
@@ -85,6 +91,11 @@ dependencies {
 
     // Kotlin
     implementation(kotlin("reflect"))
+
+    // Hilt
+    implementation(Google.dagger.hilt.android)
+    implementation(AndroidX.hilt.navigationCompose)
+    kapt(Google.dagger.hilt.compiler)
 
     testImplementation(Testing.junit4)
 
