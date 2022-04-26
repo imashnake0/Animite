@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.imashnake.animite.AnimeQuery
+import com.imashnake.animite.TrendingNowQuery
 import com.imashnake.animite.ui.state.HomeViewModel
 
 /**
@@ -26,7 +26,7 @@ fun Home(
         addAnimes(1, 5, 6, 7, 132405)
     }
 
-    val animeList = viewModel.uiState.animeList
+    val animeList = viewModel.uiState.trendingAnimeList
 
     if (animeList.isNotEmpty()) {
         AnimeList(animeList = animeList)
@@ -41,7 +41,7 @@ fun Home(
 }
 
 @Composable
-fun AnimeList(animeList: List<AnimeQuery.Media?>) {
+fun AnimeList(animeList: List<TrendingNowQuery.Media?>) {
     LazyColumn(
         modifier = Modifier
             // TODO: This is a hack, understand how layouts work and un-hardcode this.

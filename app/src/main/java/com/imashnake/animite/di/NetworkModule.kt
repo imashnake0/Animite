@@ -4,6 +4,8 @@ package com.imashnake.animite.di
 
 import com.imashnake.animite.data.sauce.AnimeApi
 import com.imashnake.animite.data.sauce.ApolloAnimeApi
+import com.imashnake.animite.data.sauce.ApolloMediaListApi
+import com.imashnake.animite.data.sauce.MediaListApi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -29,4 +31,10 @@ abstract class NetworkModuleBinds {
     abstract fun providesAnimeApi(
         apolloAnimeApi: ApolloAnimeApi
     ): AnimeApi
+
+    @Singleton
+    @Binds
+    abstract fun providesMediaListApi(
+        apolloMediaListApi: ApolloMediaListApi
+    ): MediaListApi
 }

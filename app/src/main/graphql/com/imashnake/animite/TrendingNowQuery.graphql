@@ -1,5 +1,6 @@
-query AnimeQuery($id: Int) {
-    media: Media (id: $id, type: ANIME) {
+query TrendingNow($type: MediaType) {
+    # TODO: Pagination.
+    media: Media(type: $type, sort: [TRENDING_DESC]) {
         id
         type
         title {
