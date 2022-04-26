@@ -8,5 +8,5 @@ import com.imashnake.animite.TrendingNowQuery
  */
 data class HomeUiState(
     val animeList: List<AnimeQuery.Media?> = listOf(),
-    val trendingAnimeList: List<TrendingNowQuery.Media?> = listOf()
+    val trendingAnimeList: TrendingNowQuery.Page? = null
 )

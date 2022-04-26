@@ -9,7 +9,7 @@ import com.imashnake.animite.type.MediaType
  *  - Pagination.
  */
 interface MediaListApi {
-    suspend fun fetchList(type: MediaType): TrendingNowQuery.Media?
+    suspend fun fetchList(type: MediaType): TrendingNowQuery.Page?
 
     // And potentially other functions that help sort/modify the list.
 }

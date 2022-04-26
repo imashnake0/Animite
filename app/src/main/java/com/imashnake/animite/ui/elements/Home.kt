@@ -28,7 +28,7 @@ fun Home(
 
     val animeList = viewModel.uiState.trendingAnimeList
 
-    if (animeList.isNotEmpty()) {
+    if (animeList != null) {
         AnimeList(animeList = animeList)
     } else {
         Box(
@@ -41,14 +41,14 @@ fun Home(
 }
 
 @Composable
-fun AnimeList(animeList: List<TrendingNowQuery.Media?>) {
+fun AnimeList(animeList: TrendingNowQuery.Page) {
     LazyColumn(
         modifier = Modifier
             // TODO: This is a hack, understand how layouts work and un-hardcode this.
             .padding(bottom = 80.dp)
             .fillMaxSize()
     ) {
-        items(animeList) { anime ->
+        items(animeList.media!!) { anime ->
             Row {
                 AsyncImage(
                     model = anime?.coverImage?.large,
