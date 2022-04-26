@@ -48,37 +48,38 @@ fun AnimeList(animeList: TrendingNowQuery.Page) {
             .padding(bottom = 80.dp)
             .fillMaxSize()
     ) {
-        items(animeList.media!!) { anime ->
-            Row {
-                AsyncImage(
-                    model = anime?.coverImage?.large,
-                    contentDescription = anime?.title?.native,
-                    modifier = Modifier
-                )
-                Column(modifier = Modifier.align(Alignment.CenterVertically)) {
-                    Text(
-                        text = (anime?.title?.english ?: "Null bro"),
+        if(animeList.media != null)
+            items(animeList.media) { anime ->
+                Row {
+                    AsyncImage(
+                        model = anime?.coverImage?.large,
+                        contentDescription = anime?.title?.native,
                         modifier = Modifier
-                            .padding(6.dp)
-                            .absolutePadding(left = 30.dp),
-                        fontSize = 16.sp
                     )
-                    Text(
-                        text = (anime?.title?.romaji ?: "Null bro"),
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .absolutePadding(left = 30.dp),
-                        fontSize = 16.sp
-                    )
-                    Text(
-                        text = (anime?.title?.native ?: "Null bro"),
-                        modifier = Modifier
-                            .padding(6.dp)
-                            .absolutePadding(left = 30.dp),
-                        fontSize = 16.sp
-                    )
+                    Column(modifier = Modifier.align(Alignment.CenterVertically)) {
+                        Text(
+                            text = (anime?.title?.english ?: "Null bro"),
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .absolutePadding(left = 30.dp),
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = (anime?.title?.romaji ?: "Null bro"),
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .absolutePadding(left = 30.dp),
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = (anime?.title?.native ?: "Null bro"),
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .absolutePadding(left = 30.dp),
+                            fontSize = 16.sp
+                        )
+                    }
                 }
             }
         }
-    }
 }
