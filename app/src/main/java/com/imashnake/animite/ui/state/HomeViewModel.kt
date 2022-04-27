@@ -8,10 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.AnimeQuery
 import com.imashnake.animite.data.repos.AnimeRepository
 import com.imashnake.animite.data.repos.MediaListRepository
+import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayAt
 import java.io.IOException
 import javax.inject.Inject
 
@@ -37,10 +41,18 @@ class HomeViewModel @Inject constructor(
                 for (i in id) {
                     animeList.add(animeRepository.fetchAnime(i))
                 }
-                uiState = uiState.copy(animeList = animeList)
 
                 val trendingAnime = mediaListRepository.fetchTrendingNowMediaList(MediaType.ANIME)
+
+                val popularAnimeThisSeason = mediaListRepository.fetchPopularThisSeasonMediaList(
+                    mediaType = MediaType.ANIME,
+                    season = MediaSeason.SPRING,
+                    seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
+                )
+
+                uiState = uiState.copy(animeList = animeList)
                 uiState = uiState.copy(trendingAnimeList = trendingAnime)
+                uiState = uiState.copy(popularAnimeThisSeasonList = popularAnimeThisSeason)
             } catch (ioe: IOException) {
                 TODO()
             }

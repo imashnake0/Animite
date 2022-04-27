@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.imashnake.animite.PopularThisSeasonQuery
 import com.imashnake.animite.TrendingNowQuery
 import com.imashnake.animite.ui.state.HomeViewModel
 
@@ -26,7 +27,7 @@ fun Home(
         addAnimes(1, 5, 6, 7, 132405)
     }
 
-    val animeList = viewModel.uiState.trendingAnimeList
+    val animeList = viewModel.uiState.popularAnimeThisSeasonList
 
     if (animeList != null) {
         AnimeList(animeList = animeList)
@@ -41,7 +42,7 @@ fun Home(
 }
 
 @Composable
-fun AnimeList(animeList: TrendingNowQuery.Page) {
+fun AnimeList(animeList: PopularThisSeasonQuery.Page) {
     LazyColumn(
         modifier = Modifier
             // TODO: This is a hack, understand how layouts work and un-hardcode this.
