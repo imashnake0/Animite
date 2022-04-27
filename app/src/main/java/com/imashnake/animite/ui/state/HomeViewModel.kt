@@ -50,9 +50,13 @@ class HomeViewModel @Inject constructor(
                     seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
                 )
 
-                uiState = uiState.copy(animeList = animeList)
-                uiState = uiState.copy(trendingAnimeList = trendingAnime)
-                uiState = uiState.copy(popularAnimeThisSeasonList = popularAnimeThisSeason)
+                uiState = with(uiState) {
+                    copy(
+                        animeList = animeList,
+                        trendingAnimeList = trendingAnime,
+                        popularAnimeThisSeasonList = popularAnimeThisSeason
+                    )
+                }
             } catch (ioe: IOException) {
                 TODO()
             }
