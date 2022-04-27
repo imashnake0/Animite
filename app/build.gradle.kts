@@ -91,6 +91,7 @@ dependencies {
 
     // Kotlin
     implementation(kotlin("reflect"))
+    implementation(KotlinX.datetime)
 
     // Hilt
     implementation(Google.dagger.hilt.android)
