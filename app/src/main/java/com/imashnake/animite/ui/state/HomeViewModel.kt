@@ -39,7 +39,7 @@ class HomeViewModel @Inject constructor(
                 }
                 uiState = uiState.copy(animeList = animeList)
 
-                val trendingAnime = mediaListRepository.fetchMediaList(MediaType.ANIME)
+                val trendingAnime = mediaListRepository.fetchTrendingNowMediaList(MediaType.ANIME)
                 uiState = uiState.copy(trendingAnimeList = trendingAnime)
             } catch (ioe: IOException) {
                 TODO()

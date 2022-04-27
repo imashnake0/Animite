@@ -15,7 +15,7 @@ import javax.inject.Inject
  * **ID:** 132405.
  */
 class ApolloMediaListApi @Inject constructor() : MediaListApi {
-    override suspend fun fetchList(type: MediaType): Page? {
+    override suspend fun fetchTrendingNowList(type: MediaType): Page? {
         return client
             .query(
                  TrendingNowQuery(

@@ -13,8 +13,8 @@ class MediaListNetworkSource @Inject constructor(
     private val mediaListApi: MediaListApi,
     private val dispatcher: CoroutineDispatcher
 ) {
-    suspend fun fetchMediaList(mediaType: MediaType): TrendingNowQuery.Page? =
+    suspend fun fetchTrendingNowMediaList(mediaType: MediaType): TrendingNowQuery.Page? =
         withContext(dispatcher) {
-            mediaListApi.fetchList(mediaType)
+            mediaListApi.fetchTrendingNowList(mediaType)
         }
 }

@@ -11,6 +11,6 @@ import javax.inject.Inject
 class MediaListRepository @Inject constructor(
     private val mediaListNetworkSource: MediaListNetworkSource
 ) {
-    suspend fun fetchMediaList(mediaType: MediaType): Page? =
-        mediaListNetworkSource.fetchMediaList(mediaType)
+    suspend fun fetchTrendingNowMediaList(mediaType: MediaType): Page? =
+        mediaListNetworkSource.fetchTrendingNowMediaList(mediaType)
 }
