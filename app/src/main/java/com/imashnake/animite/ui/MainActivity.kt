@@ -26,9 +26,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.imashnake.animite.dev.internal.Path
-import com.imashnake.animite.ui.elements.Home
-import com.imashnake.animite.ui.elements.Profile
-import com.imashnake.animite.ui.elements.RSlash
+import com.imashnake.animite.ui.elements.home.Home
+import com.imashnake.animite.ui.elements.profile.Profile
+import com.imashnake.animite.ui.elements.rslash.RSlash
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MainActivity"

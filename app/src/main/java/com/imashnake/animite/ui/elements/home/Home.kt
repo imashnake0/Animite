@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.elements
+package com.imashnake.animite.ui.elements.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.PopularThisSeasonQuery
-import com.imashnake.animite.TrendingNowQuery
 import com.imashnake.animite.ui.state.HomeViewModel
 
 /**
@@ -24,13 +23,14 @@ fun Home(
     viewModel: HomeViewModel = viewModel()
 ) {
     viewModel.run {
-        addAnimes(1, 5, 6, 7, 132405)
+        addAnimes()
     }
 
-    val animeList = viewModel.uiState.popularAnimeThisSeasonList
+    val popularThisSeasonAnimeList = viewModel.uiState.popularAnimeThisSeasonList
+    val trendingNowAnimeList = viewModel.uiState.trendingAnimeList
 
-    if (animeList != null) {
-        AnimeList(animeList = animeList)
+    if (popularThisSeasonAnimeList != null) {
+        AnimeList(animeList = popularThisSeasonAnimeList)
     } else {
         Box(
             contentAlignment = Alignment.Center,
@@ -82,5 +82,5 @@ fun AnimeList(animeList: PopularThisSeasonQuery.Page) {
                     }
                 }
             }
-        }
+    }
 }
