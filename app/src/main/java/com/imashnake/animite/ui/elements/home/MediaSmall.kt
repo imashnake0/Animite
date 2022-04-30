@@ -21,16 +21,19 @@ import com.imashnake.animite.ui.theme.manropeFamily
 import com.imashnake.animite.ui.theme.mediaSmallShape
 
 /**
- * TODO: Kdoc.
+ * TODO:
+ *  - Kdoc.
+ *  - Extract dimens to `ui.theme`.
  */
 @ExperimentalMaterial3Api
 @Composable
-fun MediaSmall(image: String?, anime: String) {
+fun MediaSmall(image: String?, anime: String?) {
     Card(
         onClick = { },
         modifier = Modifier
             .wrapContentHeight()
-            .width(115.dp),
+            .width((115 + 12 + 12).dp)
+            .padding(start = 12.dp, end = 12.dp),
         containerColor = Card,
         shape = mediaSmallShape
     ) {
@@ -43,7 +46,7 @@ fun MediaSmall(image: String?, anime: String) {
             )
         }
         Text(
-            text = anime,
+            text = anime ?: "",
             color = Text,
             maxLines = 1,
             overflow = TextOverflow.Clip,
