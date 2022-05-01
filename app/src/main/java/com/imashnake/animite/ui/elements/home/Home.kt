@@ -34,11 +34,11 @@ fun Home(
 
     when {
         trendingNowAnimeList != null && popularThisSeasonAnimeList != null -> {
-            // TODO: `padding(vertical = 12.dp)` doesn't work for whatever reason. Get it to work.
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Backdrop)
+                    .padding(vertical = 12.dp)
             ) {
                 Spacer(modifier = Modifier.size(24.dp))
 
