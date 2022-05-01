@@ -34,7 +34,7 @@ fun MediaSmall(image: String?, anime: String?) {
         onClick = { },
         modifier = Modifier
             .wrapContentHeight()
-            .width((115 + 12 + 12).dp),
+            .width(115.dp),
         containerColor = Card,
         shape = mediaSmallShape
     ) {
