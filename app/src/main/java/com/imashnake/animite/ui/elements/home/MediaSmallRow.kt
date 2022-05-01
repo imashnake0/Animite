@@ -31,7 +31,7 @@ fun MediaSmallRow(mediaList: List<Any>) {
 @Composable
 fun TrendingNowAnimeSmallRow(mediaList: List<TrendingNowQuery.Medium?>) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
     ) {
         items(mediaList) { media ->
