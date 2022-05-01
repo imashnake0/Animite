@@ -74,9 +74,14 @@ fun Home(
         else -> {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Backdrop)
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = Text,
+                    strokeWidth = 8.dp
+                )
             }
         }
     }
