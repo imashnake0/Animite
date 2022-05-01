@@ -38,7 +38,6 @@ fun Home(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Backdrop)
-                    .padding(vertical = 12.dp)
             ) {
                 Spacer(modifier = Modifier.size(24.dp))
 
