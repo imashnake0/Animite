@@ -45,6 +45,7 @@ fun Home(
                 Text(
                     text = "Trending Now",
                     color = Text,
+                    fontSize = 14.sp,
                     fontFamily = manropeFamily,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 24.dp)
@@ -59,6 +60,7 @@ fun Home(
                 Text(
                     text = "Popular This Season",
                     color = Text,
+                    fontSize = 14.sp,
                     fontFamily = manropeFamily,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 24.dp)

@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.imashnake.animite.ui.theme.Card
 import com.imashnake.animite.ui.theme.Text
@@ -48,6 +49,7 @@ fun MediaSmall(image: String?, anime: String?) {
         Text(
             text = anime ?: "",
             color = Text,
+            fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Clip,
             modifier = Modifier
