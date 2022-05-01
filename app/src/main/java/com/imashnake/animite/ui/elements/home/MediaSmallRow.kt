@@ -1,11 +1,11 @@
 package com.imashnake.animite.ui.elements.home
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.PopularThisSeasonQuery
@@ -31,7 +31,8 @@ fun MediaSmallRow(mediaList: List<Any>) {
 @Composable
 fun TrendingNowAnimeSmallRow(mediaList: List<TrendingNowQuery.Medium?>) {
     LazyRow(
-        modifier = Modifier.padding(start = 12.dp)
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
     ) {
         items(mediaList) { media ->
             MediaSmall(
@@ -53,7 +54,8 @@ fun TrendingNowAnimeSmallRow(mediaList: List<TrendingNowQuery.Medium?>) {
 @Composable
 fun PopularAnimeThisSeasonSmallRow(mediaList: List<PopularThisSeasonQuery.Medium?>) {
     LazyRow(
-        modifier = Modifier.padding(start = 12.dp)
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
     ) {
         items(mediaList) { media ->
             MediaSmall(
