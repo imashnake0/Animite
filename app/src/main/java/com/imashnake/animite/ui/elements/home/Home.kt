@@ -1,23 +1,26 @@
 package com.imashnake.animite.ui.elements.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import com.imashnake.animite.PopularThisSeasonQuery
 import com.imashnake.animite.ui.state.HomeViewModel
+import com.imashnake.animite.ui.theme.Backdrop
+import com.imashnake.animite.ui.theme.Text
+import com.imashnake.animite.ui.theme.manropeFamily
 
 /**
  * TODO: Kdoc.
  */
+@ExperimentalMaterial3Api
 @Composable
 fun Home(
     viewModel: HomeViewModel = viewModel()
@@ -26,61 +29,53 @@ fun Home(
         addAnimes()
     }
 
-    val popularThisSeasonAnimeList = viewModel.uiState.popularAnimeThisSeasonList
-    val trendingNowAnimeList = viewModel.uiState.trendingAnimeList
+    val popularThisSeasonAnimeList = viewModel.uiState.popularAnimeThisSeasonList?.media
+    val trendingNowAnimeList = viewModel.uiState.trendingAnimeList?.media
 
-    if (popularThisSeasonAnimeList != null) {
-        AnimeList(animeList = popularThisSeasonAnimeList)
-    } else {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            CircularProgressIndicator()
-        }
-    }
-}
+    when {
+        trendingNowAnimeList != null && popularThisSeasonAnimeList != null -> {
+            // TODO: `padding(vertical = 12.dp)` doesn't work for whatever reason. Get it to work.
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Backdrop)
+            ) {
+                Spacer(modifier = Modifier.size(24.dp))
 
-@Composable
-fun AnimeList(animeList: PopularThisSeasonQuery.Page) {
-    LazyColumn(
-        modifier = Modifier
-            // TODO: This is a hack, understand how layouts work and un-hardcode this.
-            .padding(bottom = 80.dp)
-            .fillMaxSize()
-    ) {
-        if(animeList.media != null)
-            items(animeList.media) { anime ->
-                Row {
-                    AsyncImage(
-                        model = anime?.coverImage?.large,
-                        contentDescription = anime?.title?.native,
-                        modifier = Modifier
-                    )
-                    Column(modifier = Modifier.align(Alignment.CenterVertically)) {
-                        Text(
-                            text = (anime?.title?.english ?: "Null bro"),
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .absolutePadding(left = 30.dp),
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = (anime?.title?.romaji ?: "Null bro"),
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .absolutePadding(left = 30.dp),
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = (anime?.title?.native ?: "Null bro"),
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .absolutePadding(left = 30.dp),
-                            fontSize = 16.sp
-                        )
-                    }
-                }
+                Text(
+                    text = "Trending Now",
+                    color = Text,
+                    fontFamily = manropeFamily,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 24.dp)
+                )
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                TrendingNowAnimeSmallRow(mediaList = trendingNowAnimeList)
+
+                Spacer(modifier = Modifier.size(24.dp))
+
+                Text(
+                    text = "Popular This Season",
+                    color = Text,
+                    fontFamily = manropeFamily,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 24.dp)
+                )
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                PopularAnimeThisSeasonSmallRow(mediaList = popularThisSeasonAnimeList)
             }
+        }
+        else -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                CircularProgressIndicator()
+            }
+        }
     }
 }

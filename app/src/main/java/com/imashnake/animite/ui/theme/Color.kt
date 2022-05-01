@@ -8,3 +8,6 @@ import androidx.compose.ui.graphics.Color
 // Cards
 val Card = Color(0xFF152232)
 val Text = Color(0xFFC2CBD5)
+
+// Home
+val Backdrop = Color(0xFF0A1625)
