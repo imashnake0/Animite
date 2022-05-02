@@ -11,3 +11,5 @@ val Text = Color(0xFFC2CBD5)
 
 // Home
 val Backdrop = Color(0xFF0A1625)
+val NavigationBar = Color(0xFF152232)
+val NavigationItem = Color(0xFFC3CBD5)

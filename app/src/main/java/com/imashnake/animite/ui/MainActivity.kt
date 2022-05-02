@@ -6,19 +6,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -30,6 +28,8 @@ import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.home.Home
 import com.imashnake.animite.ui.elements.profile.Profile
 import com.imashnake.animite.ui.elements.rslash.RSlash
+import com.imashnake.animite.ui.theme.NavigationBar
+import com.imashnake.animite.ui.theme.NavigationItem
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MainActivity"
@@ -65,14 +65,30 @@ class MainActivity : ComponentActivity() {
                 }
 
                 NavigationBar(
+                    containerColor = NavigationBar,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
+                        .height(80.dp)
                 ) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
 
                     paths.forEachIndexed { index, item ->
                         NavigationBarItem(
+                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+
+                            onClick = {
+                                Log.d(TAG, "index: $index; item: $item")
+
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+
                             icon = {
                                 when (index) {
                                     0 -> {
@@ -96,23 +112,11 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
 
-                            label = {
-                                Text(stringResource(id = item.stringRes))
-                            },
-
-                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-
-                            onClick = {
-                                Log.d(TAG, "index: $index; item: $item")
-
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = NavigationBar,
+                                unselectedIconColor = NavigationItem,
+                                indicatorColor = NavigationItem
+                            )
                         )
                     }
                 }
@@ -120,3 +124,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+
