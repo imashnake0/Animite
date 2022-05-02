@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.List
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.getValue
@@ -33,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MainActivity"
 
+@ExperimentalMaterial3Api
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
