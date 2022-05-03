@@ -98,6 +98,9 @@ dependencies {
     implementation(AndroidX.hilt.navigationCompose)
     kapt(Google.dagger.hilt.compiler)
 
+    // Accompanist
+    implementation(Google.accompanist.systemuicontroller)
+
     testImplementation(Testing.junit4)
 
     androidTestImplementation(AndroidX.test.ext.junit)
