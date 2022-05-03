@@ -4,18 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.List
-import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -31,6 +29,7 @@ import com.imashnake.animite.ui.elements.rslash.RSlash
 import com.imashnake.animite.ui.theme.NavigationBar
 import com.imashnake.animite.ui.theme.NavigationItem
 import dagger.hilt.android.AndroidEntryPoint
+import com.imashnake.animite.R as Res
 
 private const val TAG = "MainActivity"
 
@@ -91,22 +90,25 @@ class MainActivity : ComponentActivity() {
 
                             icon = {
                                 when (index) {
+                                    // TODO: Potentially "convert" icons to compose.
                                     0 -> {
                                         Icon(
-                                            imageVector = Icons.Rounded.List,
+                                            imageVector = ImageVector.vectorResource(id = Res.drawable.rslash),
                                             contentDescription = stringResource(id = item.stringRes)
                                         )
                                     }
                                     1 -> {
                                         Icon(
-                                            imageVector = Icons.Rounded.Home,
+                                            imageVector = ImageVector.vectorResource(id = Res.drawable.home),
                                             contentDescription = stringResource(id = item.stringRes)
                                         )
                                     }
                                     2 -> {
                                         Icon(
-                                            imageVector = Icons.Rounded.Person,
-                                            contentDescription = stringResource(id = item.stringRes)
+                                            imageVector = Icons.Rounded.AccountCircle,
+                                            contentDescription = stringResource(id = item.stringRes),
+                                            // Adding this modifier lets us control the icon's size.
+                                            modifier = Modifier.padding((3).dp).size(18.dp)
                                         )
                                     }
                                 }
