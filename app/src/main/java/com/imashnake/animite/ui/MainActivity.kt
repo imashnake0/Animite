@@ -95,7 +95,9 @@ class MainActivity : ComponentActivity() {
                         NavigationBarItem(
                             modifier = Modifier.navigationBarsPadding(),
 
-                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                            selected = currentDestination?.hierarchy?.any {
+                                it.route == item.route
+                            } == true,
 
                             onClick = {
                                 Log.d(TAG, "index: $index; item: $item")
@@ -114,20 +116,30 @@ class MainActivity : ComponentActivity() {
                                     // TODO: Potentially "convert" icons to compose.
                                     0 -> {
                                         Icon(
-                                            imageVector = ImageVector.vectorResource(id = Res.drawable.rslash),
-                                            contentDescription = stringResource(id = item.stringRes)
+                                            imageVector = ImageVector.vectorResource(
+                                                id = Res.drawable.rslash
+                                            ),
+                                            contentDescription = stringResource(
+                                                id = item.stringRes
+                                            )
                                         )
                                     }
                                     1 -> {
                                         Icon(
-                                            imageVector = ImageVector.vectorResource(id = Res.drawable.home),
-                                            contentDescription = stringResource(id = item.stringRes)
+                                            imageVector = ImageVector.vectorResource(
+                                                id = Res.drawable.home
+                                            ),
+                                            contentDescription = stringResource(
+                                                id = item.stringRes
+                                            )
                                         )
                                     }
                                     2 -> {
                                         Icon(
                                             imageVector = Icons.Rounded.AccountCircle,
-                                            contentDescription = stringResource(id = item.stringRes),
+                                            contentDescription = stringResource(
+                                                id = item.stringRes
+                                            ),
                                             // Adding this modifier lets us control the icon's size.
                                             modifier = Modifier.padding((3).dp).size(18.dp)
                                         )
