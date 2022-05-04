@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -67,24 +66,35 @@ class MainActivity : ComponentActivity() {
                 NavHost(
                     navController = navController,
                     startDestination = "home",
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .navigationBarsPadding()
                 ) {
                     composable(Path.Home.route) { Home(hiltViewModel()) }
                     composable(Path.Profile.route) { Profile() }
                     composable(Path.RSlash.route) { RSlash() }
                 }
 
+                // TODO: The way padding is handled is still a bit hacky, investigate further.
                 NavigationBar(
                     containerColor = NavigationBar,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .height(80.dp)
+                        .height(
+                            80.dp +
+                            WindowInsets
+                                .navigationBars
+                                .asPaddingValues()
+                                .calculateBottomPadding()
+                        )
                 ) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
 
                     paths.forEachIndexed { index, item ->
                         NavigationBarItem(
+                            modifier = Modifier.navigationBarsPadding(),
+
                             selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
 
                             onClick = {
@@ -137,5 +147,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
