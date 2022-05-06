@@ -78,6 +78,7 @@ dependencies {
     implementation(AndroidX.compose.runtime)
     implementation(AndroidX.compose.ui)
     implementation(AndroidX.compose.ui.toolingPreview)
+    implementation(AndroidX.compose.foundation)
 
     // Apollo Kotlin
     implementation("com.apollographql.apollo3:apollo-runtime:_")
@@ -91,11 +92,15 @@ dependencies {
 
     // Kotlin
     implementation(kotlin("reflect"))
+    implementation(KotlinX.datetime)
 
     // Hilt
     implementation(Google.dagger.hilt.android)
     implementation(AndroidX.hilt.navigationCompose)
     kapt(Google.dagger.hilt.compiler)
+
+    // Accompanist
+    implementation(Google.accompanist.systemuicontroller)
 
     testImplementation(Testing.junit4)
 

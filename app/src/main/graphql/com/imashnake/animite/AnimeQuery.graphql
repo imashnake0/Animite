@@ -1,15 +1,16 @@
-query AnimeQuery($id: Int) { # Define which variables will be used in the query (id)
-  media: Media (id: $id, type: ANIME) { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
-    id
-    type
-    title {
-      romaji
-      english
-      native
+query AnimeQuery($id: Int) {
+    # TODO: Make this `MediaQuery`.
+    media: Media (id: $id, type: ANIME) {
+        id
+        type
+        title {
+            romaji
+            english
+            native
+        }
+        coverImage {
+            extraLarge
+            large
+        }
     }
-    coverImage {
-      extraLarge
-      large
-    }
-  }
 }
