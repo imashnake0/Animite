@@ -78,7 +78,7 @@ dependencies {
     implementation(AndroidX.compose.runtime)
     implementation(AndroidX.compose.ui)
     implementation(AndroidX.compose.ui.toolingPreview)
-    implementation("androidx.compose.foundation:foundation:1.2.0-alpha08")
+    implementation(AndroidX.compose.foundation)
 
     // Apollo Kotlin
     implementation("com.apollographql.apollo3:apollo-runtime:_")
