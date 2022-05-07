@@ -65,46 +65,44 @@ kapt {
 
 dependencies {
     // AndroidX
-    implementation("androidx.activity:activity-compose:1.4.0")
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
-    implementation("androidx.navigation:navigation-compose:2.4.1")
+    implementation(deps.androidx.activityCompose)
+    implementation(deps.androidx.coreKtx)
+    implementation(deps.androidx.lifecycle.runtimeKtx)
+    implementation(deps.androidx.navigation.compose)
 
     // Compose
-    implementation("androidx.compose.material:material:1.1.1")
-    implementation("androidx.compose.material3:material3:1.0.0-alpha07")
-    implementation("androidx.compose.runtime:runtime:1.2.0-alpha05")
-    implementation("androidx.compose.ui:ui:1.1.1")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.1.1")
-    implementation("androidx.compose.foundation:foundation:1.2.0-alpha08")
+    implementation(deps.compose.material)
+    implementation(deps.compose.material3)
+    implementation(deps.compose.runtime)
+    implementation(deps.compose.ui)
+    implementation(deps.compose.uiToolingPreview)
+    implementation(deps.compose.foundation)
 
     // Apollo Kotlin
-    implementation("com.apollographql.apollo3:apollo-runtime:3.2.2")
+    implementation(deps.apolloKotlin.runtime)
 
     // Coil
-    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
-
-    // Kotlin coroutines TODO: BoM?
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation(deps.coil.compose)
 
     // Kotlin
+    implementation(deps.kotlin.coroutines.android)
+    implementation(deps.kotlin.coroutines.core)
+    implementation(deps.kotlin.datetime)
     implementation(kotlin("reflect"))
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.41")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    kapt("com.google.dagger:hilt-android-compiler:2.41")
+    implementation(deps.hilt.android)
+    implementation(deps.hilt.navigationCompose)
+    kapt(deps.hilt.android.compiler)
 
     // Accompanist
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.24.7-alpha")
+    implementation(deps.accompanist.systemUiController)
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(deps.test.junit)
 
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.1.1")
+    androidTestImplementation(deps.androidx.test.junit)
+    androidTestImplementation(deps.androidx.test.espresso.core)
+    androidTestImplementation(deps.compose.test.uiTestJunit4)
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.1.1")
+    debugImplementation(deps.compose.test.uiTooling)
 }
