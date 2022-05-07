@@ -1,12 +1,10 @@
 @file:Suppress("SpellCheckingInspection")
 
-import de.fayard.refreshVersions.core.versionFor
-
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.apollographql.apollo3")
-    id("com.google.dagger.hilt.android")
+    id("com.android.application") version ("7.1.3")
+    id("org.jetbrains.kotlin.android") version ("1.6.10")
+    id("com.apollographql.apollo3") version ("3.2.2")
+    id("com.google.dagger.hilt.android") version ("2.41")
     kotlin("kapt")
 }
 
@@ -47,7 +45,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = versionFor(AndroidX.compose.compiler)
+        kotlinCompilerExtensionVersion = "1.1.1"
     }
 
     packagingOptions {
@@ -67,46 +65,46 @@ kapt {
 
 dependencies {
     // AndroidX
-    implementation(AndroidX.activity.compose)
-    implementation(AndroidX.core.ktx)
-    implementation(AndroidX.lifecycle.runtimeKtx)
-    implementation(AndroidX.navigation.compose)
+    implementation("androidx.activity:activity-compose:1.4.0")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
+    implementation("androidx.navigation:navigation-compose:2.4.1")
 
     // Compose
-    implementation(AndroidX.compose.material)
-    implementation(AndroidX.compose.material3)
-    implementation(AndroidX.compose.runtime)
-    implementation(AndroidX.compose.ui)
-    implementation(AndroidX.compose.ui.toolingPreview)
-    implementation(AndroidX.compose.foundation)
+    implementation("androidx.compose.material:material:1.1.1")
+    implementation("androidx.compose.material3:material3:1.0.0-alpha07")
+    implementation("androidx.compose.runtime:runtime:1.2.0-alpha05")
+    implementation("androidx.compose.ui:ui:1.1.1")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.1.1")
+    implementation("androidx.compose.foundation:foundation:1.2.0-alpha08")
 
     // Apollo Kotlin
-    implementation("com.apollographql.apollo3:apollo-runtime:_")
+    implementation("com.apollographql.apollo3:apollo-runtime:3.2.2")
 
     // Coil
-    implementation(COIL.compose)
+    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
 
     // Kotlin coroutines TODO: BoM?
-    implementation(KotlinX.coroutines.android)
-    implementation(KotlinX.coroutines.core)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
     // Kotlin
     implementation(kotlin("reflect"))
-    implementation(KotlinX.datetime)
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.2")
 
     // Hilt
-    implementation(Google.dagger.hilt.android)
-    implementation(AndroidX.hilt.navigationCompose)
-    kapt(Google.dagger.hilt.compiler)
+    implementation("com.google.dagger:hilt-android:2.41")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    kapt("com.google.dagger:hilt-android-compiler:2.41")
 
     // Accompanist
-    implementation(Google.accompanist.systemuicontroller)
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.24.7-alpha")
 
-    testImplementation(Testing.junit4)
+    testImplementation("junit:junit:4.13.2")
 
-    androidTestImplementation(AndroidX.test.ext.junit)
-    androidTestImplementation(AndroidX.test.espresso.core)
-    androidTestImplementation(AndroidX.compose.ui.testJunit4)
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.1.1")
 
-    debugImplementation(AndroidX.compose.ui.tooling)
+    debugImplementation("androidx.compose.ui:ui-tooling:1.1.1")
 }
