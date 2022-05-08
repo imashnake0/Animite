@@ -67,16 +67,16 @@ dependencies {
     // AndroidX
     implementation(deps.androidx.activityCompose)
     implementation(deps.androidx.coreKtx)
-    implementation(deps.androidx.lifecycle.runtimeKtx)
-    implementation(deps.androidx.navigation.compose)
+    implementation(deps.androidx.lifecycleRuntimeKtx)
+    implementation(deps.androidx.navigationCompose)
 
     // Compose
+    implementation(deps.compose.foundation)
     implementation(deps.compose.material)
     implementation(deps.compose.material3)
     implementation(deps.compose.runtime)
     implementation(deps.compose.ui)
-    implementation(deps.compose.uiToolingPreview)
-    implementation(deps.compose.foundation)
+    implementation(deps.compose.ui.toolingPreview)
 
     // Apollo Kotlin
     implementation(deps.apolloKotlin.runtime)
@@ -101,8 +101,8 @@ dependencies {
     testImplementation(deps.test.junit)
 
     androidTestImplementation(deps.androidx.test.junit)
-    androidTestImplementation(deps.androidx.test.espresso.core)
-    androidTestImplementation(deps.compose.test.uiTestJunit4)
+    androidTestImplementation(deps.androidx.test.espressoCore)
+    androidTestImplementation(deps.compose.test.ui.testJunit4)
 
-    debugImplementation(deps.compose.test.uiTooling)
+    debugImplementation(deps.compose.test.ui.tooling)
 }
