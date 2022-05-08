@@ -1,12 +1,12 @@
 @file:Suppress("SpellCheckingInspection")
 
-import de.fayard.refreshVersions.core.versionFor
-
+// TODO: Remove this after https://youtrack.jetbrains.com/issue/KTIJ-19369 is resolved.
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.apollographql.apollo3")
-    id("com.google.dagger.hilt.android")
+    alias(deps.plugins.agp)
+    alias(deps.plugins.kotlin)
+    alias(deps.plugins.apolloKotlin)
+    alias(deps.plugins.hilt)
     kotlin("kapt")
 }
 
@@ -47,7 +47,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = versionFor(AndroidX.compose.compiler)
+        // TODO: Use version catalogs for this once Compose is updated and "bundled".
+        kotlinCompilerExtensionVersion = "1.1.1"
     }
 
     packagingOptions {
@@ -67,46 +68,44 @@ kapt {
 
 dependencies {
     // AndroidX
-    implementation(AndroidX.activity.compose)
-    implementation(AndroidX.core.ktx)
-    implementation(AndroidX.lifecycle.runtimeKtx)
-    implementation(AndroidX.navigation.compose)
+    implementation(deps.androidx.activityCompose)
+    implementation(deps.androidx.coreKtx)
+    implementation(deps.androidx.lifecycleRuntimeKtx)
+    implementation(deps.androidx.navigationCompose)
 
     // Compose
-    implementation(AndroidX.compose.material)
-    implementation(AndroidX.compose.material3)
-    implementation(AndroidX.compose.runtime)
-    implementation(AndroidX.compose.ui)
-    implementation(AndroidX.compose.ui.toolingPreview)
-    implementation(AndroidX.compose.foundation)
+    implementation(deps.compose.foundation)
+    implementation(deps.compose.material)
+    implementation(deps.compose.material3)
+    implementation(deps.compose.runtime)
+    implementation(deps.compose.ui)
+    implementation(deps.compose.ui.toolingPreview)
 
     // Apollo Kotlin
-    implementation("com.apollographql.apollo3:apollo-runtime:_")
+    implementation(deps.apolloKotlin.runtime)
 
     // Coil
-    implementation(COIL.compose)
-
-    // Kotlin coroutines TODO: BoM?
-    implementation(KotlinX.coroutines.android)
-    implementation(KotlinX.coroutines.core)
+    implementation(deps.coil.compose)
 
     // Kotlin
+    implementation(deps.kotlin.coroutines.android)
+    implementation(deps.kotlin.coroutines.core)
+    implementation(deps.kotlin.datetime)
     implementation(kotlin("reflect"))
-    implementation(KotlinX.datetime)
 
     // Hilt
-    implementation(Google.dagger.hilt.android)
-    implementation(AndroidX.hilt.navigationCompose)
-    kapt(Google.dagger.hilt.compiler)
+    implementation(deps.hilt.android)
+    implementation(deps.hilt.navigationCompose)
+    kapt(deps.hilt.android.compiler)
 
     // Accompanist
-    implementation(Google.accompanist.systemuicontroller)
+    implementation(deps.accompanist.systemUiController)
 
-    testImplementation(Testing.junit4)
+    testImplementation(deps.test.junit)
 
-    androidTestImplementation(AndroidX.test.ext.junit)
-    androidTestImplementation(AndroidX.test.espresso.core)
-    androidTestImplementation(AndroidX.compose.ui.testJunit4)
+    androidTestImplementation(deps.androidx.test.junit)
+    androidTestImplementation(deps.androidx.test.espressoCore)
+    androidTestImplementation(deps.compose.test.ui.testJunit4)
 
-    debugImplementation(AndroidX.compose.ui.tooling)
+    debugImplementation(deps.compose.test.ui.tooling)
 }

@@ -1,0 +1,52 @@
+[plugins]
+
+agp = { id = "com.android.application", version = "7.1.3" }
+kotlin = { id = "org.jetbrains.kotlin.android", version = "1.6.10" }
+apolloKotlin = { id = "com.apollographql.apollo3", version = "3.2.2" }
+hilt = { id = "com.google.dagger.hilt.android", version = "2.41" }
+
+[libraries]
+
+# AndroidX
+# TODO: Update and "bundle" dependencies.
+androidx-activityCompose = "androidx.activity:activity-compose:1.4.0"
+androidx-coreKtx = "androidx.core:core-ktx:1.7.0"
+androidx-lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+androidx-navigationCompose = "androidx.navigation:navigation-compose:2.4.1"
+androidx-test-junit = "androidx.test.ext:junit:1.1.3"
+androidx-test-espressoCore = "androidx.test.espresso:espresso-core:3.4.0"
+
+# Compose
+# TODO: Update and "bundle" dependencies.
+compose-foundation = "androidx.compose.foundation:foundation:1.2.0-alpha08"
+compose-material = "androidx.compose.material:material:1.1.1"
+compose-material3 = "androidx.compose.material3:material3:1.0.0-alpha07"
+compose-runtime = "androidx.compose.runtime:runtime:1.2.0-alpha05"
+compose-ui = "androidx.compose.ui:ui:1.1.1"
+compose-ui-toolingPreview = "androidx.compose.ui:ui-tooling-preview:1.1.1"
+compose-test-ui-testJunit4 = "androidx.compose.ui:ui-test-junit4:1.1.1"
+compose-test-ui-tooling = "androidx.compose.ui:ui-tooling:1.1.1"
+
+# Apollo Kotlin
+apolloKotlin-runtime = "com.apollographql.apollo3:apollo-runtime:3.2.2"
+
+# COIL
+coil-compose = "io.coil-kt:coil-compose:2.0.0-rc01"
+
+# Kotlin
+# TODO: Update and "bundle" dependencies.
+kotlin-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
+kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.3.2"
+
+# Hilt
+# TODO: Update and "bundle" dependencies.
+hilt-android = "com.google.dagger:hilt-android:2.41"
+hilt-android-compiler = "com.google.dagger:hilt-android-compiler:2.41"
+hilt-navigationCompose = "androidx.hilt:hilt-navigation-compose:1.0.0"
+
+# Accompanist
+accompanist-systemUiController = "com.google.accompanist:accompanist-systemuicontroller:0.24.7-alpha"
+
+# Test
+test-junit = "junit:junit:4.13.2"
