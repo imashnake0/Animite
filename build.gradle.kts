@@ -1,8 +1,9 @@
+// TODO: Remove this after https://youtrack.jetbrains.com/issue/KTIJ-19369 is resolved.
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("com.android.application") version ("7.1.3") apply false
-    id("com.android.library") version ("7.1.3") apply false
-    id("org.jetbrains.kotlin.android") version ("1.6.10") apply false
-    id("com.google.dagger.hilt.android") version ("2.41") apply false
+    alias(deps.plugins.agp) apply false
+    alias(deps.plugins.kotlin) apply false
+    alias(deps.plugins.hilt) apply false
 }
 
 tasks.register("clean", Delete::class) {

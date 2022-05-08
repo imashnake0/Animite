@@ -1,10 +1,12 @@
 @file:Suppress("SpellCheckingInspection")
 
+// TODO: Remove this after https://youtrack.jetbrains.com/issue/KTIJ-19369 is resolved.
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("com.android.application") version ("7.1.3")
-    id("org.jetbrains.kotlin.android") version ("1.6.10")
-    id("com.apollographql.apollo3") version ("3.2.2")
-    id("com.google.dagger.hilt.android") version ("2.41")
+    alias(deps.plugins.agp)
+    alias(deps.plugins.kotlin)
+    alias(deps.plugins.apolloKotlin)
+    alias(deps.plugins.hilt)
     kotlin("kapt")
 }
 
@@ -45,6 +47,7 @@ android {
     }
 
     composeOptions {
+        // TODO: Use version catalogs for this once Compose is updated and "bundled".
         kotlinCompilerExtensionVersion = "1.1.1"
     }
 
