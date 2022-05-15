@@ -47,8 +47,7 @@ android {
     }
 
     composeOptions {
-        // TODO: Use version catalogs for this once Compose is updated and "bundled".
-        kotlinCompilerExtensionVersion = "1.1.1"
+        kotlinCompilerExtensionVersion = deps.versions.compose.get()
     }
 
     packagingOptions {
