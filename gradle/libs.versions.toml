@@ -5,10 +5,16 @@
 compose = "1.2.0-beta01"
 composeMaterial3 = "1.0.0-alpha11"
 
+# Kotlin
+# https://kotlinlang.org/docs/releases.html#release-details.
+kotlin = "1.6.21"
+coroutines = "1.6.0"
+datetime = "0.3.3"
+
 [plugins]
 
 agp = { id = "com.android.application", version = "7.1.3" }
-kotlin = { id = "org.jetbrains.kotlin.android", version = "1.6.21" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 apolloKotlin = { id = "com.apollographql.apollo3", version = "3.2.2" }
 hilt = { id = "com.google.dagger.hilt.android", version = "2.41" }
 
@@ -40,10 +46,9 @@ apolloKotlin-runtime = "com.apollographql.apollo3:apollo-runtime:3.2.2"
 coil-compose = "io.coil-kt:coil-compose:2.0.0-rc01"
 
 # Kotlin
-# TODO: Update and "bundle" dependencies.
-kotlin-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
-kotlin-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
-kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.3.2"
+kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 
 # Hilt
 # TODO: Update and "bundle" dependencies.
