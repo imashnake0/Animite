@@ -9,6 +9,14 @@ agp = "7.2.0"
 compose = "1.2.0-beta01"
 composeMaterial3 = "1.0.0-alpha11"
 
+# Dagger
+# https://github.com/google/dagger/releases.
+dagger = "2.42"
+
+# Hilt
+# https://developer.android.com/jetpack/androidx/releases/hilt.
+hilt = "1.0.0"
+
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
 kotlin = "1.6.21"
@@ -20,7 +28,7 @@ datetime = "0.3.3"
 agp = { id = "com.android.application", version.ref = "agp" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 apolloKotlin = { id = "com.apollographql.apollo3", version = "3.2.2" }
-hilt = { id = "com.google.dagger.hilt.android", version = "2.41" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 
 [libraries]
 
@@ -55,10 +63,9 @@ kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 
 # Hilt
-# TODO: Update and "bundle" dependencies.
-hilt-android = "com.google.dagger:hilt-android:2.41"
-hilt-android-compiler = "com.google.dagger:hilt-android-compiler:2.41"
-hilt-navigationCompose = "androidx.hilt:hilt-navigation-compose:1.0.0"
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
+hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 
 # Accompanist
 accompanist-systemUiController = "com.google.accompanist:accompanist-systemuicontroller:0.24.7-alpha"
