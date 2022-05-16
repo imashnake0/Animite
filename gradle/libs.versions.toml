@@ -4,6 +4,14 @@
 # https://developer.android.com/studio/releases/gradle-plugin.
 agp = "7.2.0"
 
+# AndroidX
+activity = "1.4.0"
+core = "1.7.0"
+lifecycle = "2.4.1"
+navigation = "2.4.1"
+extJunit = "1.1.3"
+espresso = "3.4.0"
+
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
 compose = "1.2.0-beta01"
@@ -34,12 +42,12 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 
 # AndroidX
 # TODO: Update and "bundle" dependencies.
-androidx-activityCompose = "androidx.activity:activity-compose:1.4.0"
-androidx-coreKtx = "androidx.core:core-ktx:1.7.0"
-androidx-lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
-androidx-navigationCompose = "androidx.navigation:navigation-compose:2.4.1"
-androidx-test-junit = "androidx.test.ext:junit:1.1.3"
-androidx-test-espressoCore = "androidx.test.espresso:espresso-core:3.4.0"
+androidx-activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+androidx-coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
+androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-navigationCompose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
+androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 
 # Compose
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "compose" }
