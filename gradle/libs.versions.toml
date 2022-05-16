@@ -1,16 +1,29 @@
 [versions]
 
+# Accompanist
+# https://github.com/google/accompanist/releases.
+accompanist = "0.24.7-alpha"
+
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
 agp = "7.2.0"
 
 # AndroidX
+# https://androidx.tech.
 activity = "1.4.0"
 core = "1.7.0"
 lifecycle = "2.4.1"
 navigation = "2.4.2"
 extJunit = "1.1.3"
 espresso = "3.4.0"
+
+# Apollo Kotlin
+# https://github.com/apollographql/apollo-kotlin/releases.
+apollo = "3.2.2"
+
+# COIL
+# https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
+coil = "2.0.0-rc01"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
@@ -31,25 +44,23 @@ kotlin = "1.6.21"
 coroutines = "1.6.0"
 datetime = "0.3.3"
 
-[plugins]
+# Test
+# https://github.com/junit-team/junit4/releases.
+junit = "4.13.2"
 
+[plugins]
 agp = { id = "com.android.application", version.ref = "agp" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-apolloKotlin = { id = "com.apollographql.apollo3", version = "3.2.2" }
+apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 
 [libraries]
-
-# AndroidX
-# TODO: Update and "bundle" dependencies.
 androidx-activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidx-coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-navigationCompose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
-
-# Compose
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "compose" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
@@ -58,25 +69,13 @@ compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compos
 compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
 compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose" }
 compose-test-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
-
-# Apollo Kotlin
-apolloKotlin-runtime = "com.apollographql.apollo3:apollo-runtime:3.2.2"
-
-# COIL
-coil-compose = "io.coil-kt:coil-compose:2.0.0-rc01"
-
-# Kotlin
+apolloKotlin-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "apollo" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
-
-# Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
-
-# Accompanist
-accompanist-systemUiController = "com.google.accompanist:accompanist-systemuicontroller:0.24.7-alpha"
-
-# Test
-test-junit = "junit:junit:4.13.2"
+accompanist-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+test-junit = { group = "junit", name = "junit", version.ref = "junit" }
