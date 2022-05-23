@@ -1,7 +1,7 @@
 ![Figma mock-up of the Home screen.](resources/Home_Pixel_5.png)
 
 # Animite 🚧
-Animite is an unofficial client for [AniList](https://anilist.co/) (and potentially [MAL](https://myanimelist.net/)).
+[Animite](https://github.com/users/imashnake0/projects/1) is an unofficial client for [AniList](https://anilist.co/) (and potentially [MAL](https://myanimelist.net/)).
 
 ## Stack
 The app makes use of the *latest libraries and APIs* so be prepared to see `α`s and `β`s all over the place:
