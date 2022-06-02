@@ -1,8 +1,9 @@
-package com.imashnake.animite.data.sauce
+package com.imashnake.animite.data.sauce.apis.apollo
 
 import com.apollographql.apollo3.api.Optional
 import com.imashnake.animite.PopularThisSeasonQuery
 import com.imashnake.animite.TrendingNowQuery
+import com.imashnake.animite.data.sauce.apis.MediaListApi
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaType
 import javax.inject.Inject

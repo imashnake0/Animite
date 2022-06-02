@@ -1,4 +1,4 @@
-package com.imashnake.animite.data.sauce
+package com.imashnake.animite.data.sauce.apis
 
 import com.imashnake.animite.AnimeQuery.Media
 

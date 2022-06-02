@@ -1,8 +1,9 @@
-package com.imashnake.animite.data.sauce
+package com.imashnake.animite.data.sauce.apis.apollo
 
 import com.apollographql.apollo3.api.Optional
 import com.imashnake.animite.AnimeQuery
 import com.imashnake.animite.AnimeQuery.Media
+import com.imashnake.animite.data.sauce.apis.AnimeApi
 import javax.inject.Inject
 
 /**

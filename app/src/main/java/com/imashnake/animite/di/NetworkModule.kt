@@ -2,10 +2,10 @@
 
 package com.imashnake.animite.di
 
-import com.imashnake.animite.data.sauce.AnimeApi
-import com.imashnake.animite.data.sauce.ApolloAnimeApi
-import com.imashnake.animite.data.sauce.ApolloMediaListApi
-import com.imashnake.animite.data.sauce.MediaListApi
+import com.imashnake.animite.data.sauce.apis.AnimeApi
+import com.imashnake.animite.data.sauce.apis.apollo.ApolloAnimeApi
+import com.imashnake.animite.data.sauce.apis.apollo.ApolloMediaListApi
+import com.imashnake.animite.data.sauce.apis.MediaListApi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

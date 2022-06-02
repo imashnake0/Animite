@@ -1,6 +1,7 @@
 package com.imashnake.animite.data.sauce
 
 import com.imashnake.animite.AnimeQuery
+import com.imashnake.animite.data.sauce.apis.AnimeApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
