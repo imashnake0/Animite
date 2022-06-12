@@ -2,10 +2,10 @@
 
 package com.imashnake.animite.di
 
-import com.imashnake.animite.data.sauce.apis.AnimeApi
-import com.imashnake.animite.data.sauce.apis.apollo.ApolloAnimeApi
+import com.imashnake.animite.data.sauce.apis.MediaApi
 import com.imashnake.animite.data.sauce.apis.apollo.ApolloMediaListApi
 import com.imashnake.animite.data.sauce.apis.MediaListApi
+import com.imashnake.animite.data.sauce.apis.apollo.ApolloMediaApi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -28,9 +28,9 @@ object NetworkModule {
 abstract class NetworkModuleBinds {
     @Singleton
     @Binds
-    abstract fun providesAnimeApi(
-        apolloAnimeApi: ApolloAnimeApi
-    ): AnimeApi
+    abstract fun providesMediaApi(
+        apolloMediaApi: ApolloMediaApi
+    ): MediaApi
 
     @Singleton
     @Binds

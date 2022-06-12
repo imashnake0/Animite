@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imashnake.animite.AnimeQuery
-import com.imashnake.animite.data.repos.AnimeRepository
+import com.imashnake.animite.MediaQuery
+import com.imashnake.animite.data.repos.MediaRepository
 import com.imashnake.animite.data.repos.MediaListRepository
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaType
@@ -24,7 +24,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val animeRepository: AnimeRepository,
+    private val mediaRepository: MediaRepository,
     private val mediaListRepository: MediaListRepository
 ): ViewModel() {
     var uiState by mutableStateOf(HomeUiState())
@@ -33,13 +33,13 @@ class HomeViewModel @Inject constructor(
     // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
 
-    fun addAnimes(vararg id: Int) {
+    fun addAnimes(vararg id: Int, mediaType: MediaType = MediaType.ANIME) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             try {
-                val animeList = mutableListOf<AnimeQuery.Media?>()
+                val mediaList = mutableListOf<MediaQuery.Media?>()
                 for (i in id) {
-                    animeList.add(animeRepository.fetchAnime(i))
+                    mediaList.add(mediaRepository.fetchMedia(i, mediaType))
                 }
 
                 val trendingAnime = mediaListRepository.fetchTrendingNowMediaList(MediaType.ANIME)
@@ -52,7 +52,7 @@ class HomeViewModel @Inject constructor(
 
                 uiState = with(uiState) {
                     copy(
-                        animeList = animeList,
+                        mediaList = mediaList,
                         trendingAnimeList = trendingAnime,
                         popularAnimeThisSeasonList = popularAnimeThisSeason
                     )
