@@ -17,25 +17,7 @@ import javax.inject.Inject
  * **ID:** 132405.
  */
 class ApolloMediaListApi @Inject constructor() : MediaListApi {
-    override suspend fun fetchTrendingNowList(
-        type: MediaType,
-        page: Int,
-        perPage: Int,
-        sort: List<MediaSort>
-    ): MediaListQuery.Page? {
-        return client
-            .query(
-                 MediaListQuery(
-                     type = Optional.presentIfNotNull(type),
-                     page = Optional.presentIfNotNull(page),
-                     perPage = Optional.presentIfNotNull(perPage),
-                     sort = Optional.presentIfNotNull(sort)
-                 )
-            )
-            .execute().data?.page
-    }
-
-    override suspend fun fetchPopularThisSeasonList(
+    override suspend fun fetchMediaList(
         type: MediaType,
         page: Int,
         perPage: Int,

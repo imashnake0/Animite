@@ -11,14 +11,7 @@ import com.imashnake.animite.type.MediaType
  *  - Pagination.
  */
 interface MediaListApi {
-    suspend fun fetchTrendingNowList(
-        type: MediaType,
-        page: Int,
-        perPage: Int,
-        sort: List<MediaSort>
-    ): MediaListQuery.Page?
-
-    suspend fun fetchPopularThisSeasonList(
+    suspend fun fetchMediaList(
         type: MediaType,
         page: Int,
         perPage: Int,

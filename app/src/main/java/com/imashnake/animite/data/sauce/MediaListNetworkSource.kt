@@ -16,34 +16,21 @@ class MediaListNetworkSource @Inject constructor(
     private val mediaListApi: MediaListApi,
     private val dispatcher: CoroutineDispatcher
 ) {
-    suspend fun fetchTrendingNowMediaList(
-        mediaType: MediaType,
-        page: Int,
-        perPage: Int
-    ): MediaListQuery.Page? =
-        withContext(dispatcher) {
-            mediaListApi.fetchTrendingNowList(
-                type = mediaType,
-                page = page,
-                perPage = perPage,
-                sort = listOf(MediaSort.TRENDING_DESC)
-            )
-        }
-
-    suspend fun fetchPopularThisSeasonMediaList(
+    suspend fun fetchMediaList(
         mediaType: MediaType,
         page:Int,
         perPage: Int,
-        season: MediaSeason,
-        seasonYear: Int
+        sort: List<MediaSort>,
+        // Popular This Season.
+        season: MediaSeason?,
+        seasonYear: Int?
     ): MediaListQuery.Page? =
         withContext(dispatcher) {
-            mediaListApi.fetchPopularThisSeasonList(
+            mediaListApi.fetchMediaList(
                 type = mediaType,
                 page = page,
                 perPage = perPage,
-                sort = listOf(MediaSort.POPULARITY_DESC),
-                // TODO: These can be null!
+                sort = sort,
                 season = season,
                 seasonYear = seasonYear
             )
