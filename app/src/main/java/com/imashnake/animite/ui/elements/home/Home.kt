@@ -86,7 +86,7 @@ fun Home(
 
                         Spacer(modifier = Modifier.size(12.dp))
 
-                        TrendingNowAnimeSmallRow(mediaList = trendingNowAnimeList)
+                        MediaSmallRow(mediaList = trendingNowAnimeList)
 
                         Spacer(modifier = Modifier.size(24.dp))
 
@@ -101,7 +101,7 @@ fun Home(
 
                         Spacer(modifier = Modifier.size(12.dp))
 
-                        PopularAnimeThisSeasonSmallRow(mediaList = popularThisSeasonAnimeList)
+                        MediaSmallRow(mediaList = popularThisSeasonAnimeList)
 
                         Spacer(modifier = Modifier.size(104.dp))
                     }
