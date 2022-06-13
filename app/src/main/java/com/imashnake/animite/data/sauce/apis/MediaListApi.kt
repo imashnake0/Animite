@@ -1,8 +1,8 @@
 package com.imashnake.animite.data.sauce.apis
 
-import com.imashnake.animite.PopularThisSeasonQuery
-import com.imashnake.animite.TrendingNowQuery
+import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.type.MediaSeason
+import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 
 /**
@@ -11,13 +11,21 @@ import com.imashnake.animite.type.MediaType
  *  - Pagination.
  */
 interface MediaListApi {
-    suspend fun fetchTrendingNowList(type: MediaType): TrendingNowQuery.Page?
+    suspend fun fetchTrendingNowList(
+        type: MediaType,
+        page: Int,
+        perPage: Int,
+        sort: List<MediaSort>
+    ): MediaListQuery.Page?
 
     suspend fun fetchPopularThisSeasonList(
         type: MediaType,
-        season: MediaSeason,
-        seasonYear: Int
-    ): PopularThisSeasonQuery.Page?
+        page: Int,
+        perPage: Int,
+        sort: List<MediaSort>,
+        season: MediaSeason?,
+        seasonYear: Int?
+    ): MediaListQuery.Page?
 
     // And potentially other functions that help sort/modify the list.
 }

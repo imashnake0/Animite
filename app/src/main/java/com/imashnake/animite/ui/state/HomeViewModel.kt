@@ -42,10 +42,16 @@ class HomeViewModel @Inject constructor(
                     mediaList.add(mediaRepository.fetchMedia(i, mediaType))
                 }
 
-                val trendingAnime = mediaListRepository.fetchTrendingNowMediaList(MediaType.ANIME)
+                val trendingAnime = mediaListRepository.fetchTrendingNowMediaList(
+                    mediaType = MediaType.ANIME,
+                    page = 0,
+                    perPage = 10
+                )
 
                 val popularAnimeThisSeason = mediaListRepository.fetchPopularThisSeasonMediaList(
                     mediaType = MediaType.ANIME,
+                    page = 0,
+                    perPage = 10,
                     season = MediaSeason.SPRING,
                     seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
                 )

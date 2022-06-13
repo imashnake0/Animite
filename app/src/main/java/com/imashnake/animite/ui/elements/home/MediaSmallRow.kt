@@ -8,8 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.imashnake.animite.PopularThisSeasonQuery
-import com.imashnake.animite.TrendingNowQuery
+import com.imashnake.animite.MediaListQuery
 
 // TODO: This is precisely why we need to convert the responses to our own data classes:
 //  If we want to use `MediaSmallRow`, we need access to the list's item's content.
@@ -29,7 +28,7 @@ fun MediaSmallRow(mediaList: List<Any>) {
  */
 @ExperimentalMaterial3Api
 @Composable
-fun TrendingNowAnimeSmallRow(mediaList: List<TrendingNowQuery.Medium?>) {
+fun TrendingNowAnimeSmallRow(mediaList: List<MediaListQuery.Medium?>) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
@@ -52,7 +51,7 @@ fun TrendingNowAnimeSmallRow(mediaList: List<TrendingNowQuery.Medium?>) {
  */
 @ExperimentalMaterial3Api
 @Composable
-fun PopularAnimeThisSeasonSmallRow(mediaList: List<PopularThisSeasonQuery.Medium?>) {
+fun PopularAnimeThisSeasonSmallRow(mediaList: List<MediaListQuery.Medium?>) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
