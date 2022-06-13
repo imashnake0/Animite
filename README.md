@@ -23,17 +23,19 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
                 animite
                 ├── AnimiteApplication.kt
                 ├── data
-                │   ├── repos
-                │   │   ├── AnimeRepository.kt
-                │   │   └── MediaListRepository.kt
-                │   └── sauce
-                │       ├── AnimeApi.kt
-                │       ├── AnimeNetworkSource.kt
-                │       ├── ApolloAnimeApi.kt
-                │       ├── Apollo.kt
-                │       ├── ApolloMediaListApi.kt
-                │       ├── MediaListApi.kt
-                │       └── MediaListNetworkSource.kt
+                │   ├── repos
+                │   │   ├── MediaListRepository.kt
+                │   │   └── MediaRepository.kt
+                │   └── sauce
+                │       ├── apis
+                │       │   ├── apollo
+                │       │   │   ├── Apollo.kt
+                │       │   │   ├── ApolloMediaApi.kt
+                │       │   │   └── ApolloMediaListApi.kt
+                │       │   ├── MediaApi.kt
+                │       │   └── MediaListApi.kt
+                │       ├── MediaListNetworkSource.kt
+                │       └── MediaNetworkSource.kt
                 ├── dev
                 │   ├── extensions
                 │   └── internal
@@ -66,22 +68,26 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
 </details>
 
 #### Data Layer
+[comment]: # (`tree -I '*.md'`)
 ```
 data
 ├── repos
-│   ├── AnimeRepository.kt
-│   └── MediaListRepository.kt
+│   ├── MediaListRepository.kt
+│   └── MediaRepository.kt
 └── sauce
-    ├── AnimeApi.kt
-    ├── AnimeNetworkSource.kt
-    ├── ApolloAnimeApi.kt
-    ├── Apollo.kt
-    ├── ApolloMediaListApi.kt
-    ├── MediaListApi.kt
-    └── MediaListNetworkSource.kt
+    ├── apis
+    │   ├── apollo
+    │   │   ├── Apollo.kt
+    │   │   ├── ApolloMediaApi.kt
+    │   │   └── ApolloMediaListApi.kt
+    │   ├── MediaApi.kt
+    │   └── MediaListApi.kt
+    ├── MediaListNetworkSource.kt
+    └── MediaNetworkSource.kt
 ```
 
 #### UI Layer
+[comment]: # (`tree -I '*.md'`)
 ```
 ui
 ├── MainActivity.kt
