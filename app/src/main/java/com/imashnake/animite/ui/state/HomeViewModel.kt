@@ -9,6 +9,7 @@ import com.imashnake.animite.MediaQuery
 import com.imashnake.animite.data.repos.MediaRepository
 import com.imashnake.animite.data.repos.MediaListRepository
 import com.imashnake.animite.type.MediaSeason
+import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -42,16 +43,20 @@ class HomeViewModel @Inject constructor(
                     mediaList.add(mediaRepository.fetchMedia(i, mediaType))
                 }
 
-                val trendingAnime = mediaListRepository.fetchTrendingNowMediaList(
-                    mediaType = MediaType.ANIME,
-                    page = 0,
-                    perPage = 10
-                )
-
-                val popularAnimeThisSeason = mediaListRepository.fetchPopularThisSeasonMediaList(
+                val trendingAnime = mediaListRepository.fetchMediaList(
                     mediaType = MediaType.ANIME,
                     page = 0,
                     perPage = 10,
+                    sort = listOf(MediaSort.TRENDING_DESC),
+                    season = null,
+                    seasonYear = null
+                )
+
+                val popularAnimeThisSeason = mediaListRepository.fetchMediaList(
+                    mediaType = MediaType.ANIME,
+                    page = 0,
+                    perPage = 10,
+                    sort = listOf(MediaSort.POPULARITY_DESC),
                     season = MediaSeason.SPRING,
                     seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
                 )

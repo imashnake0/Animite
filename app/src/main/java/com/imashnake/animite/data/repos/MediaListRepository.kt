@@ -13,32 +13,19 @@ import javax.inject.Inject
 class MediaListRepository @Inject constructor(
     private val mediaListNetworkSource: MediaListNetworkSource
 ) {
-    suspend fun fetchTrendingNowMediaList(
-        mediaType: MediaType,
-        page: Int,
-        perPage: Int
-    ): MediaListQuery.Page? =
-        mediaListNetworkSource.fetchMediaList(
-            mediaType = mediaType,
-            page = page,
-            perPage = perPage,
-            sort = listOf(MediaSort.TRENDING_DESC),
-            season = null,
-            seasonYear = null
-        )
-
-    suspend fun fetchPopularThisSeasonMediaList(
+    suspend fun fetchMediaList(
         mediaType: MediaType,
         page: Int,
         perPage: Int,
-        season: MediaSeason,
-        seasonYear: Int
+        sort: List<MediaSort>,
+        season: MediaSeason?,
+        seasonYear: Int?
     ): MediaListQuery.Page? =
         mediaListNetworkSource.fetchMediaList(
             mediaType = mediaType,
             page = page,
             perPage = perPage,
-            sort = listOf(MediaSort.POPULARITY_DESC),
+            sort = sort,
             season = season,
             seasonYear = seasonYear
         )
