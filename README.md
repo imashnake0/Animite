@@ -1,10 +1,16 @@
 ![Figma mock-up of the Home screen.](resources/Home_Pixel_5.png)
 
 # Animite 🚧
-<a href = "https://www.reddit.com/r/Animite/">
+<a href="https://www.reddit.com/r/Animite/">
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="resources/reddit-assistive-chip-dark.svg">
         <img alt="Reddit chip." src="resources/reddit-assistive-chip-light.svg">
+    </picture>
+</a>
+<a href="https://discord.gg/G8wF7pjpya">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="resources/discord-assistive-chip-dark.svg">
+        <img alt="Reddit chip." src="resources/discord-assistive-chip-light.svg">
     </picture>
 </a>
 
