@@ -26,7 +26,7 @@ fun SearchBar(modifier: Modifier) {
         modifier = modifier,
         shape = CircleShape,
         color = NavigationBar,
-        shadowElevation = 30.dp
+        shadowElevation = 20.dp
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
