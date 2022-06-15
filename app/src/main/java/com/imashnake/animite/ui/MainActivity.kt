@@ -28,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.home.Home
+import com.imashnake.animite.ui.elements.home.SearchBar
 import com.imashnake.animite.ui.elements.profile.Profile
 import com.imashnake.animite.ui.elements.rslash.RSlash
 import com.imashnake.animite.ui.theme.NavigationBar
@@ -75,6 +76,18 @@ class MainActivity : ComponentActivity() {
                     composable(Path.RSlash.route) { RSlash() }
                 }
 
+                // TODO:
+                //  - UX concern: This blocks content sometimes!
+                //  - Should this be in another file?
+                SearchBar(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 80.dp)
+                        .navigationBarsPadding()
+                        .padding(24.dp)
+                        .wrapContentSize()
+                )
+
                 // TODO: The way padding is handled is still a bit hacky, investigate further.
                 NavigationBar(
                     containerColor = NavigationBar,
@@ -82,10 +95,10 @@ class MainActivity : ComponentActivity() {
                         .align(Alignment.BottomCenter)
                         .height(
                             80.dp +
-                            WindowInsets
-                                .navigationBars
-                                .asPaddingValues()
-                                .calculateBottomPadding()
+                                    WindowInsets
+                                        .navigationBars
+                                        .asPaddingValues()
+                                        .calculateBottomPadding()
                         )
                 ) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -141,7 +154,9 @@ class MainActivity : ComponentActivity() {
                                                 id = item.stringRes
                                             ),
                                             // Adding this modifier lets us control the icon's size.
-                                            modifier = Modifier.padding((3).dp).size(18.dp)
+                                            modifier = Modifier
+                                                .padding((3).dp)
+                                                .size(18.dp)
                                         )
                                     }
                                 }

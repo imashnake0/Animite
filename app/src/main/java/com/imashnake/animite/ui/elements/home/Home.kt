@@ -63,6 +63,7 @@ fun Home(
                     )
                 }
 
+                // TODO: Use `verticalArrangement` instead of the `Spacer`s.
                 Column {
                     Spacer(
                         modifier = Modifier.size((LocalConfiguration.current.screenWidthDp - 18).dp)
