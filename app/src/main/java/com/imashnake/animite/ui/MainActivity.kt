@@ -27,8 +27,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.dev.internal.Path
+import com.imashnake.animite.ui.elements.home.CollapsedSearchBar
 import com.imashnake.animite.ui.elements.home.Home
-import com.imashnake.animite.ui.elements.home.SearchBar
 import com.imashnake.animite.ui.elements.profile.Profile
 import com.imashnake.animite.ui.elements.rslash.RSlash
 import com.imashnake.animite.ui.theme.NavigationBar
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
                 // TODO:
                 //  - UX concern: This blocks content sometimes!
                 //  - Should this be in another file?
-                SearchBar(
+                CollapsedSearchBar(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(bottom = 80.dp)
