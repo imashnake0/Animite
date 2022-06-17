@@ -102,6 +102,7 @@ fun ExpandedSearchBar() {
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             trailingIcon = {
+                // TODO: Add action.
                 Icon(
                     imageVector = Icons.Rounded.Close,
                     contentDescription = "Search",
