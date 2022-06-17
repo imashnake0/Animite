@@ -62,7 +62,8 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
                     │   ├── home
                     │   │   ├── Home.kt
                     │   │   ├── MediaSmall.kt
-                    │   │   └── MediaSmallRow.kt
+                    │   │   ├── MediaSmallRow.kt
+                    │   │   └── SearchBar.kt
                     │   ├── profile
                     │   │   └── Profile.kt
                     │   └── rslash
@@ -108,7 +109,8 @@ ui
 │   ├── home
 │   │   ├── Home.kt
 │   │   ├── MediaSmall.kt
-│   │   └── MediaSmallRow.kt
+│   │   ├── MediaSmallRow.kt
+│   │   └── SearchBar.kt
 │   ├── profile
 │   │   └── Profile.kt
 │   └── rslash
