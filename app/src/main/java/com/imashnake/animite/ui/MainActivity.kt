@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.*
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -28,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.home.CollapsedSearchBar
+import com.imashnake.animite.ui.elements.home.ExpandedSearchBar
 import com.imashnake.animite.ui.elements.home.Home
 import com.imashnake.animite.ui.elements.profile.Profile
 import com.imashnake.animite.ui.elements.rslash.RSlash
@@ -38,6 +42,8 @@ import com.imashnake.animite.R as Res
 
 private const val TAG = "MainActivity"
 
+@ExperimentalComposeUiApi
+@ExperimentalAnimationApi
 @ExperimentalMaterial3Api
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -79,14 +85,28 @@ class MainActivity : ComponentActivity() {
                 // TODO:
                 //  - UX concern: This blocks content sometimes!
                 //  - Should this be in another file?
-                CollapsedSearchBar(
+                var isExpanded by remember { mutableStateOf(false) }
+                Surface(
+                    color = NavigationBar,
+                    onClick = { isExpanded = !isExpanded },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
+                        //TODO: This is quite hacky.
                         .padding(bottom = 80.dp)
                         .navigationBarsPadding()
                         .padding(24.dp)
-                        .wrapContentSize()
-                )
+                        .wrapContentSize(),
+                    shadowElevation = 20.dp,
+                    shape = CircleShape
+                ) {
+                    AnimatedContent(targetState = isExpanded) { targetExpanded ->
+                        if (targetExpanded) {
+                            ExpandedSearchBar()
+                        } else {
+                            CollapsedSearchBar()
+                        }
+                    }
+                }
 
                 // TODO: The way padding is handled is still a bit hacky, investigate further.
                 NavigationBar(
