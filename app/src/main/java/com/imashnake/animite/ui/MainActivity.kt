@@ -90,7 +90,6 @@ class MainActivity : ComponentActivity() {
                 //  - UX concern: This blocks content sometimes!
                 //  - Should this be in another file?
                 var isExpanded by remember { mutableStateOf(false) }
-
                 Column(
                     modifier = Modifier.align(Alignment.BottomEnd)
                         .padding(bottom = 80.dp, start = 24.dp, end = 24.dp)
@@ -138,10 +137,10 @@ class MainActivity : ComponentActivity() {
                         .align(Alignment.BottomCenter)
                         .height(
                             80.dp +
-                                    WindowInsets
-                                        .navigationBars
-                                        .asPaddingValues()
-                                        .calculateBottomPadding()
+                                WindowInsets
+                                    .navigationBars
+                                    .asPaddingValues()
+                                    .calculateBottomPadding()
                         )
                 ) {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()

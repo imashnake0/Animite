@@ -65,7 +65,6 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
         var text by remember { mutableStateOf("") }
         val focusRequester = FocusRequester()
         val keyboardController = LocalSoftwareKeyboardController.current
-        // TODO: Enable focus when `isEnabled`.
         TextField(
             enabled = true,
             value = text,
@@ -158,7 +157,7 @@ fun SearchList(
 @Preview
 @Composable
 fun PreviewSearchBar() {
-    Column(modifier = Modifier.padding(200.dp), ) {
+    Column(modifier = Modifier.padding(200.dp)) {
         CollapsedSearchBar()
         Spacer(modifier = Modifier.height(20.dp))
         ExpandedSearchBar()
