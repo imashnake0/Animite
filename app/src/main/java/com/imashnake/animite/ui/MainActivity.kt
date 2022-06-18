@@ -6,8 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.*
@@ -15,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -33,6 +36,7 @@ import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.home.CollapsedSearchBar
 import com.imashnake.animite.ui.elements.home.ExpandedSearchBar
 import com.imashnake.animite.ui.elements.home.Home
+import com.imashnake.animite.ui.elements.home.SearchList
 import com.imashnake.animite.ui.elements.profile.Profile
 import com.imashnake.animite.ui.elements.rslash.RSlash
 import com.imashnake.animite.ui.theme.NavigationBar
@@ -86,24 +90,43 @@ class MainActivity : ComponentActivity() {
                 //  - UX concern: This blocks content sometimes!
                 //  - Should this be in another file?
                 var isExpanded by remember { mutableStateOf(false) }
-                Surface(
-                    color = NavigationBar,
-                    onClick = { isExpanded = !isExpanded },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        //TODO: This is quite hacky.
-                        .padding(bottom = 80.dp)
+
+                Column(
+                    modifier = Modifier.align(Alignment.BottomEnd)
+                        .padding(bottom = 80.dp, start = 24.dp, end = 24.dp)
                         .navigationBarsPadding()
-                        .padding(24.dp)
-                        .wrapContentSize(),
-                    shadowElevation = 20.dp,
-                    shape = CircleShape
+                        .padding(bottom = 24.dp)
                 ) {
+                    // TODO: Customize this animation.
                     AnimatedContent(targetState = isExpanded) { targetExpanded ->
                         if (targetExpanded) {
-                            ExpandedSearchBar()
-                        } else {
-                            CollapsedSearchBar()
+                            SearchList(
+                                viewModel = hiltViewModel(),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(18.dp))
+                                    .background(NavigationBar.copy(alpha = 0.95F))
+                                    .align(Alignment.End)
+                                    .fillMaxWidth()
+                            )
+                        }
+                    }
+
+                    Surface(
+                        color = NavigationBar,
+                        onClick = { isExpanded = !isExpanded },
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .wrapContentSize(),
+                        shadowElevation = 20.dp,
+                        shape = CircleShape
+                    ) {
+                        // TODO: Customize this animation.
+                        AnimatedContent(targetState = isExpanded) { targetExpanded ->
+                            if (targetExpanded) {
+                                ExpandedSearchBar(hiltViewModel())
+                            } else {
+                                CollapsedSearchBar()
+                            }
                         }
                     }
                 }

@@ -27,7 +27,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
+import com.imashnake.animite.ui.state.SearchViewModel
 import com.imashnake.animite.ui.theme.NavigationBar
 import com.imashnake.animite.ui.theme.Text
 import com.imashnake.animite.ui.theme.manropeFamily
@@ -51,7 +53,7 @@ fun CollapsedSearchBar() {
 @ExperimentalComposeUiApi
 @ExperimentalMaterial3Api
 @Composable
-fun ExpandedSearchBar() {
+fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = Icons.Rounded.KeyboardArrowRight,
@@ -67,10 +69,12 @@ fun ExpandedSearchBar() {
         TextField(
             enabled = true,
             value = text,
-            onValueChange = {
-                text = it
-                // TODO: Perform network operation.
-                Log.d("TextField", it)
+            onValueChange = { input ->
+                text = input
+
+                viewModel.run {
+                    searchAnime(input)
+                }
             },
             label = {
                 Text(
@@ -114,6 +118,37 @@ fun ExpandedSearchBar() {
         // TODO: How does this work?
         LaunchedEffect(Unit) {
             focusRequester.requestFocus()
+        }
+    }
+}
+
+@Composable
+fun SearchList(
+    viewModel: SearchViewModel = viewModel(),
+    modifier: Modifier
+) {
+    // TODO: Use `LazyColumn` instead.
+    Column(modifier = modifier) {
+        val searchList = viewModel.uiState.searchList?.media
+
+        if(searchList != null && searchList.isNotEmpty()) {
+            searchList.forEach {
+                Text(
+                    text = it?.title?.romaji ?:
+                        it?.title?.english ?:
+                        it?.title?.native ?: "",
+                    color = Text,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .padding(11.dp),
+                    fontFamily = manropeFamily,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        } else {
+            // TODO: Handle errors.
+            Log.d("bruh", "bruh")
         }
     }
 }
