@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -58,16 +58,10 @@ fun CollapsedSearchBar() {
 @Composable
 fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            imageVector = Icons.Rounded.KeyboardArrowRight,
-            contentDescription = "Close",
-            tint = Text,
-            modifier = Modifier.padding(16.dp)
-        )
-
         var text by remember { mutableStateOf("") }
         val focusRequester = FocusRequester()
         val keyboardController = LocalSoftwareKeyboardController.current
+
         TextField(
             enabled = true,
             value = text,
@@ -78,16 +72,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                     searchAnime(input)
                 }
             },
-            label = {
-                Text(
-                    text = "Search",
-                    color = Text.copy(alpha = 0.5F),
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    fontFamily = manropeFamily,
-                    fontWeight = FontWeight.Medium
-                )
-            },
+            placeholder = { Text(text = "Search", fontSize = 16.sp, color = Text) },
             modifier = Modifier
                 .wrapContentWidth()
                 .focusRequester(focusRequester)
@@ -96,7 +81,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                 },
             textStyle = TextStyle(
                 color = Text,
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 fontFamily = manropeFamily,
                 fontWeight = FontWeight.Medium
             ),
@@ -108,13 +93,14 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             trailingIcon = {
-                // TODO: Add action.
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Search",
-                    tint = Text,
-                    modifier = Modifier.padding(16.dp)
-                )
+                IconButton(onClick = { /* TODO: Add action. */ }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "Close",
+                        tint = Text,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
         )
         // TODO: How does this work?
