@@ -2,7 +2,10 @@ package com.imashnake.animite.ui.elements.home
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.IconButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
+import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.ui.state.SearchViewModel
 import com.imashnake.animite.ui.theme.NavigationBar
 import com.imashnake.animite.ui.theme.Text
@@ -65,6 +69,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
         var text by remember { mutableStateOf("") }
         val focusRequester = FocusRequester()
         val keyboardController = LocalSoftwareKeyboardController.current
+
         TextField(
             enabled = true,
             value = text,
@@ -75,16 +80,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                     searchAnime(input)
                 }
             },
-            label = {
-                Text(
-                    text = "Search",
-                    color = Text.copy(alpha = 0.5F),
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    fontFamily = manropeFamily,
-                    fontWeight = FontWeight.Medium
-                )
-            },
+            placeholder = { Text(text = "Search", fontSize = 16.sp, color = Text) },
             modifier = Modifier
                 .wrapContentWidth()
                 .focusRequester(focusRequester)
@@ -93,7 +89,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                 },
             textStyle = TextStyle(
                 color = Text,
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 fontFamily = manropeFamily,
                 fontWeight = FontWeight.Medium
             ),
@@ -105,13 +101,14 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             trailingIcon = {
-                // TODO: Add action.
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Search",
-                    tint = Text,
-                    modifier = Modifier.padding(16.dp)
-                )
+                IconButton(onClick = { /* TODO: Add action. */ }) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "Close",
+                        tint = Text,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
         )
         // TODO: How does this work?
@@ -126,30 +123,32 @@ fun SearchList(
     viewModel: SearchViewModel = viewModel(),
     modifier: Modifier
 ) {
-    // TODO: Use `LazyColumn` instead.
-    Column(modifier = modifier) {
-        val searchList = viewModel.uiState.searchList?.media
+    val searchList = viewModel.uiState.searchList?.media
 
-        if(searchList != null && searchList.isNotEmpty()) {
-            searchList.forEach {
-                Text(
-                    text = it?.title?.romaji ?:
-                        it?.title?.english ?:
-                        it?.title?.native ?: "",
-                    color = Text,
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    modifier = Modifier
-                        .padding(11.dp),
-                    fontFamily = manropeFamily,
-                    fontWeight = FontWeight.Medium
-                )
+    if (searchList != null && searchList.isNotEmpty()) {
+        LazyColumn(modifier = modifier) {
+            items(searchList) {
+                SearchItem(item = it)
             }
-        } else {
-            // TODO: Handle errors.
-            Log.d("bruh", "bruh")
         }
+    } else {
+        // TODO: Handle errors.
+        Log.d("bruh", "bruh")
     }
+}
+
+@Composable
+private fun SearchItem(item: SearchQuery.Medium?) {
+    Text(
+        text = item?.title?.romaji ?: item?.title?.english ?: item?.title?.native ?: "",
+        color = Text,
+        fontSize = 12.sp,
+        maxLines = 1,
+        modifier = Modifier
+            .padding(11.dp),
+        fontFamily = manropeFamily,
+        fontWeight = FontWeight.Medium
+    )
 }
 
 @ExperimentalComposeUiApi
