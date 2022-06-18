@@ -10,6 +10,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -58,6 +59,13 @@ fun CollapsedSearchBar() {
 @Composable
 fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = Icons.Rounded.KeyboardArrowRight,
+            contentDescription = "Close",
+            tint = Text,
+            modifier = Modifier.padding(16.dp)
+        )
+
         var text by remember { mutableStateOf("") }
         val focusRequester = FocusRequester()
         val keyboardController = LocalSoftwareKeyboardController.current
