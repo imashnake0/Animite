@@ -38,17 +38,21 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
                 ├── data
                 │   ├── repos
                 │   │   ├── MediaListRepository.kt
-                │   │   └── MediaRepository.kt
+                │   │   ├── MediaRepository.kt
+                │   │   └── SearchRepository.kt
                 │   └── sauce
                 │       ├── apis
                 │       │   ├── apollo
                 │       │   │   ├── Apollo.kt
                 │       │   │   ├── ApolloMediaApi.kt
-                │       │   │   └── ApolloMediaListApi.kt
+                │       │   │   ├── ApolloMediaListApi.kt
+                │       │   │   └── ApolloSearchApi.kt
                 │       │   ├── MediaApi.kt
-                │       │   └── MediaListApi.kt
+                │       │   ├── MediaListApi.kt
+                │       │   └── SearchApi.kt
                 │       ├── MediaListNetworkSource.kt
-                │       └── MediaNetworkSource.kt
+                │       ├── MediaNetworkSource.kt
+                │       └── SearchNetworkSource.kt
                 ├── dev
                 │   ├── extensions
                 │   └── internal
@@ -70,7 +74,9 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
                     │       └── RSlash.kt
                     ├── state
                     │   ├── HomeUiState.kt
-                    │   └── HomeViewModel.kt
+                    │   ├── HomeViewModel.kt
+                    │   ├── SearchUiState.kt
+                    │   └── SearchViewModel.kt
                     └── theme
                         ├── Color.kt
                         ├── Shape.kt
@@ -87,17 +93,21 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
 data
 ├── repos
 │   ├── MediaListRepository.kt
-│   └── MediaRepository.kt
+│   ├── MediaRepository.kt
+│   └── SearchRepository.kt
 └── sauce
     ├── apis
     │   ├── apollo
     │   │   ├── Apollo.kt
     │   │   ├── ApolloMediaApi.kt
-    │   │   └── ApolloMediaListApi.kt
+    │   │   ├── ApolloMediaListApi.kt
+    │   │   └── ApolloSearchApi.kt
     │   ├── MediaApi.kt
-    │   └── MediaListApi.kt
+    │   ├── MediaListApi.kt
+    │   └── SearchApi.kt
     ├── MediaListNetworkSource.kt
-    └── MediaNetworkSource.kt
+    ├── MediaNetworkSource.kt
+    └── SearchNetworkSource.kt
 ```
 
 #### UI Layer
@@ -117,7 +127,9 @@ ui
 │       └── RSlash.kt
 ├── state
 │   ├── HomeUiState.kt
-│   └── HomeViewModel.kt
+│   ├── HomeViewModel.kt
+│   ├── SearchUiState.kt
+│   └── SearchViewModel.kt
 └── theme
     ├── Color.kt
     ├── Shape.kt
