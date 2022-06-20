@@ -46,12 +46,14 @@ import com.imashnake.animite.ui.theme.NavigationBar
 import com.imashnake.animite.ui.theme.Text
 import com.imashnake.animite.ui.theme.manropeFamily
 
-// TODO: UX concern: This blocks content sometimes!
+// TODO: UX concern:
+//  - This blocks content sometimes!
+//  - Do we need to use dependency injection for `Composable`s?
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
 @Composable
-fun SearchBar(modifier: Modifier) {
+fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel()) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -71,7 +73,12 @@ fun SearchBar(modifier: Modifier) {
 
         Surface(
             color = NavigationBar,
-            onClick = { isExpanded = !isExpanded },
+            onClick = {
+                isExpanded = !isExpanded
+                viewModel.run {
+                    searchAnime("")
+                }
+            },
             modifier = Modifier
                 .align(Alignment.End)
                 .wrapContentSize(),
@@ -161,7 +168,14 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             trailingIcon = {
-                IconButton(onClick = { /* TODO: Add action. */ }) {
+                IconButton(
+                    onClick = {
+                        text = ""
+                        viewModel.run {
+                            searchAnime("")
+                        }
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
                         contentDescription = "Close",
@@ -201,7 +215,9 @@ fun SearchList(
 @Composable
 private fun SearchItem(item: SearchQuery.Medium?) {
     Text(
-        text = item?.title?.romaji ?: item?.title?.english ?: item?.title?.native ?: "",
+        text = item?.title?.romaji ?:
+        item?.title?.english ?:
+        item?.title?.native ?: "",
         color = Text,
         fontSize = 12.sp,
         maxLines = 1,
