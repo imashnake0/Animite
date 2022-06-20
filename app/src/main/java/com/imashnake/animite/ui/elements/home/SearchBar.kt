@@ -46,18 +46,15 @@ import com.imashnake.animite.ui.theme.NavigationBar
 import com.imashnake.animite.ui.theme.Text
 import com.imashnake.animite.ui.theme.manropeFamily
 
-// TODO:
-//  - UX concern: This blocks content sometimes!
-//  - Should this be in another file?
+// TODO: UX concern: This blocks content sometimes!
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
 @Composable
 fun SearchBar(modifier: Modifier) {
     var isExpanded by remember { mutableStateOf(false) }
-    Column(
-    modifier = modifier
-    ) {
+
+    Column(modifier = modifier) {
         // TODO: Customize this animation.
         AnimatedContent(targetState = isExpanded) { targetExpanded ->
             if (targetExpanded) {
@@ -116,7 +113,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = Icons.Rounded.KeyboardArrowRight,
-            contentDescription = "Close",
+            contentDescription = "Collapse",
             tint = Text,
             modifier = Modifier.padding(16.dp)
         )
@@ -130,12 +127,20 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
             value = text,
             onValueChange = { input ->
                 text = input
-
                 viewModel.run {
                     searchAnime(input)
                 }
             },
-            placeholder = { Text(text = "Search", fontSize = 16.sp, color = Text) },
+            placeholder = {
+                Text(
+                    text = "Search",
+                    color = Text.copy(alpha = 0.5F),
+                    fontSize = 16.sp,
+                    maxLines = 1,
+                    fontFamily = manropeFamily,
+                    fontWeight = FontWeight.Medium
+                )
+            },
             modifier = Modifier
                 .wrapContentWidth()
                 .focusRequester(focusRequester)
@@ -161,7 +166,8 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                         imageVector = Icons.Rounded.Close,
                         contentDescription = "Close",
                         tint = Text,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier
+                            .padding(16.dp)
                     )
                 }
             }
