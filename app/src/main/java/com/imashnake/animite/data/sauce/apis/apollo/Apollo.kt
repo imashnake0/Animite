@@ -1,4 +1,4 @@
-package com.imashnake.animite.data.sauce
+package com.imashnake.animite.data.sauce.apis.apollo
 
 import com.apollographql.apollo3.ApolloClient
 import com.imashnake.animite.dev.internal.Constants

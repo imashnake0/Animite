@@ -1,9 +1,9 @@
 package com.imashnake.animite.data.repos
 
-import com.imashnake.animite.PopularThisSeasonQuery
-import com.imashnake.animite.TrendingNowQuery
+import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.data.sauce.MediaListNetworkSource
 import com.imashnake.animite.type.MediaSeason
+import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
@@ -13,13 +13,20 @@ import javax.inject.Inject
 class MediaListRepository @Inject constructor(
     private val mediaListNetworkSource: MediaListNetworkSource
 ) {
-    suspend fun fetchTrendingNowMediaList(mediaType: MediaType): TrendingNowQuery.Page? =
-        mediaListNetworkSource.fetchTrendingNowMediaList(mediaType)
-
-    suspend fun fetchPopularThisSeasonMediaList(
+    suspend fun fetchMediaList(
         mediaType: MediaType,
-        season: MediaSeason,
-        seasonYear: Int
-    ): PopularThisSeasonQuery.Page? =
-        mediaListNetworkSource.fetchPopularThisSeasonMediaList(mediaType, season, seasonYear)
+        page: Int,
+        perPage: Int,
+        sort: List<MediaSort>,
+        season: MediaSeason?,
+        seasonYear: Int?
+    ): MediaListQuery.Page? =
+        mediaListNetworkSource.fetchMediaList(
+            mediaType = mediaType,
+            page = page,
+            perPage = perPage,
+            sort = sort,
+            season = season,
+            seasonYear = seasonYear
+        )
 }

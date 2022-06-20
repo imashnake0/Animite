@@ -1,6 +1,5 @@
-query AnimeQuery($id: Int) {
-    # TODO: Make this `MediaQuery`.
-    media: Media (id: $id, type: ANIME) {
+query MediaQuery($id: Int, $type: MediaType) {
+    media: Media (id: $id, type: $type) {
         id
         type
         title {
