@@ -193,15 +193,19 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     }
 }
 
+@ExperimentalAnimationApi
 @Composable
 fun SearchList(
     viewModel: SearchViewModel = viewModel(),
     modifier: Modifier
 ) {
     val searchList = viewModel.uiState.searchList?.media
-
+    // TODO: Animate this.
     if (searchList != null && searchList.isNotEmpty()) {
-        LazyColumn(modifier = modifier) {
+        LazyColumn(
+            modifier = modifier,
+            contentPadding = PaddingValues(16.dp)
+        ) {
             items(searchList) {
                 SearchItem(item = it)
             }
