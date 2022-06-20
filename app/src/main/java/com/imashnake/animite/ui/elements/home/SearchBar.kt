@@ -46,9 +46,7 @@ import com.imashnake.animite.ui.theme.NavigationBar
 import com.imashnake.animite.ui.theme.Text
 import com.imashnake.animite.ui.theme.manropeFamily
 
-// TODO: UX concern:
-//  - This blocks content sometimes!
-//  - Do we need to use dependency injection for `Composable`s?
+// TODO: UX concern: This blocks content sometimes!
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
@@ -200,6 +198,7 @@ fun SearchList(
     modifier: Modifier
 ) {
     val searchList = viewModel.uiState.searchList?.media
+
     // TODO: Animate this.
     if (searchList != null && searchList.isNotEmpty()) {
         LazyColumn(
