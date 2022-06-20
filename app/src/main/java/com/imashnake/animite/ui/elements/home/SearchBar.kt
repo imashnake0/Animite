@@ -1,9 +1,14 @@
 package com.imashnake.animite.ui.elements.home
 
 import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.TextField
@@ -13,11 +18,13 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -30,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.SearchQuery
@@ -37,6 +45,53 @@ import com.imashnake.animite.ui.state.SearchViewModel
 import com.imashnake.animite.ui.theme.NavigationBar
 import com.imashnake.animite.ui.theme.Text
 import com.imashnake.animite.ui.theme.manropeFamily
+
+// TODO:
+//  - UX concern: This blocks content sometimes!
+//  - Should this be in another file?
+@ExperimentalComposeUiApi
+@ExperimentalAnimationApi
+@ExperimentalMaterial3Api
+@Composable
+fun SearchBar(modifier: Modifier) {
+    var isExpanded by remember { mutableStateOf(false) }
+    Column(
+    modifier = modifier
+    ) {
+        // TODO: Customize this animation.
+        AnimatedContent(targetState = isExpanded) { targetExpanded ->
+            if (targetExpanded) {
+                SearchList(
+                    viewModel = hiltViewModel(),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(NavigationBar.copy(alpha = 0.95F))
+                        .align(Alignment.End)
+                        .fillMaxWidth()
+                )
+            }
+        }
+
+        Surface(
+            color = NavigationBar,
+            onClick = { isExpanded = !isExpanded },
+            modifier = Modifier
+                .align(Alignment.End)
+                .wrapContentSize(),
+            shadowElevation = 20.dp,
+            shape = CircleShape
+        ) {
+            // TODO: Customize this animation.
+            AnimatedContent(targetState = isExpanded) { targetExpanded ->
+                if (targetExpanded) {
+                    ExpandedSearchBar(hiltViewModel())
+                } else {
+                    CollapsedSearchBar()
+                }
+            }
+        }
+    }
+}
 
 @ExperimentalMaterial3Api
 @Composable
