@@ -31,6 +31,12 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>) {
     }
 }
 
+/**
+ * Example:
+ *
+ * **Anime:** Sono Bisque Doll wa Koi wo Suru;
+ * **ID:** 132405.
+ */
 @ExperimentalMaterial3Api
 @Preview
 @Composable

@@ -6,9 +6,7 @@ import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 
 /**
- * TODO:
- *  - Kdoc.
- *  - Pagination.
+ * TODO: Kdoc.
  */
 interface MediaListApi {
     suspend fun fetchMediaList(

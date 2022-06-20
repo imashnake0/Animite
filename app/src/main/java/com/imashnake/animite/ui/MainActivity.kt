@@ -155,7 +155,7 @@ class MainActivity : ComponentActivity() {
                                             ),
                                             // Adding this modifier lets us control the icon's size.
                                             modifier = Modifier
-                                                .padding((3).dp)
+                                                .padding(3.dp)
                                                 .size(18.dp)
                                         )
                                     }

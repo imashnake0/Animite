@@ -10,11 +10,6 @@ import javax.inject.Inject
 
 /**
  * TODO: Kdoc.
- *
- * Example:
- *
- * **Anime:** Sono Bisque Doll wa Koi wo Suru;
- * **ID:** 132405.
  */
 class ApolloMediaListApi @Inject constructor() : MediaListApi {
     override suspend fun fetchMediaList(
