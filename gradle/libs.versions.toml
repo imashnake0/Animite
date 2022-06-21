@@ -2,7 +2,7 @@
 
 # Accompanist
 # https://github.com/google/accompanist/releases.
-accompanist = "0.24.7-alpha"
+accompanist = "0.24.11-rc"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
