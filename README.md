@@ -1,6 +1,19 @@
 ![Figma mock-up of the Home screen.](resources/Home_Pixel_5.png)
 
 # Animite 🚧
+<a href="https://www.reddit.com/r/Animite/">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="resources/reddit-assistive-chip-dark.svg">
+        <img alt="Reddit chip." src="resources/reddit-assistive-chip-light.svg">
+    </picture>
+</a>
+<a href="https://discord.gg/G8wF7pjpya">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="resources/discord-assistive-chip-dark.svg">
+        <img alt="Reddit chip." src="resources/discord-assistive-chip-light.svg">
+    </picture>
+</a>
+
 [Animite](https://github.com/users/imashnake0/projects/1) is an unofficial client for [AniList](https://anilist.co/) (and potentially [MAL](https://myanimelist.net/)).
 
 ## Stack
@@ -23,17 +36,23 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
                 animite
                 ├── AnimiteApplication.kt
                 ├── data
-                │   ├── repos
-                │   │   ├── AnimeRepository.kt
-                │   │   └── MediaListRepository.kt
-                │   └── sauce
-                │       ├── AnimeApi.kt
-                │       ├── AnimeNetworkSource.kt
-                │       ├── ApolloAnimeApi.kt
-                │       ├── Apollo.kt
-                │       ├── ApolloMediaListApi.kt
-                │       ├── MediaListApi.kt
-                │       └── MediaListNetworkSource.kt
+                │   ├── repos
+                │   │   ├── MediaListRepository.kt
+                │   │   ├── MediaRepository.kt
+                │   │   └── SearchRepository.kt
+                │   └── sauce
+                │       ├── apis
+                │       │   ├── apollo
+                │       │   │   ├── Apollo.kt
+                │       │   │   ├── ApolloMediaApi.kt
+                │       │   │   ├── ApolloMediaListApi.kt
+                │       │   │   └── ApolloSearchApi.kt
+                │       │   ├── MediaApi.kt
+                │       │   ├── MediaListApi.kt
+                │       │   └── SearchApi.kt
+                │       ├── MediaListNetworkSource.kt
+                │       ├── MediaNetworkSource.kt
+                │       └── SearchNetworkSource.kt
                 ├── dev
                 │   ├── extensions
                 │   └── internal
@@ -47,14 +66,17 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
                     │   ├── home
                     │   │   ├── Home.kt
                     │   │   ├── MediaSmall.kt
-                    │   │   └── MediaSmallRow.kt
+                    │   │   ├── MediaSmallRow.kt
+                    │   │   └── SearchBar.kt
                     │   ├── profile
                     │   │   └── Profile.kt
                     │   └── rslash
                     │       └── RSlash.kt
                     ├── state
                     │   ├── HomeUiState.kt
-                    │   └── HomeViewModel.kt
+                    │   ├── HomeViewModel.kt
+                    │   ├── SearchUiState.kt
+                    │   └── SearchViewModel.kt
                     └── theme
                         ├── Color.kt
                         ├── Shape.kt
@@ -66,22 +88,30 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
 </details>
 
 #### Data Layer
+[comment]: # (`tree -I '*.md'`)
 ```
 data
 ├── repos
-│   ├── AnimeRepository.kt
-│   └── MediaListRepository.kt
+│   ├── MediaListRepository.kt
+│   ├── MediaRepository.kt
+│   └── SearchRepository.kt
 └── sauce
-    ├── AnimeApi.kt
-    ├── AnimeNetworkSource.kt
-    ├── ApolloAnimeApi.kt
-    ├── Apollo.kt
-    ├── ApolloMediaListApi.kt
-    ├── MediaListApi.kt
-    └── MediaListNetworkSource.kt
+    ├── apis
+    │   ├── apollo
+    │   │   ├── Apollo.kt
+    │   │   ├── ApolloMediaApi.kt
+    │   │   ├── ApolloMediaListApi.kt
+    │   │   └── ApolloSearchApi.kt
+    │   ├── MediaApi.kt
+    │   ├── MediaListApi.kt
+    │   └── SearchApi.kt
+    ├── MediaListNetworkSource.kt
+    ├── MediaNetworkSource.kt
+    └── SearchNetworkSource.kt
 ```
 
 #### UI Layer
+[comment]: # (`tree -I '*.md'`)
 ```
 ui
 ├── MainActivity.kt
@@ -89,14 +119,17 @@ ui
 │   ├── home
 │   │   ├── Home.kt
 │   │   ├── MediaSmall.kt
-│   │   └── MediaSmallRow.kt
+│   │   ├── MediaSmallRow.kt
+│   │   └── SearchBar.kt
 │   ├── profile
 │   │   └── Profile.kt
 │   └── rslash
 │       └── RSlash.kt
 ├── state
 │   ├── HomeUiState.kt
-│   └── HomeViewModel.kt
+│   ├── HomeViewModel.kt
+│   ├── SearchUiState.kt
+│   └── SearchViewModel.kt
 └── theme
     ├── Color.kt
     ├── Shape.kt

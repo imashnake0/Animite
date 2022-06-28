@@ -1,14 +1,13 @@
 package com.imashnake.animite.ui.state
 
-import com.imashnake.animite.AnimeQuery
-import com.imashnake.animite.PopularThisSeasonQuery
-import com.imashnake.animite.TrendingNowQuery
+import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.MediaQuery
 
 /**
  * TODO: Kdoc.
  */
 data class HomeUiState(
-    val animeList: List<AnimeQuery.Media?> = listOf(),
-    val trendingAnimeList: TrendingNowQuery.Page? = null,
-    val popularAnimeThisSeasonList: PopularThisSeasonQuery.Page? = null
+    val mediaList: List<MediaQuery.Media?> = listOf(),
+    val trendingAnimeList: MediaListQuery.Page? = null,
+    val popularAnimeThisSeasonList: MediaListQuery.Page? = null
 )

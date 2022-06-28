@@ -1,0 +1,34 @@
+query MediaListQuery(
+    $type: MediaType,
+    $page: Int,
+    $perPage: Int,
+    $sort: [MediaSort],
+    # Popular This Season.
+    $season: MediaSeason,
+    $seasonYear: Int
+) {
+    page: Page (
+        page: $page,
+        perPage: $perPage
+    ) {
+        media(
+            type: $type,
+            sort: $sort,
+            # Popular This Season.
+            season: $season,
+            seasonYear: $seasonYear
+        ) {
+            id
+            type
+            title {
+                romaji
+                english
+                native
+            }
+            coverImage {
+                extraLarge
+                large
+            }
+        }
+    }
+}

@@ -1,8 +1,9 @@
 package com.imashnake.animite.data.sauce
 
-import com.imashnake.animite.PopularThisSeasonQuery
-import com.imashnake.animite.TrendingNowQuery
+import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.data.sauce.apis.MediaListApi
 import com.imashnake.animite.type.MediaSeason
+import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -15,17 +16,23 @@ class MediaListNetworkSource @Inject constructor(
     private val mediaListApi: MediaListApi,
     private val dispatcher: CoroutineDispatcher
 ) {
-    suspend fun fetchTrendingNowMediaList(mediaType: MediaType): TrendingNowQuery.Page? =
-        withContext(dispatcher) {
-            mediaListApi.fetchTrendingNowList(mediaType)
-        }
-
-    suspend fun fetchPopularThisSeasonMediaList(
+    suspend fun fetchMediaList(
         mediaType: MediaType,
-        season: MediaSeason,
-        seasonYear: Int
-    ): PopularThisSeasonQuery.Page? =
+        page:Int,
+        perPage: Int,
+        sort: List<MediaSort>,
+        // Popular This Season.
+        season: MediaSeason?,
+        seasonYear: Int?
+    ): MediaListQuery.Page? =
         withContext(dispatcher) {
-            mediaListApi.fetchPopularThisSeasonList(mediaType, season, seasonYear)
+            mediaListApi.fetchMediaList(
+                type = mediaType,
+                page = page,
+                perPage = perPage,
+                sort = sort,
+                season = season,
+                seasonYear = seasonYear
+            )
         }
 }

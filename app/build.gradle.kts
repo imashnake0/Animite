@@ -3,10 +3,10 @@
 // TODO: Remove this after https://youtrack.jetbrains.com/issue/KTIJ-19369 is resolved.
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(deps.plugins.agp)
-    alias(deps.plugins.kotlin)
-    alias(deps.plugins.apolloKotlin)
-    alias(deps.plugins.hilt)
+    alias(libs.plugins.agp)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.apolloKotlin)
+    alias(libs.plugins.hilt)
     kotlin("kapt")
 }
 
@@ -47,7 +47,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = deps.versions.compose.get()
+        kotlinCompilerExtensionVersion = libs.versions.compose.get()
     }
 
     packagingOptions {
@@ -67,44 +67,44 @@ kapt {
 
 dependencies {
     // AndroidX
-    implementation(deps.androidx.activityCompose)
-    implementation(deps.androidx.coreKtx)
-    implementation(deps.androidx.lifecycleRuntimeKtx)
-    implementation(deps.androidx.navigationCompose)
+    implementation(libs.androidx.activityCompose)
+    implementation(libs.androidx.coreKtx)
+    implementation(libs.androidx.lifecycleRuntimeKtx)
+    implementation(libs.androidx.navigationCompose)
 
     // Compose
-    implementation(deps.compose.foundation)
-    implementation(deps.compose.material)
-    implementation(deps.compose.material3)
-    implementation(deps.compose.runtime)
-    implementation(deps.compose.ui)
-    implementation(deps.compose.ui.toolingPreview)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.toolingPreview)
 
     // Apollo Kotlin
-    implementation(deps.apolloKotlin.runtime)
+    implementation(libs.apolloKotlin.runtime)
 
     // Coil
-    implementation(deps.coil.compose)
+    implementation(libs.coil.compose)
 
     // Kotlin
-    implementation(deps.kotlin.coroutines.android)
-    implementation(deps.kotlin.coroutines.core)
-    implementation(deps.kotlin.datetime)
+    implementation(libs.kotlin.coroutines.android)
+    implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlin.datetime)
     implementation(kotlin("reflect"))
 
     // Hilt
-    implementation(deps.hilt.android)
-    implementation(deps.hilt.navigationCompose)
-    kapt(deps.hilt.android.compiler)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigationCompose)
+    kapt(libs.hilt.android.compiler)
 
     // Accompanist
-    implementation(deps.accompanist.systemUiController)
+    implementation(libs.accompanist.systemUiController)
 
-    testImplementation(deps.test.junit)
+    testImplementation(libs.test.junit)
 
-    androidTestImplementation(deps.androidx.test.junit)
-    androidTestImplementation(deps.androidx.test.espressoCore)
-    androidTestImplementation(deps.compose.test.ui.testJunit4)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.espressoCore)
+    androidTestImplementation(libs.compose.test.ui.testJunit4)
 
-    debugImplementation(deps.compose.test.ui.tooling)
+    debugImplementation(libs.compose.test.ui.tooling)
 }
