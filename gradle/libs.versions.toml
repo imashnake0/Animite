@@ -28,6 +28,7 @@ coil = "2.0.0-rc01"
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
 compose = "1.2.0-beta01"
+composeCompiler = "1.2.0"
 composeMaterial3 = "1.0.0-alpha11"
 
 # Dagger
@@ -40,7 +41,7 @@ hilt = "1.0.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "1.6.21"
+kotlin = "1.7.0"
 coroutines = "1.6.0"
 datetime = "0.3.3"
 
