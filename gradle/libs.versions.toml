@@ -27,10 +27,13 @@ coil = "2.0.0-rc01"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-compose = "1.2.0-beta01"
 composeAnimation = "1.3.0-alpha01"
 composeCompiler = "1.2.0"
-composeMaterial3 = "1.0.0-alpha11"
+composeFoundation = "1.2.0-beta03"
+composeMaterial = "1.3.0-alpha01"
+composeMaterial3 = "1.0.0-alpha14"
+composeRuntime = "1.3.0-alpha01"
+composeUi = "1.3.0-alpha01"
 
 # Dagger
 # https://github.com/google/dagger/releases.
@@ -64,14 +67,14 @@ androidx-navigationCompose = { group = "androidx.navigation", name = "navigation
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "compose" }
-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "compose" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
+compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "compose" }
-compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose" }
-compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
-compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "compose" }
-compose-test-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
+compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
+compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
+compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
+compose-test-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
 apolloKotlin-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "apollo" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
