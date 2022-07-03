@@ -6,7 +6,7 @@ accompanist = "0.24.11-rc"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "7.2.0"
+agp = "7.2.1"
 
 # AndroidX
 # https://androidx.tech.
