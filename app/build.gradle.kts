@@ -47,7 +47,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
     packagingOptions {
@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.androidx.navigationCompose)
 
     // Compose
+    implementation(libs.compose.animation)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material)
     implementation(libs.compose.material3)
@@ -105,6 +106,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espressoCore)
     androidTestImplementation(libs.compose.test.ui.testJunit4)
-
-    debugImplementation(libs.compose.test.ui.tooling)
 }
