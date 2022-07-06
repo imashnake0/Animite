@@ -25,7 +25,6 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val mediaRepository: MediaRepository,
     private val mediaListRepository: MediaListRepository
 ): ViewModel() {
     var uiState by mutableStateOf(HomeUiState())
@@ -34,15 +33,10 @@ class HomeViewModel @Inject constructor(
     // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
 
-    fun addAnimes(vararg id: Int, mediaType: MediaType = MediaType.ANIME) {
+    fun addAnimes(mediaType: MediaType = MediaType.ANIME) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             try {
-                val mediaList = mutableListOf<MediaQuery.Media?>()
-                for (i in id) {
-                    mediaList.add(mediaRepository.fetchMedia(i, mediaType))
-                }
-
                 val trendingAnime = mediaListRepository.fetchMediaList(
                     mediaType = MediaType.ANIME,
                     page = 0,
@@ -63,7 +57,6 @@ class HomeViewModel @Inject constructor(
 
                 uiState = with(uiState) {
                     copy(
-                        mediaList = mediaList,
                         trendingAnimeList = trendingAnime,
                         popularAnimeThisSeasonList = popularAnimeThisSeason
                     )
