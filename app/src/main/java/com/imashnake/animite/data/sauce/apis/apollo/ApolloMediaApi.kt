@@ -23,7 +23,6 @@ class ApolloMediaApi @Inject constructor() : MediaApi {
                     id = Optional.presentIfNotNull(id),
                     type = Optional.presentIfNotNull(mediaType)
                 )
-            )
-            .execute().data?.media
+            ).execute().data?.media
     }
 }
