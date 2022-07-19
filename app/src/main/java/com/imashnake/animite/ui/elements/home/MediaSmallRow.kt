@@ -15,7 +15,7 @@ import com.imashnake.animite.MediaListQuery
  */
 @ExperimentalMaterial3Api
 @Composable
-fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: () -> Unit) {
+fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId: Int?) -> Unit) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
@@ -26,7 +26,9 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: () -> Un
                 anime = media?.title?.romaji ?:
                 media?.title?.english ?:
                 media?.title?.native,
-                onClick = onItemClick
+                onClick = {
+                    onItemClick(media?.id)
+                }
             )
         }
     }

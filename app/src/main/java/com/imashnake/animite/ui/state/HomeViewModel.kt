@@ -1,5 +1,7 @@
 package com.imashnake.animite.ui.state
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,7 +35,7 @@ class HomeViewModel @Inject constructor(
     // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
 
-    fun addMedia(mediaType: MediaType) {
+    fun populateMediaLists(mediaType: MediaType) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             try {
@@ -78,5 +80,10 @@ class HomeViewModel @Inject constructor(
                 TODO()
             }
         }
+    }
+
+    // TODO: Remove context along with `Toast`.
+    fun navigateToMedia(id: Int?, context: Context) {
+        Toast.makeText(context, "$id", Toast.LENGTH_LONG).show()
     }
 }

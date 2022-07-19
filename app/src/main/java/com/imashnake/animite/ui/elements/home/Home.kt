@@ -1,6 +1,5 @@
 package com.imashnake.animite.ui.elements.home
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -38,9 +37,7 @@ fun Home(
 ) {
     val context = LocalContext.current
 
-    viewModel.run {
-        addMedia(MediaType.MANGA)
-    }
+    viewModel.populateMediaLists(MediaType.MANGA)
 
     val popularThisSeasonMediaList = viewModel.uiState.popularMediaThisSeasonList?.media
     val trendingNowMediaList = viewModel.uiState.trendingMediaList?.media
@@ -94,8 +91,8 @@ fun Home(
 
                         MediaSmallRow(
                             mediaList = trendingNowMediaList,
-                            onItemClick = {
-                                Toast.makeText(context, "bro", Toast.LENGTH_LONG).show()
+                            onItemClick = { itemId ->
+                                viewModel.navigateToMedia(itemId, context)
                             }
                         )
 
@@ -114,8 +111,8 @@ fun Home(
 
                         MediaSmallRow(
                             mediaList = popularThisSeasonMediaList,
-                            onItemClick = {
-                                Toast.makeText(context, "bro", Toast.LENGTH_LONG).show()
+                            onItemClick = { itemId ->
+                                viewModel.navigateToMedia(itemId, context)
                             }
                         )
 
