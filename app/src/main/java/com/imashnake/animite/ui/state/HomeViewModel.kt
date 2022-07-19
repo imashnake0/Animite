@@ -7,9 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imashnake.animite.MediaQuery
-import com.imashnake.animite.data.repos.MediaRepository
 import com.imashnake.animite.data.repos.MediaListRepository
+import com.imashnake.animite.data.repos.MediaRepository
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
@@ -27,6 +26,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val mediaRepository: MediaRepository,
     private val mediaListRepository: MediaListRepository
 ): ViewModel() {
     var uiState by mutableStateOf(HomeUiState())
@@ -83,7 +83,15 @@ class HomeViewModel @Inject constructor(
     }
 
     // TODO: Remove context along with `Toast`.
-    fun navigateToMedia(id: Int?, context: Context) {
-        Toast.makeText(context, "$id", Toast.LENGTH_LONG).show()
+    fun navigateToMedia(id: Int?, mediaType: MediaType, context: Context) {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
+            val clickedMedia = mediaRepository.fetchMedia(id, mediaType)
+            Toast.makeText(
+                context,
+                clickedMedia.toString(),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 }

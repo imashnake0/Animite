@@ -36,8 +36,9 @@ fun Home(
     viewModel: HomeViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    val homeMediaType = MediaType.ANIME
 
-    viewModel.populateMediaLists(MediaType.MANGA)
+    viewModel.populateMediaLists(homeMediaType)
 
     val popularThisSeasonMediaList = viewModel.uiState.popularMediaThisSeasonList?.media
     val trendingNowMediaList = viewModel.uiState.trendingMediaList?.media
@@ -92,7 +93,7 @@ fun Home(
                         MediaSmallRow(
                             mediaList = trendingNowMediaList,
                             onItemClick = { itemId ->
-                                viewModel.navigateToMedia(itemId, context)
+                                viewModel.navigateToMedia(itemId, homeMediaType, context)
                             }
                         )
 
@@ -112,7 +113,7 @@ fun Home(
                         MediaSmallRow(
                             mediaList = popularThisSeasonMediaList,
                             onItemClick = { itemId ->
-                                viewModel.navigateToMedia(itemId, context)
+                                viewModel.navigateToMedia(itemId, homeMediaType, context)
                             }
                         )
 
