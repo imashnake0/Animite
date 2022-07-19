@@ -33,12 +33,12 @@ class HomeViewModel @Inject constructor(
     // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
 
-    fun addAnimes(mediaType: MediaType = MediaType.ANIME) {
+    fun addMedia(mediaType: MediaType) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             try {
-                val trendingAnime = mediaListRepository.fetchMediaList(
-                    mediaType = MediaType.ANIME,
+                val trendingMedia = mediaListRepository.fetchMediaList(
+                    mediaType = mediaType,
                     page = 0,
                     perPage = 10,
                     sort = listOf(MediaSort.TRENDING_DESC),
@@ -46,19 +46,32 @@ class HomeViewModel @Inject constructor(
                     seasonYear = null
                 )
 
-                val popularAnimeThisSeason = mediaListRepository.fetchMediaList(
-                    mediaType = MediaType.ANIME,
-                    page = 0,
-                    perPage = 10,
-                    sort = listOf(MediaSort.POPULARITY_DESC),
-                    season = MediaSeason.SPRING,
-                    seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
-                )
+                val popularMediaThisSeason = if(mediaType == MediaType.ANIME) {
+                    mediaListRepository.fetchMediaList(
+                        mediaType = mediaType,
+                        page = 0,
+                        perPage = 10,
+                        sort = listOf(MediaSort.POPULARITY_DESC),
+                        season = MediaSeason.SPRING,
+                        seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
+                    )
+                } else {
+                    // TODO: This is needed because there is no "Popular This Season" for manga.
+                    //  The title for the list, however, should be "All Time Popular".
+                    mediaListRepository.fetchMediaList(
+                        mediaType = mediaType,
+                        page = 0,
+                        perPage = 10,
+                        sort = listOf(MediaSort.POPULARITY_DESC),
+                        season = null,
+                        seasonYear = null
+                    )
+                }
 
                 uiState = with(uiState) {
                     copy(
-                        trendingAnimeList = trendingAnime,
-                        popularAnimeThisSeasonList = popularAnimeThisSeason
+                        trendingMediaList = trendingMedia,
+                        popularMediaThisSeasonList = popularMediaThisSeason
                     )
                 }
             } catch (ioe: IOException) {

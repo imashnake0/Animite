@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.imashnake.animite.type.MediaType
 import com.imashnake.animite.ui.state.HomeViewModel
 import com.imashnake.animite.ui.theme.Backdrop
 import com.imashnake.animite.ui.theme.Text
@@ -34,14 +35,14 @@ fun Home(
     viewModel: HomeViewModel = viewModel()
 ) {
     viewModel.run {
-        addAnimes()
+        addMedia(MediaType.MANGA)
     }
 
-    val popularThisSeasonAnimeList = viewModel.uiState.popularAnimeThisSeasonList?.media
-    val trendingNowAnimeList = viewModel.uiState.trendingAnimeList?.media
+    val popularThisSeasonMediaList = viewModel.uiState.popularMediaThisSeasonList?.media
+    val trendingNowMediaList = viewModel.uiState.trendingMediaList?.media
 
     when {
-        trendingNowAnimeList != null && popularThisSeasonAnimeList != null -> {
+        trendingNowMediaList != null && popularThisSeasonMediaList != null -> {
             Box(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
@@ -87,7 +88,7 @@ fun Home(
 
                         Spacer(modifier = Modifier.size(12.dp))
 
-                        MediaSmallRow(mediaList = trendingNowAnimeList)
+                        MediaSmallRow(mediaList = trendingNowMediaList)
 
                         Spacer(modifier = Modifier.size(24.dp))
 
@@ -102,7 +103,7 @@ fun Home(
 
                         Spacer(modifier = Modifier.size(12.dp))
 
-                        MediaSmallRow(mediaList = popularThisSeasonAnimeList)
+                        MediaSmallRow(mediaList = popularThisSeasonMediaList)
 
                         Spacer(modifier = Modifier.size(104.dp))
                     }
