@@ -16,7 +16,7 @@ import javax.inject.Inject
  * **ID:** 132405.
  */
 class ApolloMediaApi @Inject constructor() : MediaApi {
-    override suspend fun fetchMedia(id: Int, mediaType: MediaType): Media? {
+    override suspend fun fetchMedia(id: Int?, mediaType: MediaType): Media? {
         return client
             .query(
                 MediaQuery(

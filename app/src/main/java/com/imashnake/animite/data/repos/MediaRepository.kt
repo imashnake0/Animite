@@ -11,6 +11,6 @@ import javax.inject.Inject
 class MediaRepository @Inject constructor(
     private val mediaNetworkSource: MediaNetworkSource
 ) {
-    suspend fun fetchMedia(id: Int, mediaType: MediaType): MediaQuery.Media? =
+    suspend fun fetchMedia(id: Int?, mediaType: MediaType): MediaQuery.Media? =
         mediaNetworkSource.fetchMedia(id, mediaType)
 }

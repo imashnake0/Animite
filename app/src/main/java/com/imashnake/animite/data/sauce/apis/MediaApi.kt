@@ -7,5 +7,5 @@ import com.imashnake.animite.type.MediaType
  * TODO: Kdoc.
  */
 interface MediaApi {
-    suspend fun fetchMedia(id: Int, mediaType: MediaType): Media?
+    suspend fun fetchMedia(id: Int?, mediaType: MediaType): Media?
 }
