@@ -1,7 +1,6 @@
 package com.imashnake.animite.ui.state
 
-import android.content.Context
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -83,15 +82,15 @@ class HomeViewModel @Inject constructor(
     }
 
     // TODO: Remove context along with `Toast`.
-    fun navigateToMedia(id: Int?, mediaType: MediaType, context: Context) {
+    fun navigateToMedia(id: Int?, mediaType: MediaType) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             val clickedMedia = mediaRepository.fetchMedia(id, mediaType)
-            Toast.makeText(
-                context,
-                clickedMedia.toString(),
-                Toast.LENGTH_LONG
-            ).show()
+
+            Log.d(
+                "ClickedMedia",
+                clickedMedia.toString()
+            )
         }
     }
 }

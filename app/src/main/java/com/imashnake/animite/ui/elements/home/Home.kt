@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,7 +34,6 @@ import com.imashnake.animite.R as Res
 fun Home(
     viewModel: HomeViewModel = viewModel()
 ) {
-    val context = LocalContext.current
     val homeMediaType = MediaType.ANIME
 
     viewModel.populateMediaLists(homeMediaType)
@@ -93,7 +91,7 @@ fun Home(
                         MediaSmallRow(
                             mediaList = trendingNowMediaList,
                             onItemClick = { itemId ->
-                                viewModel.navigateToMedia(itemId, homeMediaType, context)
+                                viewModel.navigateToMedia(itemId, homeMediaType)
                             }
                         )
 
@@ -113,7 +111,7 @@ fun Home(
                         MediaSmallRow(
                             mediaList = popularThisSeasonMediaList,
                             onItemClick = { itemId ->
-                                viewModel.navigateToMedia(itemId, homeMediaType, context)
+                                viewModel.navigateToMedia(itemId, homeMediaType)
                             }
                         )
 
