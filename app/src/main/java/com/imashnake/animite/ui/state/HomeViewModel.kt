@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.repos.MediaListRepository
 import com.imashnake.animite.data.repos.MediaRepository
+import com.imashnake.animite.dev.extensions.toPrettyString
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
@@ -89,7 +90,7 @@ class HomeViewModel @Inject constructor(
 
             Log.d(
                 "ClickedMedia",
-                clickedMedia.toString()
+                clickedMedia.toPrettyString()
             )
         }
     }
