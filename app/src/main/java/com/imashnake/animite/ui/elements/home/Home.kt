@@ -1,5 +1,6 @@
 package com.imashnake.animite.ui.elements.home
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,6 +36,8 @@ import com.imashnake.animite.R as Res
 fun Home(
     viewModel: HomeViewModel = viewModel()
 ) {
+    val context = LocalContext.current
+
     viewModel.run {
         addMedia(MediaType.MANGA)
     }
@@ -88,7 +92,12 @@ fun Home(
 
                         Spacer(modifier = Modifier.size(12.dp))
 
-                        MediaSmallRow(mediaList = trendingNowMediaList)
+                        MediaSmallRow(
+                            mediaList = trendingNowMediaList,
+                            onItemClick = {
+                                Toast.makeText(context, "bro", Toast.LENGTH_LONG).show()
+                            }
+                        )
 
                         Spacer(modifier = Modifier.size(24.dp))
 
@@ -103,7 +112,12 @@ fun Home(
 
                         Spacer(modifier = Modifier.size(12.dp))
 
-                        MediaSmallRow(mediaList = popularThisSeasonMediaList)
+                        MediaSmallRow(
+                            mediaList = popularThisSeasonMediaList,
+                            onItemClick = {
+                                Toast.makeText(context, "bro", Toast.LENGTH_LONG).show()
+                            }
+                        )
 
                         Spacer(modifier = Modifier.size(104.dp))
                     }
