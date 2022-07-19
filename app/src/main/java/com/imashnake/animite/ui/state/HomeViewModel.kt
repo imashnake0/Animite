@@ -81,7 +81,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    // TODO: Remove context along with `Toast`.
+    // TODO: Actually navigate to media.
     fun navigateToMedia(id: Int?, mediaType: MediaType) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
