@@ -10,7 +10,7 @@
 <a href="https://discord.gg/G8wF7pjpya">
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="resources/discord-assistive-chip-dark.svg">
-        <img alt="Reddit chip." src="resources/discord-assistive-chip-light.svg">
+        <img alt="Discord chip." src="resources/discord-assistive-chip-light.svg">
     </picture>
 </a>
 
