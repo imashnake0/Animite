@@ -1,5 +1,6 @@
 package com.imashnake.animite.ui.elements.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -30,11 +31,15 @@ import com.imashnake.animite.ui.theme.mediaSmallShape
  */
 @ExperimentalMaterial3Api
 @Composable
-fun MediaSmall(image: String?, anime: String?) {
+fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .wrapContentHeight()
-            .width(115.dp),
+            .width(115.dp)
+            .clickable(
+                enabled = true,
+                onClick = onClick
+            ),
         colors = cardColors(containerColor = Card),
         shape = mediaSmallShape
     ) {
@@ -68,6 +73,7 @@ fun PreviewMediaSmall() {
         image =
         "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
         anime =
-        "Sono Bisque Doll wa Koi wo Suru"
+        "Sono Bisque Doll wa Koi wo Suru",
+        onClick = {  }
     )
 }

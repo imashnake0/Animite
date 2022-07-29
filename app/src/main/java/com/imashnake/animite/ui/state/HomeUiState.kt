@@ -8,6 +8,6 @@ import com.imashnake.animite.MediaQuery
  */
 data class HomeUiState(
     val mediaList: List<MediaQuery.Media?> = listOf(),
-    val trendingAnimeList: MediaListQuery.Page? = null,
-    val popularAnimeThisSeasonList: MediaListQuery.Page? = null
+    val trendingMediaList: MediaListQuery.Page? = null,
+    val popularMediaThisSeasonList: MediaListQuery.Page? = null
 )

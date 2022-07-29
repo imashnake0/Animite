@@ -1,13 +1,14 @@
 package com.imashnake.animite.ui.state
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imashnake.animite.MediaQuery
-import com.imashnake.animite.data.repos.MediaRepository
 import com.imashnake.animite.data.repos.MediaListRepository
+import com.imashnake.animite.data.repos.MediaRepository
+import com.imashnake.animite.dev.extensions.toPrettyString
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
@@ -34,17 +35,12 @@ class HomeViewModel @Inject constructor(
     // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
 
-    fun addAnimes(vararg id: Int, mediaType: MediaType = MediaType.ANIME) {
+    fun populateMediaLists(mediaType: MediaType) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             try {
-                val mediaList = mutableListOf<MediaQuery.Media?>()
-                for (i in id) {
-                    mediaList.add(mediaRepository.fetchMedia(i, mediaType))
-                }
-
-                val trendingAnime = mediaListRepository.fetchMediaList(
-                    mediaType = MediaType.ANIME,
+                val trendingMedia = mediaListRepository.fetchMediaList(
+                    mediaType = mediaType,
                     page = 0,
                     perPage = 10,
                     sort = listOf(MediaSort.TRENDING_DESC),
@@ -52,25 +48,50 @@ class HomeViewModel @Inject constructor(
                     seasonYear = null
                 )
 
-                val popularAnimeThisSeason = mediaListRepository.fetchMediaList(
-                    mediaType = MediaType.ANIME,
-                    page = 0,
-                    perPage = 10,
-                    sort = listOf(MediaSort.POPULARITY_DESC),
-                    season = MediaSeason.SPRING,
-                    seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
-                )
+                val popularMediaThisSeason = if(mediaType == MediaType.ANIME) {
+                    mediaListRepository.fetchMediaList(
+                        mediaType = mediaType,
+                        page = 0,
+                        perPage = 10,
+                        sort = listOf(MediaSort.POPULARITY_DESC),
+                        season = MediaSeason.SPRING,
+                        seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
+                    )
+                } else {
+                    // TODO: This is needed because there is no "Popular This Season" for manga.
+                    //  The title for the list, however, should be "All Time Popular".
+                    mediaListRepository.fetchMediaList(
+                        mediaType = mediaType,
+                        page = 0,
+                        perPage = 10,
+                        sort = listOf(MediaSort.POPULARITY_DESC),
+                        season = null,
+                        seasonYear = null
+                    )
+                }
 
                 uiState = with(uiState) {
                     copy(
-                        mediaList = mediaList,
-                        trendingAnimeList = trendingAnime,
-                        popularAnimeThisSeasonList = popularAnimeThisSeason
+                        trendingMediaList = trendingMedia,
+                        popularMediaThisSeasonList = popularMediaThisSeason
                     )
                 }
             } catch (ioe: IOException) {
                 TODO()
             }
+        }
+    }
+
+    // TODO: Actually navigate to media.
+    fun navigateToMedia(id: Int?, mediaType: MediaType) {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
+            val clickedMedia = mediaRepository.fetchMedia(id, mediaType)
+
+            Log.d(
+                "ClickedMedia",
+                clickedMedia.toPrettyString()
+            )
         }
     }
 }

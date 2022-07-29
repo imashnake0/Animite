@@ -1,15 +1,57 @@
 query MediaQuery($id: Int, $type: MediaType) {
     media: Media (id: $id, type: $type) {
         id
-        type
+        idMal
         title {
             romaji
             english
             native
         }
+        type
+        format
+        status
+        description
+        startDate {
+            year
+            month
+            day
+        }
+        endDate {
+            year
+            month
+            day
+        }
+        season
+        seasonYear
+        episodes
+        duration
+        trailer {
+            id
+            site
+            thumbnail
+        }
         coverImage {
             extraLarge
             large
+            medium
+            color
         }
+        bannerImage
+        genres
+        averageScore
+        meanScore
+        popularity
+        trending
+        favourites
+        tags {
+            id
+            name
+            description
+            category
+            rank
+            isMediaSpoiler
+            isAdult
+        }
+        isAdult
     }
 }

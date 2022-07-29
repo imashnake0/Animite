@@ -15,7 +15,7 @@ import com.imashnake.animite.MediaListQuery
  */
 @ExperimentalMaterial3Api
 @Composable
-fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>) {
+fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId: Int?) -> Unit) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
@@ -25,7 +25,10 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>) {
                 image = media?.coverImage?.large,
                 anime = media?.title?.romaji ?:
                 media?.title?.english ?:
-                media?.title?.native
+                media?.title?.native,
+                onClick = {
+                    onItemClick(media?.id)
+                }
             )
         }
     }
@@ -45,12 +48,13 @@ fun PreviewMediaSmallRow() {
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
     ) {
-        items(10) {
+        items(count = 10) {
             MediaSmall(
                 image =
                 "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
                 anime =
-                "Sono Bisque Doll wa Koi wo Suru"
+                "Sono Bisque Doll wa Koi wo Suru",
+                onClick = {  }
             )
         }
     }

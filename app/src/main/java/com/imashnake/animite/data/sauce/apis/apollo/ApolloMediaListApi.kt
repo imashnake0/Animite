@@ -30,7 +30,6 @@ class ApolloMediaListApi @Inject constructor() : MediaListApi {
                     season = Optional.presentIfNotNull(season),
                     seasonYear = Optional.presentIfNotNull(seasonYear)
                 )
-            )
-            .execute().data?.page
+            ).execute().data?.page
     }
 }
