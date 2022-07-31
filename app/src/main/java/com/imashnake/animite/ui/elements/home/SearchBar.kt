@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
@@ -124,8 +125,13 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
         )
 
         var text by remember { mutableStateOf("") }
-        val focusRequester = FocusRequester()
+        val focusRequester = remember { FocusRequester() }
         val keyboardController = LocalSoftwareKeyboardController.current
+
+        // TODO: How does this work?
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
 
         TextField(
             enabled = true,
@@ -162,7 +168,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                 backgroundColor = NavigationBar,
                 cursorColor = Text,
                 unfocusedIndicatorColor = NavigationBar,
-                focusedIndicatorColor = Text
+                focusedIndicatorColor = Color.Transparent
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             trailingIcon = {
@@ -178,16 +184,11 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                         imageVector = Icons.Rounded.Close,
                         contentDescription = "Close",
                         tint = Text,
-                        modifier = Modifier
-                            .padding(16.dp)
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
             }
         )
-        // TODO: How does this work?
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
-        }
     }
 }
 
