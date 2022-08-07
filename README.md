@@ -1,4 +1,7 @@
-![Figma mock-up of the Home screen.](resources/Home_Pixel_5.png)
+<p float="left">
+  <img src="resources/Home_Pixel_5.png" width="49%" />
+  <img src="resources/Media_Page_Pixel_5.png" width="49%" />
+</p>
 
 # Animite 🚧
 <a href="https://www.reddit.com/r/Animite/">
