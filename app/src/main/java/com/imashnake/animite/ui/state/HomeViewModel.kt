@@ -26,9 +26,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val mediaRepository: MediaRepository,
     private val mediaListRepository: MediaListRepository
-): ViewModel() {
+) : ViewModel() {
     var uiState by mutableStateOf(HomeUiState())
         private set
 
@@ -48,7 +47,7 @@ class HomeViewModel @Inject constructor(
                     seasonYear = null
                 )
 
-                val popularMediaThisSeason = if(mediaType == MediaType.ANIME) {
+                val popularMediaThisSeason = if (mediaType == MediaType.ANIME) {
                     mediaListRepository.fetchMediaList(
                         mediaType = mediaType,
                         page = 0,
@@ -79,19 +78,6 @@ class HomeViewModel @Inject constructor(
             } catch (ioe: IOException) {
                 TODO()
             }
-        }
-    }
-
-    // TODO: Actually navigate to media.
-    fun navigateToMedia(id: Int?, mediaType: MediaType) {
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch {
-            val clickedMedia = mediaRepository.fetchMedia(id, mediaType)
-
-            Log.d(
-                "ClickedMedia",
-                clickedMedia.toPrettyString()
-            )
         }
     }
 }

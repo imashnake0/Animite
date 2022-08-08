@@ -91,7 +91,7 @@ fun Home(
                         MediaSmallRow(
                             mediaList = trendingNowMediaList,
                             onItemClick = { itemId ->
-                                viewModel.navigateToMedia(itemId, homeMediaType)
+
                             }
                         )
 
@@ -111,7 +111,7 @@ fun Home(
                         MediaSmallRow(
                             mediaList = popularThisSeasonMediaList,
                             onItemClick = { itemId ->
-                                viewModel.navigateToMedia(itemId, homeMediaType)
+
                             }
                         )
 
