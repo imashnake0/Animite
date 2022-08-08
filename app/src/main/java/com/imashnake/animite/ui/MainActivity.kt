@@ -30,7 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.dev.internal.Path
 import com.imashnake.animite.ui.elements.home.Home
-import com.imashnake.animite.ui.elements.home.SearchBar
+import com.imashnake.animite.ui.elements.SearchBar
 import com.imashnake.animite.ui.elements.profile.Profile
 import com.imashnake.animite.ui.elements.rslash.RSlash
 import com.imashnake.animite.ui.theme.NavigationBar
@@ -65,8 +65,6 @@ class MainActivity : ComponentActivity() {
                     Path.Home,
                     Path.Profile
                 )
-
-                Log.d(TAG, Path.numberOfPaths.toString())
 
                 NavHost(
                     navController = navController,

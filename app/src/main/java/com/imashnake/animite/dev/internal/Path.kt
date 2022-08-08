@@ -21,16 +21,4 @@ sealed class Path(val route: String, @StringRes val stringRes: Int) {
     object Home: Path("home", Rpath.string.home)
     object Profile: Path("profile", Rpath.string.profile)
     object RSlash: Path("rslash", Rpath.string.rslash)
-
-    /**
-     * @property numberOfPaths
-     * Makes use of [reflection](https://kotlinlang.org/docs/reflection.html) to return the number
-     * of paths.
-     */
-    companion object {
-        val numberOfPaths
-            get() = Path::class.nestedClasses.filter { kClass ->
-                !kClass.isCompanion
-            }.size
-    }
 }

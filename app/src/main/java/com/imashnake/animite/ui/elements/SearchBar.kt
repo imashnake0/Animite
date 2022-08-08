@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.elements.home
+package com.imashnake.animite.ui.elements
 
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
