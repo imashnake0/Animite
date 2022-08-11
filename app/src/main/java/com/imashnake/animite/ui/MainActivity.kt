@@ -1,7 +1,6 @@
 package com.imashnake.animite.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -29,16 +28,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.dev.internal.Path
-import com.imashnake.animite.ui.elements.home.Home
 import com.imashnake.animite.ui.elements.SearchBar
+import com.imashnake.animite.ui.elements.home.Home
 import com.imashnake.animite.ui.elements.profile.Profile
 import com.imashnake.animite.ui.elements.rslash.RSlash
 import com.imashnake.animite.ui.theme.NavigationBar
 import com.imashnake.animite.ui.theme.NavigationItem
 import dagger.hilt.android.AndroidEntryPoint
 import com.imashnake.animite.R as Res
-
-private const val TAG = "MainActivity"
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
@@ -111,8 +108,6 @@ class MainActivity : ComponentActivity() {
                             } == true,
 
                             onClick = {
-                                Log.d(TAG, "index: $index; item: $item")
-
                                 navController.navigate(item.route) {
                                     popUpTo(navController.graph.findStartDestination().id) {
                                         saveState = true
@@ -124,7 +119,6 @@ class MainActivity : ComponentActivity() {
 
                             icon = {
                                 when (index) {
-                                    // TODO: Potentially "convert" icons to compose.
                                     0 -> {
                                         Icon(
                                             imageVector = ImageVector.vectorResource(

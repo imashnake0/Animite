@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.imashnake.animite.R as Rpath
 
 /**
- * There are three [Path]s that the user can take in the app: [Home], [Profile], and [RSlash].
+ * There are three [Path]s that the user can start with in the app: [Home], [Profile], and [RSlash].
  *
  * @param route
  * Used by [NavHost][androidx.navigation.compose.NavHost]; see
