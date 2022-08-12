@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.elements.profile
+package com.imashnake.animite.features.rslash
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.imashnake.animite.ui.theme.Backdrop
-import com.imashnake.animite.ui.theme.Text
+import com.imashnake.animite.features.theme.Backdrop
+import com.imashnake.animite.features.theme.Text
 
 /**
  * TODO: Kdoc.
  */
 @Composable
-fun Profile() {
+fun RSlash() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier

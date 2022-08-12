@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.theme
+package com.imashnake.animite.features.theme
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily

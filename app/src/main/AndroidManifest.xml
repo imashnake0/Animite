@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Animite">
         <!-- TODO: Support landscape. -->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".features.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Animite"
             android:screenOrientation="portrait"

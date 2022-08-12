@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.state
+package com.imashnake.animite.features.home
 
 import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.MediaQuery

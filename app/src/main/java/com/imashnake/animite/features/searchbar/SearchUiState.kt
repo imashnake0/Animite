@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.state
+package com.imashnake.animite.features.searchbar
 
 import com.imashnake.animite.SearchQuery
 

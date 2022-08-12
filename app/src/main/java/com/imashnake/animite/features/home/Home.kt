@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.elements.home
+package com.imashnake.animite.features.elements.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.type.MediaType
-import com.imashnake.animite.ui.state.HomeViewModel
-import com.imashnake.animite.ui.theme.Backdrop
-import com.imashnake.animite.ui.theme.Text
-import com.imashnake.animite.ui.theme.backdropShape
-import com.imashnake.animite.ui.theme.manropeFamily
+import com.imashnake.animite.features.home.HomeViewModel
+import com.imashnake.animite.features.theme.Backdrop
+import com.imashnake.animite.features.theme.Text
+import com.imashnake.animite.features.theme.backdropShape
+import com.imashnake.animite.features.theme.manropeFamily
 import com.imashnake.animite.R as Res
 
 /**

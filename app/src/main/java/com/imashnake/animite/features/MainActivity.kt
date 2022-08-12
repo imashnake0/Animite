@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui
+package com.imashnake.animite.features
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -28,12 +28,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.dev.internal.Path
-import com.imashnake.animite.ui.elements.SearchBar
-import com.imashnake.animite.ui.elements.home.Home
-import com.imashnake.animite.ui.elements.profile.Profile
-import com.imashnake.animite.ui.elements.rslash.RSlash
-import com.imashnake.animite.ui.theme.NavigationBar
-import com.imashnake.animite.ui.theme.NavigationItem
+import com.imashnake.animite.features.elements.SearchBar
+import com.imashnake.animite.features.elements.home.Home
+import com.imashnake.animite.features.profile.Profile
+import com.imashnake.animite.features.rslash.RSlash
+import com.imashnake.animite.features.theme.NavigationBar
+import com.imashnake.animite.features.theme.NavigationItem
 import dagger.hilt.android.AndroidEntryPoint
 import com.imashnake.animite.R as Res
 

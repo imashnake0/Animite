@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.state
+package com.imashnake.animite.features.media
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.elements.home
+package com.imashnake.animite.features.elements.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.elements.home
+package com.imashnake.animite.features.elements.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
@@ -19,10 +19,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.imashnake.animite.ui.theme.Card
-import com.imashnake.animite.ui.theme.Text
-import com.imashnake.animite.ui.theme.manropeFamily
-import com.imashnake.animite.ui.theme.mediaSmallShape
+import com.imashnake.animite.features.theme.Card
+import com.imashnake.animite.features.theme.Text
+import com.imashnake.animite.features.theme.manropeFamily
+import com.imashnake.animite.features.theme.mediaSmallShape
 
 /**
  * TODO:

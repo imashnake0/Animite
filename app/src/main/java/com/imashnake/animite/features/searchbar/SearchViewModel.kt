@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.state
+package com.imashnake.animite.features.searchbar
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.repos.SearchRepository
+import com.imashnake.animite.features.searchbar.SearchUiState
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

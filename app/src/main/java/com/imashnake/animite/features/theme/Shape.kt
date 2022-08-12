@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.theme
+package com.imashnake.animite.features.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp

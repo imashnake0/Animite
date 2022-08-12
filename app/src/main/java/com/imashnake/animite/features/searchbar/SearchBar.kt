@@ -1,4 +1,4 @@
-package com.imashnake.animite.ui.elements
+package com.imashnake.animite.features.elements
 
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
@@ -41,10 +41,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.SearchQuery
-import com.imashnake.animite.ui.state.SearchViewModel
-import com.imashnake.animite.ui.theme.NavigationBar
-import com.imashnake.animite.ui.theme.Text
-import com.imashnake.animite.ui.theme.manropeFamily
+import com.imashnake.animite.features.searchbar.SearchViewModel
+import com.imashnake.animite.features.theme.NavigationBar
+import com.imashnake.animite.features.theme.Text
+import com.imashnake.animite.features.theme.manropeFamily
 
 // TODO: UX concern: This blocks content sometimes!
 @ExperimentalComposeUiApi
