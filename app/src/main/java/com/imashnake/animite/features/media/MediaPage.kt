@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.elements
+package com.imashnake.animite.features.media
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

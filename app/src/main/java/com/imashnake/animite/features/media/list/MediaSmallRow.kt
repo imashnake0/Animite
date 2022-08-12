@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.elements.home
+package com.imashnake.animite.features.media.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.features.media.list.MediaSmall
 
 /**
  * TODO: Extract dimens to `ui.theme`.

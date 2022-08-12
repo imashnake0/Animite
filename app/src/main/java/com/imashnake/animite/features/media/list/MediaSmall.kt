@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.elements.home
+package com.imashnake.animite.features.media.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height

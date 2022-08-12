@@ -28,8 +28,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.dev.internal.Path
-import com.imashnake.animite.features.elements.SearchBar
-import com.imashnake.animite.features.elements.home.Home
+import com.imashnake.animite.features.searchbar.SearchBar
+import com.imashnake.animite.features.home.Home
 import com.imashnake.animite.features.profile.Profile
 import com.imashnake.animite.features.rslash.RSlash
 import com.imashnake.animite.features.theme.NavigationBar

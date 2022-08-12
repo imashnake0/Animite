@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.elements
+package com.imashnake.animite.features.searchbar
 
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
@@ -41,7 +41,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.SearchQuery
-import com.imashnake.animite.features.searchbar.SearchViewModel
 import com.imashnake.animite.features.theme.NavigationBar
 import com.imashnake.animite.features.theme.Text
 import com.imashnake.animite.features.theme.manropeFamily

@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.elements.home
+package com.imashnake.animite.features.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.imashnake.animite.features.media.list.MediaSmallRow
 import com.imashnake.animite.type.MediaType
-import com.imashnake.animite.features.home.HomeViewModel
 import com.imashnake.animite.features.theme.Backdrop
 import com.imashnake.animite.features.theme.Text
 import com.imashnake.animite.features.theme.backdropShape
