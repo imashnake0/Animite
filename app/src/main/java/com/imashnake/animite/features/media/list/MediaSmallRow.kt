@@ -4,17 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.MediaListQuery
-import com.imashnake.animite.features.media.list.MediaSmall
 
 /**
  * TODO: Extract dimens to `ui.theme`.
  */
-@ExperimentalMaterial3Api
 @Composable
 fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId: Int?) -> Unit) {
     LazyRow(
@@ -41,7 +38,6 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId:
  * **Anime:** Sono Bisque Doll wa Koi wo Suru;
  * **ID:** 132405.
  */
-@ExperimentalMaterial3Api
 @Preview
 @Composable
 fun PreviewMediaSmallRow() {
