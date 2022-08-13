@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp) version libs.versions.ksp.get()
     kotlin("kapt")
 }
 
@@ -55,6 +56,14 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    applicationVariants.all {
+        kotlin.sourceSets {
+            getByName(name) {
+                kotlin.srcDir("build/generated/ksp/$name/kotlin")
+            }
+        }
+    }
 }
 
 apollo {
@@ -100,6 +109,10 @@ dependencies {
 
     // Accompanist
     implementation(libs.accompanist.systemUiController)
+
+    // Compose Destinations
+    implementation(libs.compose.destinations)
+    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 
