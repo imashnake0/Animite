@@ -97,8 +97,13 @@ fun Home(
 
                         MediaSmallRow(
                             mediaList = trendingNowMediaList,
-                            onItemClick = {
-                                navigator.navigate(MediaPageDestination)
+                            onItemClick = { itemId ->
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = itemId,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
+                                )
                             }
                         )
 
@@ -117,8 +122,13 @@ fun Home(
 
                         MediaSmallRow(
                             mediaList = popularThisSeasonMediaList,
-                            onItemClick = {
-                                navigator.navigate(MediaPageDestination)
+                            onItemClick = { itemId ->
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = itemId,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
+                                )
                             }
                         )
 

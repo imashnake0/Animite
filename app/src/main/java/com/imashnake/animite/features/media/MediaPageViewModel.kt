@@ -15,10 +15,8 @@ import javax.inject.Inject
 class MediaPageViewModel @Inject constructor(
     private val mediaRepository: MediaRepository
 ) : ViewModel() {
-    // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
 
-    // TODO: Actually navigate to media.
     fun fetchMedia(id: Int?, mediaType: MediaType) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
