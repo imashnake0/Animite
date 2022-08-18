@@ -17,22 +17,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.features.media.list.MediaSmallRow
-import com.imashnake.animite.type.MediaType
 import com.imashnake.animite.features.theme.Backdrop
 import com.imashnake.animite.features.theme.Text
 import com.imashnake.animite.features.theme.backdropShape
 import com.imashnake.animite.features.theme.manropeFamily
+import com.imashnake.animite.type.MediaType
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.imashnake.animite.R as Res
 
 /**
  * TODO: Kdoc.
  */
 @ExperimentalMaterial3Api
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun Home(
-    viewModel: HomeViewModel = viewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val homeMediaType = MediaType.ANIME
 

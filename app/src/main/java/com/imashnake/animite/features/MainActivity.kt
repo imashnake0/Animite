@@ -13,17 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.imashnake.animite.dev.internal.Path
-import com.imashnake.animite.features.home.Home
 import com.imashnake.animite.features.navigationbar.NavigationBar
-import com.imashnake.animite.features.profile.Profile
-import com.imashnake.animite.features.rslash.RSlash
 import com.imashnake.animite.features.searchbar.SearchBar
+import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalComposeUiApi
@@ -45,17 +39,10 @@ class MainActivity : ComponentActivity() {
             Box(modifier = Modifier.fillMaxSize()) {
                 val navController = rememberNavController()
 
-                NavHost(
-                    navController = navController,
-                    startDestination = "home",
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .navigationBarsPadding()
-                ) {
-                    composable(Path.Home.route) { Home(hiltViewModel()) }
-                    composable(Path.Profile.route) { Profile() }
-                    composable(Path.RSlash.route) { RSlash() }
-                }
+                DestinationsNavHost(
+                    navGraph = NavGraphs.root,
+                    navController = navController
+                )
 
                 SearchBar(
                     modifier = Modifier
@@ -74,7 +61,8 @@ class MainActivity : ComponentActivity() {
                                 .navigationBars
                                 .asPaddingValues()
                                 .calculateBottomPadding()
-                        )
+                        ),
+                    itemModifier = Modifier.navigationBarsPadding()
                 )
             }
         }
