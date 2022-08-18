@@ -5,37 +5,26 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.dev.internal.Path
-import com.imashnake.animite.features.searchbar.SearchBar
 import com.imashnake.animite.features.home.Home
+import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.profile.Profile
 import com.imashnake.animite.features.rslash.RSlash
-import com.imashnake.animite.features.theme.NavigationBar
-import com.imashnake.animite.features.theme.NavigationItem
+import com.imashnake.animite.features.searchbar.SearchBar
 import dagger.hilt.android.AndroidEntryPoint
-import com.imashnake.animite.R as Res
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
@@ -55,13 +44,6 @@ class MainActivity : ComponentActivity() {
 
             Box(modifier = Modifier.fillMaxSize()) {
                 val navController = rememberNavController()
-
-                // We iterate through the list in this order.
-                val paths = listOf(
-                    Path.RSlash,
-                    Path.Home,
-                    Path.Profile
-                )
 
                 NavHost(
                     navController = navController,
@@ -83,85 +65,17 @@ class MainActivity : ComponentActivity() {
                         .padding(bottom = 24.dp)
                 )
 
-                // TODO: The way padding is handled is still a bit hacky, investigate further.
                 NavigationBar(
-                    containerColor = NavigationBar,
+                    navController = navController,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .height(
-                            80.dp +
-                                    WindowInsets
-                                        .navigationBars
-                                        .asPaddingValues()
-                                        .calculateBottomPadding()
+                            80.dp + WindowInsets
+                                .navigationBars
+                                .asPaddingValues()
+                                .calculateBottomPadding()
                         )
-                ) {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
-
-                    paths.forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            modifier = Modifier.navigationBarsPadding(),
-
-                            selected = currentDestination?.hierarchy?.any {
-                                it.route == item.route
-                            } == true,
-
-                            onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-
-                            icon = {
-                                when (index) {
-                                    0 -> {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(
-                                                id = Res.drawable.rslash
-                                            ),
-                                            contentDescription = stringResource(
-                                                id = item.stringRes
-                                            )
-                                        )
-                                    }
-                                    1 -> {
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(
-                                                id = Res.drawable.home
-                                            ),
-                                            contentDescription = stringResource(
-                                                id = item.stringRes
-                                            )
-                                        )
-                                    }
-                                    2 -> {
-                                        Icon(
-                                            imageVector = Icons.Rounded.AccountCircle,
-                                            contentDescription = stringResource(
-                                                id = item.stringRes
-                                            ),
-                                            // Adding this modifier lets us control the icon's size.
-                                            modifier = Modifier
-                                                .padding(3.dp)
-                                                .size(18.dp)
-                                        )
-                                    }
-                                }
-                            },
-
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = NavigationBar,
-                                unselectedIconColor = NavigationItem,
-                                indicatorColor = NavigationItem
-                            )
-                        )
-                    }
-                }
+                )
             }
         }
     }
