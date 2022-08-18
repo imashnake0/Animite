@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.imashnake.animite.features.theme.Backdrop
+import com.imashnake.animite.features.theme.*
 import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination
@@ -22,6 +22,6 @@ fun MediaPage(
             .fillMaxSize()
             .background(Backdrop)
     ) {
-        Text(text = "Media where?")
+        Text(text = "Media where?", color = Text)
     }
 }

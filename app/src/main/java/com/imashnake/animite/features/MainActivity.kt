@@ -18,9 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.imashnake.animite.features.destinations.HomeDestination
-import com.imashnake.animite.features.destinations.ProfileDestination
-import com.imashnake.animite.features.destinations.RSlashDestination
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.features.searchbar.SearchBar
