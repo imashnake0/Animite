@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
-// TODO: Not sure if we need this class.
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository

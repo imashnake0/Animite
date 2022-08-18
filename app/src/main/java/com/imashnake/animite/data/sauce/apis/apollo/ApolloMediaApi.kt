@@ -8,8 +8,6 @@ import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
 /**
- * TODO: Kdoc.
- *
  * Example:
  *
  * **Anime:** Sono Bisque Doll wa Koi wo Suru;

@@ -24,9 +24,7 @@ import com.imashnake.animite.features.theme.manropeFamily
 import com.imashnake.animite.features.theme.mediaSmallShape
 
 /**
- * TODO:
- *  - Kdoc.
- *  - Extract dimens to `ui.theme`.
+ * TODO: Extract dimens to `ui.theme`.
  */
 @Composable
 fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {

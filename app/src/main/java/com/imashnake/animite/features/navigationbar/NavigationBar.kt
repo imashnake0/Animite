@@ -27,6 +27,7 @@ import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import com.imashnake.animite.R as Res
 
+// TODO: Ripple where?
 @ExperimentalMaterial3Api
 @Composable
 fun NavigationBar(

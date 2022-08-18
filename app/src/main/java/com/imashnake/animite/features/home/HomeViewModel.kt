@@ -19,9 +19,6 @@ import kotlinx.datetime.todayAt
 import java.io.IOException
 import javax.inject.Inject
 
-/**
- * TODO: Kdoc.
- */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val mediaListRepository: MediaListRepository

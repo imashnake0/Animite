@@ -5,9 +5,6 @@ import com.imashnake.animite.data.sauce.MediaNetworkSource
 import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
-/**
- * TODO: Kdoc.
- */
 class MediaRepository @Inject constructor(
     private val mediaNetworkSource: MediaNetworkSource
 ) {

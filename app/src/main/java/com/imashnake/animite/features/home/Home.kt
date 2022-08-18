@@ -30,9 +30,6 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
-/**
- * TODO: Kdoc.
- */
 @ExperimentalMaterial3Api
 @RootNavGraph(start = true)
 @Destination

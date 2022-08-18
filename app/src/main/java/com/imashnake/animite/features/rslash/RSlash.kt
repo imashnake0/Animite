@@ -12,9 +12,6 @@ import com.imashnake.animite.features.theme.Backdrop
 import com.imashnake.animite.features.theme.Text
 import com.ramcosta.composedestinations.annotation.Destination
 
-/**
- * TODO: Kdoc.
- */
 @Destination
 @Composable
 fun RSlash() {
