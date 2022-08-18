@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.list.MediaSmallRow
 import com.imashnake.animite.features.theme.Backdrop
 import com.imashnake.animite.features.theme.Text
@@ -26,6 +27,7 @@ import com.imashnake.animite.features.theme.manropeFamily
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
 /**
@@ -36,7 +38,8 @@ import com.imashnake.animite.R as Res
 @Destination
 @Composable
 fun Home(
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
     val homeMediaType = MediaType.ANIME
 
@@ -94,8 +97,8 @@ fun Home(
 
                         MediaSmallRow(
                             mediaList = trendingNowMediaList,
-                            onItemClick = { itemId ->
-
+                            onItemClick = {
+                                navigator.navigate(MediaPageDestination)
                             }
                         )
 
@@ -114,8 +117,8 @@ fun Home(
 
                         MediaSmallRow(
                             mediaList = popularThisSeasonMediaList,
-                            onItemClick = { itemId ->
-
+                            onItemClick = {
+                                navigator.navigate(MediaPageDestination)
                             }
                         )
 
