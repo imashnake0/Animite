@@ -29,9 +29,7 @@ class HomeViewModel @Inject constructor(
     var uiState by mutableStateOf(HomeUiState())
         private set
 
-    // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
-
     fun populateMediaLists(mediaType: MediaType) {
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {

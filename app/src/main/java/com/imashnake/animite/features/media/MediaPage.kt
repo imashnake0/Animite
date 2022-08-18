@@ -21,12 +21,17 @@ fun MediaPage(
     viewModel: MediaPageViewModel = hiltViewModel()
 ) {
     val mediaType = MediaType.safeValueOf(mediaTypeArg)
+
+    val mediaRaw = viewModel.uiState.mediaRaw
+
+    viewModel.populateMediaPage(id, mediaType)
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
             .background(Backdrop)
     ) {
-        Text(text = "id: $id, mediaType: $mediaType", color = Text)
+        Text(text = "mediaRaw: $mediaRaw", color = Text)
     }
 }
