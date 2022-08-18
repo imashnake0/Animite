@@ -100,7 +100,9 @@ fun Home(
                                         id = itemId,
                                         mediaTypeArg = homeMediaType.rawValue
                                     )
-                                )
+                                ) {
+                                    launchSingleTop = true
+                                }
                             }
                         )
 
@@ -125,7 +127,9 @@ fun Home(
                                         id = itemId,
                                         mediaTypeArg = homeMediaType.rawValue
                                     )
-                                )
+                                ) {
+                                    launchSingleTop = true
+                                }
                             }
                         )
 
