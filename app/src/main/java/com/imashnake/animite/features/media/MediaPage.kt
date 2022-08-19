@@ -29,7 +29,7 @@ fun MediaPage(
 
     val mediaType = MediaType.safeValueOf(mediaTypeArg)
 
-    val mediaRaw = viewModel.uiState.mediaRaw
+    val media = viewModel.uiState
 
     viewModel.populateMediaPage(id, mediaType)
 
@@ -41,7 +41,17 @@ fun MediaPage(
             .systemBarsPadding()
     ) {
         Text(
-            text = "mediaRaw: $mediaRaw",
+            text = """
+                bannerImage: ${media.bannerImage}
+                coverImage: ${media.coverImage}
+                title: ${media.title}
+                description: ${media.description}
+                averageScore: ${media.averageScore}
+                ranks: ${media.ranks}
+                genres: ${media.genres}
+                characters: ${media.characters}
+                trailer: ${media.trailer}
+            """.trimIndent(),
             color = Text,
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
