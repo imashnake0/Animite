@@ -5,6 +5,7 @@ import com.imashnake.animite.type.MediaRankType
 data class MediaUiState(
     val bannerImage: String? = "",
     val coverImage: String? = "",
+    val color: String? = "",
     val title: String? = "",
     val description: String? = "",
     val averageScore: Int? = null,

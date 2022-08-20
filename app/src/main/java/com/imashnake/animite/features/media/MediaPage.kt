@@ -44,6 +44,7 @@ fun MediaPage(
             text = """
                 bannerImage: ${media.bannerImage}
                 coverImage: ${media.coverImage}
+                color: ${media.color}
                 title: ${media.title}
                 description: ${media.description}
                 averageScore: ${media.averageScore}

@@ -40,6 +40,7 @@ class MediaPageViewModel @Inject constructor(
                     copy(
                         bannerImage = media?.bannerImage,
                         coverImage = media?.coverImage?.extraLarge,
+                        color = media?.coverImage?.color,
                         title = media?.title?.romaji ?:
                                 media?.title?.english ?:
                                 media?.title?.native,
