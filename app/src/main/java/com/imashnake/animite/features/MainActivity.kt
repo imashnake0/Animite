@@ -46,23 +46,10 @@ class MainActivity : ComponentActivity() {
             Box(modifier = Modifier.fillMaxSize()) {
                 val navController = rememberNavController()
 
-                val padding: Dp by animateDpAsState(
-                    if (navController.isPath()) {
-                        WindowInsets
-                            .navigationBars
-                            .asPaddingValues()
-                            .calculateBottomPadding()
-                    } else {
-                        0.dp
-                    }
-                )
-
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
                     navController = navController,
-                    modifier = Modifier.padding(
-                        bottom = padding
-                    )
+                    modifier = Modifier.align(Alignment.TopCenter)
                 )
 
                 SearchBar(

@@ -50,6 +50,7 @@ fun Home(
             Box(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
+                    .navigationBarsPadding()
             ) {
                 Box {
                     Image(
