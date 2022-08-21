@@ -1,7 +1,5 @@
 package com.imashnake.animite.features.media
 
-import com.imashnake.animite.type.MediaRankType
-
 data class MediaUiState(
     val bannerImage: String? = "",
     val coverImage: String? = "",
