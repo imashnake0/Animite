@@ -109,6 +109,7 @@ dependencies {
 
     // Accompanist
     implementation(libs.accompanist.systemUiController)
+    implementation(libs.accompanist.placeholder)
 
     // Compose Destinations
     implementation(libs.compose.destinations)
