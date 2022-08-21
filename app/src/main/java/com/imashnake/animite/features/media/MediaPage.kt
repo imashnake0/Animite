@@ -48,7 +48,6 @@ fun MediaPage(
         // TODO: How do I align this?
         if (!media.bannerImage.isNullOrEmpty()) {
             Box {
-
                 AsyncImage(
                     model = media.bannerImage,
                     contentDescription = "Banner Image",
@@ -57,11 +56,12 @@ fun MediaPage(
                         .height(168.dp)
                         .align(Alignment.TopStart)
                 )
+
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(168.dp),
-                    color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.35f)
+                    color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
                 ) { }
             }
         } else {
@@ -88,7 +88,8 @@ fun MediaPage(
                         listOf(
                             Color(media.color?.toHexColor() ?: 0).copy(
                                 alpha = 0.08f
-                            ), Color.Transparent
+                            ),
+                            Color.Transparent
                         )
                     )
                 )
@@ -100,9 +101,7 @@ fun MediaPage(
                         modifier = Modifier
                             .padding(start = 24.dp, top = 24.dp, end = 24.dp)
                             .height(
-                                (88 + WindowInsets.statusBars
-                                    .asPaddingValues()
-                                    .calculateTopPadding().value).dp
+                                (88 + WindowInsets.statusBars.asPaddingValues().calculateTopPadding().value).dp
                             )
                             .fillMaxWidth()
                     ) {
@@ -139,7 +138,7 @@ fun MediaPage(
                                 "$it%"
                             }
 
-                            for (stat in media.ranks) {
+                            media.ranks.forEach { stat ->
                                 Stat(label = stat.first, score = stat.second) {
                                     "#$it"
                                 }
@@ -152,7 +151,7 @@ fun MediaPage(
 
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
+                    contentPadding = PaddingValues(horizontal = 24.dp)
                 ) {
                     if (!media.genres.isNullOrEmpty()) {
                         items(media.genres) { genre ->
@@ -167,15 +166,15 @@ fun MediaPage(
 
             Text(
                 text = """
-                characters: ${media.characters}
-                trailer: ${media.trailer}
-            """.trimIndent(),
+                    characters: ${media.characters}
+                    trailer: ${media.trailer}
+                """.trimIndent(),
                 color = Text,
                 modifier = Modifier.padding(
                     top = 50.dp,
                     start = 50.dp,
                     end = 50.dp,
-                    bottom = 300.dp
+                    bottom = 1000.dp
                 )
             )
         }
@@ -227,14 +226,13 @@ fun Stat(label: String, score: Int, format: (Int) -> String) {
 @ExperimentalMaterial3Api
 @Composable
 fun Genre(genre: String?, color: Color) {
-
     SuggestionChip(
         label = {
             Text(
                 text = genre?.lowercase() ?: "",
                 color = Text,
                 fontWeight = FontWeight.Medium,
-                letterSpacing = 1.sp,
+                letterSpacing = (1.5).sp,
                 modifier = Modifier.padding(vertical = 10.dp)
             )
         },
