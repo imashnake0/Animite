@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.media.list
+package com.imashnake.animite.features.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

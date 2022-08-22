@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.media.list.MediaSmallRow
 import com.imashnake.animite.features.theme.Backdrop
 import com.imashnake.animite.features.theme.Text
 import com.imashnake.animite.features.theme.backdropShape
