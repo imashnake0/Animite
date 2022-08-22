@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.home
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -30,9 +31,10 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
+@ExperimentalAnimationApi
 @ExperimentalMaterial3Api
 @RootNavGraph(start = true)
-@Destination
+@Destination(style = HomeTransitions::class)
 @Composable
 fun Home(
     viewModel: HomeViewModel = hiltViewModel(),

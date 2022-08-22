@@ -3,10 +3,8 @@ package com.imashnake.animite.features
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.SideEffect
@@ -16,14 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.features.searchbar.SearchBar
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
+import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalMaterialNavigationApi
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
@@ -41,12 +43,18 @@ class MainActivity : ComponentActivity() {
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
-                val navController = rememberNavController()
+                val navController = rememberAnimatedNavController()
+                val navHostEngine = rememberAnimatedNavHostEngine(
+                    rootDefaultAnimations = RootNavGraphDefaultAnimations(
+                        enterTransition = { fadeIn(animationSpec = tween(1000)) }
+                    )
+                )
 
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
+                    modifier = Modifier.align(Alignment.TopCenter),
                     navController = navController,
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    engine = navHostEngine
                 )
 
                 SearchBar(
