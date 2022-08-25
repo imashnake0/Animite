@@ -119,7 +119,8 @@ fun MediaPage(
 
                         Text(
                             // TODO: Some styles are not applied.
-                            text = Html.fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
+                            text = Html
+                                .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
                                 .toString(),
                             color = Text.copy(alpha = 0.5f),
                             fontSize = 10.sp,
@@ -133,8 +134,8 @@ fun MediaPage(
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = if (media.ranks.size >= 2) Arrangement.SpaceAround else Arrangement.SpaceEvenly,
-                            modifier = Modifier.fillMaxSize()
+                            horizontalArrangement = Arrangement.SpaceAround,
+                                    modifier = Modifier.fillMaxSize()
                         ) {
                             Stat(label = "SCORE", score = media.averageScore ?: 0) {
                                 "$it%"
