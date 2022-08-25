@@ -44,7 +44,10 @@ fun MediaPage(
     val media = viewModel.uiState
 
     // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/)
-    Box(Modifier.verticalScroll(rememberScrollState())) {
+    Box(Modifier
+        .fillMaxSize()
+        .verticalScroll(rememberScrollState())
+    ) {
         // TODO: How do I align this?
         if (!media.bannerImage.isNullOrEmpty()) {
             Box {
@@ -62,7 +65,7 @@ fun MediaPage(
                         .fillMaxWidth()
                         .height(168.dp),
                     color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
-                ) { }
+                ) {  }
             }
         } else {
             Image(
@@ -173,8 +176,7 @@ fun MediaPage(
                 modifier = Modifier.padding(
                     top = 50.dp,
                     start = 50.dp,
-                    end = 50.dp,
-                    bottom = 1000.dp
+                    end = 50.dp
                 )
             )
         }
