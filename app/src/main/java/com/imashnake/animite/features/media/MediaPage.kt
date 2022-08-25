@@ -55,9 +55,8 @@ fun MediaPage(
                     model = media.bannerImage,
                     contentDescription = "Banner Image",
                     contentScale = ContentScale.FillHeight,
-                    modifier = Modifier
-                        .height(168.dp)
-                        .align(Alignment.TopStart)
+                    modifier = Modifier.height(168.dp),
+                    alignment = Alignment.Center
                 )
 
                 Surface(
@@ -152,6 +151,7 @@ fun MediaPage(
 
                 Spacer(Modifier.height(24.dp))
 
+                // TODO: Monet where?
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 24.dp)
