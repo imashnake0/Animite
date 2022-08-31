@@ -1,14 +1,12 @@
 package com.imashnake.animite.features.media
 
 import android.text.Html
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.util.Log
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,9 +42,10 @@ fun MediaPage(
     val media = viewModel.uiState
 
     // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/)
-    Box(Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())
+    Box(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         // TODO: How do I align this?
         if (!media.bannerImage.isNullOrEmpty()) {
@@ -103,7 +102,9 @@ fun MediaPage(
                         modifier = Modifier
                             .padding(start = 24.dp, top = 24.dp, end = 24.dp)
                             .height(
-                                (88 + WindowInsets.statusBars.asPaddingValues().calculateTopPadding().value).dp
+                                (88 + WindowInsets.statusBars
+                                    .asPaddingValues()
+                                    .calculateTopPadding().value).dp
                             )
                             .fillMaxWidth()
                     ) {
@@ -168,9 +169,28 @@ fun MediaPage(
                 }
             }
 
+            Spacer(modifier = Modifier.size(24.dp))
+
+            if(!media.characters.isNullOrEmpty()) {
+                Text(
+                    text = "Characters",
+                    color = Text,
+                    fontSize = 14.sp,
+                    fontFamily = manropeFamily,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 24.dp)
+                )
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                CharacterRow(characterList = media.characters) {
+                    Log.d("Character", it.second ?: "null")
+                }
+            }
+
+
             Text(
                 text = """
-                    characters: ${media.characters}
                     trailer: ${media.trailer}
                 """.trimIndent(),
                 color = Text,
@@ -248,4 +268,56 @@ fun Genre(genre: String?, color: Color) {
             borderColor = Color.Transparent
         )
     )
+}
+
+@Composable
+fun Character(image: String?, name: String?, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .wrapContentHeight()
+            .width(96.dp)
+            .clickable(
+                enabled = true,
+                onClick = onClick
+            ),
+        colors = CardDefaults.cardColors(containerColor = Card),
+        shape = mediaSmallShape
+    ) {
+        AsyncImage(
+            model = image,
+            contentDescription = name,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(121.dp)
+                .clip(mediaSmallShape)
+        )
+        Text(
+            text = name ?: "",
+            color = Text,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
+            modifier = Modifier.padding(14.dp),
+            fontFamily = manropeFamily,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
+fun CharacterRow(
+    characterList: List<Pair<String?, String?>> = emptyList(),
+    onItemClick: (character: Pair<String?, String?>) -> Unit) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
+    ) {
+        items(characterList) { character ->
+            Character(
+                image = character.first,
+                name = character.second,
+                onClick = { onItemClick(character) }
+            )
+        }
+    }
 }

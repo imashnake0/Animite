@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.navigationbar
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,7 @@ import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import com.imashnake.animite.R as Res
 
 // TODO: Ripple where?
+@ExperimentalAnimationApi
 @ExperimentalMaterial3Api
 @Composable
 fun NavigationBar(
@@ -89,6 +91,7 @@ enum class NavigationBarPaths(
         }
     ),
 
+    @ExperimentalAnimationApi
     @ExperimentalMaterial3Api
     Home(
         HomeDestination,
@@ -103,6 +106,8 @@ enum class NavigationBarPaths(
             )
         }
     ),
+    @ExperimentalAnimationApi
+    @ExperimentalMaterial3Api
     Profile(
         ProfileDestination,
         {

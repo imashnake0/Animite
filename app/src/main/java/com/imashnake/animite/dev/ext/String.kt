@@ -3,7 +3,7 @@ package com.imashnake.animite.dev.ext
 import kotlin.math.*
 
 /**
- * I made this before I discovered [android.graphics.Color.parseColor].
+ * I made this before I discovered [android.graphics.Color.parseColor] (thanks boswelja :kappa:).
  */
 fun String.toHexColor(): Long {
     var value = 0
