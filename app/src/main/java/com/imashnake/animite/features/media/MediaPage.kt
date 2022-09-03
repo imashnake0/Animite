@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -188,10 +189,45 @@ fun MediaPage(
                 }
             }
 
+            Spacer(modifier = Modifier.size(24.dp))
+
+            if(!media.trailer.toList().any { it == null }) {
+                Text(
+                    text = "Trailer",
+                    color = Text,
+                    fontSize = 14.sp,
+                    fontFamily = manropeFamily,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 24.dp)
+                )
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Box {
+                    AsyncImage(
+                        model = media.trailer.second,
+                        contentDescription = "Thumbnail",
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(1.778f)
+                            .clip(RoundedCornerShape(30.dp)),
+                        alignment = Alignment.Center
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.youtube),
+                        contentDescription = "Watch on Youtube",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+            }
 
             Text(
                 text = """
-                    trailer: ${media.trailer}
+                    trailer: ${media.trailer.first}
                 """.trimIndent(),
                 color = Text,
                 modifier = Modifier.padding(

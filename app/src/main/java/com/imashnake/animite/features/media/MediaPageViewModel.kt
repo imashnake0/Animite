@@ -52,12 +52,28 @@ class MediaPageViewModel @Inject constructor(
                                 it -> Pair(it?.image?.large, it?.name?.full)
                         },
                         trailer = Pair(
-                            first = if (media?.trailer?.site == "youtube") {
-                                "https://www.youtube.com/watch?v=${media.trailer.id}"
-                            } else {
-                                "https://www.dailymotion.com/video/${media?.trailer?.id}"
+                            first = when (media?.trailer?.site) {
+                                "youtube" -> {
+                                    "https://www.youtube.com/watch?v=${media.trailer.id}"
+                                }
+                                "dailymotion" -> {
+                                    "https://www.dailymotion.com/video/${media.trailer.id}"
+                                }
+                                else -> {
+                                    null
+                                }
                             },
-                            second = media?.trailer?.thumbnail
+                            second = when (media?.trailer?.site) {
+                                "youtube" -> {
+                                    "https://img.youtube.com/vi/${media.trailer.id}/maxresdefault.jpg"
+                                }
+                                "dailymotion" -> {
+                                    media.trailer.thumbnail
+                                }
+                                else -> {
+                                    null
+                                }
+                            }
                         )
                     )
                 }
