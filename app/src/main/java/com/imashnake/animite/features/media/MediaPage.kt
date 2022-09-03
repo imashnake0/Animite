@@ -1,5 +1,7 @@
 package com.imashnake.animite.features.media
 
+import android.content.Intent
+import android.net.Uri
 import android.text.Html
 import android.util.Log
 import androidx.compose.foundation.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -203,7 +206,11 @@ fun MediaPage(
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                Box {
+                val context = LocalContext.current
+                Box(modifier = Modifier.wrapContentSize().clickable {
+                    val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
+                    context.startActivity(appIntent)
+                }) {
                     AsyncImage(
                         model = media.trailer.second,
                         contentDescription = "Thumbnail",
@@ -222,20 +229,7 @@ fun MediaPage(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-
             }
-
-            Text(
-                text = """
-                    trailer: ${media.trailer.first}
-                """.trimIndent(),
-                color = Text,
-                modifier = Modifier.padding(
-                    top = 50.dp,
-                    start = 50.dp,
-                    end = 50.dp
-                )
-            )
         }
 
         Card(
