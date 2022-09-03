@@ -230,6 +230,8 @@ fun MediaPage(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.size(24.dp))
         }
 
         Card(
