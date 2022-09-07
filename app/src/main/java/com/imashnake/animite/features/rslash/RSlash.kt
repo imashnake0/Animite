@@ -12,6 +12,7 @@ import com.imashnake.animite.features.theme.Backdrop
 import com.imashnake.animite.features.theme.Text
 import com.ramcosta.composedestinations.annotation.Destination
 
+// TODO: Add transitions as we did for `Profile`.
 @Destination
 @Composable
 fun RSlash() {

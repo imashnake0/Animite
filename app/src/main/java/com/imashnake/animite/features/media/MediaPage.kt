@@ -187,6 +187,7 @@ fun MediaPage(
 
                 Spacer(modifier = Modifier.size(12.dp))
 
+                // TODO: Make characters clickable.
                 CharacterRow(characterList = media.characters) {
                     Log.d("Character", it.second ?: "null")
                 }
@@ -291,6 +292,7 @@ fun Genre(genre: String?, color: Color) {
                 modifier = Modifier.padding(vertical = 10.dp)
             )
         },
+        // TODO: Make genres clickable.
         onClick = {  },
         shape = CircleShape,
         colors = SuggestionChipDefaults.suggestionChipColors(
@@ -339,7 +341,8 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
 @Composable
 fun CharacterRow(
     characterList: List<Pair<String?, String?>> = emptyList(),
-    onItemClick: (character: Pair<String?, String?>) -> Unit) {
+    onItemClick: (character: Pair<String?, String?>) -> Unit
+) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)

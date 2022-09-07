@@ -64,9 +64,11 @@ class MediaPageViewModel @Inject constructor(
                                 }
                             },
                             second = when (media?.trailer?.site) {
+                                // TODO: Does a high resolution image always exist?
                                 "youtube" -> {
                                     "https://img.youtube.com/vi/${media.trailer.id}/maxresdefault.jpg"
                                 }
+                                // TODO: Change the icon and handle this properly.
                                 "dailymotion" -> {
                                     media.trailer.thumbnail
                                 }
