@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,18 +40,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.imashnake.animite.R
 import com.imashnake.animite.SearchQuery
+import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.theme.NavigationBar
 import com.imashnake.animite.features.theme.Text
 import com.imashnake.animite.features.theme.manropeFamily
+import com.imashnake.animite.type.MediaType
+import com.ramcosta.composedestinations.navigation.navigate
 
 // TODO: UX concern: This blocks content sometimes!
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
 @Composable
-fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel()) {
+fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel(), navController: NavHostController) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -63,7 +68,18 @@ fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel()) {
                         .clip(RoundedCornerShape(18.dp))
                         .background(NavigationBar.copy(alpha = 0.95F))
                         .align(Alignment.End)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    onClick = {
+                        isExpanded = false
+                        navController.navigate(
+                            MediaPageDestination(
+                                id = it,
+                                mediaTypeArg = MediaType.ANIME.rawValue
+                            )
+                        ) {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
         }
@@ -194,7 +210,8 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
 @Composable
 fun SearchList(
     viewModel: SearchViewModel = viewModel(),
-    modifier: Modifier
+    modifier: Modifier,
+    onClick: (Int?) -> Unit
 ) {
     val searchList = viewModel.uiState.searchList?.media
 
@@ -205,7 +222,10 @@ fun SearchList(
             contentPadding = PaddingValues(16.dp)
         ) {
             items(searchList) {
-                SearchItem(item = it)
+                SearchItem(
+                    item = it,
+                    onClick = onClick
+                )
             }
         }
     } else {
@@ -215,7 +235,7 @@ fun SearchList(
 }
 
 @Composable
-private fun SearchItem(item: SearchQuery.Medium?) {
+private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit) {
     Text(
         text = item?.title?.romaji ?:
         item?.title?.english ?:
@@ -224,7 +244,10 @@ private fun SearchItem(item: SearchQuery.Medium?) {
         fontSize = 12.sp,
         maxLines = 1,
         modifier = Modifier
-            .padding(11.dp),
+            .padding(11.dp)
+            .clickable {
+                onClick(item?.id)
+            },
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Medium
     )

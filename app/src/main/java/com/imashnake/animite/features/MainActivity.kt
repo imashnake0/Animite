@@ -67,7 +67,8 @@ class MainActivity : ComponentActivity() {
                         .align(Alignment.BottomEnd)
                         .padding(bottom = 80.dp, start = 24.dp, end = 24.dp)
                         .navigationBarsPadding()
-                        .padding(bottom = 24.dp)
+                        .padding(bottom = 24.dp),
+                    navController = navController
                 )
 
                 AnimatedVisibility(
