@@ -53,8 +53,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
             fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Clip,
-            modifier = Modifier
-                .padding(14.dp),
+            modifier = Modifier.padding(14.dp),
             fontFamily = manropeFamily,
             fontWeight = FontWeight.Medium
         )

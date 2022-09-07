@@ -72,14 +72,13 @@ fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel(), navC
                         .fillMaxWidth(),
                     onClick = {
                         isExpanded = false
+                        // TODO: Double clicking makes the navigation happen twice.
                         navController.navigate(
                             MediaPageDestination(
                                 id = it,
                                 mediaTypeArg = MediaType.ANIME.rawValue
                             )
-                        ) {
-                            launchSingleTop = true
-                        }
+                        )
                     }
                 )
             }
