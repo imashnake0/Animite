@@ -2,11 +2,11 @@
 
 # Accompanist
 # https://github.com/google/accompanist/releases.
-accompanist = "0.24.11-rc"
+accompanist = "0.26.1-alpha"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "7.2.1"
+agp = "7.2.2"
 
 # AndroidX
 # https://androidx.tech.
@@ -27,13 +27,14 @@ coil = "2.0.0-rc01"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.3.0-alpha01"
-composeCompiler = "1.2.0"
-composeFoundation = "1.2.0-beta01"
-composeMaterial = "1.2.0-beta01"
-composeMaterial3 = "1.0.0-alpha11"
-composeRuntime = "1.2.0-beta01"
-composeUi = "1.2.0-beta01"
+composeAnimation = "1.3.0-alpha03"
+composeCompiler = "1.3.0"
+composeDestinations = "1.6.15-beta"
+composeFoundation = "1.2.1"
+composeMaterial = "1.2.1"
+composeMaterial3 = "1.0.0-alpha16"
+composeRuntime = "1.2.1"
+composeUi = "1.2.1"
 
 # Dagger
 # https://github.com/google/dagger/releases.
@@ -45,9 +46,13 @@ hilt = "1.0.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "1.7.0"
+kotlin = "1.7.10"
 coroutines = "1.6.0"
 datetime = "0.3.3"
+
+# KSP
+# https://github.com/google/ksp/releases.
+ksp = "1.7.10-1.0.6"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
@@ -58,6 +63,7 @@ agp = { id = "com.android.application", version.ref = "agp" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 [libraries]
 androidx-activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
@@ -67,6 +73,8 @@ androidx-navigationCompose = { group = "androidx.navigation", name = "navigation
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
+compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "composeDestinations" }
+compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "composeDestinations" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
@@ -83,4 +91,5 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 accompanist-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist"}
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }

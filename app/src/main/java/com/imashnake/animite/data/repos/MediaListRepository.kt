@@ -7,9 +7,6 @@ import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
-/**
- * TODO: Kdoc.
- */
 class MediaListRepository @Inject constructor(
     private val mediaListNetworkSource: MediaListNetworkSource
 ) {
