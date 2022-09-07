@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
@@ -177,7 +178,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                 backgroundColor = NavigationBar,
                 cursorColor = Text,
                 unfocusedIndicatorColor = NavigationBar,
-                focusedIndicatorColor = Text
+                focusedIndicatorColor = Color.Transparent
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             trailingIcon = {
