@@ -245,6 +245,7 @@ private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit) {
         maxLines = 1,
         modifier = Modifier
             .padding(11.dp)
+            .fillMaxSize()
             .clickable {
                 onClick(item?.id)
             },
