@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,6 +21,7 @@ import com.imashnake.animite.features.destinations.HomeDestination
 import com.imashnake.animite.features.destinations.ProfileDestination
 import com.imashnake.animite.features.destinations.RSlashDestination
 import com.imashnake.animite.features.startAppDestination
+import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.features.theme.NavigationItem
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
@@ -40,8 +38,8 @@ fun NavigationBar(
     itemModifier: Modifier
 ) {
     // TODO: The way padding is handled is still a bit hacky.
-    androidx.compose.material3.NavigationBar(
-        containerColor = com.imashnake.animite.features.theme.NavigationBar,
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
     ) {
         val currentDestination = navController.appCurrentDestinationAsState().value
@@ -66,9 +64,9 @@ fun NavigationBar(
                 icon = destination.icon,
 
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = com.imashnake.animite.features.theme.NavigationBar,
-                    unselectedIconColor = NavigationItem,
-                    indicatorColor = NavigationItem
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer
                 )
             )
         }
