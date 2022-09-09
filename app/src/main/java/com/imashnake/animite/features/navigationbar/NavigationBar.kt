@@ -21,8 +21,6 @@ import com.imashnake.animite.features.destinations.HomeDestination
 import com.imashnake.animite.features.destinations.ProfileDestination
 import com.imashnake.animite.features.destinations.RSlashDestination
 import com.imashnake.animite.features.startAppDestination
-import com.imashnake.animite.features.theme.AnimiteTheme
-import com.imashnake.animite.features.theme.NavigationItem
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import com.imashnake.animite.R as Res

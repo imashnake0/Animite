@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,10 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.theme.Backdrop
-import com.imashnake.animite.features.theme.Text
-import com.imashnake.animite.features.theme.backdropShape
-import com.imashnake.animite.features.theme.manropeFamily
+import com.imashnake.animite.features.theme.*
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -48,94 +46,96 @@ fun Home(
 
     when {
         trendingNowMediaList != null && popularThisSeasonMediaList != null -> {
-            Box(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .navigationBarsPadding()
-            ) {
-                Box {
-                    Image(
-                        painter = painterResource(id = Res.drawable.background),
-                        contentDescription = "Background",
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Text(
-                        text = "おかえり",
-                        color = Text,
-                        fontSize = 57.sp,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(start = 24.dp, bottom = (24 + 18).dp)
-                    )
-                }
-
-                // TODO: Use `verticalArrangement` instead of the `Spacer`s.
-                Column {
-                    Spacer(
-                        modifier = Modifier.size((LocalConfiguration.current.screenWidthDp - 18).dp)
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .clip(backdropShape)
-                            .background(Backdrop)
-                    ) {
-                        Spacer(modifier = Modifier.size(24.dp))
+            AnimiteTheme {
+                Box(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .navigationBarsPadding()
+                ) {
+                    Box {
+                        Image(
+                            painter = painterResource(id = Res.drawable.background),
+                            contentDescription = "Background",
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
                         Text(
-                            text = "Trending Now",
+                            text = "おかえり",
                             color = Text,
-                            fontSize = 14.sp,
-                            fontFamily = manropeFamily,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(start = 24.dp)
+                            fontSize = 57.sp,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(start = 24.dp, bottom = (24 + 18).dp)
+                        )
+                    }
+
+                    // TODO: Use `verticalArrangement` instead of the `Spacer`s.
+                    Column {
+                        Spacer(
+                            modifier = Modifier.size((LocalConfiguration.current.screenWidthDp - 18).dp)
                         )
 
-                        Spacer(modifier = Modifier.size(12.dp))
+                        Column(
+                            modifier = Modifier
+                                .clip(backdropShape)
+                                .background(MaterialTheme.colorScheme.background)
+                        ) {
+                            Spacer(modifier = Modifier.size(24.dp))
 
-                        MediaSmallRow(
-                            mediaList = trendingNowMediaList,
-                            onItemClick = { itemId ->
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        id = itemId,
-                                        mediaTypeArg = homeMediaType.rawValue
-                                    )
-                                ) {
-                                    launchSingleTop = true
+                            Text(
+                                text = "Trending Now",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontFamily = manropeFamily,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(start = 24.dp)
+                            )
+
+                            Spacer(modifier = Modifier.size(12.dp))
+
+                            MediaSmallRow(
+                                mediaList = trendingNowMediaList,
+                                onItemClick = { itemId ->
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            id = itemId,
+                                            mediaTypeArg = homeMediaType.rawValue
+                                        )
+                                    ) {
+                                        launchSingleTop = true
+                                    }
                                 }
-                            }
-                        )
+                            )
 
-                        Spacer(modifier = Modifier.size(24.dp))
+                            Spacer(modifier = Modifier.size(24.dp))
 
-                        Text(
-                            text = "Popular This Season",
-                            color = Text,
-                            fontSize = 14.sp,
-                            fontFamily = manropeFamily,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(start = 24.dp)
-                        )
+                            Text(
+                                text = "Popular This Season",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontFamily = manropeFamily,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(start = 24.dp)
+                            )
 
-                        Spacer(modifier = Modifier.size(12.dp))
+                            Spacer(modifier = Modifier.size(12.dp))
 
-                        MediaSmallRow(
-                            mediaList = popularThisSeasonMediaList,
-                            onItemClick = { itemId ->
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        id = itemId,
-                                        mediaTypeArg = homeMediaType.rawValue
-                                    )
-                                ) {
-                                    launchSingleTop = true
+                            MediaSmallRow(
+                                mediaList = popularThisSeasonMediaList,
+                                onItemClick = { itemId ->
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            id = itemId,
+                                            mediaTypeArg = homeMediaType.rawValue
+                                        )
+                                    ) {
+                                        launchSingleTop = true
+                                    }
                                 }
-                            }
-                        )
+                            )
 
-                        Spacer(modifier = Modifier.size(104.dp))
+                            Spacer(modifier = Modifier.size(104.dp))
+                        }
                     }
                 }
             }
