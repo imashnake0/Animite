@@ -50,6 +50,7 @@ fun MediaPage(
         Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
     ) {
         // TODO: How do I align this?
         if (!media.bannerImage.isNullOrEmpty()) {
