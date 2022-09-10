@@ -42,8 +42,6 @@ import androidx.navigation.NavHostController
 import com.imashnake.animite.R
 import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.theme.NavigationBar
-import com.imashnake.animite.features.theme.Text
 import com.imashnake.animite.features.theme.manropeFamily
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.navigation.navigate
