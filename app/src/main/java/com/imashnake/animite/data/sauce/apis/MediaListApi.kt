@@ -5,9 +5,6 @@ import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 
-/**
- * TODO: Kdoc.
- */
 interface MediaListApi {
     suspend fun fetchMediaList(
         type: MediaType,

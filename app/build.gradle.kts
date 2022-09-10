@@ -1,4 +1,4 @@
-@file:Suppress("SpellCheckingInspection")
+@file:Suppress("SpellCheckingInspection", "UnstableApiUsage")
 
 // TODO: Remove this after https://youtrack.jetbrains.com/issue/KTIJ-19369 is resolved.
 @Suppress("DSL_SCOPE_VIOLATION")
@@ -7,16 +7,17 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp) version libs.versions.ksp.get()
     kotlin("kapt")
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.imashnake.animite"
         minSdk = 26
-        targetSdk = 32
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
@@ -53,6 +54,14 @@ android {
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    applicationVariants.all {
+        kotlin.sourceSets {
+            getByName(name) {
+                kotlin.srcDir("build/generated/ksp/$name/kotlin")
+            }
         }
     }
 }
@@ -100,6 +109,11 @@ dependencies {
 
     // Accompanist
     implementation(libs.accompanist.systemUiController)
+    implementation(libs.accompanist.placeholder)
+
+    // Compose Destinations
+    implementation(libs.compose.destinations)
+    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 

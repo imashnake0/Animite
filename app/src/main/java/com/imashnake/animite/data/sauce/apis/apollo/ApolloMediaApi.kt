@@ -8,22 +8,19 @@ import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
 /**
- * TODO: Kdoc.
- *
  * Example:
  *
  * **Anime:** Sono Bisque Doll wa Koi wo Suru;
  * **ID:** 132405.
  */
 class ApolloMediaApi @Inject constructor() : MediaApi {
-    override suspend fun fetchMedia(id: Int, mediaType: MediaType): Media? {
+    override suspend fun fetchMedia(id: Int?, mediaType: MediaType): Media? {
         return client
             .query(
                 MediaQuery(
                     id = Optional.presentIfNotNull(id),
                     type = Optional.presentIfNotNull(mediaType)
                 )
-            )
-            .execute().data?.media
+            ).execute().data?.media
     }
 }

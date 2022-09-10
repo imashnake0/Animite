@@ -1,4 +1,7 @@
-![Figma mock-up of the Home screen.](resources/Home_Pixel_5.png)
+<p float="left">
+  <img src="resources/Home_Pixel_5.png" width="49%" />
+  <img src="resources/Media_Page_Pixel_5.png" width="49%" />
+</p>
 
 # Animite 🚧
 <a href="https://www.reddit.com/r/Animite/">
@@ -10,22 +13,22 @@
 <a href="https://discord.gg/G8wF7pjpya">
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="resources/discord-assistive-chip-dark.svg">
-        <img alt="Reddit chip." src="resources/discord-assistive-chip-light.svg">
+        <img alt="Discord chip." src="resources/discord-assistive-chip-light.svg">
     </picture>
 </a>
 
 [Animite](https://github.com/users/imashnake0/projects/1) is an unofficial client for [AniList](https://anilist.co/) (and potentially [MAL](https://myanimelist.net/)).
 
 ## Stack
-The app makes use of the *latest libraries and APIs* so be prepared to see `α`s and `β`s all over the place:
-- **Architecture:** [**MVVM**](https://developer.android.com/topic/architecture).
+The app tries to make use of the latest libraries and APIs:
+- **Architecture:** [MVVM](https://developer.android.com/topic/architecture).
 - **Networking:** [Apollo Kotlin](https://github.com/apollographql/apollo-kotlin), [Kotlin Coroutines](https://github.com/Kotlin/kotlinx.coroutines), and [COIL](https://coil-kt.github.io/coil/).
 - **UI/UX:** Made purely with [Jetpack Compose](https://developer.android.com/jetpack/compose); assets using [Figma](https://www.figma.com/).
 - **Dependency Injection:** [Hilt](https://developer.android.com/training/dependency-injection/hilt-android).
 - **Gradle:** [Version catalogs](https://docs.gradle.org/current/userguide/platforms.html) and [refreshVersions](https://github.com/jmfayard/refreshVersions).
 
 ### Architecture
-At the moment, the app uses Google's choice for app architecture, MVVM, since I don't know any better. The app has the following structure:
+At the moment, the app uses [Google's choice for app architecture](https://developer.android.com/topic/architecture), MVVM, since I don't know any better. The app has the following structure:
 <details>
     <summary> 
         <b> <code> tree </code> </b> 
@@ -86,56 +89,6 @@ At the moment, the app uses Google's choice for app architecture, MVVM, since I 
         </pre>
     </p>
 </details>
-
-#### Data Layer
-[comment]: # (`tree -I '*.md'`)
-```
-data
-├── repos
-│   ├── MediaListRepository.kt
-│   ├── MediaRepository.kt
-│   └── SearchRepository.kt
-└── sauce
-    ├── apis
-    │   ├── apollo
-    │   │   ├── Apollo.kt
-    │   │   ├── ApolloMediaApi.kt
-    │   │   ├── ApolloMediaListApi.kt
-    │   │   └── ApolloSearchApi.kt
-    │   ├── MediaApi.kt
-    │   ├── MediaListApi.kt
-    │   └── SearchApi.kt
-    ├── MediaListNetworkSource.kt
-    ├── MediaNetworkSource.kt
-    └── SearchNetworkSource.kt
-```
-
-#### UI Layer
-[comment]: # (`tree -I '*.md'`)
-```
-ui
-├── MainActivity.kt
-├── elements
-│   ├── home
-│   │   ├── Home.kt
-│   │   ├── MediaSmall.kt
-│   │   ├── MediaSmallRow.kt
-│   │   └── SearchBar.kt
-│   ├── profile
-│   │   └── Profile.kt
-│   └── rslash
-│       └── RSlash.kt
-├── state
-│   ├── HomeUiState.kt
-│   ├── HomeViewModel.kt
-│   ├── SearchUiState.kt
-│   └── SearchViewModel.kt
-└── theme
-    ├── Color.kt
-    ├── Shape.kt
-    ├── Theme.kt
-    └── Type.kt
-```
 
 ## [License](https://github.com/imashnake0/Animite/blob/15eaac4a80c1e6eef3a4d6c861cab05670fb174b/LICENSE.txt)
 ```

@@ -9,9 +9,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-/**
- * TODO: Kdoc.
- */
 class MediaListNetworkSource @Inject constructor(
     private val mediaListApi: MediaListApi,
     private val dispatcher: CoroutineDispatcher

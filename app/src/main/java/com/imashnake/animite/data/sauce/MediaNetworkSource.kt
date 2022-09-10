@@ -7,14 +7,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-/**
- * TODO: Kdoc.
- */
 class MediaNetworkSource @Inject constructor(
     private val mediaApi: MediaApi,
     private val dispatcher: CoroutineDispatcher
 ) {
-    suspend fun fetchMedia(id: Int, mediaType: MediaType): Media? =
+    suspend fun fetchMedia(id: Int?, mediaType: MediaType): Media? =
         withContext(dispatcher) {
             mediaApi.fetchMedia(id, mediaType)
         }
