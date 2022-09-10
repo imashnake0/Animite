@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,22 +59,14 @@ fun Home(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Box(
-                            Modifier
+                        Text(
+                            text = "おかえり",
+                            color = Text,
+                            fontSize = 57.sp,
+                            modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .background(
-                                    color = MaterialTheme.colorScheme.secondaryContainer.copy(0.75f),
-                                    shape = RoundedCornerShape(topEnd = 30.dp)
-                                )
-                                .padding(end = 24.dp, top = 24.dp)
-                        ) {
-                            Text(
-                                text = "おかえり",
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                fontSize = 57.sp,
-                                modifier = Modifier.padding(start = 24.dp, bottom = (24 + 18).dp)
-                            )
-                        }
+                                .padding(start = 24.dp, bottom = (24 + 18).dp)
+                        )
                     }
 
                     // TODO: Use `verticalArrangement` instead of the `Spacer`s.
