@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,9 +61,25 @@ fun Home(
                             modifier = Modifier.fillMaxWidth()
                         )
 
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(
+                                            Color.Transparent,
+                                            MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                alpha = 0.5f
+                                            )
+                                        )
+                                    )
+                                )
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                        ) {  }
+
                         Text(
                             text = "おかえり",
-                            color = Text,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
                             fontSize = 57.sp,
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
