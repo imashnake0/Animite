@@ -17,10 +17,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -67,7 +64,7 @@ fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel(), navC
                     viewModel = hiltViewModel(),
                     modifier = Modifier
                         .clip(RoundedCornerShape(18.dp))
-                        .background(NavigationBar.copy(alpha = 0.95F))
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95F))
                         .align(Alignment.End)
                         .fillMaxWidth(),
                     onClick = {
@@ -85,7 +82,7 @@ fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel(), navC
         }
 
         Surface(
-            color = NavigationBar,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
             onClick = {
                 isExpanded = !isExpanded
                 viewModel.run {
@@ -121,7 +118,7 @@ fun CollapsedSearchBar() {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.search),
             contentDescription = "Search",
-            tint = Text
+            tint = MaterialTheme.colorScheme.primaryContainer
         )
     }
 }
@@ -134,7 +131,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
         Icon(
             imageVector = Icons.Rounded.KeyboardArrowRight,
             contentDescription = "Collapse",
-            tint = Text,
+            tint = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -154,7 +151,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
             placeholder = {
                 Text(
                     text = "Search",
-                    color = Text.copy(alpha = 0.5F),
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5F),
                     fontSize = 16.sp,
                     maxLines = 1,
                     fontFamily = manropeFamily,
@@ -168,15 +165,15 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                     keyboardController?.show()
                 },
             textStyle = TextStyle(
-                color = Text,
+                color = MaterialTheme.colorScheme.primaryContainer,
                 fontSize = 16.sp,
                 fontFamily = manropeFamily,
                 fontWeight = FontWeight.Medium
             ),
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = NavigationBar,
-                cursorColor = Text,
-                unfocusedIndicatorColor = NavigationBar,
+                backgroundColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                cursorColor = MaterialTheme.colorScheme.primaryContainer,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 focusedIndicatorColor = Color.Transparent
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -192,9 +189,8 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
                         contentDescription = "Close",
-                        tint = Text,
-                        modifier = Modifier
-                            .padding(16.dp)
+                        tint = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
             }
@@ -240,7 +236,7 @@ private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit) {
         text = item?.title?.romaji ?:
         item?.title?.english ?:
         item?.title?.native ?: "",
-        color = Text,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
         fontSize = 12.sp,
         maxLines = 1,
         modifier = Modifier
