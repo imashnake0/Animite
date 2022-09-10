@@ -36,19 +36,14 @@ fun NavigationBar(
     itemModifier: Modifier
 ) {
     // TODO: The way padding is handled is still a bit hacky.
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier
-    ) {
+    NavigationBar(modifier = modifier) {
         val currentDestination = navController.appCurrentDestinationAsState().value
             ?: NavGraphs.root.startAppDestination
 
         NavigationBarPaths.values().forEach { destination ->
             NavigationBarItem(
                 modifier = itemModifier,
-
                 selected = currentDestination == destination.direction,
-
                 onClick = {
                     navController.navigate(destination.direction) {
                         popUpTo(navController.graph.findStartDestination().id) {
@@ -58,14 +53,7 @@ fun NavigationBar(
                         restoreState = true
                     }
                 },
-
-                icon = destination.icon,
-
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer
-                )
+                icon = destination.icon
             )
         }
     }

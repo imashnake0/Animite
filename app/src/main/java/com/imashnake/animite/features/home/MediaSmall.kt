@@ -6,7 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults.cardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,8 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.imashnake.animite.features.theme.Card
-import com.imashnake.animite.features.theme.Text
 import com.imashnake.animite.features.theme.manropeFamily
 import com.imashnake.animite.features.theme.mediaSmallShape
 
@@ -36,8 +35,10 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
                 enabled = true,
                 onClick = onClick
             ),
-        colors = cardColors(containerColor = Card),
-        shape = mediaSmallShape
+        shape = mediaSmallShape,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        )
     ) {
         AsyncImage(
             model = image,
@@ -49,7 +50,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
         )
         Text(
             text = anime ?: "",
-            color = Text,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Clip,
