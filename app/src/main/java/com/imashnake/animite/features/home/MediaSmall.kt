@@ -22,9 +22,6 @@ import coil.compose.AsyncImage
 import com.imashnake.animite.features.theme.manropeFamily
 import com.imashnake.animite.features.theme.mediaSmallShape
 
-/**
- * TODO: Extract dimens to `ui.theme`.
- */
 @Composable
 fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
     Card(

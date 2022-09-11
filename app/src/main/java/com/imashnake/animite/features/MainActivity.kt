@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -59,7 +60,7 @@ class MainActivity : ComponentActivity() {
                         navGraph = NavGraphs.root,
                         modifier = Modifier
                             .align(Alignment.TopCenter)
-                            .background(Backdrop),
+                            .background(MaterialTheme.colorScheme.background),
                         navController = navController,
                         engine = navHostEngine
                     )
