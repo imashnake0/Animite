@@ -75,10 +75,11 @@ fun MediaPage(
                 Image(
                     painter = painterResource(id = R.drawable.background),
                     contentDescription = "Background",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(168.dp),
-                    contentScale = ContentScale.Crop
+                    alignment = Alignment.TopCenter
                 )
             }
 

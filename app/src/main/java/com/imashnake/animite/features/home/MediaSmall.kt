@@ -24,7 +24,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .wrapContentHeight()
-            .width(130.dp)
+            .width(115.dp)
             .clickable(
                 enabled = true,
                 onClick = onClick
@@ -39,7 +39,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
             contentDescription = anime,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(223.dp)
+                .height(198.dp)
                 .clip(mediaSmallShape)
         )
         Text(
