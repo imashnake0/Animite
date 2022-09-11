@@ -13,13 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.imashnake.animite.features.theme.manropeFamily
 import com.imashnake.animite.features.theme.mediaSmallShape
 
 @Composable
@@ -27,7 +24,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .wrapContentHeight()
-            .width(115.dp)
+            .width(130.dp)
             .clickable(
                 enabled = true,
                 onClick = onClick
@@ -42,18 +39,16 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
             contentDescription = anime,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(198.dp)
+                .height(223.dp)
                 .clip(mediaSmallShape)
         )
         Text(
             text = anime ?: "",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Clip,
-            modifier = Modifier.padding(14.dp),
-            fontFamily = manropeFamily,
-            fontWeight = FontWeight.Medium
+            modifier = Modifier.padding(14.dp)
         )
     }
 }

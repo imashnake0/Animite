@@ -18,12 +18,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.theme.*
+import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.features.theme.backdropShape
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -80,7 +79,7 @@ fun Home(
                         Text(
                             text = "おかえり",
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            fontSize = 57.sp,
+                            style = MaterialTheme.typography.displayLarge,
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
                                 .padding(start = 24.dp, bottom = (24 + 18).dp)
@@ -103,9 +102,7 @@ fun Home(
                             Text(
                                 text = "Trending Now",
                                 color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontFamily = manropeFamily,
-                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.headlineMedium,
                                 modifier = Modifier.padding(start = 24.dp)
                             )
 
@@ -130,9 +127,7 @@ fun Home(
                             Text(
                                 text = "Popular This Season",
                                 color = MaterialTheme.colorScheme.onBackground,
-                                fontSize = 14.sp,
-                                fontFamily = manropeFamily,
-                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.headlineMedium,
                                 modifier = Modifier.padding(start = 24.dp)
                             )
 
@@ -163,10 +158,10 @@ fun Home(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Backdrop)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 CircularProgressIndicator(
-                    color = Text,
+                    color = MaterialTheme.colorScheme.onBackground,
                     strokeWidth = 8.dp
                 )
             }

@@ -12,6 +12,7 @@ fun AnimiteTheme(content: @Composable () -> Unit) {
 
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = AnimiteTypography,
         content = content
     )
 }
