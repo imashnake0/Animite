@@ -20,7 +20,7 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId:
     ) {
         items(mediaList) { media ->
             MediaSmall(
-                image = media?.coverImage?.large,
+                image = media?.coverImage?.extraLarge,
                 anime = media?.title?.romaji ?:
                 media?.title?.english ?:
                 media?.title?.native,
