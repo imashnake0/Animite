@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     SearchBar(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(bottom = 80.dp, start = 24.dp, end = 24.dp)
+                            .padding(bottom = 65.dp, start = 24.dp, end = 24.dp)
                             .navigationBarsPadding()
                             .padding(bottom = 24.dp),
                         navController = navController
@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .height(
-                                80.dp + WindowInsets
+                                65.dp + WindowInsets
                                     .navigationBars
                                     .asPaddingValues()
                                     .calculateBottomPadding()
@@ -91,14 +91,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavigationBar(
                             navController = navController,
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .height(
-                                    80.dp + WindowInsets
-                                        .navigationBars
-                                        .asPaddingValues()
-                                        .calculateBottomPadding()
-                                ),
+                            modifier = Modifier.align(Alignment.BottomCenter),
                             itemModifier = Modifier.navigationBarsPadding()
                         )
                     }

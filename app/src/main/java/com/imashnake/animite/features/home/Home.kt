@@ -147,7 +147,7 @@ fun Home(
                                 }
                             )
 
-                            Spacer(modifier = Modifier.size(104.dp))
+                            Spacer(modifier = Modifier.size((65 + 24).dp))
                         }
                     }
                 }
