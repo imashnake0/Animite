@@ -57,7 +57,7 @@ fun Home(
                     Box {
                         Image(
                             painter = painterResource(id = Res.drawable.background),
-                            contentDescription = "Background",
+                            contentDescription = null,
                             modifier = Modifier.fillMaxWidth()
                         )
 
