@@ -89,18 +89,7 @@ fun MediaPage(
                     .clip(backdropShape)
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                Column(
-                    Modifier.background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color(media.color?.toHexColor() ?: 0).copy(
-                                    alpha = 0.15f
-                                ),
-                                Color.Transparent
-                            )
-                        )
-                    )
-                ) {
+                Column {
                     Row {
                         Spacer(modifier = Modifier.width((115 + 24).dp))
 
