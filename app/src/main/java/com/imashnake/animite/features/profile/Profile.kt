@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.annotation.Destination
 
 @ExperimentalMaterial3Api
@@ -19,17 +18,15 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Destination(style = ProfileTransitions::class)
 @Composable
 fun Profile() {
-    AnimiteTheme {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.onBackground,
-                strokeWidth = 8.dp
-            )
-        }
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        CircularProgressIndicator(
+            color = MaterialTheme.colorScheme.onBackground,
+            strokeWidth = 8.dp
+        )
     }
 }

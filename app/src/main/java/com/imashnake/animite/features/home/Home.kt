@@ -48,7 +48,6 @@ fun Home(
 
     when {
         trendingNowMediaList != null && popularThisSeasonMediaList != null -> {
-            AnimiteTheme {
                 Box(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
@@ -152,7 +151,6 @@ fun Home(
                         }
                     }
                 }
-            }
         }
         else -> {
             Box(

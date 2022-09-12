@@ -27,7 +27,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.R
 import com.imashnake.animite.dev.ext.toHexColor
-import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.features.theme.backdropShape
 import com.imashnake.animite.features.theme.mediaSmallShape
 import com.imashnake.animite.type.MediaType
@@ -47,205 +46,203 @@ fun MediaPage(
     val media = viewModel.uiState
 
     // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/)
-    AnimiteTheme {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .navigationBarsPadding()
-        ) {
-            if (!media.bannerImage.isNullOrEmpty()) {
-                Box {
-                    AsyncImage(
-                        model = media.bannerImage,
-                        contentDescription = "Banner Image",
-                        contentScale = ContentScale.FillHeight,
-                        modifier = Modifier.height(168.dp),
-                        alignment = Alignment.Center
-                    )
+    Box(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .navigationBarsPadding()
+    ) {
+        if (!media.bannerImage.isNullOrEmpty()) {
+            Box {
+                AsyncImage(
+                    model = media.bannerImage,
+                    contentDescription = "Banner Image",
+                    contentScale = ContentScale.FillHeight,
+                    modifier = Modifier.height(168.dp),
+                    alignment = Alignment.Center
+                )
 
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(168.dp),
-                        color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.2f)
-                    ) { }
-                }
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.background),
-                    contentDescription = "Background",
-                    contentScale = ContentScale.Crop,
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(168.dp),
-                    alignment = Alignment.TopCenter
-                )
+                    color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.2f)
+                ) { }
             }
-
-            Column(
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.background),
+                contentDescription = "Background",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(top = 150.dp)
-                    .clip(backdropShape)
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
-                Column {
-                    Row {
-                        Spacer(modifier = Modifier.width((115 + 24).dp))
+                    .fillMaxWidth()
+                    .height(168.dp),
+                alignment = Alignment.TopCenter
+            )
+        }
 
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 24.dp, top = 24.dp, end = 24.dp)
-                                .height(
-                                    (88 + WindowInsets.statusBars
-                                        .asPaddingValues()
-                                        .calculateTopPadding().value).dp
-                                )
-                                .fillMaxSize()
-                        ) {
-                            Text(
-                                text = media.title ?: "",
-                                color = MaterialTheme.colorScheme.onBackground,
-                                // Override MediaSmall's text.
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(top = 150.dp)
+                .clip(backdropShape)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            Column {
+                Row {
+                    Spacer(modifier = Modifier.width((115 + 24).dp))
 
-                            Spacer(Modifier.height(10.dp))
-
-                            Text(
-                                // TODO: Some styles are not applied.
-                                text = Html
-                                    .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
-                                    .toString(),
-                                color = MaterialTheme.colorScheme.onBackground.copy(
-                                    alpha = 0.6f
-                                ),
-                                style = MaterialTheme.typography.bodyMedium,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceAround,
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 24.dp, end = 24.dp)
+                            .padding(start = 24.dp, top = 24.dp, end = 24.dp)
+                            .height(
+                                (88 + WindowInsets.statusBars
+                                    .asPaddingValues()
+                                    .calculateTopPadding().value).dp
+                            )
+                            .fillMaxSize()
                     ) {
-                        Stat(label = "SCORE", score = media.averageScore ?: 0) {
-                            "$it%"
-                        }
-
-                        media.ranks.forEach { stat ->
-                            Stat(label = stat.first, score = stat.second) {
-                                "#$it"
-                            }
-                        }
-                    }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    // TODO: Monet where?
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(horizontal = 24.dp)
-                    ) {
-                        if (!media.genres.isNullOrEmpty()) {
-                            items(media.genres) { genre ->
-                                Genre(
-                                    genre = genre,
-                                    color = Color(media.color?.toHexColor() ?: 0xFF152232)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.size(24.dp))
-
-                if (!media.characters.isNullOrEmpty()) {
-                    Text(
-                        text = "Characters",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(start = 24.dp)
-                    )
-
-                    Spacer(modifier = Modifier.size(12.dp))
-
-                    // TODO: Make characters clickable.
-                    CharacterRow(characterList = media.characters) {
-                        Log.d("Character", it.second ?: "null")
-                    }
-                }
-
-                Spacer(modifier = Modifier.size(24.dp))
-
-                if (!media.trailer.toList().any { it == null }) {
-                    Text(
-                        text = "Trailer",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.headlineMedium,
-                        modifier = Modifier.padding(start = 24.dp)
-                    )
-
-                    Spacer(modifier = Modifier.size(12.dp))
-
-                    val context = LocalContext.current
-                    Box(modifier = Modifier
-                        .wrapContentSize()
-                        .clickable {
-                            val appIntent =
-                                Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
-                            context.startActivity(appIntent)
-                        }) {
-                        AsyncImage(
-                            model = media.trailer.second,
-                            contentDescription = "Thumbnail",
-                            contentScale = ContentScale.FillWidth,
-                            modifier = Modifier
-                                .padding(horizontal = 24.dp)
-                                .fillMaxWidth()
-                                .aspectRatio(1.778f)
-                                .clip(RoundedCornerShape(30.dp)),
-                            alignment = Alignment.Center
+                        Text(
+                            text = media.title ?: "",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            // Override MediaSmall's text.
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                         )
 
-                        Image(
-                            painter = painterResource(id = R.drawable.youtube),
-                            contentDescription = "Watch on Youtube",
-                            modifier = Modifier.align(Alignment.Center)
+                        Spacer(Modifier.height(10.dp))
+
+                        Text(
+                            // TODO: Some styles are not applied.
+                            text = Html
+                                .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
+                                .toString(),
+                            color = MaterialTheme.colorScheme.onBackground.copy(
+                                alpha = 0.6f
+                            ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.size(24.dp))
-            }
+                Spacer(Modifier.height(24.dp))
 
-            Card(
-                modifier = Modifier
-                    .padding(top = 24.dp, start = 24.dp, end = 24.dp)
-                    .statusBarsPadding()
-                    .wrapContentHeight()
-                    .width(115.dp),
-                shape = mediaSmallShape
-            ) {
-                AsyncImage(
-                    model = media.coverImage,
-                    contentDescription = media.title,
-                    contentScale = ContentScale.Crop,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
-                        .height(238.dp)
-                        .clip(mediaSmallShape)
-                )
+                        .fillMaxWidth()
+                        .padding(start = 24.dp, end = 24.dp)
+                ) {
+                    Stat(label = "SCORE", score = media.averageScore ?: 0) {
+                        "$it%"
+                    }
+
+                    media.ranks.forEach { stat ->
+                        Stat(label = stat.first, score = stat.second) {
+                            "#$it"
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(24.dp))
+
+                // TODO: Monet where?
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(horizontal = 24.dp)
+                ) {
+                    if (!media.genres.isNullOrEmpty()) {
+                        items(media.genres) { genre ->
+                            Genre(
+                                genre = genre,
+                                color = Color(media.color?.toHexColor() ?: 0xFF152232)
+                            )
+                        }
+                    }
+                }
             }
+
+            Spacer(modifier = Modifier.size(24.dp))
+
+            if (!media.characters.isNullOrEmpty()) {
+                Text(
+                    text = "Characters",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(start = 24.dp)
+                )
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                // TODO: Make characters clickable.
+                CharacterRow(characterList = media.characters) {
+                    Log.d("Character", it.second ?: "null")
+                }
+            }
+
+            Spacer(modifier = Modifier.size(24.dp))
+
+            if (!media.trailer.toList().any { it == null }) {
+                Text(
+                    text = "Trailer",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(start = 24.dp)
+                )
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                val context = LocalContext.current
+                Box(modifier = Modifier
+                    .wrapContentSize()
+                    .clickable {
+                        val appIntent =
+                            Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
+                        context.startActivity(appIntent)
+                    }) {
+                    AsyncImage(
+                        model = media.trailer.second,
+                        contentDescription = "Thumbnail",
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(1.778f)
+                            .clip(RoundedCornerShape(30.dp)),
+                        alignment = Alignment.Center
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.youtube),
+                        contentDescription = "Watch on Youtube",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.size(24.dp))
+        }
+
+        Card(
+            modifier = Modifier
+                .padding(top = 24.dp, start = 24.dp, end = 24.dp)
+                .statusBarsPadding()
+                .wrapContentHeight()
+                .width(115.dp),
+            shape = mediaSmallShape
+        ) {
+            AsyncImage(
+                model = media.coverImage,
+                contentDescription = media.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(238.dp)
+                    .clip(mediaSmallShape)
+            )
         }
     }
 }
