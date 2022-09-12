@@ -19,6 +19,7 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.imashnake.animite.dev.ext.bottomNavigationBarSize
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.features.searchbar.SearchBar
@@ -68,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     SearchBar(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(bottom = 65.dp, start = 24.dp, end = 24.dp)
+                            .padding(bottom = bottomNavigationBarSize, start = 24.dp, end = 24.dp)
                             .navigationBarsPadding()
                             .padding(bottom = 24.dp),
                         navController = navController
@@ -81,7 +82,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .height(
-                                65.dp + WindowInsets
+                                bottomNavigationBarSize + WindowInsets
                                     .navigationBars
                                     .asPaddingValues()
                                     .calculateBottomPadding()
