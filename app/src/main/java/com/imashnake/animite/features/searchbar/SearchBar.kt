@@ -80,7 +80,7 @@ fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel(), navC
         }
 
         Surface(
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.primary,
             onClick = {
                 isExpanded = !isExpanded
                 viewModel.run {
@@ -116,7 +116,7 @@ fun CollapsedSearchBar() {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.search),
             contentDescription = "Search",
-            tint = MaterialTheme.colorScheme.primaryContainer
+            tint = MaterialTheme.colorScheme.onPrimary
         )
     }
 }
@@ -129,7 +129,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
         Icon(
             imageVector = Icons.Rounded.KeyboardArrowRight,
             contentDescription = "Collapse",
-            tint = MaterialTheme.colorScheme.primaryContainer,
+            tint = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(16.dp)
         )
 
@@ -149,7 +149,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
             placeholder = {
                 Text(
                     text = "Search",
-                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5F),
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5F),
                     fontSize = 16.sp,
                     maxLines = 1,
                     fontFamily = manropeFamily,
@@ -163,15 +163,15 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                     keyboardController?.show()
                 },
             textStyle = TextStyle(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 16.sp,
                 fontFamily = manropeFamily,
                 fontWeight = FontWeight.Medium
             ),
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                cursorColor = MaterialTheme.colorScheme.primaryContainer,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                backgroundColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
                 focusedIndicatorColor = Color.Transparent
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -187,7 +187,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
                         contentDescription = "Close",
-                        tint = MaterialTheme.colorScheme.primaryContainer,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -234,7 +234,7 @@ private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit) {
         text = item?.title?.romaji ?:
         item?.title?.english ?:
         item?.title?.native ?: "",
-        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        color = MaterialTheme.colorScheme.onBackground,
         fontSize = 12.sp,
         maxLines = 1,
         modifier = Modifier
