@@ -7,7 +7,8 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun AnimiteTheme(content: @Composable () -> Unit) {
-
+    // TODO: Create a colorScheme for < API 31:
+    //  https://developer.android.com/jetpack/compose/themes/material#m3-dynamic-color
     val colorScheme = dynamicDarkColorScheme(LocalContext.current)
 
     MaterialTheme(

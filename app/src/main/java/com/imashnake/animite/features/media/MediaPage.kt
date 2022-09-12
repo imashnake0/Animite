@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -28,7 +27,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.R
 import com.imashnake.animite.dev.ext.toHexColor
-import com.imashnake.animite.features.theme.*
+import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.features.theme.backdropShape
+import com.imashnake.animite.features.theme.mediaSmallShape
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 
