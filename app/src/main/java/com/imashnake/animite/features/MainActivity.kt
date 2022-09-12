@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     )
 
                     val bottomPadding: Dp by animateDpAsState(
-                        if (
+                        24.dp + if (
                             NavigationBarPaths.values().map { it.direction }.any {
                                 navController.appCurrentDestinationAsState().value == it
                             }
@@ -84,8 +84,7 @@ class MainActivity : ComponentActivity() {
                                 end = 24.dp,
                                 bottom = bottomPadding
                             )
-                            .navigationBarsPadding()
-                            .padding(bottom = 24.dp),
+                            .navigationBarsPadding(),
                         navController = navController
                     )
 
@@ -93,22 +92,11 @@ class MainActivity : ComponentActivity() {
                         visible = NavigationBarPaths.values().map { it.direction }.any {
                             navController.appCurrentDestinationAsState().value == it
                         },
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .height(
-                                bottomNavigationBarSize + WindowInsets
-                                    .navigationBars
-                                    .asPaddingValues()
-                                    .calculateBottomPadding()
-                            ),
+                        modifier = Modifier.align(Alignment.BottomCenter),
                         enter = slideInVertically { it },
                         exit = slideOutVertically { it }
                     ) {
-                        NavigationBar(
-                            navController = navController,
-                            modifier = Modifier.align(Alignment.BottomCenter),
-                            itemModifier = Modifier.navigationBarsPadding()
-                        )
+                        NavigationBar(navController = navController)
                     }
                 }
             }

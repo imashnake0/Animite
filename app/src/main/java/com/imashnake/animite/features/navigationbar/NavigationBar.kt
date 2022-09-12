@@ -1,8 +1,7 @@
 package com.imashnake.animite.features.navigationbar
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.*
@@ -15,6 +14,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.imashnake.animite.dev.ext.bottomNavigationBarSize
 import com.imashnake.animite.features.NavGraphs
 import com.imashnake.animite.features.appCurrentDestinationAsState
 import com.imashnake.animite.features.destinations.HomeDestination
@@ -31,18 +31,23 @@ import com.imashnake.animite.R as Res
 @ExperimentalMaterial3Api
 @Composable
 fun NavigationBar(
-    navController: NavController,
-    modifier: Modifier,
-    itemModifier: Modifier
+    navController: NavController
 ) {
     // TODO: The way padding is handled is still a bit hacky.
-    NavigationBar(modifier = modifier) {
+    NavigationBar(
+        Modifier.height(
+            bottomNavigationBarSize + WindowInsets
+                .navigationBars
+                .asPaddingValues()
+                .calculateBottomPadding()
+        )
+    ) {
         val currentDestination = navController.appCurrentDestinationAsState().value
             ?: NavGraphs.root.startAppDestination
 
         NavigationBarPaths.values().forEach { destination ->
             NavigationBarItem(
-                modifier = itemModifier,
+                modifier = Modifier.navigationBarsPadding(),
                 selected = currentDestination == destination.direction,
                 onClick = {
                     navController.navigate(destination.direction) {
