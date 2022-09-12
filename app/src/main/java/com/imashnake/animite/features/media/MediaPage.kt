@@ -45,8 +45,8 @@ fun MediaPage(
 
     val media = viewModel.uiState
 
+    // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/)
     AnimiteTheme {
-        // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/)
         Box(
             Modifier
                 .fillMaxSize()
@@ -112,28 +112,28 @@ fun MediaPage(
                                         .asPaddingValues()
                                         .calculateTopPadding().value).dp
                                 )
-                                .fillMaxWidth(),
+                                .fillMaxSize(),
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
                                 text = media.title ?: "",
-                                color = Text,
-                                fontSize = 14.sp,
-                                fontFamily = manropeFamily,
-                                fontWeight = FontWeight.Medium
+                                color = MaterialTheme.colorScheme.onBackground,
+                                // Override MediaSmall's text.
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                             )
-
-                            Spacer(Modifier.height(10.dp))
 
                             Text(
                                 // TODO: Some styles are not applied.
                                 text = Html
                                     .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
                                     .toString(),
-                                color = Text.copy(alpha = 0.5f),
-                                fontSize = 10.sp,
-                                fontFamily = manropeFamily,
-                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onBackground.copy(
+                                    alpha = 0.6f
+                                ),
+                                style = MaterialTheme.typography.bodyMedium,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
@@ -182,10 +182,8 @@ fun MediaPage(
                 if (!media.characters.isNullOrEmpty()) {
                     Text(
                         text = "Characters",
-                        color = Text,
-                        fontSize = 14.sp,
-                        fontFamily = manropeFamily,
-                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.padding(start = 24.dp)
                     )
 
@@ -202,10 +200,8 @@ fun MediaPage(
                 if (!media.trailer.toList().any { it == null }) {
                     Text(
                         text = "Trailer",
-                        color = Text,
-                        fontSize = 14.sp,
-                        fontFamily = manropeFamily,
-                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.headlineMedium,
                         modifier = Modifier.padding(start = 24.dp)
                     )
 
@@ -271,18 +267,14 @@ fun Stat(label: String, score: Int, format: (Int) -> String) {
     ) {
         Text(
             text = label,
-            color = Text,
-            fontSize = 10.sp,
-            fontFamily = manropeFamily,
-            fontWeight = FontWeight.Medium
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.labelSmall
         )
 
         Text(
             text = format(score),
-            color = Text,
-            fontSize = 24.sp,
-            fontFamily = manropeFamily,
-            fontWeight = FontWeight.Bold
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.displaySmall
         )
     }
 }
@@ -294,9 +286,8 @@ fun Genre(genre: String?, color: Color) {
         label = {
             Text(
                 text = genre?.lowercase() ?: "",
-                color = Text,
-                fontWeight = FontWeight.Medium,
-                letterSpacing = (1.5).sp,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(vertical = 10.dp)
             )
         },
@@ -338,12 +329,10 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
         Text(
             text = name ?: "",
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Clip,
-            modifier = Modifier.padding(14.dp),
-            fontFamily = manropeFamily,
-            fontWeight = FontWeight.Medium
+            modifier = Modifier.padding(14.dp)
         )
     }
 }

@@ -21,12 +21,18 @@ val manropeFamily = FontFamily(
     Font(R.font.manrope_extralight, FontWeight.ExtraLight)
 )
 
+// TODO: Label these!
 val AnimiteTypography = Typography(
     displayLarge = TextStyle(
         fontSize = 57.sp
     ),
+    displaySmall = TextStyle(
+        fontSize = 24.sp,
+        fontFamily = manropeFamily,
+        fontWeight = FontWeight.Bold
+    ),
     headlineMedium = TextStyle(
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.sp
@@ -38,12 +44,18 @@ val AnimiteTypography = Typography(
         letterSpacing = (0.7).sp
     ),
     bodyMedium = TextStyle(
-        fontSize = 10.sp,
+        fontSize = 14.sp,
         fontFamily = manropeFamily,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
+        lineHeight = 25.sp
     ),
     labelMedium = TextStyle(
         fontWeight = FontWeight.Medium,
-        letterSpacing = (1.5).sp,
-    )
+        letterSpacing = (1.3).sp
+    ),
+    labelSmall = TextStyle(
+        fontSize = 12.sp,
+        fontFamily = manropeFamily,
+        fontWeight = FontWeight.Medium
+    ),
 )
