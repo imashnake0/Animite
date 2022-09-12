@@ -70,8 +70,8 @@ class MainActivity : ComponentActivity() {
 
                     val searchBarBottomPadding: Dp by animateDpAsState(
                         targetValue = 24.dp + if (
-                            NavigationBarPaths.values().map { it.direction }.any {
-                                navController.appCurrentDestinationAsState().value == it
+                            NavigationBarPaths.values().any {
+                                it.direction == navController.appCurrentDestinationAsState().value
                             }
                         ) bottomNavigationBarSize else 0.dp
                     )
@@ -89,8 +89,8 @@ class MainActivity : ComponentActivity() {
                     )
 
                     AnimatedVisibility(
-                        visible = NavigationBarPaths.values().map { it.direction }.any {
-                            navController.appCurrentDestinationAsState().value == it
+                        visible = NavigationBarPaths.values().any {
+                            it.direction == navController.appCurrentDestinationAsState().value
                         },
                         modifier = Modifier.align(Alignment.BottomCenter),
                         enter = slideInVertically { it },
