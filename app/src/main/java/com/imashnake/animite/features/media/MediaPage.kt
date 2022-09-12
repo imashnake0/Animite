@@ -53,7 +53,6 @@ fun MediaPage(
                 .verticalScroll(rememberScrollState())
                 .navigationBarsPadding()
         ) {
-            // TODO: How do I align this?
             if (!media.bannerImage.isNullOrEmpty()) {
                 Box {
                     AsyncImage(
@@ -113,7 +112,8 @@ fun MediaPage(
                                         .asPaddingValues()
                                         .calculateTopPadding().value).dp
                                 )
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
                                 text = media.title ?: "",
@@ -134,26 +134,27 @@ fun MediaPage(
                                 fontSize = 10.sp,
                                 fontFamily = manropeFamily,
                                 fontWeight = FontWeight.Medium,
-                                maxLines = 3,
                                 overflow = TextOverflow.Ellipsis
                             )
+                        }
+                    }
 
-                            Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(24.dp))
 
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceAround,
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                Stat(label = "SCORE", score = media.averageScore ?: 0) {
-                                    "$it%"
-                                }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 24.dp, end = 24.dp)
+                    ) {
+                        Stat(label = "SCORE", score = media.averageScore ?: 0) {
+                            "$it%"
+                        }
 
-                                media.ranks.forEach { stat ->
-                                    Stat(label = stat.first, score = stat.second) {
-                                        "#$it"
-                                    }
-                                }
+                        media.ranks.forEach { stat ->
+                            Stat(label = stat.first, score = stat.second) {
+                                "#$it"
                             }
                         }
                     }
