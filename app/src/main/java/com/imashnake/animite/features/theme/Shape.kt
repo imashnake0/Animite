@@ -3,6 +3,7 @@ package com.imashnake.animite.features.theme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 
+// TODO: Put these in `AnimiteTheme`.
 // Cards
 val mediaSmallShape = RoundedCornerShape(18.dp)
 
