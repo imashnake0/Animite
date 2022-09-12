@@ -101,8 +101,7 @@ fun MediaPage(
                                         .asPaddingValues()
                                         .calculateTopPadding().value).dp
                                 )
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.SpaceBetween
+                                .fillMaxSize()
                         ) {
                             Text(
                                 text = media.title ?: "",
@@ -113,6 +112,8 @@ fun MediaPage(
                                     fontWeight = FontWeight.Bold
                                 )
                             )
+
+                            Spacer(Modifier.height(10.dp))
 
                             Text(
                                 // TODO: Some styles are not applied.
