@@ -10,8 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.features.theme.AnimiteTheme
-import com.imashnake.animite.features.theme.Backdrop
-import com.imashnake.animite.features.theme.Text
 import com.ramcosta.composedestinations.annotation.Destination
 
 // TODO: Add transitions as we did for `Profile`.
