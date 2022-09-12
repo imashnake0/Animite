@@ -50,15 +50,15 @@ class MainActivity : ComponentActivity() {
                     systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
                 }
 
-                Box(modifier = Modifier.fillMaxSize()) {
-                    val navController = rememberAnimatedNavController()
-                    val navHostEngine = rememberAnimatedNavHostEngine(
-                        rootDefaultAnimations = RootNavGraphDefaultAnimations(
-                            enterTransition = { fadeIn(animationSpec = tween(1000)) },
-                            exitTransition = { fadeOut(animationSpec = tween(300)) },
-                        )
+                val navController = rememberAnimatedNavController()
+                val navHostEngine = rememberAnimatedNavHostEngine(
+                    rootDefaultAnimations = RootNavGraphDefaultAnimations(
+                        enterTransition = { fadeIn(animationSpec = tween(1000)) },
+                        exitTransition = { fadeOut(animationSpec = tween(300)) },
                     )
+                )
 
+                Box(modifier = Modifier.fillMaxSize()) {
                     DestinationsNavHost(
                         navGraph = NavGraphs.root,
                         modifier = Modifier
@@ -68,8 +68,8 @@ class MainActivity : ComponentActivity() {
                         engine = navHostEngine
                     )
 
-                    val bottomPadding: Dp by animateDpAsState(
-                        24.dp + if (
+                    val searchBarBottomPadding: Dp by animateDpAsState(
+                        targetValue = 24.dp + if (
                             NavigationBarPaths.values().map { it.direction }.any {
                                 navController.appCurrentDestinationAsState().value == it
                             }
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
                             .padding(
                                 start = 24.dp,
                                 end = 24.dp,
-                                bottom = bottomPadding
+                                bottom = searchBarBottomPadding
                             )
                             .navigationBarsPadding(),
                         navController = navController
