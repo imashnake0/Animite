@@ -5,4 +5,4 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 val bottomNavigationBarSize = 65.dp
-fun Modifier.bottomNavigationBarPadding(): Modifier = this.padding(bottomNavigationBarSize)
+fun Modifier.bottomNavigationBarPadding(): Modifier = this.padding(bottom = bottomNavigationBarSize)

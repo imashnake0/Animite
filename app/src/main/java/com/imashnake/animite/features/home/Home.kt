@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.imashnake.animite.dev.ext.bottomNavigationBarPadding
 import com.imashnake.animite.dev.ext.bottomNavigationBarSize
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.theme.AnimiteTheme
