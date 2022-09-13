@@ -18,11 +18,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.dev.ext.bottomNavigationBarSize
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.features.theme.backdropShape
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
@@ -77,7 +77,7 @@ fun Home(
                         ) {  }
 
                         Text(
-                            text = "おかえり",
+                            text = stringResource(id = Res.string.okaeri),
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             style = MaterialTheme.typography.displayLarge,
                             modifier = Modifier
@@ -100,7 +100,7 @@ fun Home(
                             Spacer(modifier = Modifier.size(24.dp))
 
                             Text(
-                                text = "Trending Now",
+                                text = stringResource(id = Res.string.trending_now),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.headlineMedium,
                                 modifier = Modifier.padding(start = 24.dp)
@@ -125,7 +125,7 @@ fun Home(
                             Spacer(modifier = Modifier.size(24.dp))
 
                             Text(
-                                text = "Popular This Season",
+                                text = stringResource(id = Res.string.popular_this_season),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.headlineMedium,
                                 modifier = Modifier.padding(start = 24.dp)
