@@ -103,7 +103,7 @@ fun MediaPage(
                             .fillMaxSize()
                     ) {
                         Text(
-                            text = media.title ?: "",
+                            text = media.title.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
                             // Override MediaSmall's text.
                             style = MaterialTheme.typography.titleMedium.copy(
@@ -273,7 +273,7 @@ fun Genre(genre: String?, color: Color) {
     SuggestionChip(
         label = {
             Text(
-                text = genre?.lowercase() ?: "",
+                text = genre?.lowercase().orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(vertical = 10.dp)
@@ -315,7 +315,7 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
                 .clip(mediaSmallShape)
         )
         Text(
-            text = name ?: "",
+            text = name.orEmpty(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,

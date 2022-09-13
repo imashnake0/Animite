@@ -43,7 +43,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
                 .clip(mediaSmallShape)
         )
         Text(
-            text = anime ?: "",
+            text = anime.orEmpty(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,

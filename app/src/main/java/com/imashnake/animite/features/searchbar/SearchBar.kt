@@ -233,7 +233,7 @@ private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit) {
     Text(
         text = item?.title?.romaji ?:
         item?.title?.english ?:
-        item?.title?.native ?: "",
+        item?.title?.native.orEmpty(),
         color = MaterialTheme.colorScheme.onBackground,
         fontSize = 12.sp,
         maxLines = 1,
