@@ -18,14 +18,14 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId:
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
     ) {
-        items(mediaList) { media ->
+        items(mediaList.filterNotNull()) { media ->
             MediaSmall(
-                image = media?.coverImage?.extraLarge,
-                anime = media?.title?.romaji ?:
-                media?.title?.english ?:
-                media?.title?.native,
+                image = media.coverImage?.extraLarge,
+                anime = media.title?.romaji ?:
+                media.title?.english ?:
+                media.title?.native ?: "",
                 onClick = {
-                    onItemClick(media?.id)
+                    onItemClick(media.id)
                 }
             )
         }
