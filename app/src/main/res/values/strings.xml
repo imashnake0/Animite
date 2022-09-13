@@ -3,7 +3,7 @@
     <string name="home">Home</string>
     <string name="profile">Profile</string>
     <string name="rslash">r/</string>
-    <string name="okaeri">"おかえり"</string>
+    <string name="okaeri" translatable="false">"おかえり"</string>
     <string name="trending_now">"Trending Now"</string>
     <string name="popular_this_season">"Popular This Season"</string>
 </resources>
