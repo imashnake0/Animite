@@ -134,7 +134,9 @@ fun MediaPage(
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
-                            )
+                            ),
+                            maxLines = 4,
+                            overflow = TextOverflow.Ellipsis
                         )
 
                         Spacer(Modifier.height(dimensionResource(Res.dimen.small_padding)))
