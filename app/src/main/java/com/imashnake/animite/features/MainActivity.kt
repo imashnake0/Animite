@@ -16,12 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.imashnake.animite.R
 import com.imashnake.animite.dev.ext.bottomNavigationBarSize
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.navigationbar.NavigationBarPaths
@@ -69,7 +71,7 @@ class MainActivity : ComponentActivity() {
                     )
 
                     val searchBarBottomPadding: Dp by animateDpAsState(
-                        targetValue = 24.dp + if (
+                        targetValue = dimensionResource(R.dimen.large_padding) + if (
                             NavigationBarPaths.values().any {
                                 it.direction == navController.appCurrentDestinationAsState().value
                             }
@@ -80,8 +82,8 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(
-                                start = 24.dp,
-                                end = 24.dp,
+                                start = dimensionResource(R.dimen.large_padding),
+                                end = dimensionResource(R.dimen.large_padding),
                                 bottom = searchBarBottomPadding
                             )
                             .navigationBarsPadding(),
