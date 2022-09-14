@@ -5,6 +5,7 @@ import android.net.Uri
 import android.text.Html
 import android.util.Log
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -15,7 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -141,17 +145,49 @@ fun MediaPage(
 
                         Spacer(Modifier.height(dimensionResource(Res.dimen.small_padding)))
 
-                        Text(
-                            // TODO: Some attributes are not applied.
-                            text = Html
-                                .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
-                                .toString(),
-                            color = MaterialTheme.colorScheme.onBackground.copy(
-                                alpha = 0.6f
-                            ),
-                            style = MaterialTheme.typography.bodyMedium,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Box {
+                            Text(
+                                // TODO: Some attributes are not applied.
+                                text = Html
+                                    .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
+                                    .toString(),
+                                color = MaterialTheme.colorScheme.onBackground.copy(
+                                    alpha = 0.6f
+                                ),
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.verticalScroll(rememberScrollState())
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .height(dimensionResource(Res.dimen.small_padding))
+                                    .fillMaxWidth()
+                                    .align(Alignment.TopCenter)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                MaterialTheme.colorScheme.background,
+                                                Transparent
+                                            )
+                                        )
+                                    )
+                            ) {  }
+
+                            Box(
+                                modifier = Modifier
+                                    .height(dimensionResource(Res.dimen.small_padding))
+                                    .fillMaxWidth()
+                                    .align(Alignment.BottomCenter)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                Transparent,
+                                                MaterialTheme.colorScheme.background
+                                            )
+                                        )
+                                    )
+                            ) {  }
+                        }
                     }
                 }
 
