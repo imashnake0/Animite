@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,13 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.imashnake.animite.dev.ext.bottomNavigationBarSize
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.theme.backdropShape
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -55,7 +55,7 @@ fun Home(
                 ) {
                     Box {
                         Image(
-                            painter = painterResource(id = Res.drawable.background),
+                            painter = painterResource(Res.drawable.background),
                             contentDescription = null,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -77,36 +77,51 @@ fun Home(
                         ) {  }
 
                         Text(
-                            text = stringResource(id = Res.string.okaeri),
+                            text = stringResource(Res.string.okaeri),
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             style = MaterialTheme.typography.displayLarge,
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .padding(start = 24.dp, bottom = (24 + 18).dp)
+                                .padding(
+                                    start = dimensionResource(Res.dimen.large_padding),
+                                    bottom = dimensionResource(Res.dimen.large_padding)
+                                            + dimensionResource(Res.dimen.backdrop_corner_radius)
+                                )
                         )
                     }
 
                     // TODO: Use `verticalArrangement` instead of the `Spacer`s.
                     Column {
                         Spacer(
-                            modifier = Modifier.size((LocalConfiguration.current.screenWidthDp - 18).dp)
+                            Modifier
+                                .size(
+                                    LocalConfiguration.current.screenWidthDp.dp
+                                            - dimensionResource(Res.dimen.backdrop_corner_radius)
+                                )
                         )
 
                         Column(
                             modifier = Modifier
-                                .clip(backdropShape)
+                                .clip(
+                                    RoundedCornerShape(
+                                        topStart = dimensionResource(Res.dimen.backdrop_corner_radius),
+                                        topEnd = dimensionResource(Res.dimen.backdrop_corner_radius)
+                                    )
+                                )
                                 .background(MaterialTheme.colorScheme.background)
                         ) {
-                            Spacer(modifier = Modifier.size(24.dp))
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
                             Text(
-                                text = stringResource(id = Res.string.trending_now),
+                                text = stringResource(Res.string.trending_now),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.headlineMedium,
-                                modifier = Modifier.padding(start = 24.dp)
+                                modifier = Modifier.padding(
+                                    start = dimensionResource(Res.dimen.large_padding)
+                                )
                             )
 
-                            Spacer(modifier = Modifier.size(12.dp))
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                             MediaSmallRow(
                                 mediaList = trendingNowMediaList,
@@ -122,16 +137,18 @@ fun Home(
                                 }
                             )
 
-                            Spacer(modifier = Modifier.size(24.dp))
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
                             Text(
-                                text = stringResource(id = Res.string.popular_this_season),
+                                text = stringResource(Res.string.popular_this_season),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.headlineMedium,
-                                modifier = Modifier.padding(start = 24.dp)
+                                modifier = Modifier.padding(
+                                    start = dimensionResource(Res.dimen.large_padding)
+                                )
                             )
 
-                            Spacer(modifier = Modifier.size(12.dp))
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                             MediaSmallRow(
                                 mediaList = popularThisSeasonMediaList,
@@ -147,7 +164,12 @@ fun Home(
                                 }
                             )
 
-                            Spacer(modifier = Modifier.height(bottomNavigationBarSize + 24.dp))
+                            Spacer(
+                                Modifier.height(
+                                    dimensionResource(Res.dimen.navigation_bar_height)
+                                            + dimensionResource(Res.dimen.large_padding)
+                                )
+                            )
                         }
                     }
                 }

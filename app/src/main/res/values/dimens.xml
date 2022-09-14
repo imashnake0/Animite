@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="small_padding">8dp</dimen>
+    <dimen name="medium_padding">12dp</dimen>
+    <dimen name="large_padding">24dp</dimen>
+
+    <dimen name="backdrop_corner_radius">18dp</dimen>
+    <dimen name="navigation_bar_height">65dp</dimen>
+</resources>
