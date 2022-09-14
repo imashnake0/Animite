@@ -3,6 +3,7 @@ package com.imashnake.animite.features.searchbar
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -47,6 +48,7 @@ import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.navigation.navigate
 
 // TODO: UX concern: This blocks content sometimes!
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
@@ -200,6 +202,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     }
 }
 
+@ExperimentalFoundationApi
 @ExperimentalAnimationApi
 @Composable
 fun SearchList(
@@ -209,16 +212,17 @@ fun SearchList(
 ) {
     val searchList = viewModel.uiState.searchList?.media
 
-    // TODO: Animate this.
+    // TODO: Improve this animation.
     if (searchList != null && searchList.isNotEmpty()) {
         LazyColumn(
             modifier = modifier,
             contentPadding = PaddingValues(16.dp)
         ) {
-            items(searchList) {
+            items(searchList, key = { it!!.id }) {
                 SearchItem(
                     item = it,
-                    onClick = onClick
+                    onClick = onClick,
+                    modifier = Modifier.animateItemPlacement()
                 )
             }
         }
@@ -229,7 +233,7 @@ fun SearchList(
 }
 
 @Composable
-private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit) {
+private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit, modifier: Modifier) {
     Text(
         text = item?.title?.romaji ?:
         item?.title?.english ?:
@@ -237,7 +241,7 @@ private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit) {
         color = MaterialTheme.colorScheme.onBackground,
         fontSize = 12.sp,
         maxLines = 1,
-        modifier = Modifier
+        modifier = modifier
             .clickable {
                 onClick(item?.id)
             }
