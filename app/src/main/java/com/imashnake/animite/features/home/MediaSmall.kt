@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -13,23 +14,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.imashnake.animite.features.theme.mediaSmallShape
+import com.imashnake.animite.R as Res
 
 @Composable
 fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .wrapContentHeight()
-            .width(115.dp)
+            .width(dimensionResource(Res.dimen.media_card_width))
             .clickable(
                 enabled = true,
                 onClick = onClick
             ),
-        shape = mediaSmallShape,
+        shape = RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         )
@@ -39,8 +40,10 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
             contentDescription = anime,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(198.dp)
-                .clip(mediaSmallShape)
+                .height(dimensionResource(Res.dimen.media_card_height))
+                .clip(
+                    RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+                )
         )
         Text(
             text = anime.orEmpty(),
@@ -48,7 +51,9 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Clip,
-            modifier = Modifier.padding(14.dp)
+            modifier = Modifier.padding(
+                dimensionResource(Res.dimen.media_card_text_padding)
+            )
         )
     }
 }
