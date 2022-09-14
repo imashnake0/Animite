@@ -5,7 +5,6 @@ import android.net.Uri
 import android.text.Html
 import android.util.Log
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -108,7 +106,7 @@ fun MediaPage(
             Column {
                 Row {
                     Spacer(
-                        modifier = Modifier.width(
+                        Modifier.width(
                             dimensionResource(Res.dimen.media_card_width)
                                     + dimensionResource(Res.dimen.large_padding)
                         )
@@ -296,7 +294,7 @@ fun MediaPage(
                                     horizontal = dimensionResource(Res.dimen.large_padding)
                                 )
                                 .fillMaxWidth()
-                                .aspectRatio(1.778f)
+                                .aspectRatio(1.778f) // 16 : 9
                                 .clip(
                                     RoundedCornerShape(
                                         dimensionResource(Res.dimen.trailer_corner_radius)
@@ -314,7 +312,7 @@ fun MediaPage(
                 }
             }
 
-            Spacer(modifier = Modifier.size(dimensionResource(Res.dimen.large_padding)))
+            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
         }
 
         // TODO: Make this a reusable component.
@@ -385,11 +383,12 @@ fun Genre(genre: String?, color: Color) {
             containerColor = color.copy(alpha = 0.25f)
         ),
         border = SuggestionChipDefaults.suggestionChipBorder(
-            borderColor = Color.Transparent
+            borderColor = Transparent
         )
     )
 }
 
+// TODO: Make this a reusable component.
 @Composable
 fun Character(image: String?, name: String?, onClick: () -> Unit) {
     Card(

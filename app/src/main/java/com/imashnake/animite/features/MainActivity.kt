@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     )
                 )
 
-                Box(modifier = Modifier.fillMaxSize()) {
+                Box(Modifier.fillMaxSize()) {
                     DestinationsNavHost(
                         navGraph = NavGraphs.root,
                         modifier = Modifier

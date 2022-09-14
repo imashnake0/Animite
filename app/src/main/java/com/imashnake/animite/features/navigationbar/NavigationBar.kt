@@ -36,7 +36,7 @@ import com.imashnake.animite.R as Res
 fun NavigationBar(
     navController: NavController
 ) {
-    // TODO: The way padding is handled is still a bit hacky.
+    // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
         Modifier.height(
             dimensionResource(Res.dimen.navigation_bar_height) + WindowInsets
