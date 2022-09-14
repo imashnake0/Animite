@@ -49,6 +49,11 @@ val AnimiteTypography = Typography(
         fontWeight = FontWeight.SemiBold,
         lineHeight = 25.sp
     ),
+    labelLarge = TextStyle(
+        fontSize = 16.sp,
+        fontFamily = manropeFamily,
+        fontWeight = FontWeight.Medium
+    ),
     labelMedium = TextStyle(
         fontWeight = FontWeight.Medium,
         letterSpacing = (1.3).sp

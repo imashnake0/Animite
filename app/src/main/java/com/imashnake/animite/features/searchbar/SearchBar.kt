@@ -30,30 +30,34 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.imashnake.animite.R
 import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.theme.manropeFamily
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.navigation.navigate
+import com.imashnake.animite.R as Res
 
-// TODO: UX concern: This blocks content sometimes!
+// TODO:
+//  - UX concern: This blocks content sometimes!
+//  - `SearchList` goes beyond the status bar.
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
 @Composable
-fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel(), navController: NavHostController) {
+fun SearchBar(
+    modifier: Modifier,
+    viewModel: SearchViewModel = viewModel(),
+    navController: NavHostController
+) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -63,7 +67,9 @@ fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel(), navC
                 SearchList(
                     viewModel = hiltViewModel(),
                     modifier = Modifier
-                        .clip(RoundedCornerShape(18.dp))
+                        .clip(
+                            RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+                        )
                         .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95F))
                         .align(Alignment.End)
                         .fillMaxWidth(),
@@ -111,12 +117,11 @@ fun SearchBar(modifier: Modifier, viewModel: SearchViewModel = viewModel(), navC
 @Composable
 fun CollapsedSearchBar() {
     Row(
-        modifier = Modifier.padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(dimensionResource(Res.dimen.search_bar_padding)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.search),
+            imageVector = ImageVector.vectorResource(id = Res.drawable.search),
             contentDescription = "Search",
             tint = MaterialTheme.colorScheme.onPrimary
         )
@@ -130,9 +135,9 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = Icons.Rounded.KeyboardArrowRight,
-            contentDescription = "Collapse",
+            contentDescription = stringResource(Res.string.collapse),
             tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(dimensionResource(Res.dimen.search_bar_padding))
         )
 
         var text by remember { mutableStateOf("") }
@@ -150,12 +155,10 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
             },
             placeholder = {
                 Text(
-                    text = "Search",
+                    text = stringResource(Res.string.search),
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5F),
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                    fontFamily = manropeFamily,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 1
                 )
             },
             modifier = Modifier
@@ -164,11 +167,8 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                 .onFocusChanged {
                     keyboardController?.show()
                 },
-            textStyle = TextStyle(
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontSize = 16.sp,
-                fontFamily = manropeFamily,
-                fontWeight = FontWeight.Medium
+            textStyle = MaterialTheme.typography.labelLarge.copy(
+                color = MaterialTheme.colorScheme.onPrimary
             ),
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = MaterialTheme.colorScheme.primary,
@@ -188,9 +188,11 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(Res.string.close),
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(
+                            dimensionResource(Res.dimen.search_bar_padding)
+                        )
                     )
                 }
             }
@@ -235,20 +237,19 @@ fun SearchList(
 @Composable
 private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit, modifier: Modifier) {
     Text(
+        // TODO: Do something about this chain.
         text = item?.title?.romaji ?:
         item?.title?.english ?:
         item?.title?.native.orEmpty(),
         color = MaterialTheme.colorScheme.onBackground,
-        fontSize = 12.sp,
+        style = MaterialTheme.typography.labelLarge,
         maxLines = 1,
         modifier = modifier
             .clickable {
                 onClick(item?.id)
             }
-            .padding(11.dp)
-            .fillMaxSize(),
-        fontFamily = manropeFamily,
-        fontWeight = FontWeight.Medium
+            .padding(dimensionResource(Res.dimen.search_list_padding))
+            .fillMaxSize()
     )
 }
 
