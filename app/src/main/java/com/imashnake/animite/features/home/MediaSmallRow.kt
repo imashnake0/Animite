@@ -5,22 +5,24 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.R as Res
 
-/**
- * TODO: Extract dimens to `ui.theme`.
- */
 @Composable
 fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId: Int?) -> Unit) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding)),
+        contentPadding = PaddingValues(
+            start = dimensionResource(Res.dimen.large_padding),
+            end = dimensionResource(Res.dimen.large_padding)
+        )
     ) {
         items(mediaList.filterNotNull()) { media ->
             MediaSmall(
                 image = media.coverImage?.extraLarge,
+                // TODO: Do something about this chain.
                 anime = media.title?.romaji ?:
                 media.title?.english ?:
                 media.title?.native ?: "",
@@ -42,8 +44,11 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId:
 @Composable
 fun PreviewMediaSmallRow() {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding)),
+        contentPadding = PaddingValues(
+            start = dimensionResource(Res.dimen.large_padding),
+            end = dimensionResource(Res.dimen.large_padding)
+        )
     ) {
         items(count = 10) {
             MediaSmall(
