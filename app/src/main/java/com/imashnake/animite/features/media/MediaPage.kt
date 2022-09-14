@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.dev.ext.toHexColor
-import com.imashnake.animite.features.theme.mediaSmallShape
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
@@ -240,38 +239,40 @@ fun MediaPage(
                 Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                 val context = LocalContext.current
-                Box(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .clickable {
-                            val appIntent =
-                                Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
-                            context.startActivity(appIntent)
-                        }
-                ) {
-                    AsyncImage(
-                        model = media.trailer.second,
-                        contentDescription = stringResource(Res.string.trailer),
-                        contentScale = ContentScale.FillWidth,
+                if (!media.trailer.toList().any { (it ?: "").isBlank() }) {
+                    Box(
                         modifier = Modifier
-                            .padding(
-                                horizontal = dimensionResource(Res.dimen.large_padding)
-                            )
-                            .fillMaxWidth()
-                            .aspectRatio(1.778f)
-                            .clip(
-                                RoundedCornerShape(
-                                    dimensionResource(Res.dimen.trailer_corner_radius)
+                            .wrapContentSize()
+                            .clickable {
+                                val appIntent =
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
+                                context.startActivity(appIntent)
+                            }
+                    ) {
+                        AsyncImage(
+                            model = media.trailer.second,
+                            contentDescription = stringResource(Res.string.trailer),
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = dimensionResource(Res.dimen.large_padding)
                                 )
-                            ),
-                        alignment = Alignment.Center
-                    )
+                                .fillMaxWidth()
+                                .aspectRatio(1.778f)
+                                .clip(
+                                    RoundedCornerShape(
+                                        dimensionResource(Res.dimen.trailer_corner_radius)
+                                    )
+                                ),
+                            alignment = Alignment.Center
+                        )
 
-                    Image(
-                        painter = painterResource(Res.drawable.youtube),
-                        contentDescription = stringResource(Res.string.trailer),
-                        alignment = Alignment.Center
-                    )
+                        Image(
+                            painter = painterResource(Res.drawable.youtube),
+                            contentDescription = stringResource(Res.string.trailer),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                 }
             }
 
@@ -289,7 +290,7 @@ fun MediaPage(
                 .statusBarsPadding()
                 .wrapContentHeight()
                 .width(dimensionResource(Res.dimen.media_card_width)),
-            shape = mediaSmallShape
+            shape = RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
         ) {
             AsyncImage(
                 model = media.coverImage,
@@ -297,7 +298,9 @@ fun MediaPage(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(dimensionResource(Res.dimen.media_card_height))
-                    .clip(mediaSmallShape)
+                    .clip(
+                        RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+                    )
             )
         }
     }
