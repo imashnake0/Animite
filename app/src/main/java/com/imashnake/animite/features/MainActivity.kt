@@ -24,7 +24,6 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
-import com.imashnake.animite.dev.ext.bottomNavigationBarSize
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.features.searchbar.SearchBar
@@ -75,7 +74,7 @@ class MainActivity : ComponentActivity() {
                             NavigationBarPaths.values().any {
                                 it.direction == navController.appCurrentDestinationAsState().value
                             }
-                        ) bottomNavigationBarSize else 0.dp
+                        ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp
                     )
 
                     SearchBar(

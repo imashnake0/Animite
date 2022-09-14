@@ -4,17 +4,20 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.imashnake.animite.dev.ext.bottomNavigationBarSize
 import com.imashnake.animite.features.NavGraphs
 import com.imashnake.animite.features.appCurrentDestinationAsState
 import com.imashnake.animite.features.destinations.HomeDestination
@@ -36,7 +39,7 @@ fun NavigationBar(
     // TODO: The way padding is handled is still a bit hacky.
     NavigationBar(
         Modifier.height(
-            bottomNavigationBarSize + WindowInsets
+            dimensionResource(Res.dimen.navigation_bar_height) + WindowInsets
                 .navigationBars
                 .asPaddingValues()
                 .calculateBottomPadding()
@@ -107,7 +110,8 @@ enum class NavigationBarPaths(
                 contentDescription = stringResource(
                     id = Res.string.profile
                 ),
-                // Adding this modifier lets us control the icon's size.
+                // TODO: Adding this modifier lets us control the icon's size;
+                //  see how this works and unhardcode the dimensions.
                 modifier = Modifier
                     .padding(3.dp)
                     .size(18.dp)
