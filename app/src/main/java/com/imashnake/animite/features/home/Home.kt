@@ -90,7 +90,7 @@ fun Home(
                         )
                     }
 
-                    // TODO: Use `verticalArrangement` instead of the `Spacer`s.
+                    // TODO: Use `padding` instead of the `Spacer`s.
                     Column {
                         Spacer(
                             Modifier

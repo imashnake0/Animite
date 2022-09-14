@@ -18,19 +18,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.imashnake.animite.R
 import com.imashnake.animite.dev.ext.toHexColor
-import com.imashnake.animite.features.theme.backdropShape
 import com.imashnake.animite.features.theme.mediaSmallShape
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
+import com.imashnake.animite.R as Res
 
 @ExperimentalMaterial3Api
 @Destination
@@ -56,27 +56,33 @@ fun MediaPage(
             Box {
                 AsyncImage(
                     model = media.bannerImage,
-                    contentDescription = "Banner Image",
+                    contentDescription = null,
                     contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.height(168.dp),
+                    modifier = Modifier.height(
+                        dimensionResource(Res.dimen.banner_height)
+                    ),
                     alignment = Alignment.Center
                 )
 
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(168.dp),
+                        .height(
+                            dimensionResource(Res.dimen.banner_height)
+                        ),
                     color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.2f)
                 ) { }
             }
         } else {
             Image(
-                painter = painterResource(id = R.drawable.background),
-                contentDescription = "Background",
+                painter = painterResource(Res.drawable.background),
+                contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(168.dp),
+                    .height(
+                        dimensionResource(Res.dimen.banner_height)
+                    ),
                 alignment = Alignment.TopCenter
             )
         }
@@ -84,21 +90,41 @@ fun MediaPage(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(top = 150.dp)
-                .clip(backdropShape)
+                .padding(
+                    top = dimensionResource(Res.dimen.banner_height)
+                            - dimensionResource(Res.dimen.backdrop_corner_radius)
+                )
+                .clip(
+                    RoundedCornerShape(
+                        topStart = dimensionResource(Res.dimen.backdrop_corner_radius),
+                        topEnd = dimensionResource(Res.dimen.backdrop_corner_radius)
+                    )
+                )
                 .background(MaterialTheme.colorScheme.background)
         ) {
             Column {
                 Row {
-                    Spacer(modifier = Modifier.width((115 + 24).dp))
+                    Spacer(
+                        modifier = Modifier.width(
+                            dimensionResource(Res.dimen.media_card_width)
+                                    + dimensionResource(Res.dimen.large_padding)
+                        )
+                    )
 
                     Column(
                         modifier = Modifier
-                            .padding(start = 24.dp, top = 24.dp, end = 24.dp)
+                            .padding(
+                                start = dimensionResource(Res.dimen.large_padding),
+                                top = dimensionResource(Res.dimen.large_padding),
+                                end = dimensionResource(Res.dimen.large_padding)
+                            )
                             .height(
-                                (88 + WindowInsets.statusBars
+                                WindowInsets.statusBars
                                     .asPaddingValues()
-                                    .calculateTopPadding().value).dp
+                                    .calculateTopPadding()
+                                        + dimensionResource(Res.dimen.media_card_height)
+                                        + dimensionResource(Res.dimen.backdrop_corner_radius)
+                                        - dimensionResource(Res.dimen.banner_height)
                             )
                             .fillMaxSize()
                     ) {
@@ -112,10 +138,10 @@ fun MediaPage(
                             )
                         )
 
-                        Spacer(Modifier.height(10.dp))
+                        Spacer(Modifier.height(dimensionResource(Res.dimen.small_padding)))
 
                         Text(
-                            // TODO: Some styles are not applied.
+                            // TODO: Some attributes are not applied.
                             text = Html
                                 .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
                                 .toString(),
@@ -128,32 +154,45 @@ fun MediaPage(
                     }
                 }
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 24.dp, end = 24.dp)
+                        .padding(
+                            start = dimensionResource(Res.dimen.large_padding),
+                            end = dimensionResource(Res.dimen.large_padding)
+                        )
                 ) {
-                    Stat(label = "SCORE", score = media.averageScore ?: 0) {
+                    Stat(
+                        label = stringResource(Res.string.score),
+                        score = media.averageScore ?: 0
+                    ) {
                         "$it%"
                     }
 
                     media.ranks.forEach { stat ->
-                        Stat(label = stat.first, score = stat.second) {
+                        Stat(
+                            label = stat.first,
+                            score = stat.second
+                        ) {
                             "#$it"
                         }
                     }
                 }
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
                 // TODO: Monet where?
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(horizontal = 24.dp)
+                    horizontalArrangement = Arrangement.spacedBy(
+                        dimensionResource(Res.dimen.medium_padding)
+                    ),
+                    contentPadding = PaddingValues(
+                        horizontal = dimensionResource(Res.dimen.large_padding)
+                    )
                 ) {
                     if (!media.genres.isNullOrEmpty()) {
                         items(media.genres) { genre ->
@@ -166,17 +205,19 @@ fun MediaPage(
                 }
             }
 
-            Spacer(modifier = Modifier.size(24.dp))
+            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
             if (!media.characters.isNullOrEmpty()) {
                 Text(
-                    text = "Characters",
+                    text = stringResource(Res.string.characters),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(start = 24.dp)
+                    modifier = Modifier.padding(
+                        start = dimensionResource(Res.dimen.large_padding)
+                    )
                 )
 
-                Spacer(modifier = Modifier.size(12.dp))
+                Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                 // TODO: Make characters clickable.
                 CharacterRow(characterList = media.characters) {
@@ -184,55 +225,70 @@ fun MediaPage(
                 }
             }
 
-            Spacer(modifier = Modifier.size(24.dp))
+            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
             if (!media.trailer.toList().any { it == null }) {
                 Text(
-                    text = "Trailer",
+                    text = stringResource(Res.string.trailer),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(start = 24.dp)
+                    modifier = Modifier.padding(
+                        start = dimensionResource(Res.dimen.large_padding)
+                    )
                 )
 
-                Spacer(modifier = Modifier.size(12.dp))
+                Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                 val context = LocalContext.current
-                Box(modifier = Modifier
-                    .wrapContentSize()
-                    .clickable {
-                        val appIntent =
-                            Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
-                        context.startActivity(appIntent)
-                    }) {
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .clickable {
+                            val appIntent =
+                                Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
+                            context.startActivity(appIntent)
+                        }
+                ) {
                     AsyncImage(
                         model = media.trailer.second,
-                        contentDescription = "Thumbnail",
+                        contentDescription = stringResource(Res.string.trailer),
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier
-                            .padding(horizontal = 24.dp)
+                            .padding(
+                                horizontal = dimensionResource(Res.dimen.large_padding)
+                            )
                             .fillMaxWidth()
                             .aspectRatio(1.778f)
-                            .clip(RoundedCornerShape(30.dp)),
+                            .clip(
+                                RoundedCornerShape(
+                                    dimensionResource(Res.dimen.trailer_corner_radius)
+                                )
+                            ),
                         alignment = Alignment.Center
                     )
 
                     Image(
-                        painter = painterResource(id = R.drawable.youtube),
-                        contentDescription = "Watch on Youtube",
-                        modifier = Modifier.align(Alignment.Center)
+                        painter = painterResource(Res.drawable.youtube),
+                        contentDescription = stringResource(Res.string.trailer),
+                        alignment = Alignment.Center
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.size(dimensionResource(Res.dimen.large_padding)))
         }
 
+        // TODO: Make this a reusable component.
         Card(
             modifier = Modifier
-                .padding(top = 24.dp, start = 24.dp, end = 24.dp)
+                .padding(
+                    top = dimensionResource(Res.dimen.large_padding),
+                    start = dimensionResource(Res.dimen.large_padding),
+                    end = dimensionResource(Res.dimen.large_padding)
+                )
                 .statusBarsPadding()
                 .wrapContentHeight()
-                .width(115.dp),
+                .width(dimensionResource(Res.dimen.media_card_width)),
             shape = mediaSmallShape
         ) {
             AsyncImage(
@@ -240,7 +296,7 @@ fun MediaPage(
                 contentDescription = media.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .height(238.dp)
+                    .height(dimensionResource(Res.dimen.media_card_height))
                     .clip(mediaSmallShape)
             )
         }
@@ -276,7 +332,9 @@ fun Genre(genre: String?, color: Color) {
                 text = genre?.lowercase().orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(vertical = 10.dp)
+                modifier = Modifier.padding(
+                    vertical = dimensionResource(Res.dimen.small_padding)
+                )
             )
         },
         // TODO: Make genres clickable.
@@ -296,7 +354,7 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .wrapContentHeight()
-            .width(96.dp)
+            .width(dimensionResource(Res.dimen.character_card_width))
             .clickable(
                 enabled = true,
                 onClick = onClick
@@ -304,15 +362,17 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         ),
-        shape = mediaSmallShape
+        shape = RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
     ) {
         AsyncImage(
             model = image,
             contentDescription = name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(121.dp)
-                .clip(mediaSmallShape)
+                .height(dimensionResource(Res.dimen.character_card_height))
+                .clip(
+                    RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+                )
         )
         Text(
             text = name.orEmpty(),
@@ -320,7 +380,9 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             overflow = TextOverflow.Clip,
-            modifier = Modifier.padding(14.dp)
+            modifier = Modifier.padding(
+                dimensionResource(Res.dimen.media_card_text_padding)
+            )
         )
     }
 }
@@ -331,8 +393,11 @@ fun CharacterRow(
     onItemClick: (character: Pair<String?, String?>) -> Unit
 ) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(start = 24.dp, end = 24.dp)
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding)),
+        contentPadding = PaddingValues(
+            start = dimensionResource(Res.dimen.large_padding),
+            end = dimensionResource(Res.dimen.large_padding)
+        )
     ) {
         items(characterList) { character ->
             Character(
