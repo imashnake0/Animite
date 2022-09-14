@@ -238,11 +238,11 @@ private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit) {
         fontSize = 12.sp,
         maxLines = 1,
         modifier = Modifier
-            .padding(11.dp)
-            .fillMaxSize()
             .clickable {
                 onClick(item?.id)
-            },
+            }
+            .padding(11.dp)
+            .fillMaxSize(),
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Medium
     )
