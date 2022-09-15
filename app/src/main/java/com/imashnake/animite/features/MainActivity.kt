@@ -1,6 +1,7 @@
 package com.imashnake.animite.features
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
@@ -9,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.SideEffect
@@ -48,6 +50,41 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AnimiteTheme {
+                Log.d(
+                    "ColorSchemeBlah",
+                    """
+                        ${MaterialTheme.colorScheme.primary}
+                        ${MaterialTheme.colorScheme.onPrimary}
+                        ${MaterialTheme.colorScheme.primaryContainer}
+                        ${MaterialTheme.colorScheme.onPrimaryContainer}
+                        ${MaterialTheme.colorScheme.inversePrimary}
+                        ${MaterialTheme.colorScheme.secondary}
+                        ${MaterialTheme.colorScheme.onSecondary}
+                        ${MaterialTheme.colorScheme.secondaryContainer}
+                        ${MaterialTheme.colorScheme.onSecondaryContainer}
+                        ${MaterialTheme.colorScheme.tertiary}
+                        ${MaterialTheme.colorScheme.onTertiary}
+                        ${MaterialTheme.colorScheme.tertiaryContainer}
+                        ${MaterialTheme.colorScheme.onTertiaryContainer}
+                        ${MaterialTheme.colorScheme.background}
+                        ${MaterialTheme.colorScheme.onBackground}
+                        ${MaterialTheme.colorScheme.surface}
+                        ${MaterialTheme.colorScheme.onSurface}
+                        ${MaterialTheme.colorScheme.surfaceVariant}
+                        ${MaterialTheme.colorScheme.onSurfaceVariant}
+                        ${MaterialTheme.colorScheme.surfaceTint}
+                        ${MaterialTheme.colorScheme.inverseSurface}
+                        ${MaterialTheme.colorScheme.inverseOnSurface}
+                        ${MaterialTheme.colorScheme.error}
+                        ${MaterialTheme.colorScheme.onError}
+                        ${MaterialTheme.colorScheme.errorContainer}
+                        ${MaterialTheme.colorScheme.onErrorContainer}
+                        ${MaterialTheme.colorScheme.outline}
+                        ${MaterialTheme.colorScheme.outlineVariant}
+                        ${MaterialTheme.colorScheme.scrim}
+                    """.trimIndent()
+                )
+
                 val systemUiController = rememberSystemUiController()
                 SideEffect {
                     systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
