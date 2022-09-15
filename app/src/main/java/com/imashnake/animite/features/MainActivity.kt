@@ -4,29 +4,40 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.imashnake.animite.R
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.features.searchbar.SearchBar
-import com.imashnake.animite.features.theme.Backdrop
+import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialNavigationApi
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
@@ -39,12 +50,12 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            val systemUiController = rememberSystemUiController()
-            SideEffect {
-                systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
-            }
+            AnimiteTheme {
+                val systemUiController = rememberSystemUiController()
+                SideEffect {
+                    systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
+                }
 
-            Box(modifier = Modifier.fillMaxSize()) {
                 val navController = rememberAnimatedNavController()
                 val navHostEngine = rememberAnimatedNavHostEngine(
                     rootDefaultAnimations = RootNavGraphDefaultAnimations(
@@ -53,51 +64,46 @@ class MainActivity : ComponentActivity() {
                     )
                 )
 
-                DestinationsNavHost(
-                    navGraph = NavGraphs.root,
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .background(Backdrop),
-                    navController = navController,
-                    engine = navHostEngine
-                )
-
-                SearchBar(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = 80.dp, start = 24.dp, end = 24.dp)
-                        .navigationBarsPadding()
-                        .padding(bottom = 24.dp),
-                    navController = navController
-                )
-
-                AnimatedVisibility(
-                    visible = NavigationBarPaths.values().map { it.direction }.any {
-                        navController.appCurrentDestinationAsState().value == it
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .height(
-                            80.dp + WindowInsets
-                                .navigationBars
-                                .asPaddingValues()
-                                .calculateBottomPadding()
-                        ),
-                    enter = slideInVertically { it },
-                    exit = slideOutVertically { it }
-                ) {
-                    NavigationBar(
-                        navController = navController,
+                Box(Modifier.fillMaxSize()) {
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.root,
                         modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .height(
-                                80.dp + WindowInsets
-                                    .navigationBars
-                                    .asPaddingValues()
-                                    .calculateBottomPadding()
-                            ),
-                        itemModifier = Modifier.navigationBarsPadding()
+                            .align(Alignment.TopCenter)
+                            .background(MaterialTheme.colorScheme.background),
+                        navController = navController,
+                        engine = navHostEngine
                     )
+
+                    val searchBarBottomPadding: Dp by animateDpAsState(
+                        targetValue = dimensionResource(R.dimen.large_padding) + if (
+                            NavigationBarPaths.values().any {
+                                it.direction == navController.appCurrentDestinationAsState().value
+                            }
+                        ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp
+                    )
+
+                    SearchBar(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(
+                                start = dimensionResource(R.dimen.large_padding),
+                                end = dimensionResource(R.dimen.large_padding),
+                                bottom = searchBarBottomPadding
+                            )
+                            .navigationBarsPadding(),
+                        navController = navController
+                    )
+
+                    AnimatedVisibility(
+                        visible = NavigationBarPaths.values().any {
+                            it.direction == navController.appCurrentDestinationAsState().value
+                        },
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                        enter = slideInVertically { it },
+                        exit = slideOutVertically { it }
+                    ) {
+                        NavigationBar(navController = navController)
+                    }
                 }
             }
         }

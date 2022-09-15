@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.repos.MediaListRepository
-import com.imashnake.animite.features.home.HomeUiState
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
