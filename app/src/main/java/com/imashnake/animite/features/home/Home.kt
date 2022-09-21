@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -55,7 +56,11 @@ fun Home(
                     Image(
                         painter = painterResource(Res.drawable.background),
                         contentDescription = null,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(dimensionResource(Res.dimen.banner_height)),
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.TopCenter
                     )
 
                     Box(
@@ -71,13 +76,13 @@ fun Home(
                                 )
                             )
                             .fillMaxWidth()
-                            .aspectRatio(1f)
+                            .height(dimensionResource(Res.dimen.banner_height))
                     ) {  }
 
                     Text(
                         text = stringResource(Res.string.okaeri),
                         color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        style = MaterialTheme.typography.displayLarge,
+                        style = MaterialTheme.typography.displayMedium,
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(
@@ -93,7 +98,7 @@ fun Home(
                     Spacer(
                         Modifier
                             .size(
-                                LocalConfiguration.current.screenWidthDp.dp
+                                dimensionResource(Res.dimen.banner_height)
                                         - dimensionResource(Res.dimen.backdrop_corner_radius)
                             )
                     )
@@ -113,13 +118,13 @@ fun Home(
                         Text(
                             text = stringResource(Res.string.trending_now),
                             color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.headlineMedium,
+                            style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(
                                 start = dimensionResource(Res.dimen.large_padding)
                             )
                         )
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.small_padding)))
 
                         MediaSmallRow(
                             mediaList = trendingNowMediaList,
@@ -140,13 +145,13 @@ fun Home(
                         Text(
                             text = stringResource(Res.string.popular_this_season),
                             color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.headlineMedium,
+                            style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(
                                 start = dimensionResource(Res.dimen.large_padding)
                             )
                         )
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.small_padding)))
 
                         MediaSmallRow(
                             mediaList = popularThisSeasonMediaList,

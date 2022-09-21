@@ -133,6 +133,7 @@ fun MediaPage(
                             text = media.title.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
                             // Override MediaSmall's text.
+                            // TODO: This might be using an unintended style.
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold

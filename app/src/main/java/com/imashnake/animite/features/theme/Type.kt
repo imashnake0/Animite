@@ -23,8 +23,13 @@ val manropeFamily = FontFamily(
 
 // TODO: Label these!
 val AnimiteTypography = Typography(
-    displayLarge = TextStyle(
-        fontSize = 57.sp
+    // Media list headings
+    titleMedium = TextStyle(
+        fontFamily = manropeFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 24.0.sp,
+        letterSpacing = 0.2.sp,
     ),
     displaySmall = TextStyle(
         fontSize = 24.sp,
@@ -36,12 +41,6 @@ val AnimiteTypography = Typography(
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.sp
-    ),
-    titleMedium = TextStyle(
-        fontSize = 14.sp,
-        fontFamily = manropeFamily,
-        fontWeight = FontWeight.Medium,
-        letterSpacing = (0.7).sp
     ),
     bodyMedium = TextStyle(
         fontSize = 14.sp,
