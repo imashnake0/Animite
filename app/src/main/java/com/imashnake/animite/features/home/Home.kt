@@ -46,131 +46,131 @@ fun Home(
 
     when {
         trendingNowMediaList != null && popularThisSeasonMediaList != null -> {
-                Box(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .navigationBarsPadding()
-                ) {
-                    Box {
-                        Image(
-                            painter = painterResource(Res.drawable.background),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+            Box(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .navigationBarsPadding()
+            ) {
+                Box {
+                    Image(
+                        painter = painterResource(Res.drawable.background),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    Brush.verticalGradient(
-                                        listOf(
-                                            Color.Transparent,
-                                            MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                alpha = 0.5f
-                                            )
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        Color.Transparent,
+                                        MaterialTheme.colorScheme.secondaryContainer.copy(
+                                            alpha = 0.5f
                                         )
                                     )
                                 )
-                                .fillMaxWidth()
-                                .aspectRatio(1f)
-                        ) {  }
+                            )
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                    ) {  }
+
+                    Text(
+                        text = stringResource(Res.string.okaeri),
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = MaterialTheme.typography.displayLarge,
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(
+                                start = dimensionResource(Res.dimen.large_padding),
+                                bottom = dimensionResource(Res.dimen.large_padding)
+                                        + dimensionResource(Res.dimen.backdrop_corner_radius)
+                            )
+                    )
+                }
+
+                // TODO: Use `padding` instead of the `Spacer`s.
+                Column {
+                    Spacer(
+                        Modifier
+                            .size(
+                                LocalConfiguration.current.screenWidthDp.dp
+                                        - dimensionResource(Res.dimen.backdrop_corner_radius)
+                            )
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = dimensionResource(Res.dimen.backdrop_corner_radius),
+                                    topEnd = dimensionResource(Res.dimen.backdrop_corner_radius)
+                                )
+                            )
+                            .background(MaterialTheme.colorScheme.background)
+                    ) {
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
                         Text(
-                            text = stringResource(Res.string.okaeri),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            style = MaterialTheme.typography.displayLarge,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(
-                                    start = dimensionResource(Res.dimen.large_padding),
-                                    bottom = dimensionResource(Res.dimen.large_padding)
-                                            + dimensionResource(Res.dimen.backdrop_corner_radius)
-                                )
-                        )
-                    }
-
-                    // TODO: Use `padding` instead of the `Spacer`s.
-                    Column {
-                        Spacer(
-                            Modifier
-                                .size(
-                                    LocalConfiguration.current.screenWidthDp.dp
-                                            - dimensionResource(Res.dimen.backdrop_corner_radius)
-                                )
+                            text = stringResource(Res.string.trending_now),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.padding(
+                                start = dimensionResource(Res.dimen.large_padding)
+                            )
                         )
 
-                        Column(
-                            modifier = Modifier
-                                .clip(
-                                    RoundedCornerShape(
-                                        topStart = dimensionResource(Res.dimen.backdrop_corner_radius),
-                                        topEnd = dimensionResource(Res.dimen.backdrop_corner_radius)
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+                        MediaSmallRow(
+                            mediaList = trendingNowMediaList,
+                            onItemClick = { itemId ->
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = itemId,
+                                        mediaTypeArg = homeMediaType.rawValue
                                     )
-                                )
-                                .background(MaterialTheme.colorScheme.background)
-                        ) {
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-                            Text(
-                                text = stringResource(Res.string.trending_now),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.headlineMedium,
-                                modifier = Modifier.padding(
-                                    start = dimensionResource(Res.dimen.large_padding)
-                                )
-                            )
-
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                            MediaSmallRow(
-                                mediaList = trendingNowMediaList,
-                                onItemClick = { itemId ->
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = itemId,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                ) {
+                                    launchSingleTop = true
                                 }
+                            }
+                        )
+
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+
+                        Text(
+                            text = stringResource(Res.string.popular_this_season),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.headlineMedium,
+                            modifier = Modifier.padding(
+                                start = dimensionResource(Res.dimen.large_padding)
                             )
+                        )
 
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
-                            Text(
-                                text = stringResource(Res.string.popular_this_season),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.headlineMedium,
-                                modifier = Modifier.padding(
-                                    start = dimensionResource(Res.dimen.large_padding)
-                                )
-                            )
-
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                            MediaSmallRow(
-                                mediaList = popularThisSeasonMediaList,
-                                onItemClick = { itemId ->
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = itemId,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                        MediaSmallRow(
+                            mediaList = popularThisSeasonMediaList,
+                            onItemClick = { itemId ->
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = itemId,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
+                                ) {
+                                    launchSingleTop = true
                                 }
-                            )
+                            }
+                        )
 
-                            Spacer(
-                                Modifier.height(
-                                    dimensionResource(Res.dimen.navigation_bar_height)
-                                            + dimensionResource(Res.dimen.large_padding)
-                                )
+                        Spacer(
+                            Modifier.height(
+                                dimensionResource(Res.dimen.navigation_bar_height)
+                                        + dimensionResource(Res.dimen.large_padding)
                             )
-                        }
+                        )
                     }
                 }
+            }
         }
         else -> {
             Box(
