@@ -111,6 +111,9 @@ dependencies {
     implementation(libs.accompanist.systemUiController)
     implementation(libs.accompanist.placeholder)
 
+    // Snapper
+    implementation(libs.chrisbanes.snapper)
+
     // Compose Destinations
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)

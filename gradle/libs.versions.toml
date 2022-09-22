@@ -54,6 +54,10 @@ datetime = "0.3.3"
 # https://github.com/google/ksp/releases.
 ksp = "1.7.10-1.0.6"
 
+# Snapper
+# https://github.com/chrisbanes/snapper/releases.
+snapper = "0.3.0"
+
 # Test
 # https://github.com/junit-team/junit4/releases.
 junit = "4.13.2"
@@ -91,5 +95,6 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 accompanist-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
-accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist"}
+accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist" }
+chrisbanes-snapper = { group = "dev.chrisbanes.snapper", name = "snapper", version.ref = "snapper" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
