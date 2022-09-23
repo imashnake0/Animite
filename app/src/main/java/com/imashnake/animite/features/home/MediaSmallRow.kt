@@ -13,7 +13,7 @@ import com.imashnake.animite.R as Res
 @Composable
 fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId: Int?) -> Unit) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding)),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.medium_padding)),
         contentPadding = PaddingValues(
             start = dimensionResource(Res.dimen.large_padding),
             end = dimensionResource(Res.dimen.large_padding)

@@ -69,7 +69,8 @@ class MainActivity : ComponentActivity() {
                         navGraph = NavGraphs.root,
                         modifier = Modifier
                             .align(Alignment.TopCenter)
-                            .background(MaterialTheme.colorScheme.background),
+                            .background(MaterialTheme.colorScheme.background)
+                            .fillMaxSize(),
                         navController = navController,
                         engine = navHostEngine
                     )
