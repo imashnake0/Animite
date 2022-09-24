@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.imashnake.animite.R as Res
 
@@ -48,9 +49,11 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
         Text(
             text = anime.orEmpty(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontSize = 12.sp
+            ),
             maxLines = 1,
-            overflow = TextOverflow.Clip,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(
                 dimensionResource(Res.dimen.media_card_text_padding)
             )

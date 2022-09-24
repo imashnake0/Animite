@@ -140,7 +140,7 @@ fun Home(
                             }
                         )
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                         Text(
                             text = stringResource(Res.string.popular_this_season),
