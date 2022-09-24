@@ -124,7 +124,7 @@ fun Home(
                             )
                         )
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.small_padding)))
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                         MediaSmallRow(
                             mediaList = trendingNowMediaList,
@@ -140,7 +140,7 @@ fun Home(
                             }
                         )
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
                         Text(
                             text = stringResource(Res.string.popular_this_season),
@@ -151,7 +151,7 @@ fun Home(
                             )
                         )
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.small_padding)))
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                         MediaSmallRow(
                             mediaList = popularThisSeasonMediaList,
