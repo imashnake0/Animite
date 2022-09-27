@@ -422,7 +422,8 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
             maxLines = 1,
             overflow = TextOverflow.Clip,
             modifier = Modifier.padding(
-                dimensionResource(Res.dimen.media_card_text_padding)
+                horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
+                vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
             )
         )
     }
