@@ -98,7 +98,7 @@ fun Home(
                             .align(Alignment.BottomStart)
                             .padding(
                                 start = dimensionResource(Res.dimen.large_padding),
-                                bottom = dimensionResource(Res.dimen.large_padding)
+                                bottom = dimensionResource(Res.dimen.medium_padding)
                                         + dimensionResource(Res.dimen.backdrop_corner_radius)
                             )
                     )

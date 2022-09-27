@@ -27,8 +27,8 @@ val AnimiteTypography = Typography(
     titleMedium = TextStyle(
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
-        letterSpacing = 0.2.sp,
+        fontSize = 14.sp,
+        letterSpacing = 0.2.sp
     ),
     displaySmall = TextStyle(
         fontSize = 24.sp,
@@ -62,5 +62,5 @@ val AnimiteTypography = Typography(
         fontSize = 12.sp,
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Medium
-    ),
+    )
 )
