@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,10 +13,10 @@ import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayAt
 import java.io.IOException
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,14 +40,22 @@ class HomeViewModel @Inject constructor(
                     seasonYear = null
                 )
 
+                val now = LocalDate.now()
+                val seasons = with(Month.values()) {drop(2) + take(2) }.chunked(3)
                 val popularMediaThisSeason = if (mediaType == MediaType.ANIME) {
                     mediaListRepository.fetchMediaList(
                         mediaType = mediaType,
                         page = 0,
                         perPage = 10,
                         sort = listOf(MediaSort.POPULARITY_DESC),
-                        season = MediaSeason.SPRING,
-                        seasonYear = Clock.System.todayAt(TimeZone.currentSystemDefault()).year
+                        season = when(now.month) {
+                            in seasons[0] -> MediaSeason.SPRING
+                            in seasons[1] -> MediaSeason.SUMMER
+                            in seasons[2] -> MediaSeason.FALL
+                            in seasons[3] -> MediaSeason.WINTER
+                            else -> MediaSeason.UNKNOWN__
+                        },
+                        seasonYear = now.year
                     )
                 } else {
                     // TODO: This is needed because there is no "Popular This Season" for manga.

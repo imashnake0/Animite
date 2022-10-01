@@ -35,6 +35,7 @@ android {
     }
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -99,7 +100,6 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
-    implementation(libs.kotlin.datetime)
     implementation(kotlin("reflect"))
 
     // Hilt
@@ -113,6 +113,8 @@ dependencies {
 
     // Snapper
     implementation(libs.chrisbanes.snapper)
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     // Compose Destinations
     implementation(libs.compose.destinations)
