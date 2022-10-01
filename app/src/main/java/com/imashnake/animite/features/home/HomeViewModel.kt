@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.repos.MediaListRepository
+import com.imashnake.animite.dev.ext.nextSeason
+import com.imashnake.animite.dev.ext.season
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
@@ -39,20 +41,13 @@ class HomeViewModel @Inject constructor(
                 )
 
                 val now = LocalDate.now()
-                val seasons = with(Month.values()) {drop(2) + take(2) }.chunked(3)
                 val popularMediaThisSeason = if (mediaType == MediaType.ANIME) {
                     mediaListRepository.fetchMediaList(
                         mediaType = mediaType,
                         page = 0,
                         perPage = 10,
                         sort = listOf(MediaSort.POPULARITY_DESC),
-                        season = when(now.month) {
-                            in seasons[0] -> MediaSeason.SPRING
-                            in seasons[1] -> MediaSeason.SUMMER
-                            in seasons[2] -> MediaSeason.FALL
-                            in seasons[3] -> MediaSeason.WINTER
-                            else -> MediaSeason.UNKNOWN__
-                        },
+                        season = now.month.season,
                         seasonYear = now.year
                     )
                 } else {
@@ -68,10 +63,20 @@ class HomeViewModel @Inject constructor(
                     )
                 }
 
+                val upcomingMediaNextSeason = mediaListRepository.fetchMediaList(
+                    mediaType = mediaType,
+                    page = 0,
+                    perPage = 10,
+                    sort = listOf(MediaSort.POPULARITY_DESC),
+                    season = now.month.season.nextSeason(now).first,
+                    seasonYear = now.month.season.nextSeason(now).second
+                )
+
                 uiState = with(uiState) {
                     copy(
                         trendingMediaList = trendingMedia,
-                        popularThisSeasonMediaList = popularMediaThisSeason
+                        popularThisSeasonMediaList = popularMediaThisSeason,
+                        upcomingNextSeasonMediaList = upcomingMediaNextSeason
                     )
                 }
             } catch (ioe: IOException) {

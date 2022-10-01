@@ -55,9 +55,12 @@ fun Home(
 
     val popularThisSeasonMediaList = viewModel.uiState.popularThisSeasonMediaList?.media
     val trendingNowMediaList = viewModel.uiState.trendingMediaList?.media
+    val upcomingNextSeasonMediaList = viewModel.uiState.upcomingNextSeasonMediaList?.media
 
     when {
-        trendingNowMediaList != null && popularThisSeasonMediaList != null -> {
+        trendingNowMediaList != null &&
+        popularThisSeasonMediaList != null &&
+        upcomingNextSeasonMediaList != null -> {
             Box(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
@@ -88,7 +91,7 @@ fun Home(
                             )
                             .fillMaxWidth()
                             .height(dimensionResource(Res.dimen.banner_height))
-                    ) {  }
+                    ) { }
 
                     Text(
                         text = stringResource(Res.string.okaeri),
@@ -178,6 +181,33 @@ fun Home(
                             }
                         )
 
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+
+                        Text(
+                            text = stringResource(Res.string.upcoming_next_season),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(
+                                start = dimensionResource(Res.dimen.large_padding)
+                            )
+                        )
+
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+                        MediaSmallRow(
+                            mediaList = upcomingNextSeasonMediaList,
+                            onItemClick = { itemId ->
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = itemId,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            }
+                        )
+
                         Spacer(
                             Modifier.height(
                                 dimensionResource(Res.dimen.navigation_bar_height)
@@ -188,6 +218,7 @@ fun Home(
                 }
             }
         }
+
         else -> {
             Box(
                 contentAlignment = Alignment.Center,
