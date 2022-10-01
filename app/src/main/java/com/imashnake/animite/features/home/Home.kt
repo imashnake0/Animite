@@ -53,7 +53,7 @@ fun Home(
 
     viewModel.populateMediaLists(homeMediaType)
 
-    val popularThisSeasonMediaList = viewModel.uiState.popularMediaThisSeasonList?.media
+    val popularThisSeasonMediaList = viewModel.uiState.popularThisSeasonMediaList?.media
     val trendingNowMediaList = viewModel.uiState.trendingMediaList?.media
 
     when {

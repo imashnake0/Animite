@@ -71,7 +71,7 @@ class HomeViewModel @Inject constructor(
                 uiState = with(uiState) {
                     copy(
                         trendingMediaList = trendingMedia,
-                        popularMediaThisSeasonList = popularMediaThisSeason
+                        popularThisSeasonMediaList = popularMediaThisSeason
                     )
                 }
             } catch (ioe: IOException) {
