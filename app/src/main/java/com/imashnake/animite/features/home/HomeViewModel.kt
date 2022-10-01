@@ -1,6 +1,5 @@
 package com.imashnake.animite.features.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,7 +14,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.IOException
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Month
 import javax.inject.Inject
 
