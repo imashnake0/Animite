@@ -38,16 +38,16 @@ class HomeViewModel @Inject constructor(
                     seasonYear = null
                 )
 
+                val now = LocalDate.now()
                 val popularMediaThisSeason = mediaListRepository.fetchMediaList(
                     mediaType = mediaType,
                     page = 0,
                     perPage = 10,
                     sort = listOf(MediaSort.POPULARITY_DESC),
-                    season = null,
-                    seasonYear = null
+                    season = now.month.season,
+                    seasonYear = now.year
                 )
 
-                val now = LocalDate.now()
                 val upcomingMediaNextSeason = mediaListRepository.fetchMediaList(
                     mediaType = mediaType,
                     page = 0,
