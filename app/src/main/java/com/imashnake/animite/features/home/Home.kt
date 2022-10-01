@@ -56,11 +56,13 @@ fun Home(
     val popularThisSeasonMediaList = viewModel.uiState.popularThisSeasonMediaList?.media
     val trendingNowMediaList = viewModel.uiState.trendingMediaList?.media
     val upcomingNextSeasonMediaList = viewModel.uiState.upcomingNextSeasonMediaList?.media
+    val allTimePopularMediaList = viewModel.uiState.allTimePopularMediaList?.media
 
     when {
         trendingNowMediaList != null &&
         popularThisSeasonMediaList != null &&
-        upcomingNextSeasonMediaList != null -> {
+        upcomingNextSeasonMediaList != null &&
+        allTimePopularMediaList != null -> {
             Box(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
@@ -196,6 +198,33 @@ fun Home(
 
                         MediaSmallRow(
                             mediaList = upcomingNextSeasonMediaList,
+                            onItemClick = { itemId ->
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = itemId,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            }
+                        )
+
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+
+                        Text(
+                            text = stringResource(Res.string.all_time_popular),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(
+                                start = dimensionResource(Res.dimen.large_padding)
+                            )
+                        )
+
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+                        MediaSmallRow(
+                            mediaList = allTimePopularMediaList,
                             onItemClick = { itemId ->
                                 navigator.navigate(
                                     MediaPageDestination(
