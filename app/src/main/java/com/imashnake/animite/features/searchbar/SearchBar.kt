@@ -216,7 +216,7 @@ fun SearchList(
     val searchList = viewModel.uiState.searchList?.media
 
     // TODO: Improve this animation.
-    if (searchList != null && searchList.isNotEmpty()) {
+    if (!searchList.isNullOrEmpty()) {
         LazyColumn(
             modifier = modifier,
             contentPadding = PaddingValues(16.dp)
