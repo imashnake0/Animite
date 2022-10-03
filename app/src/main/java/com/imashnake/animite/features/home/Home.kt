@@ -104,30 +104,16 @@ fun Home(
                             .padding(
                                 start = dimensionResource(Res.dimen.large_padding),
                                 bottom = dimensionResource(Res.dimen.medium_padding)
-                                        + dimensionResource(Res.dimen.backdrop_corner_radius)
                             )
                     )
                 }
 
                 // TODO: Use `padding` instead of the `Spacer`s.
                 Column {
-                    Spacer(
-                        Modifier
-                            .size(
-                                dimensionResource(Res.dimen.banner_height)
-                                        - dimensionResource(Res.dimen.backdrop_corner_radius)
-                            )
-                    )
+                    Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
 
                     Column(
-                        modifier = Modifier
-                            .clip(
-                                RoundedCornerShape(
-                                    topStart = dimensionResource(Res.dimen.backdrop_corner_radius),
-                                    topEnd = dimensionResource(Res.dimen.backdrop_corner_radius)
-                                )
-                            )
-                            .background(MaterialTheme.colorScheme.background)
+                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
                     ) {
                         Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 

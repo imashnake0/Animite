@@ -81,9 +81,7 @@ fun MediaPage(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(
-                        dimensionResource(Res.dimen.banner_height)
-                    ),
+                    .height(dimensionResource(Res.dimen.banner_height)),
                 alignment = Alignment.TopCenter
             )
         }
@@ -91,16 +89,7 @@ fun MediaPage(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(
-                    top = dimensionResource(Res.dimen.banner_height)
-                            - dimensionResource(Res.dimen.backdrop_corner_radius)
-                )
-                .clip(
-                    RoundedCornerShape(
-                        topStart = dimensionResource(Res.dimen.backdrop_corner_radius),
-                        topEnd = dimensionResource(Res.dimen.backdrop_corner_radius)
-                    )
-                )
+                .padding(top = dimensionResource(Res.dimen.banner_height))
                 .background(MaterialTheme.colorScheme.background)
         ) {
             Column {
