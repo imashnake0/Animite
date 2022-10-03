@@ -68,7 +68,8 @@ fun SearchBar(
                     viewModel = hiltViewModel(),
                     modifier = Modifier
                         .clip(
-                            RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+                            // TODO: Either remove this or change the resource.
+                            RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
                         )
                         .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95F))
                         .align(Alignment.End)

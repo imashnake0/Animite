@@ -35,7 +35,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
                 enabled = true,
                 onClick = onClick
             ),
-        shape = RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius)),
+        shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         )
@@ -47,7 +47,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
             modifier = Modifier
                 .height(dimensionResource(Res.dimen.media_card_height))
                 .clip(
-                    RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+                    RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
                 )
         )
 

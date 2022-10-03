@@ -113,7 +113,6 @@ fun MediaPage(
                                     .asPaddingValues()
                                     .calculateTopPadding()
                                         + dimensionResource(Res.dimen.media_card_height)
-                                        + dimensionResource(Res.dimen.backdrop_corner_radius)
                                         - dimensionResource(Res.dimen.banner_height)
                             )
                             .fillMaxSize()
@@ -316,7 +315,7 @@ fun MediaPage(
                 .statusBarsPadding()
                 .wrapContentHeight()
                 .width(dimensionResource(Res.dimen.media_card_width)),
-            shape = RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+            shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
         ) {
             AsyncImage(
                 model = media.coverImage,
@@ -325,7 +324,7 @@ fun MediaPage(
                 modifier = Modifier
                     .height(dimensionResource(Res.dimen.media_card_height))
                     .clip(
-                        RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+                        RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
                     )
             )
         }
@@ -392,7 +391,7 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         ),
-        shape = RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+        shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
     ) {
         AsyncImage(
             model = image,
@@ -401,7 +400,7 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
             modifier = Modifier
                 .height(dimensionResource(Res.dimen.character_card_height))
                 .clip(
-                    RoundedCornerShape(dimensionResource(Res.dimen.backdrop_corner_radius))
+                    RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
                 )
         )
         Text(
