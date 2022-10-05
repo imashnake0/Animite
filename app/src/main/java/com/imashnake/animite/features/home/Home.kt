@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -63,9 +64,10 @@ fun Home(
         popularThisSeasonMediaList != null &&
         upcomingNextSeasonMediaList != null &&
         allTimePopularMediaList != null -> {
+            val scrollState = rememberScrollState()
             Box(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(scrollState)
                     .navigationBarsPadding()
             ) {
                 Box {
@@ -74,7 +76,10 @@ fun Home(
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(dimensionResource(Res.dimen.banner_height)),
+                            .height(dimensionResource(Res.dimen.banner_height))
+                            .graphicsLayer {
+                                translationY = 0.7f * scrollState.value
+                            },
                         contentScale = ContentScale.Crop,
                         alignment = Alignment.TopCenter
                     )
