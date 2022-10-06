@@ -31,6 +31,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
         modifier = Modifier
             .wrapContentHeight()
             .width(dimensionResource(Res.dimen.media_card_width))
+            .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
             .clickable(
                 enabled = true,
                 onClick = onClick
@@ -46,9 +47,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(dimensionResource(Res.dimen.media_card_height))
-                .clip(
-                    RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
-                )
+                .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
         )
 
         Box {
