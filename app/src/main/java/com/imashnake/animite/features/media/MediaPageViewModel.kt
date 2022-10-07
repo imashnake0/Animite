@@ -49,7 +49,7 @@ class MediaPageViewModel @Inject constructor(
                         ranks = ranks,
                         genres = media?.genres,
                         characters = media?.characters?.nodes?.map {
-                                it -> Pair(it?.image?.large, it?.name?.full)
+                            Pair(it?.image?.large, it?.name?.full)
                         },
                         trailer = Pair(
                             first = when (media?.trailer?.site) {

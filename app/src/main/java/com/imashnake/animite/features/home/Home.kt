@@ -243,19 +243,25 @@ fun Home(
                 }
 
                 // Translucent status bar.
-                val bannerHeight = with(LocalDensity.current) { dimensionResource(Res.dimen.banner_height).toPx() }
+                val bannerHeight = with(LocalDensity.current) {
+                    dimensionResource(Res.dimen.banner_height).toPx()
+                }
                 Box(
                     modifier = Modifier
                         .graphicsLayer {
                             alpha = 0.75f * if (scrollState.value < bannerHeight) {
-                                    scrollState.value.toFloat()/bannerHeight
-                                } else 1f
+                                scrollState.value.toFloat() / bannerHeight
+                            } else 1f
                         }
                         .background(color = MaterialTheme.colorScheme.background)
                         .fillMaxWidth()
-                        .height(WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
+                        .height(
+                            WindowInsets.statusBars
+                                .asPaddingValues()
+                                .calculateTopPadding()
+                        )
                         .align(Alignment.TopCenter)
-                ) {  }
+                ) { }
             }
         }
 

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.imashnake.animite.dev.ext.isZeroOrNull
 import com.imashnake.animite.dev.ext.toHexColor
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
@@ -46,7 +47,7 @@ fun MediaPage(
 
     val media = viewModel.uiState
 
-    // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/)
+    // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
     Box(
         Modifier
             .fillMaxSize()
@@ -59,18 +60,14 @@ fun MediaPage(
                     model = media.bannerImage,
                     contentDescription = null,
                     contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.height(
-                        dimensionResource(Res.dimen.banner_height)
-                    ),
+                    modifier = Modifier.height(dimensionResource(Res.dimen.banner_height)),
                     alignment = Alignment.Center
                 )
 
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(
-                            dimensionResource(Res.dimen.banner_height)
-                        ),
+                        .height(dimensionResource(Res.dimen.banner_height)),
                     color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.2f)
                 ) { }
             }
@@ -112,8 +109,10 @@ fun MediaPage(
                                 WindowInsets.statusBars
                                     .asPaddingValues()
                                     .calculateTopPadding()
+                                        + dimensionResource(Res.dimen.media_card_top_padding)
                                         + dimensionResource(Res.dimen.media_card_height)
                                         - dimensionResource(Res.dimen.banner_height)
+                                        - dimensionResource(Res.dimen.large_padding)
                             )
                             .fillMaxSize()
                     ) {
@@ -178,31 +177,35 @@ fun MediaPage(
                     }
                 }
 
-                Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
+                if (!media.averageScore.isZeroOrNull() || media.ranks.isNotEmpty()) {
+                    Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = dimensionResource(Res.dimen.large_padding),
-                            end = dimensionResource(Res.dimen.large_padding)
-                        )
-                ) {
-                    Stat(
-                        label = stringResource(Res.string.score),
-                        score = media.averageScore ?: 0
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = dimensionResource(Res.dimen.large_padding),
+                                end = dimensionResource(Res.dimen.large_padding)
+                            )
                     ) {
-                        "$it%"
-                    }
+                        media.averageScore.let {
+                            if (!it.isZeroOrNull()) Stat(
+                                label = stringResource(Res.string.score),
+                                score = it!!
+                            ) { score ->
+                                "$score%"
+                            }
+                        }
 
-                    media.ranks.forEach { stat ->
-                        Stat(
-                            label = stat.first,
-                            score = stat.second
-                        ) {
-                            "#$it"
+                        media.ranks.forEach { stat ->
+                            Stat(
+                                label = stat.first,
+                                score = stat.second
+                            ) {
+                                "#$it"
+                            }
                         }
                     }
                 }
@@ -307,12 +310,12 @@ fun MediaPage(
         // TODO: Make this a reusable component.
         Card(
             modifier = Modifier
+                .statusBarsPadding()
                 .padding(
-                    top = dimensionResource(Res.dimen.large_padding),
+                    top = dimensionResource(Res.dimen.media_card_top_padding),
                     start = dimensionResource(Res.dimen.large_padding),
                     end = dimensionResource(Res.dimen.large_padding)
                 )
-                .statusBarsPadding()
                 .wrapContentHeight()
                 .width(dimensionResource(Res.dimen.media_card_width)),
             shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
@@ -323,9 +326,7 @@ fun MediaPage(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(dimensionResource(Res.dimen.media_card_height))
-                    .clip(
-                        RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
-                    )
+                    .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
             )
         }
     }
