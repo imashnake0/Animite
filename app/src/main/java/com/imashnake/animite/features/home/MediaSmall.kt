@@ -51,21 +51,19 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
         )
 
         Box {
-            Column {
-                Text(
-                    text = " \n ",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge,
-                    maxLines = 2,
-                    modifier = Modifier.padding(
-                        vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
-                    )
+            Text(
+                text = " \n ",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 2,
+                modifier = Modifier.padding(
+                    vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
                 )
-            }
+            )
 
             Text(
                 text = anime.orEmpty(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelLarge,
                 maxLines = 2,
                 // TODO: Add a custom overflow indicator:

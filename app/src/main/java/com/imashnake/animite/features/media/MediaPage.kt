@@ -24,6 +24,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -102,7 +103,7 @@ fun MediaPage(
                         modifier = Modifier
                             .padding(
                                 start = dimensionResource(Res.dimen.large_padding),
-                                top = dimensionResource(Res.dimen.large_padding),
+                                top = dimensionResource(Res.dimen.medium_padding),
                                 end = dimensionResource(Res.dimen.large_padding)
                             )
                             .height(
@@ -112,19 +113,14 @@ fun MediaPage(
                                         + dimensionResource(Res.dimen.media_card_top_padding)
                                         + dimensionResource(Res.dimen.media_card_height)
                                         - dimensionResource(Res.dimen.banner_height)
-                                        - dimensionResource(Res.dimen.large_padding)
+                                        - dimensionResource(Res.dimen.medium_padding)
                             )
                             .fillMaxSize()
                     ) {
                         Text(
                             text = media.title.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
-                            // Override MediaSmall's text.
-                            // TODO: This might be using an unintended style.
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            ),
+                            style = MaterialTheme.typography.titleLarge,
                             maxLines = 4,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -238,7 +234,7 @@ fun MediaPage(
                 Text(
                     text = stringResource(Res.string.characters),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(
                         start = dimensionResource(Res.dimen.large_padding)
                     )
@@ -258,7 +254,7 @@ fun MediaPage(
                 Text(
                     text = stringResource(Res.string.trailer),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(
                         start = dimensionResource(Res.dimen.large_padding)
                     )
@@ -404,17 +400,34 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
                     RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
                 )
         )
-        Text(
-            text = name.orEmpty(),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Clip,
-            modifier = Modifier.padding(
-                horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
-                vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
+
+        Box {
+            Text(
+                text = " \n ",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 2,
+                modifier = Modifier.padding(
+                    vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
+                )
             )
-        )
+
+            Text(
+                text = name.orEmpty(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Clip,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
+                        vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
+                    )
+            )
+        }
     }
 }
 
@@ -424,7 +437,7 @@ fun CharacterRow(
     onItemClick: (character: Pair<String?, String?>) -> Unit
 ) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding)),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
         contentPadding = PaddingValues(
             start = dimensionResource(Res.dimen.large_padding),
             end = dimensionResource(Res.dimen.large_padding)
