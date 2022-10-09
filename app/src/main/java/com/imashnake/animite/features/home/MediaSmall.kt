@@ -25,6 +25,7 @@ import coil.compose.AsyncImage
 import com.imashnake.animite.R as Res
 
 /**
+ * TODO: This component is hardly reusable, make changes to the API.
  * A [Card] to display a media image and a label.
  *
  * @param image A URL of the image to be shown in the card that this component is.

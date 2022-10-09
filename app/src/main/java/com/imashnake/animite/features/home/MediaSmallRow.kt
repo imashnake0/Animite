@@ -13,6 +13,7 @@ import com.imashnake.animite.type.MediaType
 import com.imashnake.animite.R as Res
 
 /**
+ * TODO: This component is hardly reusable, make changes to the API.
  * A [LazyRow] of [MediaSmall]s.
  *
  * @param mediaList A list of [MediaListQuery.Medium]s.
