@@ -98,7 +98,7 @@ fun MediaPage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(dimensionResource(Res.dimen.banner_height)),
-                    color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.2f)
+                    color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
                 ) { }
             }
         } else {
