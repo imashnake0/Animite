@@ -410,6 +410,7 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
         modifier = Modifier
             .wrapContentHeight()
             .width(dimensionResource(Res.dimen.character_card_width))
+            .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
             .clickable(
                 enabled = true,
                 onClick = onClick
@@ -425,9 +426,7 @@ fun Character(image: String?, name: String?, onClick: () -> Unit) {
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(dimensionResource(Res.dimen.character_card_height))
-                .clip(
-                    RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
-                )
+                .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
         )
 
         Box {
