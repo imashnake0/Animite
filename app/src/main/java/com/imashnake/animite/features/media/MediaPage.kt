@@ -60,6 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.dev.ext.isZeroOrNull
 import com.imashnake.animite.dev.ext.toHexColor
+import com.imashnake.animite.features.home.MediaSmall
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
@@ -335,8 +336,7 @@ fun MediaPage(
             Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
         }
 
-        // TODO: Make this a reusable component.
-        Card(
+        Box(
             modifier = Modifier
                 .statusBarsPadding()
                 .padding(
@@ -344,18 +344,8 @@ fun MediaPage(
                     start = dimensionResource(Res.dimen.large_padding),
                     end = dimensionResource(Res.dimen.large_padding)
                 )
-                .wrapContentHeight()
-                .width(dimensionResource(Res.dimen.media_card_width)),
-            shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
         ) {
-            AsyncImage(
-                model = media.coverImage,
-                contentDescription = media.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .height(dimensionResource(Res.dimen.media_card_height))
-                    .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
-            )
+            MediaSmall(image = media.coverImage)
         }
     }
 }

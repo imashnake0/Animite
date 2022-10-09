@@ -70,7 +70,7 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId:
  * @param onClick Action to happen when the card is clicked.
  */
 @Composable
-fun MediaSmall(image: String?, label: String?, onClick: () -> Unit) {
+fun MediaSmall(image: String?, label: String? = null, onClick: () -> Unit = {  }) {
     Card(
         modifier = Modifier
             .wrapContentHeight()
