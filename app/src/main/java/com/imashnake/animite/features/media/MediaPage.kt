@@ -296,6 +296,12 @@ fun MediaPage(
                     Box(
                         modifier = Modifier
                             .wrapContentSize()
+                            .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                            .clip(
+                                RoundedCornerShape(
+                                    dimensionResource(Res.dimen.trailer_corner_radius)
+                                )
+                            )
                             .clickable {
                                 val appIntent =
                                     Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
@@ -307,9 +313,6 @@ fun MediaPage(
                             contentDescription = stringResource(Res.string.trailer),
                             contentScale = ContentScale.FillWidth,
                             modifier = Modifier
-                                .padding(
-                                    horizontal = dimensionResource(Res.dimen.large_padding)
-                                )
                                 .fillMaxWidth()
                                 .aspectRatio(1.778f) // 16 : 9
                                 .clip(
