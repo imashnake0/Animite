@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
+    debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
     // Apollo Kotlin
@@ -114,7 +115,7 @@ dependencies {
     // Snapper
     implementation(libs.chrisbanes.snapper)
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
+    coreLibraryDesugaring(libs.android.desugaring)
 
     // Compose Destinations
     implementation(libs.compose.destinations)
