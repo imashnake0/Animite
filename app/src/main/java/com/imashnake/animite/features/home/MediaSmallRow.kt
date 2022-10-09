@@ -8,8 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.MediaQuery
+import com.imashnake.animite.type.MediaType
 import com.imashnake.animite.R as Res
 
+/**
+ * A [LazyRow] of [MediaSmall]s.
+ *
+ * @param mediaList A list of [MediaListQuery.Medium]s.
+ * @param onItemClick Action that is propagated to the [MediaSmall]s, it takes a unique id.
+ */
 @Composable
 fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId: Int?) -> Unit) {
     LazyRow(
@@ -23,7 +31,7 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId:
             MediaSmall(
                 image = media.coverImage?.extraLarge,
                 // TODO: Do something about this chain.
-                anime = media.title?.romaji ?:
+                label = media.title?.romaji ?:
                 media.title?.english ?:
                 media.title?.native ?: "",
                 onClick = {
@@ -43,21 +51,22 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId:
 @Preview
 @Composable
 fun PreviewMediaSmallRow() {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding)),
-        contentPadding = PaddingValues(
-            start = dimensionResource(Res.dimen.large_padding),
-            end = dimensionResource(Res.dimen.large_padding)
-        )
-    ) {
-        items(count = 10) {
-            MediaSmall(
-                image =
-                "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
-                anime =
-                "Sono Bisque Doll wa Koi wo Suru",
-                onClick = {  }
-            )
-        }
-    }
+    MediaSmallRow(
+        mediaList = List(10) {
+             MediaListQuery.Medium(
+                 id = it,
+                 type = MediaType.ANIME,
+                 title = MediaListQuery.Title(
+                     romaji = "Sono Bisque Doll wa Koi wo Suru",
+                     english = null,
+                     native = null
+                 ),
+                 coverImage = MediaListQuery.CoverImage(
+                     extraLarge = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
+                     large = null
+                 )
+             )
+        },
+        onItemClick = {  }
+    )
 }

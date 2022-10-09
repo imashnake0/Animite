@@ -24,8 +24,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.imashnake.animite.R as Res
 
+/**
+ * A [Card] to display a media image and a label.
+ *
+ * @param image The image to be shown in the card that this component is.
+ * @param label A label for the [image], if this is `null`, the [label] is not shown.
+ * @param onClick Action to happen when the card is clicked.
+ */
 @Composable
-fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
+fun MediaSmall(image: String?, label: String?, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .wrapContentHeight()
@@ -41,7 +48,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
     ) {
         AsyncImage(
             model = image,
-            contentDescription = anime,
+            contentDescription = label,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(dimensionResource(Res.dimen.media_card_height))
@@ -60,7 +67,7 @@ fun MediaSmall(image: String?, anime: String?, onClick: () -> Unit) {
             )
 
             Text(
-                text = anime.orEmpty(),
+                text = label.orEmpty(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelLarge,
                 maxLines = 2,
@@ -86,7 +93,7 @@ fun PreviewMediaSmall() {
     MediaSmall(
         image =
         "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
-        anime =
+        label =
         "Sono Bisque Doll wa Koi wo Suru",
         onClick = {  }
     )
