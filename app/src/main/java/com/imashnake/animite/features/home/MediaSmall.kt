@@ -27,7 +27,7 @@ import com.imashnake.animite.R as Res
 /**
  * A [Card] to display a media image and a label.
  *
- * @param image The image to be shown in the card that this component is.
+ * @param image A URL of the image to be shown in the card that this component is.
  * @param label A label for the [image], if this is `null`, the [label] is not shown.
  * @param onClick Action to happen when the card is clicked.
  */
@@ -55,35 +55,36 @@ fun MediaSmall(image: String?, label: String?, onClick: () -> Unit) {
                 .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
         )
 
-        Box {
-            Text(
-                text = " \n ",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 2,
-                modifier = Modifier.padding(
-                    vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
-                )
-            )
-
-            Text(
-                text = label.orEmpty(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 2,
-                // TODO: Add a custom overflow indicator:
-                //  https://proandroiddev.com/detect-text-overflow-in-jetpack-compose-56c0b83da5a5.
-                overflow = TextOverflow.Visible,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
+        if (label != null)
+            Box {
+                Text(
+                    text = " \n ",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 2,
+                    modifier = Modifier.padding(
                         vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
                     )
-            )
-        }
+                )
+
+                Text(
+                    text = label.orEmpty(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 2,
+                    // TODO: Add a custom overflow indicator:
+                    //  https://proandroiddev.com/detect-text-overflow-in-jetpack-compose-56c0b83da5a5.
+                    overflow = TextOverflow.Visible,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .fillMaxWidth()
+                        .padding(
+                            horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
+                            vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
+                        )
+                )
+            }
     }
 }
 
