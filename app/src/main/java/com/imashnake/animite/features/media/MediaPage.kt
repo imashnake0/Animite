@@ -60,7 +60,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.dev.ext.isZeroOrNull
 import com.imashnake.animite.dev.ext.toHexColor
-import com.imashnake.animite.features.home.MediaSmall
+import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res

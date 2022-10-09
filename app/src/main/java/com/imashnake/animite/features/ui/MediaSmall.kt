@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.home
+package com.imashnake.animite.features.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -126,12 +126,6 @@ fun MediaSmall(image: String?, label: String? = null, onClick: () -> Unit = {  }
     }
 }
 
-/**
- * Example:
- *
- * **Anime:** Sono Bisque Doll wa Koi wo Suru;
- * **ID:** 132405.
- */
 @Preview
 @Composable
 fun PreviewMediaSmallRow() {
