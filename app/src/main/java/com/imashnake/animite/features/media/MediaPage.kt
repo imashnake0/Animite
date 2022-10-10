@@ -191,8 +191,6 @@ fun MediaPage(
                                 overflow = TextOverflow.Ellipsis
                             )
 
-                            Spacer(Modifier.height(dimensionResource(Res.dimen.small_padding)))
-
                             Box {
                                 Text(
                                     // TODO: Some attributes are not applied.
@@ -203,7 +201,9 @@ fun MediaPage(
                                         alpha = 0.6f
                                     ),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier.verticalScroll(rememberScrollState())
+                                    modifier = Modifier
+                                        .verticalScroll(rememberScrollState())
+                                        .padding(top = dimensionResource(Res.dimen.small_padding))
                                 )
 
                                 Box(
