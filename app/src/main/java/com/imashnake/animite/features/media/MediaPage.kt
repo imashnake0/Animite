@@ -51,9 +51,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -82,306 +84,331 @@ fun MediaPage(
 
     val media = viewModel.uiState
 
-    // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
-    Box(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
-    ) {
-        if (!media.bannerImage.isNullOrEmpty()) {
-            Box {
-                val bannerHeight = dimensionResource(Res.dimen.banner_height)
-                AsyncImage(
-                    model = media.bannerImage,
-                    contentDescription = null,
-                    contentScale = if (
-                        LocalConfiguration.current.orientation
-                        != Configuration.ORIENTATION_LANDSCAPE
-                    ) ContentScale.FillHeight else ContentScale.FillWidth,
-                    modifier = Modifier.given(
-                        LocalConfiguration.current.orientation
+    Box {
+        val scrollState = rememberScrollState()
+        val bannerHeight = dimensionResource(Res.dimen.banner_height)
+        // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
+        Box(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .navigationBarsPadding()
+        ) {
+            if (!media.bannerImage.isNullOrEmpty()) {
+                Box {
+
+                    AsyncImage(
+                        model = media.bannerImage,
+                        contentDescription = null,
+                        contentScale = if (
+                            LocalConfiguration.current.orientation
                             != Configuration.ORIENTATION_LANDSCAPE
-                    ) {
-                        height(bannerHeight)
-                    }.given(
+                        ) ContentScale.FillHeight else ContentScale.FillWidth,
+                        modifier = Modifier
+                            .given(
+                                LocalConfiguration.current.orientation
+                                        != Configuration.ORIENTATION_LANDSCAPE
+                            ) {
+                                height(bannerHeight)
+                            }
+                            .given(
+                                LocalConfiguration.current.orientation
+                                        == Configuration.ORIENTATION_LANDSCAPE
+                            ) {
+                                fillMaxWidth()
+                            },
+                        alignment = Alignment.Center
+                    )
+
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .given(
+                                LocalConfiguration.current.orientation
+                                        != Configuration.ORIENTATION_LANDSCAPE
+                            ) {
+                                height(bannerHeight)
+                            },
+                        color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
+                    ) { }
+                }
+            } else {
+                Image(
+                    painter = painterResource(Res.drawable.background),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(dimensionResource(Res.dimen.banner_height)),
+                    alignment = Alignment.TopCenter
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(top = dimensionResource(Res.dimen.banner_height))
+                    .background(MaterialTheme.colorScheme.background)
+                    .given(
                         LocalConfiguration.current.orientation
                                 == Configuration.ORIENTATION_LANDSCAPE
                     ) {
-                        fillMaxWidth()
-                    },
-                    alignment = Alignment.Center
-                )
-
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .given(
-                            LocalConfiguration.current.orientation
-                                    != Configuration.ORIENTATION_LANDSCAPE
-                        ) {
-                            height(bannerHeight)
-                        },
-                    color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
-                ) { }
-            }
-        } else {
-            Image(
-                painter = painterResource(Res.drawable.background),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(dimensionResource(Res.dimen.banner_height)),
-                alignment = Alignment.TopCenter
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(top = dimensionResource(Res.dimen.banner_height))
-                .background(MaterialTheme.colorScheme.background)
-                .given(
-                    LocalConfiguration.current.orientation
-                            == Configuration.ORIENTATION_LANDSCAPE
-                ) {
-                    displayCutoutPadding()
-                }
-        ) {
-            Column {
-                Row {
-                    Spacer(
-                        Modifier.width(
-                            dimensionResource(Res.dimen.media_card_width)
-                                    + dimensionResource(Res.dimen.large_padding)
-                        )
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .padding(
-                                start = dimensionResource(Res.dimen.large_padding),
-                                top = dimensionResource(Res.dimen.medium_padding),
-                                end = dimensionResource(Res.dimen.large_padding)
+                        displayCutoutPadding()
+                    }
+            ) {
+                Column {
+                    Row {
+                        Spacer(
+                            Modifier.width(
+                                dimensionResource(Res.dimen.media_card_width)
+                                        + dimensionResource(Res.dimen.large_padding)
                             )
-                            .height(
-                                WindowInsets.statusBars
-                                    .asPaddingValues()
-                                    .calculateTopPadding()
-                                        + dimensionResource(Res.dimen.media_card_top_padding)
-                                        + dimensionResource(Res.dimen.media_card_height)
-                                        - dimensionResource(Res.dimen.banner_height)
-                                        - dimensionResource(Res.dimen.medium_padding)
-                            )
-                            .fillMaxSize()
-                    ) {
-                        Text(
-                            text = media.title.orEmpty(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleLarge,
-                            maxLines = 4,
-                            overflow = TextOverflow.Ellipsis
                         )
 
-                        Spacer(Modifier.height(dimensionResource(Res.dimen.small_padding)))
-
-                        Box {
-                            Text(
-                                // TODO: Some attributes are not applied.
-                                text = Html
-                                    .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
-                                    .toString(),
-                                color = MaterialTheme.colorScheme.onBackground.copy(
-                                    alpha = 0.6f
-                                ),
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.verticalScroll(rememberScrollState())
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .height(dimensionResource(Res.dimen.small_padding))
-                                    .fillMaxWidth()
-                                    .align(Alignment.TopCenter)
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(
-                                                MaterialTheme.colorScheme.background,
-                                                Transparent
-                                            )
-                                        )
-                                    )
-                            ) {  }
-
-                            Box(
-                                modifier = Modifier
-                                    .height(dimensionResource(Res.dimen.small_padding))
-                                    .fillMaxWidth()
-                                    .align(Alignment.BottomCenter)
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(
-                                                Transparent,
-                                                MaterialTheme.colorScheme.background
-                                            )
-                                        )
-                                    )
-                            ) {  }
-                        }
-                    }
-                }
-
-                if (!media.averageScore.isZeroOrNull() || media.ranks.isNotEmpty()) {
-                    Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                start = dimensionResource(Res.dimen.large_padding),
-                                end = dimensionResource(Res.dimen.large_padding)
-                            )
-                    ) {
-                        media.averageScore.let {
-                            if (!it.isZeroOrNull()) Stat(
-                                label = stringResource(Res.string.score),
-                                score = it!!
-                            ) { score ->
-                                "$score%"
-                            }
-                        }
-
-                        media.ranks.forEach { stat ->
-                            Stat(
-                                label = stat.first,
-                                score = stat.second
-                            ) {
-                                "#$it"
-                            }
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
-
-                // TODO: Monet where?
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(
-                        dimensionResource(Res.dimen.medium_padding)
-                    ),
-                    contentPadding = PaddingValues(
-                        horizontal = dimensionResource(Res.dimen.large_padding)
-                    )
-                ) {
-                    if (!media.genres.isNullOrEmpty()) {
-                        items(media.genres) { genre ->
-                            Genre(
-                                genre = genre,
-                                color = Color(media.color?.toHexColor() ?: 0xFF152232)
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-            if (!media.characters.isNullOrEmpty()) {
-                Text(
-                    text = stringResource(Res.string.characters),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(
-                        start = dimensionResource(Res.dimen.large_padding)
-                    )
-                )
-
-                Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                // TODO: Make characters clickable.
-                CharacterRow(characterList = media.characters) {
-                    Log.d("Character", it.second ?: "null")
-                }
-            }
-
-            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-            if (!media.trailer.toList().any { it == null }) {
-                Text(
-                    text = stringResource(Res.string.trailer),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(
-                        start = dimensionResource(Res.dimen.large_padding)
-                    )
-                )
-
-                Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                val context = LocalContext.current
-                if (!media.trailer.toList().any { (it ?: "").isBlank() }) {
-                    Box(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(horizontal = dimensionResource(Res.dimen.large_padding))
-                            .clip(
-                                RoundedCornerShape(
-                                    dimensionResource(Res.dimen.trailer_corner_radius)
+                        Column(
+                            modifier = Modifier
+                                .padding(
+                                    start = dimensionResource(Res.dimen.large_padding),
+                                    top = dimensionResource(Res.dimen.medium_padding),
+                                    end = dimensionResource(Res.dimen.large_padding)
                                 )
+                                .height(
+                                    WindowInsets.statusBars
+                                        .asPaddingValues()
+                                        .calculateTopPadding()
+                                            + dimensionResource(Res.dimen.media_card_top_padding)
+                                            + dimensionResource(Res.dimen.media_card_height)
+                                            - dimensionResource(Res.dimen.banner_height)
+                                            - dimensionResource(Res.dimen.medium_padding)
+                                )
+                                .fillMaxSize()
+                        ) {
+                            Text(
+                                text = media.title.orEmpty(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleLarge,
+                                maxLines = 4,
+                                overflow = TextOverflow.Ellipsis
                             )
-                            .clickable {
-                                val appIntent =
-                                    Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
-                                context.startActivity(appIntent)
+
+                            Spacer(Modifier.height(dimensionResource(Res.dimen.small_padding)))
+
+                            Box {
+                                Text(
+                                    // TODO: Some attributes are not applied.
+                                    text = Html
+                                        .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
+                                        .toString(),
+                                    color = MaterialTheme.colorScheme.onBackground.copy(
+                                        alpha = 0.6f
+                                    ),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.verticalScroll(rememberScrollState())
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .height(dimensionResource(Res.dimen.small_padding))
+                                        .fillMaxWidth()
+                                        .align(Alignment.TopCenter)
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(
+                                                    MaterialTheme.colorScheme.background,
+                                                    Transparent
+                                                )
+                                            )
+                                        )
+                                ) { }
+
+                                Box(
+                                    modifier = Modifier
+                                        .height(dimensionResource(Res.dimen.small_padding))
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter)
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(
+                                                    Transparent,
+                                                    MaterialTheme.colorScheme.background
+                                                )
+                                            )
+                                        )
+                                ) { }
                             }
-                    ) {
-                        AsyncImage(
-                            model = media.trailer.second,
-                            contentDescription = stringResource(Res.string.trailer),
-                            contentScale = ContentScale.FillWidth,
+                        }
+                    }
+
+                    if (!media.averageScore.isZeroOrNull() || media.ranks.isNotEmpty()) {
+                        Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceAround,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .aspectRatio(1.778f) // 16 : 9
+                                .padding(
+                                    start = dimensionResource(Res.dimen.large_padding),
+                                    end = dimensionResource(Res.dimen.large_padding)
+                                )
+                        ) {
+                            media.averageScore.let {
+                                if (!it.isZeroOrNull()) Stat(
+                                    label = stringResource(Res.string.score),
+                                    score = it!!
+                                ) { score ->
+                                    "$score%"
+                                }
+                            }
+
+                            media.ranks.forEach { stat ->
+                                Stat(
+                                    label = stat.first,
+                                    score = stat.second
+                                ) {
+                                    "#$it"
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
+
+                    // TODO: Monet where?
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(
+                            dimensionResource(Res.dimen.medium_padding)
+                        ),
+                        contentPadding = PaddingValues(
+                            horizontal = dimensionResource(Res.dimen.large_padding)
+                        )
+                    ) {
+                        if (!media.genres.isNullOrEmpty()) {
+                            items(media.genres) { genre ->
+                                Genre(
+                                    genre = genre,
+                                    color = Color(media.color?.toHexColor() ?: 0xFF152232)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+
+                if (!media.characters.isNullOrEmpty()) {
+                    Text(
+                        text = stringResource(Res.string.characters),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(
+                            start = dimensionResource(Res.dimen.large_padding)
+                        )
+                    )
+
+                    Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+                    // TODO: Make characters clickable.
+                    CharacterRow(characterList = media.characters) {
+                        Log.d("Character", it.second ?: "null")
+                    }
+                }
+
+                Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+
+                if (!media.trailer.toList().any { it == null }) {
+                    Text(
+                        text = stringResource(Res.string.trailer),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(
+                            start = dimensionResource(Res.dimen.large_padding)
+                        )
+                    )
+
+                    Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+                    val context = LocalContext.current
+                    if (!media.trailer.toList().any { (it ?: "").isBlank() }) {
+                        Box(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .padding(horizontal = dimensionResource(Res.dimen.large_padding))
                                 .clip(
                                     RoundedCornerShape(
                                         dimensionResource(Res.dimen.trailer_corner_radius)
                                     )
-                                ),
-                            alignment = Alignment.Center
-                        )
+                                )
+                                .clickable {
+                                    val appIntent =
+                                        Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
+                                    context.startActivity(appIntent)
+                                }
+                        ) {
+                            AsyncImage(
+                                model = media.trailer.second,
+                                contentDescription = stringResource(Res.string.trailer),
+                                contentScale = ContentScale.FillWidth,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1.778f) // 16 : 9
+                                    .clip(
+                                        RoundedCornerShape(
+                                            dimensionResource(Res.dimen.trailer_corner_radius)
+                                        )
+                                    ),
+                                alignment = Alignment.Center
+                            )
 
-                        Image(
-                            painter = painterResource(Res.drawable.youtube),
-                            contentDescription = stringResource(Res.string.trailer),
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                            Image(
+                                painter = painterResource(Res.drawable.youtube),
+                                contentDescription = stringResource(Res.string.trailer),
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
                     }
                 }
+
+                Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
             }
 
-            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+            Box(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(
+                        top = dimensionResource(Res.dimen.media_card_top_padding),
+                        start = dimensionResource(Res.dimen.large_padding),
+                        end = dimensionResource(Res.dimen.large_padding)
+                    )
+                    .given(
+                        LocalConfiguration.current.orientation
+                                == Configuration.ORIENTATION_LANDSCAPE
+                    ) {
+                        displayCutoutPadding()
+                    }
+            ) {
+                MediaSmall(image = media.coverImage)
+            }
         }
 
+        // Translucent status bar.
+        val bannerHeightPx = with(LocalDensity.current) { bannerHeight.toPx() }
         Box(
             modifier = Modifier
-                .statusBarsPadding()
-                .padding(
-                    top = dimensionResource(Res.dimen.media_card_top_padding),
-                    start = dimensionResource(Res.dimen.large_padding),
-                    end = dimensionResource(Res.dimen.large_padding)
-                )
-                .given(
-                    LocalConfiguration.current.orientation
-                            == Configuration.ORIENTATION_LANDSCAPE
-                ) {
-                    displayCutoutPadding()
+                .graphicsLayer {
+                    alpha = 0.75f * if (scrollState.value < bannerHeightPx) {
+                        scrollState.value.toFloat() / bannerHeightPx
+                    } else 1f
                 }
-        ) {
-            MediaSmall(image = media.coverImage)
-        }
+                .background(color = MaterialTheme.colorScheme.background)
+                .fillMaxWidth()
+                .height(
+                    WindowInsets.statusBars
+                        .asPaddingValues()
+                        .calculateTopPadding()
+                )
+                .align(Alignment.TopCenter)
+        ) { }
     }
 }
 
