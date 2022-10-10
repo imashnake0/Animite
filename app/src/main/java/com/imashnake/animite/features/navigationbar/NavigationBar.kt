@@ -1,7 +1,15 @@
 package com.imashnake.animite.features.navigationbar
 
+import android.content.res.Configuration
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -43,7 +52,11 @@ fun NavigationBar(
                 .navigationBars
                 .asPaddingValues()
                 .calculateBottomPadding()
-        )
+        ),
+        // TODO: Use a `NavigationRail` instead.
+        windowInsets = if (LocalConfiguration.current.orientation
+            == Configuration.ORIENTATION_LANDSCAPE
+        ) { WindowInsets.displayCutout } else { WindowInsets(0.dp) }
     ) {
         val currentDestination = navController.appCurrentDestinationAsState().value
             ?: NavGraphs.root.startAppDestination

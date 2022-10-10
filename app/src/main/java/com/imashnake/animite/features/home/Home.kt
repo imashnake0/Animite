@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.home
 
+import android.content.res.Configuration
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,12 +33,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
@@ -115,6 +119,12 @@ fun Home(
                                     start = dimensionResource(Res.dimen.large_padding),
                                     bottom = dimensionResource(Res.dimen.medium_padding)
                                 )
+                                .given(
+                                    LocalConfiguration.current.orientation
+                                            == Configuration.ORIENTATION_LANDSCAPE
+                                ) {
+                                    displayCutoutPadding()
+                                }
                         )
                     }
 
@@ -123,7 +133,14 @@ fun Home(
                         Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
 
                         Column(
-                            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.background)
+                                .given(
+                                    LocalConfiguration.current.orientation
+                                            == Configuration.ORIENTATION_LANDSCAPE
+                                ) {
+                                    displayCutoutPadding()
+                                }
                         ) {
                             Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
