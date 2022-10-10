@@ -1,6 +1,7 @@
 package com.imashnake.animite.features.media
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -50,6 +52,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -58,6 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.dev.ext.isZeroOrNull
 import com.imashnake.animite.dev.ext.toHexColor
 import com.imashnake.animite.features.ui.MediaSmall
@@ -87,18 +91,37 @@ fun MediaPage(
     ) {
         if (!media.bannerImage.isNullOrEmpty()) {
             Box {
+                val bannerHeight = dimensionResource(Res.dimen.banner_height)
                 AsyncImage(
                     model = media.bannerImage,
                     contentDescription = null,
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.height(dimensionResource(Res.dimen.banner_height)),
+                    contentScale = if (
+                        LocalConfiguration.current.orientation
+                        != Configuration.ORIENTATION_LANDSCAPE
+                    ) ContentScale.FillHeight else ContentScale.FillWidth,
+                    modifier = Modifier.given(
+                        LocalConfiguration.current.orientation
+                            != Configuration.ORIENTATION_LANDSCAPE
+                    ) {
+                        height(bannerHeight)
+                    }.given(
+                        LocalConfiguration.current.orientation
+                                == Configuration.ORIENTATION_LANDSCAPE
+                    ) {
+                        fillMaxWidth()
+                    },
                     alignment = Alignment.Center
                 )
 
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(dimensionResource(Res.dimen.banner_height)),
+                        .given(
+                            LocalConfiguration.current.orientation
+                                    != Configuration.ORIENTATION_LANDSCAPE
+                        ) {
+                            height(bannerHeight)
+                        },
                     color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
                 ) { }
             }
@@ -119,6 +142,12 @@ fun MediaPage(
                 .fillMaxHeight()
                 .padding(top = dimensionResource(Res.dimen.banner_height))
                 .background(MaterialTheme.colorScheme.background)
+                .given(
+                    LocalConfiguration.current.orientation
+                            == Configuration.ORIENTATION_LANDSCAPE
+                ) {
+                    displayCutoutPadding()
+                }
         ) {
             Column {
                 Row {
@@ -344,6 +373,12 @@ fun MediaPage(
                     start = dimensionResource(Res.dimen.large_padding),
                     end = dimensionResource(Res.dimen.large_padding)
                 )
+                .given(
+                    LocalConfiguration.current.orientation
+                            == Configuration.ORIENTATION_LANDSCAPE
+                ) {
+                    displayCutoutPadding()
+                }
         ) {
             MediaSmall(image = media.coverImage)
         }
