@@ -28,11 +28,12 @@ class MediaPageViewModel @Inject constructor(
             try {
                 val media = mediaRepository.fetchMedia(id, mediaType)
 
-                val ranks = mutableListOf<Pair<String, Int>>()
+                val stats = mutableListOf<Stat>()
+                stats.add(Stat(StatLabel.SCORE, media?.averageScore))
                 media?.rankings?.forEach {
                     if (it?.allTime == true) {
-                        if (it.type == MediaRankType.RATED) ranks.add(Pair("RATING", it.rank))
-                        if (it.type == MediaRankType.POPULAR) ranks.add(Pair("POPULARITY", it.rank))
+                        if (it.type == MediaRankType.RATED) stats.add(Stat(StatLabel.RATING, it.rank))
+                        if (it.type == MediaRankType.POPULAR) stats.add(Stat(StatLabel.POPULARITY, it.rank))
                     }
                 }
 
@@ -45,8 +46,7 @@ class MediaPageViewModel @Inject constructor(
                                 media?.title?.english ?:
                                 media?.title?.native,
                         description = media?.description,
-                        averageScore = media?.averageScore,
-                        ranks = ranks,
+                        stats = stats,
                         genres = media?.genres,
                         characters = media?.characters?.nodes?.map {
                             Pair(it?.image?.large, it?.name?.full)

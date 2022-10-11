@@ -239,7 +239,7 @@ fun MediaPage(
                         }
                     }
 
-                    if (!media.averageScore.isZeroOrNull() || media.ranks.isNotEmpty()) {
+                    if (!media.stats.all { it.score.isZeroOrNull() }) {
                         Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
                         Row(
@@ -252,22 +252,21 @@ fun MediaPage(
                                     end = dimensionResource(Res.dimen.large_padding)
                                 )
                         ) {
-                            media.averageScore.let {
-                                if (!it.isZeroOrNull()) Stat(
-                                    label = stringResource(Res.string.score),
-                                    score = it!!
-                                ) { score ->
-                                    "$score%"
-                                }
-                            }
-
-                            media.ranks.forEach { stat ->
-                                Stat(
-                                    label = stat.first,
-                                    score = stat.second
-                                ) {
-                                    "#$it"
-                                }
+                            media.stats.forEach { stat ->
+                                if (stat.score != null)
+                                    Stat(
+                                        label = stat.label.value,
+                                        score = stat.score
+                                    ) {
+                                        when(stat.label) {
+                                            StatLabel.SCORE -> {
+                                                "$it%"
+                                            }
+                                            StatLabel.RATING, StatLabel.POPULARITY -> {
+                                                "#$it"
+                                            }
+                                        }
+                                    }
                             }
                         }
                     }
