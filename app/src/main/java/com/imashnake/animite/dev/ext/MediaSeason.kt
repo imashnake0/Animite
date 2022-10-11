@@ -12,13 +12,14 @@ import java.time.Month
  */
 fun MediaSeason.nextSeason(now: LocalDate): Pair<MediaSeason, Int> {
     return when (this) {
-        MediaSeason.SPRING -> Pair(MediaSeason.SUMMER, now.year)
-        MediaSeason.SUMMER -> Pair(MediaSeason.FALL, now.year)
-        MediaSeason.FALL -> Pair(MediaSeason.WINTER, now.year + 1)
-        MediaSeason.WINTER -> Pair(
-            MediaSeason.SPRING,
-            if (now.month == Month.DECEMBER) now.year + 1 else now.year
-        )
-        else -> Pair(MediaSeason.UNKNOWN__, 0)
+        MediaSeason.SPRING -> MediaSeason.SUMMER to now.year
+        MediaSeason.SUMMER -> MediaSeason.FALL to now.year
+        MediaSeason.FALL -> MediaSeason.WINTER to now.year + 1
+        MediaSeason.WINTER -> MediaSeason.SPRING to if (now.month == Month.DECEMBER) {
+            now.year + 1
+        } else {
+            now.year
+        }
+        else -> MediaSeason.UNKNOWN__ to 0
     }
 }
