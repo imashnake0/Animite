@@ -17,18 +17,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -38,12 +34,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
+import com.imashnake.animite.features.ui.ProgressIndicator
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -347,15 +343,7 @@ fun Home(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                // TODO: Unhardcode dimensions.
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .width(100.dp)
-                        .height(3.dp),
-                    color = MaterialTheme.colorScheme.background,
-                    trackColor = MaterialTheme.colorScheme.primary
-                )
+                ProgressIndicator()
             }
         }
     }
