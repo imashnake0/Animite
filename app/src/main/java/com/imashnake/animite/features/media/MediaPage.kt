@@ -60,7 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.dev.ext.given
-import com.imashnake.animite.dev.ext.isZeroOrNull
+import com.imashnake.animite.dev.ext.isNullOrZero()
 import com.imashnake.animite.dev.ext.toHexColor
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
@@ -236,7 +236,7 @@ fun MediaPage(
                         }
                     }
 
-                    if (!media.stats.all { it.score.isZeroOrNull() }) {
+                    if (!media.stats.all { it.score.isNullOrZero() }) {
                         Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
                         Row(
