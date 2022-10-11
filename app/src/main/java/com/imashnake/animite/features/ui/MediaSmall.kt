@@ -25,6 +25,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImage
 import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.type.MediaType
@@ -63,11 +64,11 @@ fun <T> MediaSmallRow(
  * @param onClick Action to happen when the card is clicked.
  */
 @Composable
-fun MediaSmall(image: String?, label: String? = null, onClick: () -> Unit = {  }) {
+fun MediaSmall(height: Dp, width: Dp, image: String?, label: String? = null, onClick: () -> Unit = {  }) {
     Card(
         modifier = Modifier
             .wrapContentHeight()
-            .width(dimensionResource(Res.dimen.media_card_width))
+            .width(width)
             .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
             .clickable(
                 enabled = true,
@@ -82,7 +83,7 @@ fun MediaSmall(image: String?, label: String? = null, onClick: () -> Unit = {  }
             contentDescription = label,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(dimensionResource(Res.dimen.media_card_height))
+                .height(height)
                 .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
         )
 
@@ -141,6 +142,8 @@ fun PreviewMediaSmallRow() {
         onItemClick = {  },
         content = { media, onItemClick ->
             MediaSmall(
+                height = dimensionResource(Res.dimen.media_card_height),
+                width = dimensionResource(Res.dimen.media_card_width),
                 image = media.coverImage?.extraLarge,
                 // TODO: Do something about this chain.
                 label = media.title?.romaji ?:
@@ -158,6 +161,8 @@ fun PreviewMediaSmallRow() {
 @Composable
 fun PreviewMediaSmall() {
     MediaSmall(
+        height = dimensionResource(Res.dimen.media_card_height),
+        width = dimensionResource(Res.dimen.media_card_width),
         image =
         "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
         label =

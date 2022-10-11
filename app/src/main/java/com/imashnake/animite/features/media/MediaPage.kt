@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -36,8 +35,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -59,7 +56,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -312,9 +308,17 @@ fun MediaPage(
 
                     MediaSmallRow(
                         mediaList = media.characters,
-                        onItemClick = { characterId -> Log.d("CharacterId", "$characterId") }
+                        onItemClick = { characterId ->
+                            Log.d("CharacterId", "$characterId")
+                        }
                     ) { character, onClickingCharacter ->
-                        MediaSmall(image = character.image, label = character.name, onClick = { onClickingCharacter(character.id) })
+                        MediaSmall(
+                            height = dimensionResource(Res.dimen.character_card_height),
+                            width = dimensionResource(Res.dimen.character_card_width),
+                            image = character.image,
+                            label = character.name,
+                            onClick = { onClickingCharacter(character.id) }
+                        )
                     }
                 }
 
@@ -391,7 +395,11 @@ fun MediaPage(
                         displayCutoutPadding()
                     }
             ) {
-                MediaSmall(image = media.coverImage)
+                MediaSmall(
+                    height = dimensionResource(Res.dimen.media_card_height),
+                    width = dimensionResource(Res.dimen.media_card_width),
+                    image = media.coverImage
+                )
             }
         }
 
@@ -460,81 +468,3 @@ fun Genre(genre: String?, color: Color, onClick: () -> Unit) {
         )
     )
 }
-
-//// TODO: Make this a reusable component.
-//@Composable
-//fun Character(image: String?, name: String?, onClick: () -> Unit) {
-//    Card(
-//        modifier = Modifier
-//            .wrapContentHeight()
-//            .width(dimensionResource(Res.dimen.character_card_width))
-//            .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
-//            .clickable(
-//                enabled = true,
-//                onClick = onClick
-//            ),
-//        colors = CardDefaults.cardColors(
-//            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-//        ),
-//        shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
-//    ) {
-//        AsyncImage(
-//            model = image,
-//            contentDescription = name,
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(dimensionResource(Res.dimen.character_card_height))
-//                .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
-//        )
-//
-//        Box {
-//            Text(
-//                text = " \n ",
-//                color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                style = MaterialTheme.typography.labelLarge,
-//                maxLines = 2,
-//                modifier = Modifier.padding(
-//                    vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
-//                )
-//            )
-//
-//            Text(
-//                text = name.orEmpty(),
-//                color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                style = MaterialTheme.typography.labelLarge,
-//                maxLines = 2,
-//                overflow = TextOverflow.Clip,
-//                textAlign = TextAlign.Center,
-//                modifier = Modifier
-//                    .align(Alignment.Center)
-//                    .fillMaxWidth()
-//                    .padding(
-//                        horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
-//                        vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
-//                    )
-//            )
-//        }
-//    }
-//}
-//
-//@Composable
-//fun CharacterRow(
-//    characterList: List<Pair<String?, String?>> = emptyList(),
-//    onItemClick: (character: Pair<String?, String?>) -> Unit
-//) {
-//    LazyRow(
-//        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
-//        contentPadding = PaddingValues(
-//            start = dimensionResource(Res.dimen.large_padding),
-//            end = dimensionResource(Res.dimen.large_padding)
-//        )
-//    ) {
-//        items(characterList) { character ->
-//            Character(
-//                image = character.first,
-//                name = character.second,
-//                onClick = { onItemClick(character) }
-//            )
-//        }
-//    }
-//}

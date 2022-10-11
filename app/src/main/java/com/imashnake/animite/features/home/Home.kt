@@ -170,6 +170,8 @@ fun Home(
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
+                                        height = dimensionResource(Res.dimen.media_card_height),
+                                        width = dimensionResource(Res.dimen.media_card_width),
                                         image = media?.coverImage?.extraLarge,
                                         // TODO: Do something about this chain.
                                         label = media?.title?.romaji ?:
@@ -209,6 +211,8 @@ fun Home(
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
+                                        height = dimensionResource(Res.dimen.media_card_height),
+                                        width = dimensionResource(Res.dimen.media_card_width),
                                         image = media?.coverImage?.extraLarge,
                                         // TODO: Do something about this chain.
                                         label = media?.title?.romaji ?:
@@ -248,6 +252,8 @@ fun Home(
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
+                                        height = dimensionResource(Res.dimen.media_card_height),
+                                        width = dimensionResource(Res.dimen.media_card_width),
                                         image = media?.coverImage?.extraLarge,
                                         // TODO: Do something about this chain.
                                         label = media?.title?.romaji ?:
@@ -287,6 +293,8 @@ fun Home(
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
+                                        height = dimensionResource(Res.dimen.media_card_height),
+                                        width = dimensionResource(Res.dimen.media_card_width),
                                         image = media?.coverImage?.extraLarge,
                                         // TODO: Do something about this chain.
                                         label = media?.title?.romaji ?:
