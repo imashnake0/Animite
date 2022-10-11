@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="small_padding">10dp</dimen>
-    <dimen name="medium_padding">12dp</dimen>
+    <dimen name="small_padding">8dp</dimen>
+    <dimen name="medium_padding">16dp</dimen>
     <dimen name="large_padding">24dp</dimen>
 
-    <dimen name="backdrop_corner_radius">18dp</dimen>
+    <dimen name="media_card_corner_radius">18dp</dimen>
+    <dimen name="media_card_text_padding_horizontal">16dp</dimen>
+    <dimen name="media_card_text_padding_vertical">10dp</dimen>
+
     <dimen name="navigation_bar_height">65dp</dimen>
 
     <dimen name="banner_height">168dp</dimen>
-    <dimen name="media_card_width">115dp</dimen>
-    <dimen name="media_card_height">238dp</dimen>
-    <dimen name="media_card_text_padding">14dp</dimen>
+    <dimen name="media_card_width">140dp</dimen>
+    <dimen name="media_card_height">200dp</dimen>
+    <dimen name="media_card_top_padding">96dp</dimen>
     <dimen name="character_card_width">96dp</dimen>
     <dimen name="character_card_height">121dp</dimen>
     <dimen name="trailer_corner_radius">30dp</dimen>
 
     <dimen name="search_bar_padding">16dp</dimen>
     <dimen name="search_list_padding">14dp</dimen>
+
+    <dimen name="progress_indicator_width">100dp</dimen>
+    <dimen name="progress_indicator_height">3dp</dimen>
 </resources>

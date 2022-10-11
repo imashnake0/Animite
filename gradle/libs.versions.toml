@@ -1,5 +1,9 @@
 [versions]
 
+# Core Library Desugaring
+# https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
+desugaring = "1.1.5"
+
 # Accompanist
 # https://github.com/google/accompanist/releases.
 accompanist = "0.26.1-alpha"
@@ -32,7 +36,7 @@ composeCompiler = "1.3.0"
 composeDestinations = "1.6.15-beta"
 composeFoundation = "1.2.1"
 composeMaterial = "1.2.1"
-composeMaterial3 = "1.0.0-alpha16"
+composeMaterial3 = "1.0.0-beta03"
 composeRuntime = "1.2.1"
 composeUi = "1.2.1"
 
@@ -54,6 +58,10 @@ datetime = "0.3.3"
 # https://github.com/google/ksp/releases.
 ksp = "1.7.10-1.0.6"
 
+# Snapper
+# https://github.com/chrisbanes/snapper/releases.
+snapper = "0.3.0"
+
 # Test
 # https://github.com/junit-team/junit4/releases.
 junit = "4.13.2"
@@ -66,6 +74,7 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 [libraries]
+android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
 androidx-activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidx-coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
@@ -80,6 +89,7 @@ compose-material = { group = "androidx.compose.material", name = "material", ver
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
 compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
 compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
 apolloKotlin-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "apollo" }
@@ -91,5 +101,6 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 accompanist-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
-accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist"}
+accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist" }
+chrisbanes-snapper = { group = "dev.chrisbanes.snapper", name = "snapper", version.ref = "snapper" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }

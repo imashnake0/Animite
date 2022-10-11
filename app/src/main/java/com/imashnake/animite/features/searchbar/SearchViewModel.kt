@@ -21,7 +21,6 @@ class SearchViewModel @Inject constructor(
     var uiState by mutableStateOf(SearchUiState())
         private set
 
-    // TODO: Understand coroutines better.
     private var fetchJob: Job? = null
 
     fun searchAnime(search: String) {
@@ -35,9 +34,7 @@ class SearchViewModel @Inject constructor(
                 )
 
                 uiState = with(uiState) {
-                    copy(
-                        searchList = searchList
-                    )
+                    copy(searchList = searchList)
                 }
             } catch (ioe: IOException) {
                 TODO()
