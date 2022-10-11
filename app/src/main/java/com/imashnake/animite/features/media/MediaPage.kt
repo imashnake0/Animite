@@ -250,7 +250,7 @@ fun MediaPage(
                                 )
                         ) {
                             media.stats.forEach { stat ->
-                                if (stat.score != null)
+                                if (stat.score != null && stat.label != StatLabel.UNKNOWN)
                                     Stat(
                                         label = stat.label.value,
                                         score = stat.score
@@ -262,6 +262,7 @@ fun MediaPage(
                                             StatLabel.RATING, StatLabel.POPULARITY -> {
                                                 "#$it"
                                             }
+                                            else -> { "" }
                                         }
                                     }
                             }

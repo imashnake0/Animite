@@ -28,14 +28,18 @@ class MediaPageViewModel @Inject constructor(
             try {
                 val media = mediaRepository.fetchMedia(id, mediaType)
 
-                val stats = mutableListOf<Stat>()
-                stats.add(Stat(StatLabel.SCORE, media?.averageScore))
-                media?.rankings?.forEach {
-                    if (it?.allTime == true) {
-                        if (it.type == MediaRankType.RATED) stats.add(Stat(StatLabel.RATING, it.rank))
-                        if (it.type == MediaRankType.POPULAR) stats.add(Stat(StatLabel.POPULARITY, it.rank))
-                    }
-                }
+                val score = listOf(Stat(StatLabel.SCORE, media?.averageScore))
+
+                val rankOptions = mapOf(
+                    MediaRankType.RATED to StatLabel.RATING,
+                    MediaRankType.POPULAR to StatLabel.POPULARITY,
+                )
+                // TODO: This code is a little sus, see if we can create internal models.
+                val ranks = media?.rankings?.filter {
+                    it?.type in rankOptions.keys && it?.allTime == true
+                }?.map {
+                    Stat(rankOptions[it?.type] ?: StatLabel.UNKNOWN, it?.rank)
+                } ?: emptyList()
 
                 uiState = with(uiState) {
                     copy(
@@ -46,7 +50,7 @@ class MediaPageViewModel @Inject constructor(
                                 media?.title?.english ?:
                                 media?.title?.native,
                         description = media?.description,
-                        stats = stats,
+                        stats = score + ranks,
                         genres = media?.genres,
                         characters = media?.characters?.nodes?.map {
                             Character(

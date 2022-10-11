@@ -4,6 +4,7 @@ import com.imashnake.animite.type.MediaSeason
 import java.time.Month
 
 /**
+ * TODO: Add a unit test.
  * This groups the [Month]s  in 4 [List]s (each with 3 [Month]s).
  * There is an offset of two [Month]s, i.e., we need [Month.MARCH]..[Month.FEBRUARY]:
  *
