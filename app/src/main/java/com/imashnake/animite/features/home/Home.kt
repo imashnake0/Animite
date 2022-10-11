@@ -59,16 +59,17 @@ fun Home(
 
     viewModel.populateMediaLists(homeMediaType)
 
-    val popularThisSeasonMediaList = viewModel.uiState.popularThisSeasonMediaList?.media
-    val trendingNowMediaList = viewModel.uiState.trendingMediaList?.media
-    val upcomingNextSeasonMediaList = viewModel.uiState.upcomingNextSeasonMediaList?.media
-    val allTimePopularMediaList = viewModel.uiState.allTimePopularMediaList?.media
+    val trendingList = viewModel.uiState.trendingList?.media
+    val popularList = viewModel.uiState.popularList?.media
+    val upcomingList = viewModel.uiState.upcomingList?.media
+    val allTimePopularList = viewModel.uiState.allTimePopularList?.media
 
+    // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
     when {
-        trendingNowMediaList != null &&
-        popularThisSeasonMediaList != null &&
-        upcomingNextSeasonMediaList != null &&
-        allTimePopularMediaList != null -> {
+        trendingList != null &&
+        popularList != null &&
+        upcomingList != null &&
+        allTimePopularList != null -> {
             val scrollState = rememberScrollState()
             Box {
                 Box(
@@ -153,7 +154,7 @@ fun Home(
                             Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                             MediaSmallRow(
-                                mediaList = trendingNowMediaList,
+                                mediaList = trendingList,
                                 onItemClick = { itemId ->
                                     navigator.navigate(
                                         MediaPageDestination(
@@ -194,7 +195,7 @@ fun Home(
                             Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                             MediaSmallRow(
-                                mediaList = popularThisSeasonMediaList,
+                                mediaList = popularList,
                                 onItemClick = { itemId ->
                                     navigator.navigate(
                                         MediaPageDestination(
@@ -235,7 +236,7 @@ fun Home(
                             Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                             MediaSmallRow(
-                                mediaList = upcomingNextSeasonMediaList,
+                                mediaList = upcomingList,
                                 onItemClick = { itemId ->
                                     navigator.navigate(
                                         MediaPageDestination(
@@ -276,7 +277,7 @@ fun Home(
                             Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                             MediaSmallRow(
-                                mediaList = allTimePopularMediaList,
+                                mediaList = allTimePopularList,
                                 onItemClick = { itemId ->
                                     navigator.navigate(
                                         MediaPageDestination(
