@@ -9,7 +9,7 @@ data class MediaUiState(
     val stats: MutableList<Stat> = mutableListOf(),
     val genres: List<String?>? = emptyList(),
     val characters: List<Character>? = emptyList(),
-    val trailer: Pair<String?, String?> = Pair("", "")
+    val trailer: Trailer = Trailer("", "")
 )
 
 data class Stat(
@@ -27,4 +27,9 @@ data class Character(
     val id: Int?,
     val image: String?,
     val name: String?
+)
+
+data class Trailer(
+    val link: String?,
+    val thumbnail: String?
 )

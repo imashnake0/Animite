@@ -55,8 +55,8 @@ class MediaPageViewModel @Inject constructor(
                                 name = it?.name?.full
                             )
                         },
-                        trailer = Pair(
-                            first = when (media?.trailer?.site) {
+                        trailer = Trailer(
+                            link = when (media?.trailer?.site) {
                                 "youtube" -> {
                                     "https://www.youtube.com/watch?v=${media.trailer.id}"
                                 }
@@ -67,7 +67,7 @@ class MediaPageViewModel @Inject constructor(
                                     null
                                 }
                             },
-                            second = when (media?.trailer?.site) {
+                            thumbnail = when (media?.trailer?.site) {
                                 // TODO: Does a high resolution image always exist?
                                 "youtube" -> {
                                     "https://img.youtube.com/vi/${media.trailer.id}/maxresdefault.jpg"

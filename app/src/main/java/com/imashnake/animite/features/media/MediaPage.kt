@@ -324,7 +324,7 @@ fun MediaPage(
 
                 Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
-                if (!media.trailer.toList().any { it == null }) {
+                if (!(media.trailer.link.isNullOrEmpty() || media.trailer.thumbnail.isNullOrEmpty())) { // De Morgan's law
                     Text(
                         text = stringResource(Res.string.trailer),
                         color = MaterialTheme.colorScheme.onBackground,
@@ -337,43 +337,41 @@ fun MediaPage(
                     Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                     val context = LocalContext.current
-                    if (!media.trailer.toList().any { (it ?: "").isBlank() }) {
-                        Box(
+                    Box(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                            .clip(
+                                RoundedCornerShape(
+                                    dimensionResource(Res.dimen.trailer_corner_radius)
+                                )
+                            )
+                            .clickable {
+                                val appIntent =
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.link))
+                                context.startActivity(appIntent)
+                            }
+                    ) {
+                        AsyncImage(
+                            model = media.trailer.thumbnail,
+                            contentDescription = stringResource(Res.string.trailer),
+                            contentScale = ContentScale.FillWidth,
                             modifier = Modifier
-                                .wrapContentSize()
-                                .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                                .fillMaxWidth()
+                                .aspectRatio(1.778f) // 16 : 9
                                 .clip(
                                     RoundedCornerShape(
                                         dimensionResource(Res.dimen.trailer_corner_radius)
                                     )
-                                )
-                                .clickable {
-                                    val appIntent =
-                                        Intent(Intent.ACTION_VIEW, Uri.parse(media.trailer.first))
-                                    context.startActivity(appIntent)
-                                }
-                        ) {
-                            AsyncImage(
-                                model = media.trailer.second,
-                                contentDescription = stringResource(Res.string.trailer),
-                                contentScale = ContentScale.FillWidth,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1.778f) // 16 : 9
-                                    .clip(
-                                        RoundedCornerShape(
-                                            dimensionResource(Res.dimen.trailer_corner_radius)
-                                        )
-                                    ),
-                                alignment = Alignment.Center
-                            )
+                                ),
+                            alignment = Alignment.Center
+                        )
 
-                            Image(
-                                painter = painterResource(Res.drawable.youtube),
-                                contentDescription = stringResource(Res.string.trailer),
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
+                        Image(
+                            painter = painterResource(Res.drawable.youtube),
+                            contentDescription = stringResource(Res.string.trailer),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
                 }
 
