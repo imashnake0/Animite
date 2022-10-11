@@ -61,6 +61,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.dev.ext.given
@@ -286,7 +287,9 @@ fun MediaPage(
                             items(media.genres) { genre ->
                                 Genre(
                                     genre = genre,
-                                    color = Color(media.color?.toHexColor() ?: 0xFF152232)
+                                    color = Color(media.color?.toHexColor() ?: 0xFF152232),
+                                    // TODO: Make genres clickable.
+                                    onClick = {  }
                                 )
                             }
                         }
@@ -433,7 +436,7 @@ fun Stat(label: String, score: Int, format: (Int) -> String) {
 
 @ExperimentalMaterial3Api
 @Composable
-fun Genre(genre: String?, color: Color) {
+fun Genre(genre: String?, color: Color, onClick: () -> Unit) {
     SuggestionChip(
         label = {
             Text(
@@ -445,8 +448,7 @@ fun Genre(genre: String?, color: Color) {
                 )
             )
         },
-        // TODO: Make genres clickable.
-        onClick = { },
+        onClick = onClick,
         shape = CircleShape,
         colors = SuggestionChipDefaults.suggestionChipColors(
             containerColor = color.copy(alpha = 0.25f)
