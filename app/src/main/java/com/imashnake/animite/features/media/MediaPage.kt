@@ -61,13 +61,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.dev.ext.isZeroOrNull
 import com.imashnake.animite.dev.ext.toHexColor
 import com.imashnake.animite.features.ui.MediaSmall
+import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
@@ -275,15 +275,15 @@ fun MediaPage(
                     Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
                     // TODO: Monet where?
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(
-                            dimensionResource(Res.dimen.medium_padding)
-                        ),
-                        contentPadding = PaddingValues(
-                            horizontal = dimensionResource(Res.dimen.large_padding)
-                        )
-                    ) {
-                        if (!media.genres.isNullOrEmpty()) {
+                    if (!media.genres.isNullOrEmpty()) {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(
+                                dimensionResource(Res.dimen.medium_padding)
+                            ),
+                            contentPadding = PaddingValues(
+                                horizontal = dimensionResource(Res.dimen.large_padding)
+                            )
+                        ) {
                             items(media.genres) { genre ->
                                 Genre(
                                     genre = genre,
@@ -310,9 +310,11 @@ fun MediaPage(
 
                     Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
-                    // TODO: Make characters clickable.
-                    CharacterRow(characterList = media.characters) {
-                        Log.d("Character", it.second ?: "null")
+                    MediaSmallRow(
+                        mediaList = media.characters,
+                        onItemClick = { characterId -> Log.d("CharacterId", "$characterId") }
+                    ) { character, onClickingCharacter ->
+                        MediaSmall(image = character.image, label = character.name, onClick = { onClickingCharacter(character.id) })
                     }
                 }
 
@@ -459,80 +461,80 @@ fun Genre(genre: String?, color: Color, onClick: () -> Unit) {
     )
 }
 
-// TODO: Make this a reusable component.
-@Composable
-fun Character(image: String?, name: String?, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .wrapContentHeight()
-            .width(dimensionResource(Res.dimen.character_card_width))
-            .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
-            .clickable(
-                enabled = true,
-                onClick = onClick
-            ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        ),
-        shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
-    ) {
-        AsyncImage(
-            model = image,
-            contentDescription = name,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(dimensionResource(Res.dimen.character_card_height))
-                .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
-        )
-
-        Box {
-            Text(
-                text = " \n ",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 2,
-                modifier = Modifier.padding(
-                    vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
-                )
-            )
-
-            Text(
-                text = name.orEmpty(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 2,
-                overflow = TextOverflow.Clip,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
-                        vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
-                    )
-            )
-        }
-    }
-}
-
-@Composable
-fun CharacterRow(
-    characterList: List<Pair<String?, String?>> = emptyList(),
-    onItemClick: (character: Pair<String?, String?>) -> Unit
-) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
-        contentPadding = PaddingValues(
-            start = dimensionResource(Res.dimen.large_padding),
-            end = dimensionResource(Res.dimen.large_padding)
-        )
-    ) {
-        items(characterList) { character ->
-            Character(
-                image = character.first,
-                name = character.second,
-                onClick = { onItemClick(character) }
-            )
-        }
-    }
-}
+//// TODO: Make this a reusable component.
+//@Composable
+//fun Character(image: String?, name: String?, onClick: () -> Unit) {
+//    Card(
+//        modifier = Modifier
+//            .wrapContentHeight()
+//            .width(dimensionResource(Res.dimen.character_card_width))
+//            .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
+//            .clickable(
+//                enabled = true,
+//                onClick = onClick
+//            ),
+//        colors = CardDefaults.cardColors(
+//            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+//        ),
+//        shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
+//    ) {
+//        AsyncImage(
+//            model = image,
+//            contentDescription = name,
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(dimensionResource(Res.dimen.character_card_height))
+//                .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
+//        )
+//
+//        Box {
+//            Text(
+//                text = " \n ",
+//                color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                style = MaterialTheme.typography.labelLarge,
+//                maxLines = 2,
+//                modifier = Modifier.padding(
+//                    vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
+//                )
+//            )
+//
+//            Text(
+//                text = name.orEmpty(),
+//                color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                style = MaterialTheme.typography.labelLarge,
+//                maxLines = 2,
+//                overflow = TextOverflow.Clip,
+//                textAlign = TextAlign.Center,
+//                modifier = Modifier
+//                    .align(Alignment.Center)
+//                    .fillMaxWidth()
+//                    .padding(
+//                        horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
+//                        vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
+//                    )
+//            )
+//        }
+//    }
+//}
+//
+//@Composable
+//fun CharacterRow(
+//    characterList: List<Pair<String?, String?>> = emptyList(),
+//    onItemClick: (character: Pair<String?, String?>) -> Unit
+//) {
+//    LazyRow(
+//        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
+//        contentPadding = PaddingValues(
+//            start = dimensionResource(Res.dimen.large_padding),
+//            end = dimensionResource(Res.dimen.large_padding)
+//        )
+//    ) {
+//        items(characterList) { character ->
+//            Character(
+//                image = character.first,
+//                name = character.second,
+//                onClick = { onItemClick(character) }
+//            )
+//        }
+//    }
+//}
