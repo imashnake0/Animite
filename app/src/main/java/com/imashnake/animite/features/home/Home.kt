@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.features.destinations.MediaPageDestination
+import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
@@ -166,6 +167,18 @@ fun Home(
                                     ) {
                                         launchSingleTop = true
                                     }
+                                },
+                                content = { media, onItemClick ->
+                                    MediaSmall(
+                                        image = media?.coverImage?.extraLarge,
+                                        // TODO: Do something about this chain.
+                                        label = media?.title?.romaji ?:
+                                        media?.title?.english ?:
+                                        media?.title?.native ?: "",
+                                        onClick = {
+                                            onItemClick(media?.id)
+                                        }
+                                    )
                                 }
                             )
 
@@ -193,6 +206,18 @@ fun Home(
                                     ) {
                                         launchSingleTop = true
                                     }
+                                },
+                                content = { media, onItemClick ->
+                                    MediaSmall(
+                                        image = media?.coverImage?.extraLarge,
+                                        // TODO: Do something about this chain.
+                                        label = media?.title?.romaji ?:
+                                        media?.title?.english ?:
+                                        media?.title?.native ?: "",
+                                        onClick = {
+                                            onItemClick(media?.id)
+                                        }
+                                    )
                                 }
                             )
 
@@ -220,6 +245,18 @@ fun Home(
                                     ) {
                                         launchSingleTop = true
                                     }
+                                },
+                                content = { media, onItemClick ->
+                                    MediaSmall(
+                                        image = media?.coverImage?.extraLarge,
+                                        // TODO: Do something about this chain.
+                                        label = media?.title?.romaji ?:
+                                        media?.title?.english ?:
+                                        media?.title?.native ?: "",
+                                        onClick = {
+                                            onItemClick(media?.id)
+                                        }
+                                    )
                                 }
                             )
 
@@ -247,6 +284,18 @@ fun Home(
                                     ) {
                                         launchSingleTop = true
                                     }
+                                },
+                                content = { media, onItemClick ->
+                                    MediaSmall(
+                                        image = media?.coverImage?.extraLarge,
+                                        // TODO: Do something about this chain.
+                                        label = media?.title?.romaji ?:
+                                        media?.title?.english ?:
+                                        media?.title?.native ?: "",
+                                        onClick = {
+                                            onItemClick(media?.id)
+                                        }
+                                    )
                                 }
                             )
 

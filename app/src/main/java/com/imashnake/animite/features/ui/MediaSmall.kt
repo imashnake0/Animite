@@ -31,14 +31,17 @@ import com.imashnake.animite.type.MediaType
 import com.imashnake.animite.R as Res
 
 /**
- * TODO: This component is hardly reusable, make changes to the API.
  * A [LazyRow] of [MediaSmall]s.
  *
  * @param mediaList A list of [MediaListQuery.Medium]s.
  * @param onItemClick Action that is propagated to the [MediaSmall]s, it takes a unique id.
  */
 @Composable
-fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId: Int?) -> Unit) {
+fun <T> MediaSmallRow(
+    mediaList: List<T>,
+    onItemClick: (itemId: Int?) -> Unit,
+    content: @Composable (T, (itemId: Int?) -> Unit) -> Unit
+) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
         contentPadding = PaddingValues(
@@ -47,22 +50,12 @@ fun MediaSmallRow(mediaList: List<MediaListQuery.Medium?>, onItemClick: (itemId:
         )
     ) {
         items(mediaList.filterNotNull()) { media ->
-            MediaSmall(
-                image = media.coverImage?.extraLarge,
-                // TODO: Do something about this chain.
-                label = media.title?.romaji ?:
-                media.title?.english ?:
-                media.title?.native ?: "",
-                onClick = {
-                    onItemClick(media.id)
-                }
-            )
+            content(media, onItemClick)
         }
     }
 }
 
 /**
- * TODO: This component is hardly reusable, make changes to the API.
  * A [Card] to display a media image and a label.
  *
  * @param image A URL of the image to be shown in the card that this component is.
@@ -145,7 +138,19 @@ fun PreviewMediaSmallRow() {
                 )
             )
         },
-        onItemClick = {  }
+        onItemClick = {  },
+        content = { media, onItemClick ->
+            MediaSmall(
+                image = media.coverImage?.extraLarge,
+                // TODO: Do something about this chain.
+                label = media.title?.romaji ?:
+                media.title?.english ?:
+                media.title?.native ?: "",
+                onClick = {
+                    onItemClick(media.id)
+                }
+            )
+        }
     )
 }
 
