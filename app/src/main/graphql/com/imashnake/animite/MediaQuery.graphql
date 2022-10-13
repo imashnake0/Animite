@@ -33,6 +33,7 @@ query MediaQuery(
             perPage: 10
         ) {
             nodes {
+                id
                 image {
                     large
                 }

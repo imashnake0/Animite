@@ -28,13 +28,18 @@ class MediaPageViewModel @Inject constructor(
             try {
                 val media = mediaRepository.fetchMedia(id, mediaType)
 
-                val ranks = mutableListOf<Pair<String, Int>>()
-                media?.rankings?.forEach {
-                    if (it?.allTime == true) {
-                        if (it.type == MediaRankType.RATED) ranks.add(Pair("RATING", it.rank))
-                        if (it.type == MediaRankType.POPULAR) ranks.add(Pair("POPULARITY", it.rank))
-                    }
-                }
+                val score = listOf(Stat(StatLabel.SCORE, media?.averageScore))
+
+                val rankOptions = mapOf(
+                    MediaRankType.RATED to StatLabel.RATING,
+                    MediaRankType.POPULAR to StatLabel.POPULARITY,
+                )
+                // TODO: This code is a little sus, see if we can create internal models.
+                val ranks = media?.rankings?.filter {
+                    it?.type in rankOptions.keys && it?.allTime == true
+                }?.map {
+                    Stat(rankOptions[it?.type] ?: StatLabel.UNKNOWN, it?.rank)
+                } ?: emptyList()
 
                 uiState = with(uiState) {
                     copy(
@@ -45,14 +50,17 @@ class MediaPageViewModel @Inject constructor(
                                 media?.title?.english ?:
                                 media?.title?.native,
                         description = media?.description,
-                        averageScore = media?.averageScore,
-                        ranks = ranks,
+                        stats = score + ranks,
                         genres = media?.genres,
                         characters = media?.characters?.nodes?.map {
-                                it -> Pair(it?.image?.large, it?.name?.full)
+                            Character(
+                                id = it?.id,
+                                image = it?.image?.large,
+                                name = it?.name?.full
+                            )
                         },
-                        trailer = Pair(
-                            first = when (media?.trailer?.site) {
+                        trailer = Trailer(
+                            link = when (media?.trailer?.site) {
                                 "youtube" -> {
                                     "https://www.youtube.com/watch?v=${media.trailer.id}"
                                 }
@@ -63,7 +71,7 @@ class MediaPageViewModel @Inject constructor(
                                     null
                                 }
                             },
-                            second = when (media?.trailer?.site) {
+                            thumbnail = when (media?.trailer?.site) {
                                 // TODO: Does a high resolution image always exist?
                                 "youtube" -> {
                                     "https://img.youtube.com/vi/${media.trailer.id}/maxresdefault.jpg"

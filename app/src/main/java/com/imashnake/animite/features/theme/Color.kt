@@ -1,15 +1,68 @@
 package com.imashnake.animite.features.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 
-/**
- * TODO: These will be removed in favor of Material You.
- */
-// Cards
-val Card = Color(0xFF152232)
-val Text = Color(0xFFC2CBD5)
+val KimiNoDarkColorScheme = ColorScheme(
+    Color(-6697985),
+    Color(-16764075),
+    Color(-16758152),
+    Color(-3152385),
+    Color(-16751970),
+    Color(-4602134),
+    Color(-14471091),
+    Color(-12958108),
+    Color(-2497793),
+    Color(-4013319),
+    Color(-13948071),
+    Color(-12500367),
+    Color(-1974273),
+    Color(-15393756),
+    Color(-2300946),
+    Color(-15393756),
+    Color(-2300946),
+    Color(-12629934),
+    Color(-4274220),
+    Color(-6697985),
+    Color(-2300946),
+    Color(-14012103),
+    Color(-870219),
+    Color(-10480624),
+    Color(-7594728),
+    Color(-870219),
+    Color(-7827042),
+    Color(-11975345),
+    Color(-16777216),
+)
 
-// Home
-val Backdrop = Color(0xFF0A1625)
-val NavigationBar = Color(0xFF152232)
-val NavigationItem = Color(0xFFC3CBD5)
+val KimiNoLightColorScheme = ColorScheme(
+    Color(-16751970),
+    Color(-1),
+    Color(-3152385),
+    Color(-16769740),
+    Color(-6697985),
+    Color(-11379075),
+    Color(-1),
+    Color(-2497793),
+    Color(-15918281),
+    Color(-10921333),
+    Color(-1),
+    Color(-1974273),
+    Color(-15395261),
+    Color(-197377),
+    Color(-15393756),
+    Color(-197377),
+    Color(-15393756),
+    Color(-2432015),
+    Color(-12629934),
+    Color(-16751970),
+    Color(-14012103),
+    Color(-1314308),
+    Color(-5036514),
+    Color(-1),
+    Color(-401700),
+    Color(-12513781),
+    Color(-9537661),
+    Color(-3488560),
+    Color(-16777216),
+)

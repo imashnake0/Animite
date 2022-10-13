@@ -35,6 +35,7 @@ android {
     }
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -88,6 +89,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
+    debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
     // Apollo Kotlin
@@ -99,7 +101,6 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
-    implementation(libs.kotlin.datetime)
     implementation(kotlin("reflect"))
 
     // Hilt
@@ -110,6 +111,11 @@ dependencies {
     // Accompanist
     implementation(libs.accompanist.systemUiController)
     implementation(libs.accompanist.placeholder)
+
+    // Snapper
+    implementation(libs.chrisbanes.snapper)
+
+    coreLibraryDesugaring(libs.android.desugaring)
 
     // Compose Destinations
     implementation(libs.compose.destinations)

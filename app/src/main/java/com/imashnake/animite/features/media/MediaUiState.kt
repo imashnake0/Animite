@@ -6,9 +6,31 @@ data class MediaUiState(
     val color: String? = "",
     val title: String? = "",
     val description: String? = "",
-    val averageScore: Int? = null,
-    val ranks: MutableList<Pair<String, Int>> = mutableListOf(),
-    val genres: List<String?>? = listOf(),
-    val characters: List<Pair<String?, String?>>? = listOf(),
-    val trailer: Pair<String?, String?> = Pair("", "")
+    val stats: List<Stat> = emptyList(),
+    val genres: List<String?>? = emptyList(),
+    val characters: List<Character>? = emptyList(),
+    val trailer: Trailer = Trailer("", "")
+)
+
+data class Stat(
+    val label: StatLabel,
+    val score: Int?
+)
+
+enum class StatLabel(val value: String) {
+    SCORE("SCORE"),
+    RATING("RATING"),
+    POPULARITY("POPULARITY"),
+    UNKNOWN("UNKNOWN")
+}
+
+data class Character(
+    val id: Int?,
+    val image: String?,
+    val name: String?
+)
+
+data class Trailer(
+    val link: String?,
+    val thumbnail: String?
 )

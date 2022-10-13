@@ -12,13 +12,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Animite">
+        android:theme="@android:style/Theme.Material.NoActionBar">
         <!-- TODO: Support landscape. -->
         <activity
             android:name=".features.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Animite"
-            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

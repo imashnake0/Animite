@@ -36,55 +36,67 @@ At the moment, the app uses [Google's choice for app architecture](https://devel
     <p>
         <pre>
             <code>
-                animite
-                ├── AnimiteApplication.kt
-                ├── data
-                │   ├── repos
-                │   │   ├── MediaListRepository.kt
-                │   │   ├── MediaRepository.kt
-                │   │   └── SearchRepository.kt
-                │   └── sauce
-                │       ├── apis
-                │       │   ├── apollo
-                │       │   │   ├── Apollo.kt
-                │       │   │   ├── ApolloMediaApi.kt
-                │       │   │   ├── ApolloMediaListApi.kt
-                │       │   │   └── ApolloSearchApi.kt
-                │       │   ├── MediaApi.kt
-                │       │   ├── MediaListApi.kt
-                │       │   └── SearchApi.kt
-                │       ├── MediaListNetworkSource.kt
-                │       ├── MediaNetworkSource.kt
-                │       └── SearchNetworkSource.kt
-                ├── dev
-                │   ├── extensions
-                │   └── internal
-                │       ├── Constants.kt
-                │       └── Path.kt
-                ├── di
-                │   └── NetworkModule.kt
-                └── ui
-                    ├── MainActivity.kt
-                    ├── elements
-                    │   ├── home
-                    │   │   ├── Home.kt
-                    │   │   ├── MediaSmall.kt
-                    │   │   ├── MediaSmallRow.kt
-                    │   │   └── SearchBar.kt
-                    │   ├── profile
-                    │   │   └── Profile.kt
-                    │   └── rslash
-                    │       └── RSlash.kt
-                    ├── state
-                    │   ├── HomeUiState.kt
-                    │   ├── HomeViewModel.kt
-                    │   ├── SearchUiState.kt
-                    │   └── SearchViewModel.kt
-                    └── theme
-                        ├── Color.kt
-                        ├── Shape.kt
-                        ├── Theme.kt
-                        └── Type.kt
+animite
+├── AnimiteApplication.kt
+├── data
+│   ├── repos
+│   │   ├── MediaListRepository.kt
+│   │   ├── MediaRepository.kt
+│   │   └── SearchRepository.kt
+│   └── sauce
+│       ├── apis
+│       │   ├── apollo
+│       │   │   ├── Apollo.kt
+│       │   │   ├── ApolloMediaApi.kt
+│       │   │   ├── ApolloMediaListApi.kt
+│       │   │   └── ApolloSearchApi.kt
+│       │   ├── MediaApi.kt
+│       │   ├── MediaListApi.kt
+│       │   └── SearchApi.kt
+│       ├── MediaListNetworkSource.kt
+│       ├── MediaNetworkSource.kt
+│       └── SearchNetworkSource.kt
+├── dev
+│   ├── ext
+│   │   ├── Int.kt
+│   │   ├── MediaSeason.kt
+│   │   ├── Modifier.kt
+│   │   ├── Month.kt
+│   │   └── String.kt
+│   └── internal
+│       └── Constants.kt
+├── di
+│   └── NetworkModule.kt
+└── features
+    ├── home
+    │   ├── Home.kt
+    │   ├── HomeTransitions.kt
+    │   ├── HomeUiState.kt
+    │   └── HomeViewModel.kt
+    ├── MainActivity.kt
+    ├── media
+    │   ├── MediaPage.kt
+    │   ├── MediaPageViewModel.kt
+    │   └── MediaUiState.kt
+    ├── navigationbar
+    │   └── NavigationBar.kt
+    ├── profile
+    │   ├── Profile.kt
+    │   └── ProfileTransitions.kt
+    ├── rslash
+    │   └── RSlash.kt
+    ├── searchbar
+    │   ├── SearchBar.kt
+    │   ├── SearchUiState.kt
+    │   └── SearchViewModel.kt
+    ├── theme
+    │   ├── Color.kt
+    │   ├── Shape.kt
+    │   ├── Theme.kt
+    │   └── Type.kt
+    └── ui
+        ├── MediaSmall.kt
+        └── ProgressIndicator.kt
             </code>
         </pre>
     </p>
@@ -92,7 +104,7 @@ At the moment, the app uses [Google's choice for app architecture](https://devel
 
 ## [License](https://github.com/imashnake0/Animite/blob/15eaac4a80c1e6eef3a4d6c861cab05670fb174b/LICENSE.txt)
 ```
-Copyright 2022 Kamalesh Reddy Paluru
+Copyright 2022 imashnake0
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
