@@ -171,7 +171,6 @@ coroutines = "1.6.0"
 ##      ⬆ = "1.6.3"
 ##      ⬆ = "1.6.3-native-mt"
 ##      ⬆ = "1.6.4"
-datetime = "0.3.3"
 
 # KSP
 # https://github.com/google/ksp/releases.
@@ -212,7 +211,6 @@ apolloKotlin-runtime = { group = "com.apollographql.apollo3", name = "apollo-run
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlin-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
