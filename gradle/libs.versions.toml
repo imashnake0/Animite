@@ -12,11 +12,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 # Core Library Desugaring
 # https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
-desugaring = "1.1.5"
-##      ⬆ = "1.1.6"
-##      ⬆ = "1.1.8"
-##      ⬆ = "1.2.0"
-##      ⬆ = "1.2.2"
+desugaring = "1.2.2"
 ##      ⬆ = "2.0.0"
 
 # Accompanist
