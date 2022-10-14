@@ -81,7 +81,6 @@ dependencies {
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
-    implementation(libs.androidx.navigationCompose)
 
     // Compose
     implementation(libs.compose.animation)
