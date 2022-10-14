@@ -57,6 +57,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    namespace = "com.imashnake.animite"
 
     applicationVariants.all {
         kotlin.sourceSets {
