@@ -69,14 +69,7 @@ espresso = "3.4.0"
 
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
-apollo = "3.3.0"
-##  ⬆ = "3.3.1"
-##  ⬆ = "3.3.2"
-##  ⬆ = "3.4.0"
-##  ⬆ = "3.5.0"
-##  ⬆ = "3.6.0"
-##  ⬆ = "3.6.1"
-##  ⬆ = "3.6.2"
+apollo = "3.6.2"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
@@ -209,7 +202,7 @@ compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compos
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
 compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
 compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
-apolloKotlin-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime", version.ref = "apollo" }
+apolloKotlin-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
