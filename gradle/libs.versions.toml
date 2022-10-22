@@ -83,6 +83,7 @@ composeAnimation = "1.3.0-alpha03"
 ##            ⬆ = "1.3.0-beta03"
 ##            ⬆ = "1.3.0-rc01"
 composeCompiler = "1.3.0"
+# TODO: Replace this with [Appyx](https://github.com/bumble-tech/appyx).
 composeDestinations = "1.6.15-beta"
 ##               ⬆ = "1.6.16-beta"
 ##               ⬆ = "1.6.17-beta"
