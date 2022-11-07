@@ -25,6 +25,7 @@ import com.bumble.appyx.core.node.ParentNode
 import com.bumble.appyx.core.node.node
 import com.bumble.appyx.navmodel.backstack.BackStack
 import com.bumble.appyx.navmodel.backstack.operation.newRoot
+import com.bumble.appyx.navmodel.backstack.transitionhandler.rememberBackstackFader
 import com.imashnake.animite.R
 import com.imashnake.animite.features.home.HomeNode
 import com.imashnake.animite.features.profile.Profile
@@ -81,7 +82,11 @@ class RootNode(
                 },
                 floatingActionButtonPosition = FabPosition.End
             ) {
-                Children(navModel = backStack, modifier = Modifier.padding(it))
+                Children(
+                    navModel = backStack,
+                    modifier = Modifier.padding(it),
+                    transitionHandler = rememberBackstackFader()
+                )
             }
         }
     }
