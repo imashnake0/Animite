@@ -3,7 +3,6 @@ package com.imashnake.animite.features
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -26,18 +25,16 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import com.bumble.appyx.core.integration.NodeHost
+import com.bumble.appyx.core.integrationpoint.NodeActivity
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
 import com.imashnake.animite.features.searchbar.SearchBar
 import com.imashnake.animite.features.theme.AnimiteTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
-@ExperimentalAnimationApi
-@ExperimentalMaterial3Api
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : NodeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -65,6 +62,9 @@ class MainActivity : ComponentActivity() {
 //                        navController = navController,
 //                        engine = navHostEngine
 //                    )
+                    NodeHost(integrationPoint = appyxIntegrationPoint) {
+                        RootNode(it)
+                    }
 
                     val searchBarBottomPadding: Dp by animateDpAsState(
                         targetValue = dimensionResource(R.dimen.large_padding) + if (
