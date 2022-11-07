@@ -24,7 +24,7 @@ import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.node.ParentNode
 import com.bumble.appyx.core.node.node
 import com.bumble.appyx.navmodel.backstack.BackStack
-import com.bumble.appyx.navmodel.backstack.operation.singleTop
+import com.bumble.appyx.navmodel.backstack.operation.newRoot
 import com.imashnake.animite.R
 import com.imashnake.animite.features.home.Home
 import com.imashnake.animite.features.profile.Profile
@@ -44,13 +44,7 @@ class RootNode(
     buildContext
 ) {
 
-    override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
-        return when (navTarget) {
-            NavTarget.Home -> node(buildContext) { Home() }
-            NavTarget.Profile -> node(buildContext) { Profile() }
-            NavTarget.RSlash -> node(buildContext) { RSlash() }
-        }
-    }
+    override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node = navTarget.getNode(buildContext)
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -67,24 +61,18 @@ class RootNode(
                         // TODO We don't need to be creating 3 of everything
                         NavigationBarItem(
                             selected = screenState.last().key.navTarget == NavTarget.RSlash,
-                            onClick = { backStack.singleTop(NavTarget.RSlash) },
-                            icon = {
-                                Icon(painterResource(R.drawable.rslash), stringResource(R.string.rslash))
-                            }
+                            onClick = { backStack.newRoot(NavTarget.RSlash) },
+                            icon = { NavTarget.RSlash.Icon() }
                         )
                         NavigationBarItem(
                             selected = screenState.last().key.navTarget == NavTarget.Home,
-                            onClick = { backStack.singleTop(NavTarget.Home) },
-                            icon = {
-                                Icon(painterResource(R.drawable.home), stringResource(R.string.home))
-                            }
+                            onClick = { backStack.newRoot(NavTarget.Home) },
+                            icon = { NavTarget.Home.Icon() }
                         )
                         NavigationBarItem(
                             selected = screenState.last().key.navTarget == NavTarget.Profile,
-                            onClick = { backStack.singleTop(NavTarget.Profile) },
-                            icon = {
-                                Icon(Icons.Rounded.AccountCircle, stringResource(R.string.profile))
-                            }
+                            onClick = { backStack.newRoot(NavTarget.Profile) },
+                            icon = { NavTarget.Profile.Icon() }
                         )
                     }
                 },
@@ -99,11 +87,45 @@ class RootNode(
     }
 
     sealed class NavTarget : Parcelable {
+        abstract fun getNode(buildContext: BuildContext): Node
+
+        @Composable
+        abstract fun Icon()
+
+        @Composable
+        abstract fun getName(): String
+
         @Parcelize
-        object RSlash : NavTarget()
+        object RSlash : NavTarget() {
+            override fun getNode(buildContext: BuildContext) = node(buildContext) { RSlash() }
+
+            @Composable
+            override fun Icon() = Icon(painterResource(R.drawable.rslash), contentDescription = getName())
+
+            @Composable
+            override fun getName(): String = stringResource(R.string.rslash)
+        }
+
         @Parcelize
-        object Home : NavTarget()
+        object Home : NavTarget() {
+            override fun getNode(buildContext: BuildContext) = node(buildContext) { Home() }
+
+            @Composable
+            override fun Icon() = Icon(painterResource(R.drawable.home), contentDescription = getName())
+
+            @Composable
+            override fun getName(): String = stringResource(R.string.home)
+        }
+
         @Parcelize
-        object Profile : NavTarget()
+        object Profile : NavTarget() {
+            override fun getNode(buildContext: BuildContext) = node(buildContext) { Profile() }
+
+            @Composable
+            override fun Icon() =Icon(Icons.Rounded.AccountCircle, contentDescription = getName())
+
+            @Composable
+            override fun getName(): String = stringResource(R.string.profile)
+        }
     }
 }
