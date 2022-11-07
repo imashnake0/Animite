@@ -18,8 +18,8 @@ android {
         applicationId = "com.imashnake.animite"
         minSdk = 26
         targetSdk = 33
-        versionCode = 0
-        versionName = "0.0.0-alpha00"
+        versionCode = 1
+        versionName = "0.0.0-alpha01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
