@@ -65,11 +65,9 @@ import com.imashnake.animite.dev.ext.toHexColor
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
-import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
 @ExperimentalMaterial3Api
-@Destination
 @Composable
 fun MediaPage(
     id: Int?,

@@ -38,11 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.imashnake.animite.SearchQuery
-import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.type.MediaType
-import com.ramcosta.composedestinations.navigation.navigate
 import com.imashnake.animite.R as Res
 
 // TODO:
@@ -54,9 +50,9 @@ import com.imashnake.animite.R as Res
 @ExperimentalMaterial3Api
 @Composable
 fun SearchBar(
+    onItemClicked: (Int?) -> Unit,
     modifier: Modifier,
-    viewModel: SearchViewModel = viewModel(),
-    navController: NavHostController
+    viewModel: SearchViewModel = viewModel()
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -77,12 +73,7 @@ fun SearchBar(
                     onClick = {
                         isExpanded = false
                         // TODO: Double clicking makes the navigation happen twice.
-                        navController.navigate(
-                            MediaPageDestination(
-                                id = it,
-                                mediaTypeArg = MediaType.ANIME.rawValue
-                            )
-                        )
+                        onItemClicked(it)
                     }
                 )
             }

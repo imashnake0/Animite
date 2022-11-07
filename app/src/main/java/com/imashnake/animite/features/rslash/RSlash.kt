@@ -8,10 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.imashnake.animite.features.ui.ProgressIndicator
-import com.ramcosta.composedestinations.annotation.Destination
 
 // TODO: Add transitions as we did for `Profile`.
-@Destination
 @Composable
 fun RSlash() {
     Box(

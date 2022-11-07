@@ -36,24 +36,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.dev.ext.given
-import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.features.ui.ProgressIndicator
 import com.imashnake.animite.type.MediaType
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
-@RootNavGraph(start = true)
-@Destination(style = HomeTransitions::class)
 @Composable
 fun Home(
-    viewModel: HomeViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val homeMediaType = MediaType.ANIME
 
@@ -156,14 +149,14 @@ fun Home(
                             MediaSmallRow(
                                 mediaList = trendingList,
                                 onItemClick = { itemId ->
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = itemId,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+//                                    navigator.navigate(
+//                                        MediaPageDestination(
+//                                            id = itemId,
+//                                            mediaTypeArg = homeMediaType.rawValue
+//                                        )
+//                                    ) {
+//                                        launchSingleTop = true
+//                                    }
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
@@ -197,14 +190,14 @@ fun Home(
                             MediaSmallRow(
                                 mediaList = popularList,
                                 onItemClick = { itemId ->
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = itemId,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+//                                    navigator.navigate(
+//                                        MediaPageDestination(
+//                                            id = itemId,
+//                                            mediaTypeArg = homeMediaType.rawValue
+//                                        )
+//                                    ) {
+//                                        launchSingleTop = true
+//                                    }
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
@@ -238,14 +231,14 @@ fun Home(
                             MediaSmallRow(
                                 mediaList = upcomingList,
                                 onItemClick = { itemId ->
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = itemId,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+//                                    navigator.navigate(
+//                                        MediaPageDestination(
+//                                            id = itemId,
+//                                            mediaTypeArg = homeMediaType.rawValue
+//                                        )
+//                                    ) {
+//                                        launchSingleTop = true
+//                                    }
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
@@ -279,14 +272,14 @@ fun Home(
                             MediaSmallRow(
                                 mediaList = allTimePopularList,
                                 onItemClick = { itemId ->
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = itemId,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+//                                    navigator.navigate(
+//                                        MediaPageDestination(
+//                                            id = itemId,
+//                                            mediaTypeArg = homeMediaType.rawValue
+//                                        )
+//                                    ) {
+//                                        launchSingleTop = true
+//                                    }
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(

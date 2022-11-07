@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
     kotlin("kapt")
 }
 
@@ -22,9 +21,6 @@ android {
         versionName = "0.0.1-alpha01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -58,14 +54,6 @@ android {
         }
     }
     namespace = "com.imashnake.animite"
-
-    applicationVariants.all {
-        kotlin.sourceSets {
-            getByName(name) {
-                kotlin.srcDir("build/generated/ksp/$name/kotlin")
-            }
-        }
-    }
 }
 
 apollo {
@@ -101,7 +89,6 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
-    implementation(kotlin("reflect"))
 
     // Hilt
     implementation(libs.hilt.android)
@@ -116,10 +103,6 @@ dependencies {
     implementation(libs.chrisbanes.snapper)
 
     coreLibraryDesugaring(libs.android.desugaring)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 
