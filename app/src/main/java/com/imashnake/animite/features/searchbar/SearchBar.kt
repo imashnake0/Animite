@@ -48,7 +48,7 @@ import com.imashnake.animite.R as Res
 @Composable
 fun SearchBar(
     onItemClicked: (Int?) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     viewModel: SearchViewModel = viewModel()
 ) {
     var isExpanded by remember { mutableStateOf(false) }

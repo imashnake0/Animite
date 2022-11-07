@@ -1,31 +1,22 @@
 package com.imashnake.animite.features
 
 import android.os.Parcelable
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.add
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.mandatorySystemGestures
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.bumble.appyx.core.composable.Children
 import com.bumble.appyx.core.composable.childrenAsState
 import com.bumble.appyx.core.modality.BuildContext
@@ -33,7 +24,7 @@ import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.node.ParentNode
 import com.bumble.appyx.core.node.node
 import com.bumble.appyx.navmodel.backstack.BackStack
-import com.bumble.appyx.navmodel.backstack.operation.newRoot
+import com.bumble.appyx.navmodel.backstack.operation.singleTop
 import com.imashnake.animite.R
 import com.imashnake.animite.features.home.Home
 import com.imashnake.animite.features.profile.Profile
@@ -61,60 +52,48 @@ class RootNode(
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun View(modifier: Modifier) {
         val screenState by backStack.childrenAsState()
 
         AnimiteTheme {
-            // TODO Scaffold
-            Column(modifier.background(MaterialTheme.colorScheme.background)) {
-                Box(Modifier.fillMaxWidth().weight(1f)) {
-                    Children(navModel = backStack)
-
-                    SearchBar(
-                        onItemClicked = { /* TODO */ },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(
-                                start = dimensionResource(R.dimen.large_padding),
-                                end = dimensionResource(R.dimen.large_padding),
-                                bottom = dimensionResource(R.dimen.large_padding)
-                            )
-                            .navigationBarsPadding()
-                    )
-                }
-                NavigationBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    windowInsets = WindowInsets.navigationBars.add(WindowInsets.mandatorySystemGestures)
-                ) {
-                    NavigationBarItem(
-                        selected = screenState.last().key.navTarget == NavTarget.RSlash,
-                        onClick = {
-                            backStack.newRoot(NavTarget.RSlash)
-                        },
-                        icon = {
-                            Icon(painterResource(R.drawable.rslash), stringResource(R.string.rslash))
-                        }
-                    )
-                    NavigationBarItem(
-                        selected = screenState.last().key.navTarget == NavTarget.Home,
-                        onClick = {
-                            backStack.newRoot(NavTarget.Home)
-                        },
-                        icon = {
-                            Icon(painterResource(R.drawable.home), stringResource(R.string.home))
-                        }
-                    )
-                    NavigationBarItem(
-                        selected = screenState.last().key.navTarget == NavTarget.Profile,
-                        onClick = {
-                            backStack.newRoot(NavTarget.Profile)
-                        },
-                        icon = {
-                            Icon(Icons.Rounded.AccountCircle, stringResource(R.string.profile))
-                        }
-                    )
-                }
+            Scaffold(
+                contentWindowInsets = WindowInsets(0), // We handle insets ourselves
+                bottomBar = {
+                    NavigationBar(
+                        windowInsets = WindowInsets.navigationBars
+                    ) {
+                        // TODO We don't need to be creating 3 of everything
+                        NavigationBarItem(
+                            selected = screenState.last().key.navTarget == NavTarget.RSlash,
+                            onClick = { backStack.singleTop(NavTarget.RSlash) },
+                            icon = {
+                                Icon(painterResource(R.drawable.rslash), stringResource(R.string.rslash))
+                            }
+                        )
+                        NavigationBarItem(
+                            selected = screenState.last().key.navTarget == NavTarget.Home,
+                            onClick = { backStack.singleTop(NavTarget.Home) },
+                            icon = {
+                                Icon(painterResource(R.drawable.home), stringResource(R.string.home))
+                            }
+                        )
+                        NavigationBarItem(
+                            selected = screenState.last().key.navTarget == NavTarget.Profile,
+                            onClick = { backStack.singleTop(NavTarget.Profile) },
+                            icon = {
+                                Icon(Icons.Rounded.AccountCircle, stringResource(R.string.profile))
+                            }
+                        )
+                    }
+                },
+                floatingActionButton = {
+                    SearchBar(onItemClicked = { /* TODO */ })
+                },
+                floatingActionButtonPosition = FabPosition.End
+            ) {
+                Children(navModel = backStack, modifier = Modifier.padding(it))
             }
         }
     }
