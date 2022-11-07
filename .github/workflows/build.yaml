@@ -1,0 +1,43 @@
+## https://github.com/n8ebel.
+## Sample: https://github.com/n8ebel/GitHubActionsAutomationSandbox.
+name: Build
+
+on:
+  push:
+    tags:
+      - v*
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Restore Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Assemble Debug
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: app/build/outputs/apk/debug/**.apk
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          # TODO: Generate release notes, see https://github.com/orhun/git-cliff.
+          generate_release_notes: false
+          files: |
+            app/build/outputs/apk/debug/**.apk

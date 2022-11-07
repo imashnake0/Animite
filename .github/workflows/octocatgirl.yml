@@ -1,0 +1,18 @@
+name: OctoCatGirl
+
+on:
+  push:
+    tags:
+      - v*
+  pull_request:
+
+jobs:
+  notify:
+    name: octocatgirl
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        # TODO: Configure.
+        if: always()
+        with:
+          webhook: ${{ secrets.OCTO_CAT_GIRL }}
