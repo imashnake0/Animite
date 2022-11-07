@@ -42,6 +42,7 @@ import com.imashnake.animite.R as Res
 
 @Composable
 fun Home(
+    onItemClicked: (Int?, MediaType) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val homeMediaType = MediaType.ANIME
@@ -145,14 +146,7 @@ fun Home(
                             MediaSmallRow(
                                 mediaList = trendingList,
                                 onItemClick = { itemId ->
-//                                    navigator.navigate(
-//                                        MediaPageDestination(
-//                                            id = itemId,
-//                                            mediaTypeArg = homeMediaType.rawValue
-//                                        )
-//                                    ) {
-//                                        launchSingleTop = true
-//                                    }
+                                    onItemClicked(itemId, homeMediaType)
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
@@ -186,14 +180,7 @@ fun Home(
                             MediaSmallRow(
                                 mediaList = popularList,
                                 onItemClick = { itemId ->
-//                                    navigator.navigate(
-//                                        MediaPageDestination(
-//                                            id = itemId,
-//                                            mediaTypeArg = homeMediaType.rawValue
-//                                        )
-//                                    ) {
-//                                        launchSingleTop = true
-//                                    }
+                                    onItemClicked(itemId, homeMediaType)
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
@@ -227,14 +214,7 @@ fun Home(
                             MediaSmallRow(
                                 mediaList = upcomingList,
                                 onItemClick = { itemId ->
-//                                    navigator.navigate(
-//                                        MediaPageDestination(
-//                                            id = itemId,
-//                                            mediaTypeArg = homeMediaType.rawValue
-//                                        )
-//                                    ) {
-//                                        launchSingleTop = true
-//                                    }
+                                    onItemClicked(itemId, homeMediaType)
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
@@ -268,14 +248,7 @@ fun Home(
                             MediaSmallRow(
                                 mediaList = allTimePopularList,
                                 onItemClick = { itemId ->
-//                                    navigator.navigate(
-//                                        MediaPageDestination(
-//                                            id = itemId,
-//                                            mediaTypeArg = homeMediaType.rawValue
-//                                        )
-//                                    ) {
-//                                        launchSingleTop = true
-//                                    }
+                                    onItemClicked(itemId, homeMediaType)
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(

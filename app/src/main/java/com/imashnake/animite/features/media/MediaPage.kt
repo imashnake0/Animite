@@ -67,7 +67,6 @@ import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
 import com.imashnake.animite.R as Res
 
-@ExperimentalMaterial3Api
 @Composable
 fun MediaPage(
     id: Int?,
@@ -441,7 +440,7 @@ fun Stat(label: String, score: Int, format: (Int) -> String) {
     }
 }
 
-@ExperimentalMaterial3Api
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Genre(genre: String?, color: Color, onClick: () -> Unit) {
     SuggestionChip(

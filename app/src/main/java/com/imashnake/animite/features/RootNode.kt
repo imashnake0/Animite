@@ -26,7 +26,7 @@ import com.bumble.appyx.core.node.node
 import com.bumble.appyx.navmodel.backstack.BackStack
 import com.bumble.appyx.navmodel.backstack.operation.newRoot
 import com.imashnake.animite.R
-import com.imashnake.animite.features.home.Home
+import com.imashnake.animite.features.home.HomeNode
 import com.imashnake.animite.features.profile.Profile
 import com.imashnake.animite.features.rslash.RSlash
 import com.imashnake.animite.features.searchbar.SearchBar
@@ -108,7 +108,7 @@ class RootNode(
 
         @Parcelize
         object Home : NavTarget() {
-            override fun getNode(buildContext: BuildContext) = node(buildContext) { Home() }
+            override fun getNode(buildContext: BuildContext) = HomeNode(buildContext)
 
             @Composable
             override fun Icon() = Icon(painterResource(R.drawable.home), contentDescription = getName())
