@@ -70,6 +70,9 @@ dependencies {
     implementation(libs.androidx.coreKtx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
+    // Appyx
+    implementation(libs.appyx.core)
+
     // Compose
     implementation(libs.compose.animation)
     implementation(libs.compose.foundation)

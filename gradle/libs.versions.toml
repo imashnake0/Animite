@@ -11,6 +11,10 @@ dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.re
 
 [versions]
 
+# Appyx
+# https://github.com/bumble-tech/appyx/releases
+appyx = "1.0.0"
+
 # Core Library Desugaring
 # https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
 desugaring = "1.2.2"
@@ -165,7 +169,7 @@ junit = "4.13.2"
 dependencyAnalysis = "1.13.1"
 
 [libraries]
-
+appyx-core = { group = "com.bumble.appyx", name = "core", version.ref = "appyx" }
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
 androidx-activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidx-coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
@@ -173,8 +177,6 @@ androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
-compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "composeDestinations" }
-compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "composeDestinations" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
