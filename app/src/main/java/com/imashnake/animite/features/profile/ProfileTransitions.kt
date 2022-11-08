@@ -8,8 +8,7 @@ import com.imashnake.animite.features.appDestination
 import com.imashnake.animite.features.destinations.HomeDestination
 import com.ramcosta.composedestinations.spec.DestinationStyle
 
-@ExperimentalAnimationApi
-@ExperimentalMaterial3Api
+@OptIn(ExperimentalAnimationApi::class)
 object ProfileTransitions : DestinationStyle.Animated {
     override fun AnimatedContentScope<NavBackStackEntry>.enterTransition(): EnterTransition? {
         return when (initialState.appDestination()) {

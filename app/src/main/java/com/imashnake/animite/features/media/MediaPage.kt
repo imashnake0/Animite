@@ -68,7 +68,6 @@ import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
-@ExperimentalMaterial3Api
 @Destination
 @Composable
 fun MediaPage(
@@ -443,7 +442,7 @@ fun Stat(label: String, score: Int, format: (Int) -> String) {
     }
 }
 
-@ExperimentalMaterial3Api
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Genre(genre: String?, color: Color, onClick: () -> Unit) {
     SuggestionChip(

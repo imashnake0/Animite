@@ -48,10 +48,7 @@ import com.imashnake.animite.R as Res
 // TODO:
 //  - UX concern: This blocks content sometimes!
 //  - `SearchList` goes beyond the status bar.
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
-@ExperimentalAnimationApi
-@ExperimentalMaterial3Api
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     modifier: Modifier,
@@ -114,7 +111,6 @@ fun SearchBar(
     }
 }
 
-@ExperimentalMaterial3Api
 @Composable
 fun CollapsedSearchBar() {
     Row(
@@ -129,8 +125,7 @@ fun CollapsedSearchBar() {
     }
 }
 
-@ExperimentalComposeUiApi
-@ExperimentalMaterial3Api
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -205,8 +200,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
     }
 }
 
-@ExperimentalFoundationApi
-@ExperimentalAnimationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchList(
     viewModel: SearchViewModel = viewModel(),
@@ -254,8 +248,6 @@ private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit, modif
     )
 }
 
-@ExperimentalComposeUiApi
-@ExperimentalMaterial3Api
 @Preview
 @Composable
 fun PreviewSearchBar() {
