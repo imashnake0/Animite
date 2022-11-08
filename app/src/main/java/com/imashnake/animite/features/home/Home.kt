@@ -265,13 +265,6 @@ fun Home(
                                     )
                                 }
                             )
-
-                            Spacer(
-                                Modifier.height(
-                                    dimensionResource(Res.dimen.navigation_bar_height)
-                                            + dimensionResource(Res.dimen.large_padding)
-                                )
-                            )
                         }
                     }
                 }
