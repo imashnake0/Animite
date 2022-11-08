@@ -1,6 +1,11 @@
 package com.imashnake.animite.features
 
 import android.os.Parcelable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -56,29 +61,37 @@ class RootNode(
             Scaffold(
                 contentWindowInsets = WindowInsets(0), // We handle insets ourselves
                 bottomBar = {
-                    NavigationBar(
-                        windowInsets = WindowInsets.navigationBars
+                    AnimatedVisibility(
+                        visible = true, // TODO
+                        enter = expandVertically() + slideInVertically { it }, // We use expand* here because slide* doesn't change height
+                        exit = shrinkVertically() + slideOutVertically { it }
                     ) {
-                        // TODO We don't need to be creating 3 of everything
-                        NavigationBarItem(
-                            selected = screenState.last().key.navTarget == NavTarget.RSlash,
-                            onClick = { backStack.newRoot(NavTarget.RSlash) },
-                            icon = { NavTarget.RSlash.Icon() }
-                        )
-                        NavigationBarItem(
-                            selected = screenState.last().key.navTarget == NavTarget.Home,
-                            onClick = { backStack.newRoot(NavTarget.Home) },
-                            icon = { NavTarget.Home.Icon() }
-                        )
-                        NavigationBarItem(
-                            selected = screenState.last().key.navTarget == NavTarget.Profile,
-                            onClick = { backStack.newRoot(NavTarget.Profile) },
-                            icon = { NavTarget.Profile.Icon() }
-                        )
+                        NavigationBar(
+                            windowInsets = WindowInsets.navigationBars
+                        ) {
+                            // TODO We don't need to be creating 3 of everything
+                            NavigationBarItem(
+                                selected = screenState.last().key.navTarget == NavTarget.RSlash,
+                                onClick = { backStack.newRoot(NavTarget.RSlash) },
+                                icon = { NavTarget.RSlash.Icon() }
+                            )
+                            NavigationBarItem(
+                                selected = screenState.last().key.navTarget == NavTarget.Home,
+                                onClick = { backStack.newRoot(NavTarget.Home) },
+                                icon = { NavTarget.Home.Icon() }
+                            )
+                            NavigationBarItem(
+                                selected = screenState.last().key.navTarget == NavTarget.Profile,
+                                onClick = { backStack.newRoot(NavTarget.Profile) },
+                                icon = { NavTarget.Profile.Icon() }
+                            )
+                        }
                     }
                 },
                 floatingActionButton = {
-                    SearchBar(onItemClicked = { /* TODO */ })
+                    SearchBar(onItemClicked = {
+
+                    })
                 },
                 floatingActionButtonPosition = FabPosition.End
             ) {
@@ -127,7 +140,7 @@ class RootNode(
             override fun getNode(buildContext: BuildContext) = node(buildContext) { Profile() }
 
             @Composable
-            override fun Icon() =Icon(Icons.Rounded.AccountCircle, contentDescription = getName())
+            override fun Icon() = Icon(Icons.Rounded.AccountCircle, contentDescription = getName())
 
             @Composable
             override fun getName(): String = stringResource(R.string.profile)
