@@ -12,8 +12,6 @@ import androidx.compose.ui.Modifier
 import com.imashnake.animite.features.ui.ProgressIndicator
 import com.ramcosta.composedestinations.annotation.Destination
 
-@ExperimentalMaterial3Api
-@ExperimentalAnimationApi
 @Destination(style = ProfileTransitions::class)
 @Composable
 fun Profile() {
