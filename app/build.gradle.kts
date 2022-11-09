@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp) version libs.versions.ksp.get()
     kotlin("kapt")
+    id("kotlin-parcelize")
+    kotlin("plugin.serialization") version "1.7.21" // todo catalogue
 }
 
 android {
@@ -126,4 +128,12 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espressoCore)
     androidTestImplementation(libs.compose.test.ui.testJunit4)
+
+    //room db
+    implementation(libs.room)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
+
+    //kotlinx-serialization
+    implementation(libs.kotlinx.serialization)
 }

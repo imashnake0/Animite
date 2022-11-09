@@ -160,6 +160,14 @@ snapper = "0.3.0"
 # https://github.com/junit-team/junit4/releases.
 junit = "4.13.2"
 
+# Room
+# https://developer.android.com/jetpack/androidx/releases/room
+room = "2.4.3"
+
+# Kotlinx-Serialization
+# https://kotlinlang.org/docs/serialization.html#example-json-serialization
+serialization = "1.4.1"
+
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.13.1"
@@ -194,3 +202,7 @@ accompanist-systemUiController = { group = "com.google.accompanist", name = "acc
 accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist" }
 chrisbanes-snapper = { group = "dev.chrisbanes.snapper", name = "snapper", version.ref = "snapper" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
+room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
