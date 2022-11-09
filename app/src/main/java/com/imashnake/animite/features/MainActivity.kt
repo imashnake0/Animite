@@ -78,6 +78,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
         )
     )
 
+    // TODO Refactor to use Scaffold once AnimatedVisibility issues are fixed
+    // See https://issuetracker.google.com/issues/258270139
     Box(modifier) {
         DestinationsNavHost(
             navGraph = NavGraphs.root,
