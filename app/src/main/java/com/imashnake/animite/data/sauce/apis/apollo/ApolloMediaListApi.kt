@@ -1,5 +1,6 @@
 package com.imashnake.animite.data.sauce.apis.apollo
 
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.data.sauce.apis.MediaListApi
@@ -8,7 +9,9 @@ import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
-class ApolloMediaListApi @Inject constructor() : MediaListApi {
+class ApolloMediaListApi @Inject constructor(
+    private val client: ApolloClient
+) : MediaListApi {
     override suspend fun fetchMediaList(
         type: MediaType,
         page: Int,

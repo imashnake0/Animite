@@ -1,5 +1,6 @@
 package com.imashnake.animite.data.sauce.apis.apollo
 
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.imashnake.animite.MediaQuery
 import com.imashnake.animite.MediaQuery.Media
@@ -13,7 +14,9 @@ import javax.inject.Inject
  * **Anime:** Sono Bisque Doll wa Koi wo Suru;
  * **ID:** 132405.
  */
-class ApolloMediaApi @Inject constructor() : MediaApi {
+class ApolloMediaApi @Inject constructor(
+    private val client: ApolloClient
+) : MediaApi {
     override suspend fun fetchMedia(id: Int?, mediaType: MediaType): Media? {
         return client
             .query(
