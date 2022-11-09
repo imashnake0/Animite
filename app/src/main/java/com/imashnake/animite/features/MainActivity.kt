@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -68,7 +69,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialNavigationApi::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalMaterialNavigationApi::class,
+    ExperimentalMaterial3Api::class
+)
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberAnimatedNavController()
     val navHostEngine = rememberAnimatedNavHostEngine(
@@ -78,8 +83,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
         )
     )
 
-    // TODO Refactor to use Scaffold once AnimatedVisibility issues are fixed
-    // See https://issuetracker.google.com/issues/258270139
+    // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
+    //  see https://issuetracker.google.com/issues/258270139.
     Box(modifier) {
         DestinationsNavHost(
             navGraph = NavGraphs.root,
