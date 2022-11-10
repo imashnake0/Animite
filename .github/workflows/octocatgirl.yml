@@ -15,4 +15,4 @@ jobs:
         # TODO: Configure.
         if: always()
         with:
-          webhook: ${{ secrets.OCTO_CAT_GIRL }}
+          webhook: ${{ secrets.OCTOCATGIRL }}
