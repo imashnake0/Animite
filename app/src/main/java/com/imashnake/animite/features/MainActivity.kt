@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,18 +30,19 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
 import com.imashnake.animite.features.navigationbar.NavigationBar
-import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.features.searchbar.SearchBar
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
-import com.ramcosta.composedestinations.utils.currentDestinationAsState
+import com.ramcosta.composedestinations.utils.navGraph
+import com.ramcosta.composedestinations.utils.route
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -81,6 +83,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
             exitTransition = { fadeOut(animationSpec = tween(300)) },
         )
     )
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val navBarVisible = remember(currentBackStackEntry) {
+        currentBackStackEntry?.navGraph()?.startRoute == currentBackStackEntry?.route()
+    }
 
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
     //  see https://issuetracker.google.com/issues/258270139.
@@ -97,9 +103,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
         val searchBarBottomPadding: Dp by animateDpAsState(
             targetValue = dimensionResource(R.dimen.large_padding) + if (
-                NavigationBarPaths.values().any {
-                    it.route == navController.currentDestinationAsState().value?.route
-                }
+                navBarVisible
             ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp
         )
 
@@ -116,9 +120,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         )
 
         AnimatedVisibility(
-            visible = NavigationBarPaths.values().any {
-                it.route == navController.currentDestinationAsState().value?.route
-            },
+            visible = navBarVisible,
             modifier = Modifier.align(Alignment.BottomCenter),
             enter = slideInVertically { it },
             exit = slideOutVertically { it }

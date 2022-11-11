@@ -28,7 +28,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.imashnake.animite.features.destinations.HomeDestination
 import com.imashnake.animite.profile.ProfileNavGraph
 import com.imashnake.animite.rslash.RslashNavGraph
+import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
+import com.ramcosta.composedestinations.utils.startDestination
 import com.imashnake.animite.R as Res
 
 // TODO: Ripple where?
@@ -54,9 +56,9 @@ fun NavigationBar(
         NavigationBarPaths.values().forEach { destination ->
             NavigationBarItem(
                 modifier = Modifier.navigationBarsPadding(),
-                selected = currentDestination?.route == destination.route,
+                selected = currentDestination?.startDestination == destination.route,
                 onClick = {
-                    navController.navigate(destination.route) {
+                    navController.navigate(destination.route.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -71,11 +73,11 @@ fun NavigationBar(
 }
 
 enum class NavigationBarPaths(
-    val route: String,
+    val route: DestinationSpec<*>,
     val icon: @Composable () -> Unit
 ) {
     RSlash(
-        RslashNavGraph.route,
+        RslashNavGraph.startDestination,
         {
             Icon(
                 imageVector = ImageVector.vectorResource(
@@ -88,7 +90,7 @@ enum class NavigationBarPaths(
         }
     ),
     Home(
-        HomeDestination.route,
+        HomeDestination,
         {
             Icon(
                 imageVector = ImageVector.vectorResource(
@@ -101,7 +103,7 @@ enum class NavigationBarPaths(
         }
     ),
     Profile(
-        ProfileNavGraph.route,
+        ProfileNavGraph.startDestination,
         {
             Icon(
                 imageVector = Icons.Rounded.AccountCircle,
