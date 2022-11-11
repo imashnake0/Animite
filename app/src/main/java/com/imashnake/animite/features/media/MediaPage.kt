@@ -313,11 +313,10 @@ fun MediaPage(
                         }
                     ) { character, onClickingCharacter ->
                         MediaSmall(
-                            height = dimensionResource(Res.dimen.character_card_height),
-                            width = dimensionResource(Res.dimen.character_card_width),
                             image = character.image,
                             label = character.name,
-                            onClick = { onClickingCharacter(character.id) }
+                            onClick = { onClickingCharacter(character.id) },
+                            modifier = Modifier.width(dimensionResource(Res.dimen.character_card_width))
                         )
                     }
                 }
@@ -394,9 +393,8 @@ fun MediaPage(
                     }
             ) {
                 MediaSmall(
-                    height = dimensionResource(Res.dimen.media_card_height),
-                    width = dimensionResource(Res.dimen.media_card_width),
-                    image = media.coverImage
+                    image = media.coverImage,
+                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                 )
             }
         }

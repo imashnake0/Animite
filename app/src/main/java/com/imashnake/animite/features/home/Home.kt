@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -163,8 +164,6 @@ fun Home(
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
-                                        height = dimensionResource(Res.dimen.media_card_height),
-                                        width = dimensionResource(Res.dimen.media_card_width),
                                         image = media?.coverImage?.extraLarge,
                                         // TODO: Do something about this chain.
                                         label = media?.title?.romaji ?:
@@ -172,7 +171,8 @@ fun Home(
                                         media?.title?.native ?: "",
                                         onClick = {
                                             onItemClick(media?.id)
-                                        }
+                                        },
+                                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                                     )
                                 }
                             )
@@ -204,8 +204,6 @@ fun Home(
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
-                                        height = dimensionResource(Res.dimen.media_card_height),
-                                        width = dimensionResource(Res.dimen.media_card_width),
                                         image = media?.coverImage?.extraLarge,
                                         // TODO: Do something about this chain.
                                         label = media?.title?.romaji ?:
@@ -213,7 +211,8 @@ fun Home(
                                         media?.title?.native ?: "",
                                         onClick = {
                                             onItemClick(media?.id)
-                                        }
+                                        },
+                                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                                     )
                                 }
                             )
@@ -245,8 +244,6 @@ fun Home(
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
-                                        height = dimensionResource(Res.dimen.media_card_height),
-                                        width = dimensionResource(Res.dimen.media_card_width),
                                         image = media?.coverImage?.extraLarge,
                                         // TODO: Do something about this chain.
                                         label = media?.title?.romaji ?:
@@ -254,7 +251,8 @@ fun Home(
                                         media?.title?.native ?: "",
                                         onClick = {
                                             onItemClick(media?.id)
-                                        }
+                                        },
+                                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                                     )
                                 }
                             )
@@ -286,8 +284,6 @@ fun Home(
                                 },
                                 content = { media, onItemClick ->
                                     MediaSmall(
-                                        height = dimensionResource(Res.dimen.media_card_height),
-                                        width = dimensionResource(Res.dimen.media_card_width),
                                         image = media?.coverImage?.extraLarge,
                                         // TODO: Do something about this chain.
                                         label = media?.title?.romaji ?:
@@ -295,7 +291,8 @@ fun Home(
                                         media?.title?.native ?: "",
                                         onClick = {
                                             onItemClick(media?.id)
-                                        }
+                                        },
+                                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                                     )
                                 }
                             )

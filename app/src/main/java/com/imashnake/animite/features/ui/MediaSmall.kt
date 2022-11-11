@@ -4,11 +4,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +24,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.type.MediaType
@@ -64,11 +63,14 @@ fun <T> MediaSmallRow(
  * @param onClick Action to happen when the card is clicked.
  */
 @Composable
-fun MediaSmall(height: Dp, width: Dp, image: String?, label: String? = null, onClick: () -> Unit = {  }) {
+fun MediaSmall(
+    image: String?,
+    modifier: Modifier = Modifier,
+    label: String? = null,
+    onClick: () -> Unit = {  }
+) {
     Card(
-        modifier = Modifier
-            .wrapContentHeight()
-            .width(width)
+        modifier = modifier
             .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
             .clickable(
                 enabled = true,
@@ -83,7 +85,8 @@ fun MediaSmall(height: Dp, width: Dp, image: String?, label: String? = null, onC
             contentDescription = label,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(height)
+                .fillMaxWidth()
+                .aspectRatio(0.7f)
                 .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
         )
 
@@ -142,8 +145,6 @@ fun PreviewMediaSmallRow() {
         onItemClick = {  },
         content = { media, onItemClick ->
             MediaSmall(
-                height = dimensionResource(Res.dimen.media_card_height),
-                width = dimensionResource(Res.dimen.media_card_width),
                 image = media.coverImage?.extraLarge,
                 // TODO: Do something about this chain.
                 label = media.title?.romaji ?:
@@ -151,7 +152,8 @@ fun PreviewMediaSmallRow() {
                 media.title?.native ?: "",
                 onClick = {
                     onItemClick(media.id)
-                }
+                },
+                modifier = Modifier.width(140.dp)
             )
         }
     )
@@ -161,12 +163,11 @@ fun PreviewMediaSmallRow() {
 @Composable
 fun PreviewMediaSmall() {
     MediaSmall(
-        height = dimensionResource(Res.dimen.media_card_height),
-        width = dimensionResource(Res.dimen.media_card_width),
         image =
         "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
         label =
         "Sono Bisque Doll wa Koi wo Suru",
-        onClick = {  }
+        onClick = {  },
+        modifier = Modifier.width(140.dp)
     )
 }
