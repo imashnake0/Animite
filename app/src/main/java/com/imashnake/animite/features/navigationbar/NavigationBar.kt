@@ -38,9 +38,6 @@ import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
 import com.imashnake.animite.R as Res
 
 // TODO: Ripple where?
-@ExperimentalComposeUiApi
-@ExperimentalAnimationApi
-@ExperimentalMaterial3Api
 @Composable
 fun NavigationBar(
     navController: NavController
@@ -98,9 +95,7 @@ enum class NavigationBarPaths(
         }
     ),
 
-    @ExperimentalAnimationApi
-    @ExperimentalMaterial3Api
-    Home(
+            Home(
         HomeDestination,
         {
             Icon(
@@ -113,9 +108,7 @@ enum class NavigationBarPaths(
             )
         }
     ),
-    @ExperimentalAnimationApi
-    @ExperimentalMaterial3Api
-    Profile(
+            Profile(
         ProfileDestination,
         {
             Icon(
