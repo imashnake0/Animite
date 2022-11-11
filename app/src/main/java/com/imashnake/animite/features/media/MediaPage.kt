@@ -61,7 +61,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.dev.ext.isNullOrZero
-import com.imashnake.animite.dev.ext.toHexColor
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
@@ -125,7 +124,7 @@ fun MediaPage(
                             ) {
                                 height(bannerHeight)
                             },
-                        color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
+                        color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: 0).copy(alpha = 0.25f)
                     ) { }
                 }
             } else {
@@ -283,7 +282,7 @@ fun MediaPage(
                             items(media.genres) { genre ->
                                 Genre(
                                     genre = genre,
-                                    color = Color(media.color?.toHexColor() ?: 0xFF152232),
+                                    color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: (0xFF152232).toInt()),
                                     // TODO: Make genres clickable.
                                     onClick = {  }
                                 )
