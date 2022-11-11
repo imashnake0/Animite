@@ -83,6 +83,7 @@ dependencies {
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha03")
 
     // Compose
     implementation(libs.compose.animation)

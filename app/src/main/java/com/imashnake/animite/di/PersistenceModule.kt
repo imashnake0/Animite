@@ -3,6 +3,7 @@ package com.imashnake.animite.di
 import android.content.Context
 import androidx.room.Room
 import com.imashnake.animite.data.sauce.db.AnimiteDatabase
+import com.imashnake.animite.data.sauce.db.MediaDAO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,4 +25,8 @@ object PersistenceModule {
             .setTransactionExecutor(dispatcher.asExecutor())
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideMediumDAO(db: AnimiteDatabase): MediaDAO = db.homepageDAO()
 }

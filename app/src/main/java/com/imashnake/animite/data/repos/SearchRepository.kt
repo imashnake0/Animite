@@ -1,7 +1,7 @@
 package com.imashnake.animite.data.repos
 
 import com.imashnake.animite.SearchQuery
-import com.imashnake.animite.data.sauce.SearchNetworkSource
+import com.imashnake.animite.data.sauce.network.SearchNetworkSource
 import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
