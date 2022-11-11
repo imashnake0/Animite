@@ -1,14 +1,7 @@
-@file:Suppress("Unused")
-
 package com.imashnake.animite.di
 
-import com.imashnake.animite.data.sauce.apis.MediaApi
-import com.imashnake.animite.data.sauce.apis.apollo.ApolloMediaListApi
-import com.imashnake.animite.data.sauce.apis.MediaListApi
-import com.imashnake.animite.data.sauce.apis.SearchApi
-import com.imashnake.animite.data.sauce.apis.apollo.ApolloMediaApi
-import com.imashnake.animite.data.sauce.apis.apollo.ApolloSearchApi
-import dagger.Binds
+import com.apollographql.apollo3.ApolloClient
+import com.imashnake.animite.dev.internal.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,32 +10,18 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
-@InstallIn(SingletonComponent::class)
 @Module
+@InstallIn(SingletonComponent::class)
 object NetworkModule {
     @Provides
-    fun providesNetworkDispatcher(): CoroutineDispatcher =
-        Dispatchers.IO
-}
+    fun providesNetworkDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
-@InstallIn(SingletonComponent::class)
-@Module
-abstract class NetworkModuleBinds {
+    @Provides
     @Singleton
-    @Binds
-    abstract fun providesMediaApi(
-        apolloMediaApi: ApolloMediaApi
-    ): MediaApi
-
-    @Singleton
-    @Binds
-    abstract fun providesMediaListApi(
-        apolloMediaListApi: ApolloMediaListApi
-    ): MediaListApi
-
-    @Singleton
-    @Binds
-    abstract fun providesSearchApi(
-        apolloSearchApi: ApolloSearchApi
-    ): SearchApi
+    fun provideApolloClient(dispatcher: CoroutineDispatcher): ApolloClient {
+        return ApolloClient.Builder()
+            .dispatcher(dispatcher)
+            .serverUrl(Constants.ANILIST_BASE_URL)
+            .build()
+    }
 }
