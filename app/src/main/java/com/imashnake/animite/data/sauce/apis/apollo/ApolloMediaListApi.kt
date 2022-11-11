@@ -10,7 +10,7 @@ import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
 class ApolloMediaListApi @Inject constructor(
-    private val client: ApolloClient
+    private val apolloClient: ApolloClient
 ) : MediaListApi {
     override suspend fun fetchMediaList(
         type: MediaType,
@@ -20,7 +20,7 @@ class ApolloMediaListApi @Inject constructor(
         season: MediaSeason?,
         seasonYear: Int?
     ): MediaListQuery.Page? {
-        return client
+        return apolloClient
             .query(
                 MediaListQuery(
                     type = Optional.presentIfNotNull(type),
