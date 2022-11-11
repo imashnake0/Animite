@@ -59,8 +59,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.dev.ext.isNullOrZero
+import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
@@ -93,7 +95,10 @@ fun MediaPage(
                 Box {
 
                     AsyncImage(
-                        model = media.bannerImage,
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(media.bannerImage)
+                            .crossfade(CROSSFADE_DURATION)
+                            .build(),
                         contentDescription = null,
                         contentScale = if (
                             LocalConfiguration.current.orientation
@@ -352,7 +357,10 @@ fun MediaPage(
                             }
                     ) {
                         AsyncImage(
-                            model = media.trailer.thumbnail,
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(media.trailer.thumbnail)
+                                .crossfade(CROSSFADE_DURATION)
+                                .build(),
                             contentDescription = stringResource(Res.string.trailer),
                             contentScale = ContentScale.FillWidth,
                             modifier = Modifier
