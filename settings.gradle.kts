@@ -23,6 +23,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Animite"
 include(
+    ":core",
     ":profile",
     ":rslash",
     ":app"

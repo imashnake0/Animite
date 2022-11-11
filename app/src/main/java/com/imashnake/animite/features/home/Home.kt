@@ -33,7 +33,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.imashnake.animite.dev.ext.given
+import com.imashnake.animite.core.extensions.given
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow

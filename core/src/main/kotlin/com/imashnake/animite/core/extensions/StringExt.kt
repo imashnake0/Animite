@@ -1,4 +1,4 @@
-package com.imashnake.animite.dev.ext
+package com.imashnake.animite.core.extensions
 
 import kotlin.math.*
 
