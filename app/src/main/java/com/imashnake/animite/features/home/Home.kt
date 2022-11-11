@@ -3,6 +3,7 @@ package com.imashnake.animite.features.home
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.ui.MediaSmall
@@ -136,173 +138,70 @@ fun Home(
                                 ) {
                                     displayCutoutPadding()
                                 }
+                                .padding(vertical = dimensionResource(Res.dimen.large_padding)),
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
                         ) {
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-                            Text(
-                                text = stringResource(Res.string.trending_now),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(
-                                    start = dimensionResource(Res.dimen.large_padding)
-                                )
-                            )
-
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                            MediaSmallRow(
-                                mediaList = trendingList,
-                                onItemClick = { itemId ->
+                            HomeRow(
+                                list = trendingList,
+                                title = stringResource(Res.string.trending_now),
+                                onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = itemId,
+                                            id = it.id,
                                             mediaTypeArg = homeMediaType.rawValue
                                         )
                                     ) {
                                         launchSingleTop = true
                                     }
-                                },
-                                content = { media, onItemClick ->
-                                    MediaSmall(
-                                        image = media?.coverImage?.extraLarge,
-                                        // TODO: Do something about this chain.
-                                        label = media?.title?.romaji ?:
-                                        media?.title?.english ?:
-                                        media?.title?.native ?: "",
-                                        onClick = {
-                                            onItemClick(media?.id)
-                                        },
-                                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                                    )
                                 }
                             )
 
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-                            Text(
-                                text = stringResource(Res.string.popular_this_season),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(
-                                    start = dimensionResource(Res.dimen.large_padding)
-                                )
-                            )
-
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                            MediaSmallRow(
-                                mediaList = popularList,
-                                onItemClick = { itemId ->
+                            HomeRow(
+                                list = popularList,
+                                title = stringResource(Res.string.popular_this_season),
+                                onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = itemId,
+                                            id = it.id,
                                             mediaTypeArg = homeMediaType.rawValue
                                         )
                                     ) {
                                         launchSingleTop = true
                                     }
-                                },
-                                content = { media, onItemClick ->
-                                    MediaSmall(
-                                        image = media?.coverImage?.extraLarge,
-                                        // TODO: Do something about this chain.
-                                        label = media?.title?.romaji ?:
-                                        media?.title?.english ?:
-                                        media?.title?.native ?: "",
-                                        onClick = {
-                                            onItemClick(media?.id)
-                                        },
-                                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                                    )
                                 }
                             )
 
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-                            Text(
-                                text = stringResource(Res.string.upcoming_next_season),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(
-                                    start = dimensionResource(Res.dimen.large_padding)
-                                )
-                            )
-
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                            MediaSmallRow(
-                                mediaList = upcomingList,
-                                onItemClick = { itemId ->
+                            HomeRow(
+                                list = upcomingList,
+                                title = stringResource(Res.string.upcoming_next_season),
+                                onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = itemId,
+                                            id = it.id,
                                             mediaTypeArg = homeMediaType.rawValue
                                         )
                                     ) {
                                         launchSingleTop = true
                                     }
-                                },
-                                content = { media, onItemClick ->
-                                    MediaSmall(
-                                        image = media?.coverImage?.extraLarge,
-                                        // TODO: Do something about this chain.
-                                        label = media?.title?.romaji ?:
-                                        media?.title?.english ?:
-                                        media?.title?.native ?: "",
-                                        onClick = {
-                                            onItemClick(media?.id)
-                                        },
-                                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                                    )
                                 }
                             )
 
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-                            Text(
-                                text = stringResource(Res.string.all_time_popular),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(
-                                    start = dimensionResource(Res.dimen.large_padding)
-                                )
-                            )
-
-                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                            MediaSmallRow(
-                                mediaList = allTimePopularList,
-                                onItemClick = { itemId ->
+                            HomeRow(
+                                list = allTimePopularList,
+                                title = stringResource(Res.string.all_time_popular),
+                                onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = itemId,
+                                            id = it.id,
                                             mediaTypeArg = homeMediaType.rawValue
                                         )
                                     ) {
                                         launchSingleTop = true
                                     }
-                                },
-                                content = { media, onItemClick ->
-                                    MediaSmall(
-                                        image = media?.coverImage?.extraLarge,
-                                        // TODO: Do something about this chain.
-                                        label = media?.title?.romaji ?:
-                                        media?.title?.english ?:
-                                        media?.title?.native ?: "",
-                                        onClick = {
-                                            onItemClick(media?.id)
-                                        },
-                                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                                    )
                                 }
                             )
 
-                            Spacer(
-                                Modifier.height(
-                                    dimensionResource(Res.dimen.navigation_bar_height)
-                                            + dimensionResource(Res.dimen.large_padding)
-                                )
-                            )
+                            Spacer(Modifier.height(dimensionResource(Res.dimen.navigation_bar_height)))
                         }
                     }
                 }
@@ -340,5 +239,45 @@ fun Home(
                 ProgressIndicator()
             }
         }
+    }
+}
+
+@Composable
+fun HomeRow(
+    list: List<MediaListQuery.Medium?>,
+    title: String,
+    onItemClicked: (MediaListQuery.Medium) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(
+                start = dimensionResource(Res.dimen.large_padding)
+            )
+        )
+
+        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+        MediaSmallRow(
+            mediaList = list,
+            onItemClick = { itemId ->
+                if (itemId != null) { onItemClicked(list.first { it?.id == itemId }!!) }
+            },
+            content = { media, onItemClick ->
+                MediaSmall(
+                    image = media?.coverImage?.extraLarge,
+                    // TODO: Do something about this chain.
+                    label = media?.title?.romaji ?:
+                    media?.title?.english ?:
+                    media?.title?.native ?: "",
+                    onClick = {
+                        onItemClick(media?.id)
+                    },
+                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+                )
+            }
+        )
     }
 }
