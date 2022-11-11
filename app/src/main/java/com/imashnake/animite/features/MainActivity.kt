@@ -40,6 +40,7 @@ import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -85,7 +86,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
     //  see https://issuetracker.google.com/issues/258270139.
     Box(modifier) {
         DestinationsNavHost(
-            navGraph = NavGraphs.root,
+            navGraph = RootNavGraph,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .background(MaterialTheme.colorScheme.background)
@@ -97,7 +98,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         val searchBarBottomPadding: Dp by animateDpAsState(
             targetValue = dimensionResource(R.dimen.large_padding) + if (
                 NavigationBarPaths.values().any {
-                    it.direction == navController.appCurrentDestinationAsState().value
+                    it.route == navController.currentDestinationAsState().value?.route
                 }
             ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp
         )
@@ -116,7 +117,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
         AnimatedVisibility(
             visible = NavigationBarPaths.values().any {
-                it.direction == navController.appCurrentDestinationAsState().value
+                it.route == navController.currentDestinationAsState().value?.route
             },
             modifier = Modifier.align(Alignment.BottomCenter),
             enter = slideInVertically { it },

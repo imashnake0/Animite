@@ -76,6 +76,10 @@ kapt {
     correctErrorTypes = true
 }
 
+ksp {
+    arg("compose-destinations.mode", "destinations")
+}
+
 dependencies {
     implementation(project(":core"))
     implementation(project(":profile"))

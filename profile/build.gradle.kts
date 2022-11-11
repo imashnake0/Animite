@@ -54,7 +54,13 @@ android {
     }
 }
 
+ksp {
+    arg("compose-destinations.mode", "navgraphs")
+    arg("compose-destinations.moduleName", project.name)
+}
+
 dependencies {
+    implementation(project(":core"))
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)

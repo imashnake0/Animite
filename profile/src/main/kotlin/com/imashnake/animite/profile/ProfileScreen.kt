@@ -1,20 +1,20 @@
-package com.imashnake.animite.features.profile
+package com.imashnake.animite.profile
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.imashnake.animite.features.ui.ProgressIndicator
+import com.imashnake.animite.core.ui.ProgressIndicator
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 
-@Destination(style = ProfileTransitions::class)
+@Destination(route = "profile-screen")
+@RootNavGraph(start = true)
 @Composable
-fun Profile() {
+fun ProfileScreen() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
