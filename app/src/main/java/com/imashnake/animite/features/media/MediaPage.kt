@@ -394,6 +394,8 @@ fun MediaPage(
             ) {
                 MediaSmall(
                     image = media.coverImage,
+                    label = null,
+                    onClick = {},
                     modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                 )
             }

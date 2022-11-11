@@ -49,7 +49,7 @@ fun <T> MediaSmallRow(
             end = dimensionResource(Res.dimen.large_padding)
         )
     ) {
-        items(mediaList.filterNotNull()) { media ->
+        items(mediaList) { media ->
             content(media, onItemClick)
         }
     }
@@ -65,9 +65,9 @@ fun <T> MediaSmallRow(
 @Composable
 fun MediaSmall(
     image: String?,
+    label: String?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    label: String? = null,
-    onClick: () -> Unit = {  }
 ) {
     Card(
         modifier = modifier
