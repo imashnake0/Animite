@@ -3,10 +3,9 @@
 name: Build
 
 on:
-  push:
-    tags:
-      - v*
   pull_request:
+    branches:
+      - 'main'
 
 jobs:
   build:
@@ -14,15 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Restore Cache
-        uses: actions/cache@v3
+      - uses: actions/setup-java@v3
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          distribution: 'adopt'
+          java-version: 11
+          cache: 'gradle'
 
       - name: Assemble Debug
         run: ./gradlew assembleDebug
@@ -33,11 +28,7 @@ jobs:
           name: apk
           path: app/build/outputs/apk/debug/**.apk
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Notify New Build
+        uses: sarisia/actions-status-discord@v1
         with:
-          # TODO: Generate release notes, see https://github.com/orhun/git-cliff.
-          generate_release_notes: false
-          files: |
-            app/build/outputs/apk/debug/**.apk
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
