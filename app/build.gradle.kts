@@ -7,10 +7,10 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
-    kotlin("kapt")
-    kotlin("plugin.parcelize")
-    kotlin("plugin.serialization") version "1.7.20"
+    alias(libs.plugins.ksp)
+    kotlin(libs.plugins.parcelize.get().pluginId)
+    kotlin(libs.plugins.kapt.get().pluginId)
+    alias(libs.plugins.serialization)
 }
 
 android {
