@@ -42,8 +42,8 @@ import com.imashnake.animite.R as Res
 @Composable
 fun <T> MediaSmallRow(
     mediaList: List<T>,
-    onItemClick: (itemId: Int?) -> Unit,
-    content: @Composable (T, (itemId: Int?) -> Unit) -> Unit
+    onItemClick: (itemId: Int) -> Unit,
+    content: @Composable (T, (itemId: Int) -> Unit) -> Unit
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),

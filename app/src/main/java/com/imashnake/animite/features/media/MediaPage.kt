@@ -320,7 +320,7 @@ fun MediaPage(
                         MediaSmall(
                             image = character.image,
                             label = character.name,
-                            onClick = { onClickingCharacter(character.id) },
+                            onClick = { onClickingCharacter(character.id!!) },
                             modifier = Modifier.width(dimensionResource(Res.dimen.character_card_width))
                         )
                     }
