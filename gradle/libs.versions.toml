@@ -59,9 +59,6 @@ activity = "1.6.0"
 ##    ⬆ = "1.7.0-alpha02"
 core = "1.9.0"
 lifecycle = "2.6.0-alpha03"
-##     ⬆ = "2.6.0-alpha01"
-##     ⬆ = "2.6.0-alpha02"
-##     ⬆ = "2.6.0-alpha03"
 extJunit = "1.1.3"
 ##    ⬆ = "1.1.4-alpha01"
 ##    ⬆ = "1.1.4-alpha02"
@@ -113,6 +110,7 @@ composeCompiler = "1.3.2"
 composeDestinations = "1.6.22-beta"
 ##               ⬆ = "1.6.23-beta"
 ##               ⬆ = "1.6.25-beta"
+##               ⬆ = "1.6.26-beta"
 ##               ⬆ = "1.7.15-beta"
 ##               ⬆ = "1.7.16-beta"
 ##               ⬆ = "1.7.17-beta"
@@ -123,6 +121,7 @@ composeDestinations = "1.6.22-beta"
 ##               ⬆ = "1.7.22-beta"
 ##               ⬆ = "1.7.23-beta"
 ##               ⬆ = "1.7.25-beta"
+##               ⬆ = "1.7.26-beta"
 composeFoundation = "1.2.1"
 ##             ⬆ = "1.3.0-alpha01"
 ##             ⬆ = "1.3.0-alpha02"
@@ -185,6 +184,8 @@ dagger = "2.42"
 ##  ⬆ = "2.43.1"
 ##  ⬆ = "2.43.2"
 ##  ⬆ = "2.44"
+##  ⬆ = "2.44.1"
+##  ⬆ = "2.44.2"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
@@ -194,6 +195,7 @@ hilt = "1.0.0"
 # https://kotlinlang.org/docs/releases.html#release-details.
 kotlin = "1.7.20"
 ##  ⬆ = "1.7.21"
+##  ⬆ = "1.8.0-Beta"
 coroutines = "1.6.4"
 
 # KSP
@@ -213,6 +215,11 @@ junit = "4.13.2"
 # Room
 # https://developer.android.com/jetpack/androidx/releases/room.
 room = "2.4.3"
+##⬆ = "2.5.0-alpha01"
+##⬆ = "2.5.0-alpha02"
+##⬆ = "2.5.0-alpha03"
+##⬆ = "2.5.0-beta01"
+##⬆ = "2.5.0-beta02"
 
 # Kotlinx-Serialization
 # https://kotlinlang.org/docs/serialization.html#example-json-serialization.
@@ -221,6 +228,7 @@ serialization = "1.4.1"
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.13.1"
+##              ⬆ = "1.14.0"
 
 [libraries]
 
