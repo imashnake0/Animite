@@ -94,8 +94,7 @@ enum class NavigationBarPaths(
             )
         }
     ),
-
-            Home(
+    Home(
         HomeDestination,
         {
             Icon(
@@ -108,7 +107,7 @@ enum class NavigationBarPaths(
             )
         }
     ),
-            Profile(
+    Profile(
         ProfileDestination,
         {
             Icon(
