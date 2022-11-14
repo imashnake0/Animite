@@ -5,7 +5,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.imashnake.animite.data.sauce.db.BaseEntity
 import com.imashnake.animite.type.MediaType
 import kotlinx.parcelize.Parcelize
 
@@ -53,5 +52,5 @@ data class Medium(
     /**
      * The cover images of the media
      */
-    @Embedded val coverImage: CoverImage?,
+    @Embedded val coverImage: CoverImage?
 ) : BaseEntity, Parcelable

@@ -1,21 +1,14 @@
 package com.imashnake.animite.data.sauce.db
 
 import androidx.room.TypeConverter
-import com.imashnake.animite.data.sauce.db.model.Medium
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.imashnake.animite.data.sauce.db.model.ListTag
 
 // TODO, try to avoid doing this for lists, try to save with ID + relationship links
 object RoomConverters {
 
     @TypeConverter
-    fun fromMedium(list: List<Medium?>?): String {
-        return Json.encodeToString(list)
-    }
+    fun toListType(type: ListTag) = type.name
 
     @TypeConverter
-    fun toMedium(medium: String): List<Medium?>? {
-        return Json.decodeFromString(medium)
-    }
+    fun fromListType(type: String) = ListTag.valueOf(type)
 }

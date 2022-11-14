@@ -1,9 +1,10 @@
-package com.imashnake.animite.data.sauce.db
+package com.imashnake.animite.data.sauce.db.dao
 
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Update
+import com.imashnake.animite.data.sauce.db.model.BaseEntity
 import kotlinx.coroutines.flow.Flow
 
 interface BaseDAO<T : BaseEntity> {

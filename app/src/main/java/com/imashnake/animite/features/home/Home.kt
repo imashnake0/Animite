@@ -65,7 +65,16 @@ fun Home(
     val allTimePopularList by viewModel.allTimePopular.collectAsStateWithLifecycle()
 
     // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
-    if (!trendingList.isNullOrEmpty() && !popularList.isNullOrEmpty() && !upcomingList.isNullOrEmpty() && !allTimePopularList.isNullOrEmpty()) {
+    if (trendingList.isNullOrEmpty() && popularList.isNullOrEmpty() && upcomingList.isNullOrEmpty() && allTimePopularList.isNullOrEmpty()) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            ProgressIndicator()
+        }
+    } else {
         val scrollState = rememberScrollState()
         Box {
             Box(
@@ -322,15 +331,6 @@ fun Home(
                     )
                     .align(Alignment.TopCenter)
             ) { }
-        }
-    } else {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            ProgressIndicator()
         }
     }
 }
