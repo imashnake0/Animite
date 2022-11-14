@@ -58,32 +58,27 @@ fun Search(
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
-        // TODO: Customize this animation.
-        AnimatedContent(targetState = isExpanded) { targetExpanded ->
-            if (targetExpanded) {
-                SearchList(
-                    viewModel = hiltViewModel(),
-                    modifier = Modifier
-                        .clip(
-                            // TODO: Either remove this or change the resource.
-                            RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
-                        )
-                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95F))
-                        .align(Alignment.End)
-                        .fillMaxWidth(),
-                    onClick = {
-                        isExpanded = false
-                        // TODO: Double clicking makes the navigation happen twice.
-                        navController.navigate(
-                            MediaPageDestination(
-                                id = it,
-                                mediaTypeArg = MediaType.ANIME.rawValue
-                            )
-                        )
-                    }
+        SearchList(
+            viewModel = hiltViewModel(),
+            modifier = Modifier
+                .clip(
+                    // TODO: Either remove this or change the resource.
+                    RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
+                )
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95F))
+                .align(Alignment.End)
+                .fillMaxWidth(),
+            onClick = {
+                isExpanded = false
+                // TODO: Double clicking makes the navigation happen twice.
+                navController.navigate(
+                    MediaPageDestination(
+                        id = it,
+                        mediaTypeArg = MediaType.ANIME.rawValue
+                    )
                 )
             }
-        }
+        )
 
         Surface(
             color = MaterialTheme.colorScheme.primary,
