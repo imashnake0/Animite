@@ -1,6 +1,5 @@
 package com.imashnake.animite.features.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,13 +37,11 @@ import com.imashnake.animite.R as Res
  * A [LazyRow] of [MediaSmall]s.
  *
  * @param mediaList A list of [MediaListQuery.Medium]s.
- * @param onItemClick Action that is propagated to the [MediaSmall]s, it takes a unique id.
  */
 @Composable
 fun <T> MediaSmallRow(
     mediaList: List<T>,
-    onItemClick: (itemId: Int) -> Unit,
-    content: @Composable (T, (itemId: Int) -> Unit) -> Unit
+    content: @Composable (T) -> Unit
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
@@ -53,7 +51,7 @@ fun <T> MediaSmallRow(
         )
     ) {
         items(mediaList) { media ->
-            content(media, onItemClick)
+            content(media)
         }
     }
 }
@@ -65,6 +63,7 @@ fun <T> MediaSmallRow(
  * @param label A label for the [image], if this is `null`, the [label] is not shown.
  * @param onClick Action to happen when the card is clicked.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaSmall(
     image: String?,
@@ -73,15 +72,12 @@ fun MediaSmall(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier
-            .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
-            .clickable(
-                enabled = true,
-                onClick = onClick
-            ),
+        modifier = modifier,
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        )
+        ),
+        shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -148,17 +144,14 @@ fun PreviewMediaSmallRow() {
                 )
             )
         },
-        onItemClick = {  },
-        content = { media, onItemClick ->
+        content = { media ->
             MediaSmall(
                 image = media.coverImage?.extraLarge,
                 // TODO: Do something about this chain.
                 label = media.title?.romaji ?:
                 media.title?.english ?:
                 media.title?.native ?: "",
-                onClick = {
-                    onItemClick(media.id)
-                },
+                onClick = { },
                 modifier = Modifier.width(140.dp)
             )
         }

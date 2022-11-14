@@ -262,10 +262,7 @@ fun HomeRow(
 
         MediaSmallRow(
             mediaList = list,
-            onItemClick = { itemId ->
-                onItemClicked(list.first { it?.id == itemId }!!)
-            },
-            content = { media, onItemClick ->
+            content = { media ->
                 MediaSmall(
                     image = media?.coverImage?.extraLarge,
                     // TODO: Do something about this chain.
@@ -273,7 +270,7 @@ fun HomeRow(
                     media?.title?.english ?:
                     media?.title?.native ?: "",
                     onClick = {
-                        onItemClick(media!!.id)
+                        onItemClicked(media!!)
                     },
                     modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                 )
