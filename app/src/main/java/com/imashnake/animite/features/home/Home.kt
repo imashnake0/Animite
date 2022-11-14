@@ -138,7 +138,9 @@ fun Home(
                                 ) {
                                     displayCutoutPadding()
                                 }
-                                .padding(vertical = dimensionResource(Res.dimen.large_padding)),
+                                .padding(vertical = dimensionResource(Res.dimen.large_padding))
+                                // TODO move this one out of Home when we can pass modifiers in
+                                .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
                             verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
                         ) {
                             HomeRow(
@@ -200,8 +202,6 @@ fun Home(
                                     }
                                 }
                             )
-
-                            Spacer(Modifier.height(dimensionResource(Res.dimen.navigation_bar_height)))
                         }
                     }
                 }
