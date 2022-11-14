@@ -84,9 +84,7 @@ fun Search(
             color = MaterialTheme.colorScheme.primary,
             onClick = {
                 isExpanded = !isExpanded
-                viewModel.run {
-                    searchAnime("")
-                }
+                viewModel.clearList()
             },
             modifier = Modifier
                 .align(Alignment.End)
@@ -172,9 +170,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
                 IconButton(
                     onClick = {
                         text = ""
-                        viewModel.run {
-                            searchAnime("")
-                        }
+                        viewModel.clearList()
                     }
                 ) {
                     Icon(
