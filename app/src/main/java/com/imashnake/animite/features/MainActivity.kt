@@ -35,7 +35,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.navigationbar.NavigationBarPaths
-import com.imashnake.animite.features.searchbar.SearchBar
+import com.imashnake.animite.features.searchbar.Search
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
@@ -102,7 +102,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
             ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp
         )
 
-        SearchBar(
+        Search(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(

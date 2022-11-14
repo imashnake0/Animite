@@ -50,7 +50,7 @@ import com.imashnake.animite.R as Res
 //  - `SearchList` goes beyond the status bar.
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(
+fun Search(
     modifier: Modifier,
     viewModel: SearchViewModel = viewModel(),
     navController: NavHostController
