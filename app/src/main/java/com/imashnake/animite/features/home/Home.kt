@@ -56,16 +56,12 @@ fun Home(
     navigator: DestinationsNavigator
 ) {
     val homeMediaType = MediaType.ANIME
-
     viewModel.setMediaType(homeMediaType)
 
-    val trendingList by viewModel.trendingMedia.collectAsStateWithLifecycle()
-    val popularList by viewModel.popularMediaThisSeason.collectAsStateWithLifecycle()
-    val upcomingList by viewModel.upcomingMediaNextSeason.collectAsStateWithLifecycle()
-    val allTimePopularList by viewModel.allTimePopular.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle(true)
 
-    // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
-    if (trendingList.isNullOrEmpty() && popularList.isNullOrEmpty() && upcomingList.isNullOrEmpty() && allTimePopularList.isNullOrEmpty()) {
+    // true while mediaType is not set (Flow.filterNotNull) and up until the lists have emitted non-null and non-empty data
+    if (isLoading) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -75,6 +71,12 @@ fun Home(
             ProgressIndicator()
         }
     } else {
+        // are these kind of lists "stable"?
+        val trendingList by viewModel.trendingMedia.collectAsStateWithLifecycle()
+        val popularList by viewModel.popularMediaThisSeason.collectAsStateWithLifecycle()
+        val upcomingList by viewModel.upcomingMediaNextSeason.collectAsStateWithLifecycle()
+        val allTimePopularList by viewModel.allTimePopular.collectAsStateWithLifecycle()
+
         val scrollState = rememberScrollState()
         Box {
             Box(
@@ -147,159 +149,165 @@ fun Home(
                     ) {
                         Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
 
-                        Text(
-                            text = stringResource(Res.string.trending_now),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(
-                                start = dimensionResource(Res.dimen.large_padding)
-                            )
-                        )
-
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                        MediaSmallRow(
-                            mediaList = trendingList.orEmpty(),
-                            onItemClick = { itemId ->
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        id = itemId,
-                                        mediaTypeArg = homeMediaType.rawValue
-                                    )
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            },
-                            content = { media, onItemClick ->
-                                MediaSmall(
-                                    height = dimensionResource(Res.dimen.media_card_height),
-                                    width = dimensionResource(Res.dimen.media_card_width),
-                                    image = media?.coverImage?.extraLarge,
-                                    // TODO: Do something about this chain.
-                                    label = media?.title?.romaji ?: media?.title?.english ?: media?.title?.native ?: "",
-                                    onClick = {
-                                        onItemClick(media?.id)
-                                    }
+                        if (trendingList.isNotEmpty()) {
+                            Text(
+                                text = stringResource(Res.string.trending_now),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(
+                                    start = dimensionResource(Res.dimen.large_padding)
                                 )
-                            }
-                        )
-
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-                        Text(
-                            text = stringResource(Res.string.popular_this_season),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(
-                                start = dimensionResource(Res.dimen.large_padding)
                             )
-                        )
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
-                        MediaSmallRow(
-                            mediaList = popularList.orEmpty(),
-                            onItemClick = { itemId ->
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        id = itemId,
-                                        mediaTypeArg = homeMediaType.rawValue
-                                    )
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            },
-                            content = { media, onItemClick ->
-                                MediaSmall(
-                                    height = dimensionResource(Res.dimen.media_card_height),
-                                    width = dimensionResource(Res.dimen.media_card_width),
-                                    image = media?.coverImage?.extraLarge,
-                                    // TODO: Do something about this chain.
-                                    label = media?.title?.romaji ?: media?.title?.english ?: media?.title?.native ?: "",
-                                    onClick = {
-                                        onItemClick(media?.id)
+                            MediaSmallRow(
+                                mediaList = trendingList,
+                                onItemClick = { itemId ->
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            id = itemId,
+                                            mediaTypeArg = homeMediaType.rawValue
+                                        )
+                                    ) {
+                                        launchSingleTop = true
                                     }
-                                )
-                            }
-                        )
-
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-                        Text(
-                            text = stringResource(Res.string.upcoming_next_season),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(
-                                start = dimensionResource(Res.dimen.large_padding)
+                                },
+                                content = { media, onItemClick ->
+                                    MediaSmall(
+                                        height = dimensionResource(Res.dimen.media_card_height),
+                                        width = dimensionResource(Res.dimen.media_card_width),
+                                        image = media.coverImage?.extraLarge,
+                                        // TODO: Do something about this chain.
+                                        label = media.title?.romaji ?: media.title?.english ?: media.title?.native ?: "",
+                                        onClick = {
+                                            onItemClick(media.id)
+                                        }
+                                    )
+                                }
                             )
-                        )
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+                        }
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-                        MediaSmallRow(
-                            mediaList = upcomingList.orEmpty(),
-                            onItemClick = { itemId ->
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        id = itemId,
-                                        mediaTypeArg = homeMediaType.rawValue
-                                    )
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            },
-                            content = { media, onItemClick ->
-                                MediaSmall(
-                                    height = dimensionResource(Res.dimen.media_card_height),
-                                    width = dimensionResource(Res.dimen.media_card_width),
-                                    image = media?.coverImage?.extraLarge,
-                                    // TODO: Do something about this chain.
-                                    label = media?.title?.romaji ?: media?.title?.english ?: media?.title?.native ?: "",
-                                    onClick = {
-                                        onItemClick(media?.id)
-                                    }
+                        if (popularList.isNotEmpty()) {
+                            Text(
+                                text = stringResource(Res.string.popular_this_season),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(
+                                    start = dimensionResource(Res.dimen.large_padding)
                                 )
-                            }
-                        )
-
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
-                        Text(
-                            text = stringResource(Res.string.all_time_popular),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(
-                                start = dimensionResource(Res.dimen.large_padding)
                             )
-                        )
 
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
-                        MediaSmallRow(
-                            mediaList = allTimePopularList.orEmpty(),
-                            onItemClick = { itemId ->
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        id = itemId,
-                                        mediaTypeArg = homeMediaType.rawValue
-                                    )
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            },
-                            content = { media, onItemClick ->
-                                MediaSmall(
-                                    height = dimensionResource(Res.dimen.media_card_height),
-                                    width = dimensionResource(Res.dimen.media_card_width),
-                                    image = media?.coverImage?.extraLarge,
-                                    // TODO: Do something about this chain.
-                                    label = media?.title?.romaji ?: media?.title?.english ?: media?.title?.native ?: "",
-                                    onClick = {
-                                        onItemClick(media?.id)
+                            MediaSmallRow(
+                                mediaList = popularList,
+                                onItemClick = { itemId ->
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            id = itemId,
+                                            mediaTypeArg = homeMediaType.rawValue
+                                        )
+                                    ) {
+                                        launchSingleTop = true
                                     }
+                                },
+                                content = { media, onItemClick ->
+                                    MediaSmall(
+                                        height = dimensionResource(Res.dimen.media_card_height),
+                                        width = dimensionResource(Res.dimen.media_card_width),
+                                        image = media.coverImage?.extraLarge,
+                                        // TODO: Do something about this chain.
+                                        label = media.title?.romaji ?: media.title?.english ?: media.title?.native ?: "",
+                                        onClick = {
+                                            onItemClick(media.id)
+                                        }
+                                    )
+                                }
+                            )
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+                        }
+
+                        if (upcomingList.isNotEmpty()) {
+
+                            Text(
+                                text = stringResource(Res.string.upcoming_next_season),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(
+                                    start = dimensionResource(Res.dimen.large_padding)
                                 )
-                            }
-                        )
+                            )
+
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+                            MediaSmallRow(
+                                mediaList = upcomingList,
+                                onItemClick = { itemId ->
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            id = itemId,
+                                            mediaTypeArg = homeMediaType.rawValue
+                                        )
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                },
+                                content = { media, onItemClick ->
+                                    MediaSmall(
+                                        height = dimensionResource(Res.dimen.media_card_height),
+                                        width = dimensionResource(Res.dimen.media_card_width),
+                                        image = media.coverImage?.extraLarge,
+                                        // TODO: Do something about this chain.
+                                        label = media.title?.romaji ?: media.title?.english ?: media.title?.native ?: "",
+                                        onClick = {
+                                            onItemClick(media.id)
+                                        }
+                                    )
+                                }
+                            )
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
+                        }
+
+                        if (allTimePopularList.isNotEmpty()) {
+                            Text(
+                                text = stringResource(Res.string.all_time_popular),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(
+                                    start = dimensionResource(Res.dimen.large_padding)
+                                )
+                            )
+
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+                            MediaSmallRow(
+                                mediaList = allTimePopularList,
+                                onItemClick = { itemId ->
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            id = itemId,
+                                            mediaTypeArg = homeMediaType.rawValue
+                                        )
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                },
+                                content = { media, onItemClick ->
+                                    MediaSmall(
+                                        height = dimensionResource(Res.dimen.media_card_height),
+                                        width = dimensionResource(Res.dimen.media_card_width),
+                                        image = media.coverImage?.extraLarge,
+                                        // TODO: Do something about this chain.
+                                        label = media.title?.romaji ?: media.title?.english ?: media.title?.native ?: "",
+                                        onClick = {
+                                            onItemClick(media.id)
+                                        }
+                                    )
+                                }
+                            )
+                        }
 
                         Spacer(
                             Modifier.height(
