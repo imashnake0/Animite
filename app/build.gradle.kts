@@ -9,8 +9,8 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp) version libs.versions.ksp.get()
     kotlin("kapt")
-    id("kotlin-parcelize")
-    kotlin("plugin.serialization") version "1.7.21"
+    kotlin("plugin.parcelize")
+    kotlin("plugin.serialization") version "1.7.20"
 }
 
 android {
@@ -102,8 +102,8 @@ dependencies {
     implementation(libs.coil.compose)
 
     // Kotlin
-    implementation(libs.kotlin.coroutines.android)
-    implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(kotlin("reflect"))
 
     // Hilt
@@ -137,5 +137,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espressoCore)
     androidTestImplementation(libs.compose.test.ui.testJunit4)
-
 }
