@@ -8,14 +8,14 @@ import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
 class ApolloSearchApi @Inject constructor(
-    private val client: ApolloClient
+    private val apolloClient: ApolloClient
 ) : SearchApi {
     override suspend fun search(
         type: MediaType,
         perPage: Int,
         search: String
     ): SearchQuery.Page? {
-        return client
+        return apolloClient
             .query(
                 SearchQuery(
                     type = Optional.presentIfNotNull(type),

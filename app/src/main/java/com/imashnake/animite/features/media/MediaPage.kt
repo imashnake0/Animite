@@ -59,9 +59,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.dev.ext.isNullOrZero
-import com.imashnake.animite.dev.ext.toHexColor
+import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
@@ -94,7 +95,10 @@ fun MediaPage(
                 Box {
 
                     AsyncImage(
-                        model = media.bannerImage,
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(media.bannerImage)
+                            .crossfade(CROSSFADE_DURATION)
+                            .build(),
                         contentDescription = null,
                         contentScale = if (
                             LocalConfiguration.current.orientation
@@ -125,7 +129,7 @@ fun MediaPage(
                             ) {
                                 height(bannerHeight)
                             },
-                        color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
+                        color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: 0).copy(alpha = 0.25f)
                     ) { }
                 }
             } else {
@@ -283,7 +287,7 @@ fun MediaPage(
                             items(media.genres) { genre ->
                                 Genre(
                                     genre = genre,
-                                    color = Color(media.color?.toHexColor() ?: 0xFF152232),
+                                    color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: (0xFF152232).toInt()),
                                     // TODO: Make genres clickable.
                                     onClick = {  }
                                 )
@@ -353,7 +357,10 @@ fun MediaPage(
                             }
                     ) {
                         AsyncImage(
-                            model = media.trailer.thumbnail,
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(media.trailer.thumbnail)
+                                .crossfade(CROSSFADE_DURATION)
+                                .build(),
                             contentDescription = stringResource(Res.string.trailer),
                             contentScale = ContentScale.FillWidth,
                             modifier = Modifier

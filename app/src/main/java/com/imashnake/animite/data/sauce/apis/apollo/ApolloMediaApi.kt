@@ -15,10 +15,10 @@ import javax.inject.Inject
  * **ID:** 132405.
  */
 class ApolloMediaApi @Inject constructor(
-    private val client: ApolloClient
+    private val apolloClient: ApolloClient
 ) : MediaApi {
     override suspend fun fetchMedia(id: Int?, mediaType: MediaType): Media? {
-        return client
+        return apolloClient
             .query(
                 MediaQuery(
                     id = Optional.presentIfNotNull(id),

@@ -12,7 +12,7 @@ import javax.inject.Inject
 import kotlin.jvm.Throws
 
 class ApolloMediaListApi @Inject constructor(
-    private val client: ApolloClient
+    private val apolloClient: ApolloClient
 ) : MediaListApi {
     @Throws(ApolloHttpException::class)
     override suspend fun fetchMediaList(
@@ -23,7 +23,7 @@ class ApolloMediaListApi @Inject constructor(
         season: MediaSeason?,
         seasonYear: Int?
     ): MediaListQuery.Page? {
-        return client
+        return apolloClient
             .query(
                 MediaListQuery(
                     type = Optional.presentIfNotNull(type),
