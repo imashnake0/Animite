@@ -152,7 +152,7 @@ fun PreviewMediaSmallRow() {
                 media.title?.english ?:
                 media.title?.native ?: "",
                 onClick = { },
-                modifier = Modifier.width(140.dp)
+                modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
             )
         }
     )
@@ -167,6 +167,6 @@ fun PreviewMediaSmall() {
         label =
         "Sono Bisque Doll wa Koi wo Suru",
         onClick = {  },
-        modifier = Modifier.width(140.dp)
+        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
     )
 }
