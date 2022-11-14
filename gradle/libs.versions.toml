@@ -227,8 +227,8 @@ dependencyAnalysis = "1.13.1"
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
 androidx-activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidx-coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
-androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
-androidx-lifecycleCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycle-runtimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
