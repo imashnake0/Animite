@@ -3,6 +3,8 @@ package com.imashnake.animite.features.searchbar
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,7 +12,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.TextField
@@ -23,7 +24,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -56,18 +56,27 @@ fun Search(
     navController: NavHostController
 ) {
     var isExpanded by remember { mutableStateOf(false) }
+    var isMaskVisible by remember { mutableStateOf(false) }
+    val maskAlpha: Float by animateFloatAsState(
+        targetValue = if (isExpanded) 0.95f else 0f,
+        animationSpec = tween(500),
+        // Mask waits for the alpha to decrease.
+        finishedListener = {
+            isMaskVisible = false
+        }
+    )
+    if(isExpanded || isMaskVisible) {
+        Box(
+            Modifier
+                .background(MaterialTheme.colorScheme.background.copy(alpha = maskAlpha))
+                .fillMaxSize()
+        )
+    }
 
     Column(modifier = modifier) {
         SearchList(
             viewModel = hiltViewModel(),
-            modifier = Modifier
-                .clip(
-                    // TODO: Either remove this or change the resource.
-                    RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
-                )
-                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95F))
-                .align(Alignment.End)
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             onClick = {
                 isExpanded = false
                 // TODO: Double clicking makes the navigation happen twice.
@@ -84,6 +93,7 @@ fun Search(
             color = MaterialTheme.colorScheme.primary,
             onClick = {
                 isExpanded = !isExpanded
+                isMaskVisible = !isMaskVisible
                 viewModel.clearList()
             },
             modifier = Modifier
