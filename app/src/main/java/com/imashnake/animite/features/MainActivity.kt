@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -84,15 +86,19 @@ fun MainScreen(modifier: Modifier = Modifier) {
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
     //  see https://issuetracker.google.com/issues/258270139.
     Box(modifier) {
-        DestinationsNavHost(
-            navGraph = NavGraphs.root,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize(),
-            navController = navController,
-            engine = navHostEngine
-        )
+        CompositionLocalProvider(
+            LocalContentColor provides MaterialTheme.colorScheme.onBackground
+        ) {
+            DestinationsNavHost(
+                navGraph = NavGraphs.root,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxSize(),
+                navController = navController,
+                engine = navHostEngine
+            )
+        }
 
         val searchBarBottomPadding: Dp by animateDpAsState(
             targetValue = dimensionResource(R.dimen.large_padding) + if (

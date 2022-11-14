@@ -311,17 +311,13 @@ fun MediaPage(
                     Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                     MediaSmallRow(
-                        mediaList = media.characters,
-                        onItemClick = { characterId ->
-                            Log.d("CharacterId", "$characterId")
-                        }
-                    ) { character, onClickingCharacter ->
+                        mediaList = media.characters
+                    ) { character ->
                         MediaSmall(
-                            height = dimensionResource(Res.dimen.character_card_height),
-                            width = dimensionResource(Res.dimen.character_card_width),
                             image = character.image,
                             label = character.name,
-                            onClick = { onClickingCharacter(character.id) }
+                            onClick = { Log.d("CharacterId", "${character.id}") },
+                            modifier = Modifier.width(dimensionResource(Res.dimen.character_card_width))
                         )
                     }
                 }
@@ -401,9 +397,10 @@ fun MediaPage(
                     }
             ) {
                 MediaSmall(
-                    height = dimensionResource(Res.dimen.media_card_height),
-                    width = dimensionResource(Res.dimen.media_card_width),
-                    image = media.coverImage
+                    image = media.coverImage,
+                    label = null,
+                    onClick = {},
+                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                 )
             }
         }
