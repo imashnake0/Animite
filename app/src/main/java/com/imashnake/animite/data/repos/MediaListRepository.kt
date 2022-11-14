@@ -28,7 +28,10 @@ class MediaListRepository @Inject constructor(
         season: MediaSeason? = null,
         seasonYear: Int? = null
     ): Flow<List<Medium>> = networkBoundResource(
-        db = mediaListDatabaseSource.getMedia(mediaType, tag).map { it.map { it.medium } },
+        db = mediaListDatabaseSource.getMedia(mediaType, tag)
+            .map {
+                it.map { it.medium }
+            },
         request = {
             mediaListNetworkSource.fetchMediaList(
                 mediaType = mediaType,

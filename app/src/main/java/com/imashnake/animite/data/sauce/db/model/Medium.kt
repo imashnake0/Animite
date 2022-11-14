@@ -8,30 +8,6 @@ import androidx.room.PrimaryKey
 import com.imashnake.animite.type.MediaType
 import kotlinx.parcelize.Parcelize
 
-/*@Parcelize
-@Entity(tableName = "media_page")
-data class MediaPage(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    @Embedded val page: Page?,
-) : BaseEntity, Parcelable
-
-@Entity(tableName = "page_medium_link", primaryKeys = ["pageId", "mediumId"], indices = [Index("pageId"), Index("mediumId")])
-data class PageToMediumLink(val pageId: Int, val mediumId: Int): BaseEntity
-
-@Parcelize
-@Entity(tableName = "page")
-data class Page(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "page_id")
-    val id: Int = 0,
-    val media: List<Medium?>?,
-) : BaseEntity, Parcelable*/
-
-
-/**
- * Ensure that data coming from the API is flattened into List<Medium> to be inserted
- */
 @Parcelize
 @Entity(tableName = "medium")
 data class Medium(
