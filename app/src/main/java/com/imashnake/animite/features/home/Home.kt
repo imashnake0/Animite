@@ -47,7 +47,6 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
-@RootNavGraph(start = true)
 @Destination
 @Composable
 fun Home(
