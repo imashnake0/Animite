@@ -65,6 +65,7 @@ fun Search(
             isMaskVisible = false
         }
     )
+
     if(isExpanded || isMaskVisible) {
         Box(
             Modifier
@@ -148,9 +149,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
             value = text,
             onValueChange = { input ->
                 text = input
-                viewModel.run {
-                    searchAnime(input)
-                }
+                viewModel.searchAnime(input)
             },
             placeholder = {
                 Text(
