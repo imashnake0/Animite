@@ -249,30 +249,32 @@ fun HomeRow(
     onItemClicked: (Media) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(
-                start = dimensionResource(Res.dimen.large_padding)
-            )
-        )
-
-        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-        MediaSmallRow(
-            mediaList = list,
-            content = { media ->
-                MediaSmall(
-                    image = media.coverImage?.extraLarge,
-                    // TODO: Do something about this chain.
-                    label = media.title?.romaji ?: media.title?.english ?: media.title?.native ?: "",
-                    onClick = {
-                        onItemClicked(media)
-                    },
-                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+    if (list.isNotEmpty()) {
+        Column(modifier) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(
+                    start = dimensionResource(Res.dimen.large_padding)
                 )
-            }
-        )
+            )
+
+            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+            MediaSmallRow(
+                mediaList = list,
+                content = { media ->
+                    MediaSmall(
+                        image = media.coverImage?.extraLarge,
+                        // TODO: Do something about this chain.
+                        label = media.title?.romaji ?: media.title?.english ?: media.title?.native ?: "",
+                        onClick = {
+                            onItemClicked(media)
+                        },
+                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+                    )
+                }
+            )
+        }
     }
 }

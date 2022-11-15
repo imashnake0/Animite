@@ -6,14 +6,14 @@ import androidx.room.TypeConverters
 import com.imashnake.animite.data.sauce.db.dao.MediaDAO
 import com.imashnake.animite.data.sauce.db.dao.MediaLinkDAO
 import com.imashnake.animite.data.sauce.db.model.Media
-import com.imashnake.animite.data.sauce.db.model.MediumLink
+import com.imashnake.animite.data.sauce.db.model.MediaLink
 
 @Database(
     version = 2,
     exportSchema = false,
     entities = [
         Media::class,
-        MediumLink::class
+        MediaLink::class
     ]
 )
 @TypeConverters(RoomConverters::class)

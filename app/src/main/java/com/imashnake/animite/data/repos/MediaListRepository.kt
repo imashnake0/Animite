@@ -11,7 +11,6 @@ import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MediaListRepository @Inject constructor(
@@ -28,10 +27,7 @@ class MediaListRepository @Inject constructor(
         season: MediaSeason? = null,
         seasonYear: Int? = null
     ): Flow<List<Media>> = networkBoundResource(
-        db = mediaListDatabaseSource.getMedia(mediaType, tag)
-            .map {
-                it.map { it.medium }
-            },
+        db = mediaListDatabaseSource.getMedia(mediaType, tag),
         request = {
             mediaListNetworkSource.fetchMediaList(
                 mediaType = mediaType,

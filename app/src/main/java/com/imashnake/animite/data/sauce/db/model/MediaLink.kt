@@ -7,9 +7,9 @@ import androidx.room.Index
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity(tableName = "medium_link", primaryKeys = ["medium_id", "tag"], indices = [Index("medium_id")])
-data class MediumLink(
-    @ColumnInfo(name = "medium_id")
+@Entity(tableName = "media_link", primaryKeys = ["media_id", "tag"], indices = [Index("media_id")])
+data class MediaLink(
+    @ColumnInfo(name = "media_id")
     val id: Int,
     @ColumnInfo(name = "tag")
     val tag: ListTag

@@ -6,12 +6,12 @@ import androidx.room.Relation
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class MediumWithLink(
+data class MediaWithLink(
     @Embedded
-    val link: MediumLink,
+    val link: MediaLink,
     @Relation(
-        parentColumn = "medium_id",
-        entityColumn = "medium_id"
+        parentColumn = "media_id",
+        entityColumn = "media_id"
     )
     val medium: Media
 ) : BaseEntity, Parcelable
