@@ -1,10 +1,9 @@
 package com.imashnake.animite.data.repos
 
+import com.imashnake.animite.data.repos.mappers.MediaMapper
 import com.imashnake.animite.data.sauce.db.medialist.MediaListDatabaseSource
-import com.imashnake.animite.data.sauce.db.model.CoverImage
 import com.imashnake.animite.data.sauce.db.model.ListTag
 import com.imashnake.animite.data.sauce.db.model.Media
-import com.imashnake.animite.data.sauce.db.model.Title
 import com.imashnake.animite.data.sauce.network.MediaListNetworkSource
 import com.imashnake.animite.data.sauce.networkBoundResource
 import com.imashnake.animite.type.MediaSeason
@@ -42,12 +41,7 @@ class MediaListRepository @Inject constructor(
             mediaListDatabaseSource.insertMedia(
                 it?.media.orEmpty()
                     .filterNotNull()
-                    .map { medium ->
-                        val title = medium.title?.let { title -> Title(title.romaji, title.english, title.native) }
-                        val coverImage = medium.coverImage?.let { image -> CoverImage(image.extraLarge, image.large) }
-
-                        Media(medium.id, medium.type, title, coverImage)
-                    },
+                    .map(MediaMapper::mediaApiToDB),
                 tag
             )
         }
