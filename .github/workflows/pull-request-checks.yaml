@@ -10,11 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Notify New Pull Request
-        uses: sarisia/actions-status-discord@v1
-        with:
-          webhook: ${{ secrets.NEW_PR_WEBHOOK }}
-
       - uses: actions/checkout@v3
 
       - uses: actions/setup-java@v3
