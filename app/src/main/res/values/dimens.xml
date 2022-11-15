@@ -15,7 +15,6 @@
     <dimen name="media_card_height">200dp</dimen>
     <dimen name="media_card_top_padding">96dp</dimen>
     <dimen name="character_card_width">96dp</dimen>
-    <dimen name="character_card_height">121dp</dimen>
     <dimen name="trailer_corner_radius">30dp</dimen>
 
     <dimen name="search_bar_padding">16dp</dimen>
