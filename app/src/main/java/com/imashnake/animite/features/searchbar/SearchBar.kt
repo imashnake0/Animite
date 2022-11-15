@@ -3,6 +3,7 @@ package com.imashnake.animite.features.searchbar
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -35,12 +36,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.imashnake.animite.R
 import com.imashnake.animite.SearchQuery
+import com.imashnake.animite.features.appCurrentDestinationAsState
 import com.imashnake.animite.features.destinations.MediaPageDestination
+import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.navigation.navigate
 import com.imashnake.animite.R as Res
@@ -66,6 +71,17 @@ fun Search(
         }
     )
 
+    // TODO: This hack still results in a very slight jitter (still an improvement); remove this
+    //  after we start using custom `Scaffold`s.
+    val searchBarBottomPadding: Dp by animateDpAsState(
+        targetValue = dimensionResource(R.dimen.large_padding) + if (
+            NavigationBarPaths.values().any {
+                it.direction == navController.appCurrentDestinationAsState().value
+            } && !isExpanded
+        ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp,
+        animationSpec = tween(delayMillis = 100)
+    )
+
     if(isExpanded || isMaskVisible) {
         Box(
             Modifier
@@ -74,21 +90,28 @@ fun Search(
         )
     }
 
-    Column(modifier = modifier) {
-        SearchList(
-            viewModel = hiltViewModel(),
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                isExpanded = false
-                // TODO: Double clicking makes the navigation happen twice.
-                navController.navigate(
-                    MediaPageDestination(
-                        id = it,
-                        mediaTypeArg = MediaType.ANIME.rawValue
+    Column(
+        modifier = modifier
+            .padding(bottom = searchBarBottomPadding)
+            .navigationBarsPadding()
+            .imePadding()
+    ) {
+        if(isExpanded) {
+            SearchList(
+                viewModel = hiltViewModel(),
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    isExpanded = false
+                    // TODO: Double clicking makes the navigation happen twice.
+                    navController.navigate(
+                        MediaPageDestination(
+                            id = it,
+                            mediaTypeArg = MediaType.ANIME.rawValue
+                        )
                     )
-                )
-            }
-        )
+                }
+            )
+        }
 
         Surface(
             color = MaterialTheme.colorScheme.primary,
