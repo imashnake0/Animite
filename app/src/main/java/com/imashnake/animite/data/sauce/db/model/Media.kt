@@ -9,8 +9,8 @@ import com.imashnake.animite.type.MediaType
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity(tableName = "medium")
-data class Medium(
+@Entity(tableName = "media")
+data class Media(
     /**
      * The id of the media
      */

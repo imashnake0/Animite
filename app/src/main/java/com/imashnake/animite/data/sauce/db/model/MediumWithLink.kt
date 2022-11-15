@@ -13,5 +13,5 @@ data class MediumWithLink(
         parentColumn = "medium_id",
         entityColumn = "medium_id"
     )
-    val medium: Medium
+    val medium: Media
 ) : BaseEntity, Parcelable

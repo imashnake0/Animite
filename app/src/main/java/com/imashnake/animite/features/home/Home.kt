@@ -38,7 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.data.sauce.db.model.Media
 import com.imashnake.animite.dev.ext.given
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.ui.MediaSmall
@@ -140,113 +140,113 @@ fun Home(
                 Column {
                     Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
 
-                        Column(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.background)
-                                .given(
-                                    LocalConfiguration.current.orientation
-                                            == Configuration.ORIENTATION_LANDSCAPE
+                    Column(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .given(
+                                LocalConfiguration.current.orientation
+                                    == Configuration.ORIENTATION_LANDSCAPE
+                            ) {
+                                displayCutoutPadding()
+                            }
+                            .padding(vertical = dimensionResource(Res.dimen.large_padding))
+                            // TODO move this one out of Home when we can pass modifiers in
+                            .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
+                        verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                    ) {
+
+                        HomeRow(
+                            list = trendingList,
+                            title = stringResource(Res.string.trending_now),
+                            onItemClicked = {
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = it.id,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
                                 ) {
-                                    displayCutoutPadding()
+                                    launchSingleTop = true
                                 }
-                                .padding(vertical = dimensionResource(Res.dimen.large_padding))
-                                // TODO move this one out of Home when we can pass modifiers in
-                                .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
-                            verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
-                        ) {
-                            HomeRow(
-                                list = trendingList,
-                                title = stringResource(Res.string.trending_now),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
+                            }
+                        )
 
-                            HomeRow(
-                                list = popularList,
-                                title = stringResource(Res.string.popular_this_season),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                        HomeRow(
+                            list = popularList,
+                            title = stringResource(Res.string.popular_this_season),
+                            onItemClicked = {
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = it.id,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
+                                ) {
+                                    launchSingleTop = true
                                 }
-                            )
+                            }
+                        )
 
-                            HomeRow(
-                                list = upcomingList,
-                                title = stringResource(Res.string.upcoming_next_season),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                        HomeRow(
+                            list = upcomingList,
+                            title = stringResource(Res.string.upcoming_next_season),
+                            onItemClicked = {
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = it.id,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
+                                ) {
+                                    launchSingleTop = true
                                 }
-                            )
+                            }
+                        )
 
-                            HomeRow(
-                                list = allTimePopularList,
-                                title = stringResource(Res.string.all_time_popular),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                        HomeRow(
+                            list = allTimePopularList,
+                            title = stringResource(Res.string.all_time_popular),
+                            onItemClicked = {
+                                navigator.navigate(
+                                    MediaPageDestination(
+                                        id = it.id,
+                                        mediaTypeArg = homeMediaType.rawValue
+                                    )
+                                ) {
+                                    launchSingleTop = true
                                 }
-                            )
-                        }
+                            }
+                        )
                     }
                 }
-
-                // Translucent status bar.
-                val bannerHeight = with(LocalDensity.current) {
-                    dimensionResource(Res.dimen.banner_height).toPx()
-                }
-                Box(
-                    modifier = Modifier
-                        .graphicsLayer {
-                            alpha = 0.75f * if (scrollState.value < bannerHeight) {
-                                scrollState.value.toFloat() / bannerHeight
-                            } else 1f
-                        }
-                        .background(color = MaterialTheme.colorScheme.background)
-                        .fillMaxWidth()
-                        .height(
-                            WindowInsets.statusBars
-                                .asPaddingValues()
-                                .calculateTopPadding()
-                        )
-                        .align(Alignment.TopCenter)
-                ) { }
             }
+
+            // Translucent status bar.
+            val bannerHeight = with(LocalDensity.current) {
+                dimensionResource(Res.dimen.banner_height).toPx()
+            }
+            Box(
+                modifier = Modifier
+                    .graphicsLayer {
+                        alpha = 0.75f * if (scrollState.value < bannerHeight) {
+                            scrollState.value.toFloat() / bannerHeight
+                        } else 1f
+                    }
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
+                    .height(
+                        WindowInsets.statusBars
+                            .asPaddingValues()
+                            .calculateTopPadding()
+                    )
+                    .align(Alignment.TopCenter)
+            ) { }
         }
     }
 }
 
 @Composable
 fun HomeRow(
-    list: List<MediaListQuery.Medium?>,
+    list: List<Media>,
     title: String,
-    onItemClicked: (MediaListQuery.Medium) -> Unit,
+    onItemClicked: (Media) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -264,13 +264,11 @@ fun HomeRow(
             mediaList = list,
             content = { media ->
                 MediaSmall(
-                    image = media?.coverImage?.extraLarge,
+                    image = media.coverImage?.extraLarge,
                     // TODO: Do something about this chain.
-                    label = media?.title?.romaji ?:
-                    media?.title?.english ?:
-                    media?.title?.native ?: "",
+                    label = media.title?.romaji ?: media.title?.english ?: media.title?.native ?: "",
                     onClick = {
-                        onItemClicked(media!!)
+                        onItemClicked(media)
                     },
                     modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                 )

@@ -3,7 +3,7 @@ package com.imashnake.animite.data.sauce.db.medialist
 import com.imashnake.animite.data.sauce.db.dao.MediaDAO
 import com.imashnake.animite.data.sauce.db.dao.MediaLinkDAO
 import com.imashnake.animite.data.sauce.db.model.ListTag
-import com.imashnake.animite.data.sauce.db.model.Medium
+import com.imashnake.animite.data.sauce.db.model.Media
 import com.imashnake.animite.data.sauce.db.model.MediumLink
 import com.imashnake.animite.data.sauce.db.model.MediumWithLink
 import com.imashnake.animite.type.MediaType
@@ -15,7 +15,7 @@ class MediaListDatabaseSource @Inject constructor(
     private val mediaLinkDao: MediaLinkDAO
 ) {
 
-    suspend fun insertMedia(media: List<Medium>, tag: ListTag) {
+    suspend fun insertMedia(media: List<Media>, tag: ListTag) {
         mediaLinkDao.insertAll(*media.map { MediumLink(it.id, tag) }.toTypedArray())
         mediaDAO.insertAll(*media.toTypedArray())
     }

@@ -3,7 +3,7 @@ package com.imashnake.animite.data.repos
 import com.imashnake.animite.data.sauce.db.medialist.MediaListDatabaseSource
 import com.imashnake.animite.data.sauce.db.model.CoverImage
 import com.imashnake.animite.data.sauce.db.model.ListTag
-import com.imashnake.animite.data.sauce.db.model.Medium
+import com.imashnake.animite.data.sauce.db.model.Media
 import com.imashnake.animite.data.sauce.db.model.Title
 import com.imashnake.animite.data.sauce.network.MediaListNetworkSource
 import com.imashnake.animite.data.sauce.networkBoundResource
@@ -27,7 +27,7 @@ class MediaListRepository @Inject constructor(
         perPage: Int = 10,
         season: MediaSeason? = null,
         seasonYear: Int? = null
-    ): Flow<List<Medium>> = networkBoundResource(
+    ): Flow<List<Media>> = networkBoundResource(
         db = mediaListDatabaseSource.getMedia(mediaType, tag)
             .map {
                 it.map { it.medium }
@@ -50,7 +50,7 @@ class MediaListRepository @Inject constructor(
                         val title = medium.title?.let { title -> Title(title.romaji, title.english, title.native) }
                         val coverImage = medium.coverImage?.let { image -> CoverImage(image.extraLarge, image.large) }
 
-                        Medium(medium.id, medium.type, title, coverImage)
+                        Media(medium.id, medium.type, title, coverImage)
                     },
                 tag
             )
