@@ -5,7 +5,6 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
 }
 
 android {
@@ -73,10 +72,6 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 
