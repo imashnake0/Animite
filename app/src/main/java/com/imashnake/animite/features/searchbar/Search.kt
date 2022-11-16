@@ -78,11 +78,11 @@ fun Search(
     // TODO: This hack still results in a very slight jitter (still an improvement); remove this
     //  after we start using custom `Scaffold`s.
     val searchBarBottomPadding: Dp by animateDpAsState(
-        targetValue = dimensionResource(R.dimen.large_padding) + if (
+        targetValue = dimensionResource(Res.dimen.large_padding) + if (
             NavigationBarPaths.values().any {
                 it.direction == navController.appCurrentDestinationAsState().value
             } && !isExpanded
-        ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp,
+        ) dimensionResource(Res.dimen.navigation_bar_height) else 0.dp,
         animationSpec = tween(delayMillis = 100)
     )
 
@@ -99,9 +99,7 @@ fun Search(
                         .navigationBarsPadding()
                         .imePadding()
                         .imeNestedScroll()
-                        .align(Alignment.BottomCenter)
-                        // TODO: Unhardcode.
-                        .padding(bottom = 54.dp + dimensionResource(Res.dimen.large_padding) + dimensionResource(Res.dimen.medium_padding)),
+                        .align(Alignment.BottomCenter),
                     onClick = {
                         isExpanded = false
                         // TODO: Double clicking makes the navigation happen twice.
@@ -248,7 +246,14 @@ fun SearchList(
     if (!searchList.isNullOrEmpty()) {
         LazyColumn(
             modifier = modifier,
-            contentPadding = PaddingValues(horizontal = 16.dp)
+            contentPadding = PaddingValues(
+                start = dimensionResource(Res.dimen.medium_padding),
+                end = dimensionResource(Res.dimen.medium_padding),
+                bottom = dimensionResource(Res.dimen.search_bar_height)
+                        + dimensionResource(Res.dimen.large_padding)
+                        + dimensionResource(Res.dimen.large_padding),
+                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+            )
         ) {
             items(searchList, key = { it!!.id }) {
                 SearchItem(

@@ -18,6 +18,7 @@
     <dimen name="character_card_height">121dp</dimen>
     <dimen name="trailer_corner_radius">30dp</dimen>
 
+    <dimen name="search_bar_height">54dp</dimen>
     <dimen name="search_bar_padding">16dp</dimen>
     <dimen name="search_list_padding">14dp</dimen>
 
