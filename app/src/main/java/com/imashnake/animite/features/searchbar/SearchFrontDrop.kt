@@ -51,14 +51,14 @@ import com.imashnake.animite.R as Res
 
 // TODO:
 //  - UX concern: This blocks content sometimes!
-//  - `SearchList` goes beyond the status bar.
+//  - Create a custom layout for `FrontDrop`s.
 @OptIn(
     ExperimentalAnimationApi::class,
     ExperimentalMaterial3Api::class,
     ExperimentalLayoutApi::class
 )
 @Composable
-fun Search(
+fun SearchFrontDrop(
     modifier: Modifier,
     viewModel: SearchViewModel = viewModel(),
     navController: NavHostController

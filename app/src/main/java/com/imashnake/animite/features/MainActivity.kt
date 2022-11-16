@@ -30,7 +30,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.navigationbar.NavigationBarPaths
-import com.imashnake.animite.features.searchbar.Search
+import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
@@ -100,7 +100,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
             NavigationBar(navController = navController)
         }
 
-        Search(
+        SearchFrontDrop(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
