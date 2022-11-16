@@ -43,8 +43,6 @@ class SearchViewModel @Inject constructor(
     }
 
     fun clearList() {
-        uiState = with(uiState) {
-            copy(searchList = null)
-        }
+        uiState = uiState.copy(searchList = null)
     }
 }
