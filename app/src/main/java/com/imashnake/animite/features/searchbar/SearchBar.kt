@@ -100,6 +100,7 @@ fun Search(
                         .imePadding()
                         .imeNestedScroll()
                         .align(Alignment.BottomCenter)
+                        // TODO: Unhardcode.
                         .padding(bottom = 54.dp + dimensionResource(Res.dimen.large_padding) + dimensionResource(Res.dimen.medium_padding)),
                     onClick = {
                         isExpanded = false
@@ -132,6 +133,7 @@ fun Search(
             modifier = Modifier
                 .align(Alignment.End)
                 .wrapContentWidth()
+                // TODO: Unhardcode.
                 .height(54.dp),
             shadowElevation = 20.dp,
             shape = CircleShape
