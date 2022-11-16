@@ -3,28 +3,18 @@
 // TODO: Remove this after https://youtrack.jetbrains.com/issue/KTIJ-19369 is resolved.
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.apolloKotlin)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
-    kotlin("kapt")
 }
 
 android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.imashnake.animite"
         minSdk = 26
         targetSdk = 33
-        versionCode = 2
-        versionName = "0.0.1-alpha02"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -35,7 +25,6 @@ android {
     }
 
     compileOptions {
-        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -52,14 +41,10 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    namespace = "com.imashnake.animite"
+    namespace = "com.imashnake.animite.core"
 
-    applicationVariants.all {
+    // Workaround for KSP generated sources not being indexable by the IDE
+    libraryVariants.all {
         kotlin.sourceSets {
             getByName(name) {
                 kotlin.srcDir("build/generated/ksp/$name/kotlin")
@@ -68,23 +53,7 @@ android {
     }
 }
 
-apollo {
-    packageName.set("com.imashnake.animite")
-}
-
-kapt {
-    correctErrorTypes = true
-}
-
-ksp {
-    arg("compose-destinations.mode", "destinations")
-}
-
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":profile"))
-    implementation(project(":rslash"))
-
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
@@ -100,34 +69,9 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
-    // Apollo Kotlin
-    implementation(libs.apolloKotlin.runtime)
-
-    // Coil
-    implementation(libs.coil.compose)
-
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
-    implementation(kotlin("reflect"))
-
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.navigationCompose)
-    kapt(libs.hilt.android.compiler)
-
-    // Accompanist
-    implementation(libs.accompanist.systemUiController)
-    implementation(libs.accompanist.placeholder)
-
-    // Snapper
-    implementation(libs.chrisbanes.snapper)
-
-    coreLibraryDesugaring(libs.android.desugaring)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 
