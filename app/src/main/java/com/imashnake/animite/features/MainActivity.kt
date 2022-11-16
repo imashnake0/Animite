@@ -89,16 +89,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
             engine = navHostEngine
         )
 
-        Search(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    start = dimensionResource(R.dimen.large_padding),
-                    end = dimensionResource(R.dimen.large_padding)
-                ),
-            navController = navController
-        )
-
         AnimatedVisibility(
             visible = NavigationBarPaths.values().any {
                 it.direction == navController.appCurrentDestinationAsState().value
@@ -109,5 +99,15 @@ fun MainScreen(modifier: Modifier = Modifier) {
         ) {
             NavigationBar(navController = navController)
         }
+
+        Search(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(
+                    start = dimensionResource(R.dimen.large_padding),
+                    end = dimensionResource(R.dimen.large_padding)
+                ),
+            navController = navController
+        )
     }
 }

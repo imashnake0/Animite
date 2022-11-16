@@ -53,7 +53,11 @@ import com.imashnake.animite.R as Res
 // TODO:
 //  - UX concern: This blocks content sometimes!
 //  - `SearchList` goes beyond the status bar.
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalLayoutApi::class
+)
 @Composable
 fun Search(
     modifier: Modifier,
@@ -87,7 +91,29 @@ fun Search(
             Modifier
                 .background(MaterialTheme.colorScheme.background.copy(alpha = maskAlpha))
                 .fillMaxSize()
-        )
+        ) {
+            if(isExpanded) {
+                SearchList(
+                    viewModel = hiltViewModel(),
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .imePadding()
+                        .imeNestedScroll()
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 54.dp + dimensionResource(Res.dimen.large_padding) + dimensionResource(Res.dimen.medium_padding)),
+                    onClick = {
+                        isExpanded = false
+                        // TODO: Double clicking makes the navigation happen twice.
+                        navController.navigate(
+                            MediaPageDestination(
+                                id = it,
+                                mediaTypeArg = MediaType.ANIME.rawValue
+                            )
+                        )
+                    }
+                )
+            }
+        }
     }
 
     Column(
@@ -96,23 +122,6 @@ fun Search(
             .navigationBarsPadding()
             .imePadding()
     ) {
-        if(isExpanded) {
-            SearchList(
-                viewModel = hiltViewModel(),
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    isExpanded = false
-                    // TODO: Double clicking makes the navigation happen twice.
-                    navController.navigate(
-                        MediaPageDestination(
-                            id = it,
-                            mediaTypeArg = MediaType.ANIME.rawValue
-                        )
-                    )
-                }
-            )
-        }
-
         Surface(
             color = MaterialTheme.colorScheme.primary,
             onClick = {
@@ -122,7 +131,8 @@ fun Search(
             },
             modifier = Modifier
                 .align(Alignment.End)
-                .wrapContentSize(),
+                .wrapContentWidth()
+                .height(54.dp),
             shadowElevation = 20.dp,
             shape = CircleShape
         ) {
@@ -236,7 +246,7 @@ fun SearchList(
     if (!searchList.isNullOrEmpty()) {
         LazyColumn(
             modifier = modifier,
-            contentPadding = PaddingValues(16.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             items(searchList, key = { it!!.id }) {
                 SearchItem(
