@@ -130,8 +130,7 @@ fun SearchFrontDrop(
             modifier = Modifier
                 .align(Alignment.End)
                 .wrapContentWidth()
-                // TODO: Unhardcode.
-                .height(54.dp),
+                .height(dimensionResource(Res.dimen.search_bar_height)),
             shadowElevation = 20.dp,
             shape = CircleShape
         ) {
