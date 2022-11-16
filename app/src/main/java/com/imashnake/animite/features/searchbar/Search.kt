@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.imashnake.animite.R
 import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.features.appCurrentDestinationAsState
 import com.imashnake.animite.features.destinations.MediaPageDestination
