@@ -60,9 +60,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.imashnake.animite.dev.ext.given
-import com.imashnake.animite.dev.ext.isNullOrZero
-import com.imashnake.animite.dev.ext.toHexColor
+import com.imashnake.animite.core.extensions.given
+import com.imashnake.animite.core.extensions.isNullOrZero
 import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
@@ -130,7 +129,7 @@ fun MediaPage(
                             ) {
                                 height(bannerHeight)
                             },
-                        color = Color(media.color?.toHexColor() ?: 0).copy(alpha = 0.25f)
+                        color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: 0).copy(alpha = 0.25f)
                     ) { }
                 }
             } else {
@@ -288,7 +287,7 @@ fun MediaPage(
                             items(media.genres) { genre ->
                                 Genre(
                                     genre = genre,
-                                    color = Color(media.color?.toHexColor() ?: 0xFF152232),
+                                    color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: (0xFF152232).toInt()),
                                     // TODO: Make genres clickable.
                                     onClick = {  }
                                 )
@@ -312,17 +311,13 @@ fun MediaPage(
                     Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
                     MediaSmallRow(
-                        mediaList = media.characters,
-                        onItemClick = { characterId ->
-                            Log.d("CharacterId", "$characterId")
-                        }
-                    ) { character, onClickingCharacter ->
+                        mediaList = media.characters
+                    ) { character ->
                         MediaSmall(
-                            height = dimensionResource(Res.dimen.character_card_height),
-                            width = dimensionResource(Res.dimen.character_card_width),
                             image = character.image,
                             label = character.name,
-                            onClick = { onClickingCharacter(character.id) }
+                            onClick = { Log.d("CharacterId", "${character.id}") },
+                            modifier = Modifier.width(dimensionResource(Res.dimen.character_card_width))
                         )
                     }
                 }
@@ -402,9 +397,10 @@ fun MediaPage(
                     }
             ) {
                 MediaSmall(
-                    height = dimensionResource(Res.dimen.media_card_height),
-                    width = dimensionResource(Res.dimen.media_card_width),
-                    image = media.coverImage
+                    image = media.coverImage,
+                    label = null,
+                    onClick = {},
+                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                 )
             }
         }

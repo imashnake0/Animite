@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
@@ -24,14 +25,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.imashnake.animite.features.NavGraphs
-import com.imashnake.animite.features.appCurrentDestinationAsState
 import com.imashnake.animite.features.destinations.HomeDestination
-import com.imashnake.animite.features.destinations.ProfileDestination
-import com.imashnake.animite.features.destinations.RSlashDestination
-import com.imashnake.animite.features.startAppDestination
-import com.ramcosta.composedestinations.navigation.navigate
-import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
+import com.imashnake.animite.profile.ProfileNavGraph
+import com.imashnake.animite.rslash.RslashNavGraph
+import com.ramcosta.composedestinations.spec.DestinationSpec
+import com.ramcosta.composedestinations.utils.currentDestinationAsState
+import com.ramcosta.composedestinations.utils.startDestination
 import com.imashnake.animite.R as Res
 
 // TODO: Ripple where?
@@ -52,15 +51,14 @@ fun NavigationBar(
             == Configuration.ORIENTATION_LANDSCAPE
         ) { WindowInsets.displayCutout } else { WindowInsets(0.dp) }
     ) {
-        val currentDestination = navController.appCurrentDestinationAsState().value
-            ?: NavGraphs.root.startAppDestination
+        val currentDestination by navController.currentDestinationAsState()
 
         NavigationBarPaths.values().forEach { destination ->
             NavigationBarItem(
                 modifier = Modifier.navigationBarsPadding(),
-                selected = currentDestination == destination.direction,
+                selected = currentDestination?.startDestination == destination.route,
                 onClick = {
-                    navController.navigate(destination.direction) {
+                    navController.navigate(destination.route.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -75,11 +73,11 @@ fun NavigationBar(
 }
 
 enum class NavigationBarPaths(
-    val direction: DirectionDestinationSpec,
+    val route: DestinationSpec<*>,
     val icon: @Composable () -> Unit
 ) {
     RSlash(
-        RSlashDestination,
+        RslashNavGraph.startDestination,
         {
             Icon(
                 imageVector = ImageVector.vectorResource(
@@ -105,7 +103,7 @@ enum class NavigationBarPaths(
         }
     ),
     Profile(
-        ProfileDestination,
+        ProfileNavGraph.startDestination,
         {
             Icon(
                 imageVector = Icons.Rounded.AccountCircle,

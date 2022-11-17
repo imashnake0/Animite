@@ -1,19 +1,18 @@
 package com.imashnake.animite.features.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +25,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.MediaListQuery
@@ -38,13 +37,11 @@ import com.imashnake.animite.R as Res
  * A [LazyRow] of [MediaSmall]s.
  *
  * @param mediaList A list of [MediaListQuery.Medium]s.
- * @param onItemClick Action that is propagated to the [MediaSmall]s, it takes a unique id.
  */
 @Composable
 fun <T> MediaSmallRow(
     mediaList: List<T>,
-    onItemClick: (itemId: Int?) -> Unit,
-    content: @Composable (T, (itemId: Int?) -> Unit) -> Unit
+    content: @Composable (T) -> Unit
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
@@ -53,8 +50,8 @@ fun <T> MediaSmallRow(
             end = dimensionResource(Res.dimen.large_padding)
         )
     ) {
-        items(mediaList.filterNotNull()) { media ->
-            content(media, onItemClick)
+        items(mediaList) { media ->
+            content(media)
         }
     }
 }
@@ -66,20 +63,21 @@ fun <T> MediaSmallRow(
  * @param label A label for the [image], if this is `null`, the [label] is not shown.
  * @param onClick Action to happen when the card is clicked.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MediaSmall(height: Dp, width: Dp, image: String?, label: String? = null, onClick: () -> Unit = {  }) {
+fun MediaSmall(
+    image: String?,
+    label: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Card(
-        modifier = Modifier
-            .wrapContentHeight()
-            .width(width)
-            .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
-            .clickable(
-                enabled = true,
-                onClick = onClick
-            ),
+        modifier = modifier,
+        onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        )
+        ),
+        shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -89,7 +87,8 @@ fun MediaSmall(height: Dp, width: Dp, image: String?, label: String? = null, onC
             contentDescription = label,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(height)
+                .fillMaxWidth()
+                .aspectRatio(0.7f)
                 .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
         )
 
@@ -145,19 +144,15 @@ fun PreviewMediaSmallRow() {
                 )
             )
         },
-        onItemClick = {  },
-        content = { media, onItemClick ->
+        content = { media ->
             MediaSmall(
-                height = dimensionResource(Res.dimen.media_card_height),
-                width = dimensionResource(Res.dimen.media_card_width),
                 image = media.coverImage?.extraLarge,
                 // TODO: Do something about this chain.
                 label = media.title?.romaji ?:
                 media.title?.english ?:
                 media.title?.native ?: "",
-                onClick = {
-                    onItemClick(media.id)
-                }
+                onClick = { },
+                modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
             )
         }
     )
@@ -167,12 +162,11 @@ fun PreviewMediaSmallRow() {
 @Composable
 fun PreviewMediaSmall() {
     MediaSmall(
-        height = dimensionResource(Res.dimen.media_card_height),
-        width = dimensionResource(Res.dimen.media_card_width),
         image =
         "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
         label =
         "Sono Bisque Doll wa Koi wo Suru",
-        onClick = {  }
+        onClick = {  },
+        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
     )
 }
