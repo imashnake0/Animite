@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,8 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -38,7 +35,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
 import com.imashnake.animite.features.navigationbar.NavigationBar
-import com.imashnake.animite.features.searchbar.SearchBar
+import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
@@ -107,20 +104,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
             )
         }
 
-        val searchBarBottomPadding: Dp by animateDpAsState(
-            targetValue = dimensionResource(R.dimen.large_padding) + if (
-                navBarVisible
-            ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp
-        )
-
-        SearchBar(
+        SearchFrontDrop(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(
-                    start = dimensionResource(R.dimen.large_padding),
-                    end = dimensionResource(R.dimen.large_padding),
-                    bottom = searchBarBottomPadding
-                )
+                .padding(horizontal = dimensionResource(R.dimen.large_padding))
                 .navigationBarsPadding(),
             navController = navController
         )

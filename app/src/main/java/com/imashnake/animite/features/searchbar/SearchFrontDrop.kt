@@ -42,12 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.imashnake.animite.SearchQuery
-import com.imashnake.animite.features.appCurrentDestinationAsState
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.navigation.navigate
+import com.ramcosta.composedestinations.utils.navGraph
+import com.ramcosta.composedestinations.utils.route
 import com.imashnake.animite.R as Res
 
 // TODO:
@@ -64,6 +65,11 @@ fun SearchFrontDrop(
     viewModel: SearchViewModel = viewModel(),
     navController: NavHostController
 ) {
+    // TODO: Use a lambda or something?
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val navBarVisible = remember(currentBackStackEntry) {
+        currentBackStackEntry?.navGraph()?.startRoute == currentBackStackEntry?.route()
+    }
     var isExpanded by remember { mutableStateOf(false) }
     var isMaskVisible by remember { mutableStateOf(false) }
     val maskAlpha: Float by animateFloatAsState(
@@ -79,9 +85,7 @@ fun SearchFrontDrop(
     //  after we start using custom `Scaffold`s.
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = dimensionResource(Res.dimen.large_padding) + if (
-            NavigationBarPaths.values().any {
-                it.direction == navController.appCurrentDestinationAsState().value
-            } && !isExpanded
+            navBarVisible && !isExpanded
         ) dimensionResource(Res.dimen.navigation_bar_height) else 0.dp,
         animationSpec = tween(delayMillis = 100)
     )
