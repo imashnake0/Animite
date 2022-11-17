@@ -11,7 +11,9 @@ class MediaRepository @Inject constructor(
 ) {
     suspend fun fetchMedia(id: Int?, mediaType: MediaType): MediaQuery.Media? {
         // TODO: Is there a better way to "wait for animations to complete"?
-        delay(100)
+        //  searchBarBottomPadding's animateDpAsState has a finishedListener, how do I propagate
+        //  this to `Home` so I can use it to navigate to `MediaPage` when true?
+        delay(250)
         return mediaNetworkSource.fetchMedia(id, mediaType)
     }
 }
