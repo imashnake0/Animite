@@ -3,6 +3,8 @@ package com.imashnake.animite.features.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imashnake.animite.data.Resource
+import com.imashnake.animite.data.Status
 import com.imashnake.animite.data.repos.MediaListRepository
 import com.imashnake.animite.data.sauce.db.model.ListTag
 import com.imashnake.animite.dev.ext.nextSeason
@@ -16,7 +18,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 import javax.inject.Inject
@@ -29,10 +30,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>("mediaType", null)
-
-    private val now = mediaType
-        .filterNotNull()
-        .map { LocalDate.now() }
+    private val now = savedStateHandle.getStateFlow("now", LocalDate.now())
 
     fun setMediaType(mediaType: MediaType) {
         savedStateHandle["mediaType"] = mediaType
@@ -47,7 +45,7 @@ class HomeViewModel @Inject constructor(
                 tag = ListTag.TRENDING
             )
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, listOf())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading(null))
 
     val popularMediaThisSeason = mediaType
         .filterNotNull()
@@ -61,7 +59,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.year
             )
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, listOf())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading(null))
 
     val upcomingMediaNextSeason = mediaType
         .filterNotNull()
@@ -75,7 +73,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.month.season.nextSeason(now).second
             )
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, listOf())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading(null))
 
     val allTimePopular = mediaType
         .filterNotNull()
@@ -86,9 +84,9 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )
         }
-        .stateIn(viewModelScope, SharingStarted.Lazily, listOf())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading(null))
 
     val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { lists ->
-        emit(lists.all { media -> media.isEmpty() })
+        emit(lists.any { it.status == Status.LOADING })
     }
 }

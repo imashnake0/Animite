@@ -1,5 +1,6 @@
 package com.imashnake.animite.data.repos
 
+import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.repos.mappers.MediaMapper
 import com.imashnake.animite.data.sauce.db.medialist.MediaListDatabaseSource
 import com.imashnake.animite.data.sauce.db.model.ListTag
@@ -25,7 +26,7 @@ class MediaListRepository @Inject constructor(
         perPage: Int = 10,
         season: MediaSeason? = null,
         seasonYear: Int? = null
-    ): Flow<List<Media>> = networkBoundResource(
+    ): Flow<Resource<List<Media>>> = networkBoundResource(
         db = mediaListDatabaseSource.getMedia(mediaType, tag),
         request = {
             mediaListNetworkSource.fetchMediaList(

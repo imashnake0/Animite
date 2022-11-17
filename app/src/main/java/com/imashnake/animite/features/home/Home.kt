@@ -156,7 +156,7 @@ fun Home(
                     ) {
 
                         HomeRow(
-                            list = trendingList,
+                            list = trendingList.data.orEmpty(),
                             title = stringResource(Res.string.trending_now),
                             onItemClicked = {
                                 navigator.navigate(
@@ -171,7 +171,7 @@ fun Home(
                         )
 
                         HomeRow(
-                            list = popularList,
+                            list = popularList.data.orEmpty(),
                             title = stringResource(Res.string.popular_this_season),
                             onItemClicked = {
                                 navigator.navigate(
@@ -186,7 +186,7 @@ fun Home(
                         )
 
                         HomeRow(
-                            list = upcomingList,
+                            list = upcomingList.data.orEmpty(),
                             title = stringResource(Res.string.upcoming_next_season),
                             onItemClicked = {
                                 navigator.navigate(
@@ -201,7 +201,7 @@ fun Home(
                         )
 
                         HomeRow(
-                            list = allTimePopularList,
+                            list = allTimePopularList.data.orEmpty(),
                             title = stringResource(Res.string.all_time_popular),
                             onItemClicked = {
                                 navigator.navigate(
