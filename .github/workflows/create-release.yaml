@@ -1,4 +1,4 @@
-# This workflow creates a release and uploads release binaries for each new tag created
+# This workflow creates a release and uploads release binaries for each new tag created.
 name: create-release
 
 on:
