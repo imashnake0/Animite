@@ -32,7 +32,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.core.extensions.given
-import com.imashnake.animite.core.extensions.isNullOrZero
 import com.imashnake.animite.features.ui.MediaSmall
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
@@ -56,7 +55,7 @@ fun MediaPage(
         ) {
             MediaBanner(
                 imageUrl = media.bannerImage,
-                tintColor = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: 0).copy(alpha = 0.25f),
+                tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
                 modifier = Modifier
                     .height(bannerHeight)
                     .fillMaxWidth()
@@ -95,7 +94,7 @@ fun MediaPage(
                         .fillMaxSize()
                 )
 
-                if (media.stats.none { it.score.isNullOrZero() }) {
+                if (media.stats != null) {
                     MediaStats(
                         stats = media.stats,
                         modifier = Modifier
@@ -104,24 +103,24 @@ fun MediaPage(
                     )
                 }
 
-                if (!media.genres.isNullOrEmpty()) {
+                if (media.genres != null) {
                     MediaGenres(
-                        genres = media.genres.filterNotNull(),
+                        genres = media.genres,
                         contentPadding = PaddingValues(
                             horizontal = dimensionResource(Res.dimen.large_padding)
                         ),
-                        color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: (0xFF152232).toInt()),
+                        color = Color(media.color ?: (0xFF152232).toInt()),
                     )
                 }
 
-                if (!media.characters.isNullOrEmpty()) {
+                if (media.characters != null) {
                     MediaCharacters(
                         characters = media.characters,
                         contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
                     )
                 }
 
-                if (!(media.trailer.link.isNullOrEmpty() || media.trailer.thumbnail.isNullOrEmpty())) { // De Morgan's law
+                if (media.trailer != null) {
                     MediaTrailer(
                         trailer = media.trailer,
                         modifier = Modifier.padding(horizontal = dimensionResource(Res.dimen.large_padding))
