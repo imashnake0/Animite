@@ -35,6 +35,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -162,7 +163,7 @@ fun MediaPage(
                                     .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
                                     .toString(),
                                 color = MaterialTheme.colorScheme.onBackground.copy(
-                                    alpha = 0.6f
+                                    alpha = ContentAlpha.medium
                                 ),
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier
@@ -172,12 +173,11 @@ fun MediaPage(
                                         height = dimensionResource(Res.dimen.small_padding)
                                     )
                                     .padding(vertical = dimensionResource(Res.dimen.small_padding))
-
                             )
                         }
                     }
 
-                    if (!media.stats.all { it.score.isNullOrZero() }) {
+                    if (media.stats.none { it.score.isNullOrZero() }) {
                         Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
                         Row(
@@ -197,13 +197,9 @@ fun MediaPage(
                                         score = stat.score
                                     ) {
                                         when(stat.label) {
-                                            StatLabel.SCORE -> {
-                                                "$it%"
-                                            }
-                                            StatLabel.RATING, StatLabel.POPULARITY -> {
-                                                "#$it"
-                                            }
-                                            else -> { "" }
+                                            StatLabel.SCORE -> "$it%"
+                                            StatLabel.RATING, StatLabel.POPULARITY -> "#$it"
+                                            else -> ""
                                         }
                                     }
                             }
@@ -212,7 +208,6 @@ fun MediaPage(
 
                     Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
-                    // TODO: Monet where?
                     if (!media.genres.isNullOrEmpty()) {
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(
@@ -301,9 +296,7 @@ fun MediaPage(
                                 .fillMaxWidth()
                                 .aspectRatio(1.778f) // 16 : 9
                                 .clip(
-                                    RoundedCornerShape(
-                                        dimensionResource(Res.dimen.trailer_corner_radius)
-                                    )
+                                    RoundedCornerShape(dimensionResource(Res.dimen.trailer_corner_radius))
                                 ),
                             alignment = Alignment.Center
                         )
