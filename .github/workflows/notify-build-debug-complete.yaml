@@ -1,0 +1,16 @@
+# This workflow notifies Discord when `build-debug` succeeds
+name: notify-build-debug-complete
+
+on:
+  workflow_run:
+    workflows: [build-debug]
+    types: [completed]
+
+jobs:
+  on-complete:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify workflow completed
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.CI_BUILDS_WEBHOOK }}
