@@ -1,4 +1,4 @@
-# This workflow builds debug binaries and uploads them for every push to main.
+# This workflow builds debug binaries and uploads them for every push to main
 name: build-debug
 
 on:

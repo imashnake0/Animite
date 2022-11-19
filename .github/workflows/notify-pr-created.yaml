@@ -10,5 +10,5 @@ jobs:
     steps:
       - name: Notify New Pull Request
         uses: sarisia/actions-status-discord@v1
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.NEW_PR_WEBHOOK }}
+        with:
+          webhook: ${{ secrets.NEW_PR_WEBHOOK }}

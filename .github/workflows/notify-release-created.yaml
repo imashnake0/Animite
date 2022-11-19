@@ -11,5 +11,5 @@ jobs:
     steps:
       - name: Notify workflow completed
         uses: sarisia/actions-status-discord@v1
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.RELEASES_WEBHOOK }}
+        with:
+          webhook: ${{ secrets.RELEASES_WEBHOOK }}
