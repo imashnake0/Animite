@@ -1,0 +1,15 @@
+# This workflow notifies Discord when a release is created
+name: notify-build-debug-complete
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  on-complete:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify workflow completed
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.RELEASES_WEBHOOK }}
