@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.core.extensions.given
 import com.imashnake.animite.core.ui.ProgressIndicator
+import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
@@ -69,7 +66,10 @@ fun Home(
         upcomingList != null &&
         allTimePopularList != null -> {
             val scrollState = rememberScrollState()
-            Box {
+            TranslucentStatusBarLayout(
+                scrollState = scrollState,
+                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height)
+            ) {
                 Box(
                     modifier = Modifier
                         .verticalScroll(scrollState)
@@ -212,27 +212,6 @@ fun Home(
                         }
                     }
                 }
-
-                // Translucent status bar.
-                val bannerHeight = with(LocalDensity.current) {
-                    dimensionResource(Res.dimen.banner_height).toPx()
-                }
-                Box(
-                    modifier = Modifier
-                        .graphicsLayer {
-                            alpha = 0.75f * if (scrollState.value < bannerHeight) {
-                                scrollState.value.toFloat() / bannerHeight
-                            } else 1f
-                        }
-                        .background(color = MaterialTheme.colorScheme.background)
-                        .fillMaxWidth()
-                        .height(
-                            WindowInsets.statusBars
-                                .asPaddingValues()
-                                .calculateTopPadding()
-                        )
-                        .align(Alignment.TopCenter)
-                ) { }
             }
         }
 

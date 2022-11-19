@@ -48,11 +48,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,6 +60,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
 import com.imashnake.animite.core.extensions.given
+import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.scrim
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
@@ -74,12 +73,13 @@ import com.imashnake.animite.R as Res
 fun MediaPage(
     viewModel: MediaPageViewModel = hiltViewModel()
 ) {
+    val scrollState = rememberScrollState()
+    val bannerHeight = dimensionResource(Res.dimen.banner_height)
+
     val media = viewModel.uiState
 
-    Box {
-        val scrollState = rememberScrollState()
-        val bannerHeight = dimensionResource(Res.dimen.banner_height)
-        // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
+    // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
+    TranslucentStatusBarLayout(scrollState = scrollState, distanceUntilAnimated = bannerHeight) {
         Box(
             Modifier
                 .fillMaxSize()
@@ -97,7 +97,10 @@ fun MediaPage(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(top = bannerHeight, bottom = dimensionResource(Res.dimen.large_padding))
+                    .padding(
+                        top = bannerHeight,
+                        bottom = dimensionResource(Res.dimen.large_padding)
+                    )
                     .background(MaterialTheme.colorScheme.background),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
             ) {
@@ -184,25 +187,6 @@ fun MediaPage(
                 )
             }
         }
-
-        // Translucent status bar.
-        val bannerHeightPx = with(LocalDensity.current) { bannerHeight.toPx() }
-        Box(
-            modifier = Modifier
-                .graphicsLayer {
-                    alpha = 0.75f * if (scrollState.value < bannerHeightPx) {
-                        scrollState.value.toFloat() / bannerHeightPx
-                    } else 1f
-                }
-                .background(color = MaterialTheme.colorScheme.background)
-                .fillMaxWidth()
-                .height(
-                    WindowInsets.statusBars
-                        .asPaddingValues()
-                        .calculateTopPadding()
-                )
-                .align(Alignment.TopCenter)
-        ) { }
     }
 }
 
