@@ -39,16 +39,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -66,7 +66,6 @@ import com.imashnake.animite.core.extensions.isNullOrZero
 import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
-import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
@@ -88,46 +87,22 @@ fun MediaPage(
                 .navigationBarsPadding()
         ) {
             if (!media.bannerImage.isNullOrEmpty()) {
-                Box {
-
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(media.bannerImage)
-                            .crossfade(CROSSFADE_DURATION)
-                            .build(),
-                        contentDescription = null,
-                        contentScale = if (
-                            LocalConfiguration.current.orientation
-                            != Configuration.ORIENTATION_LANDSCAPE
-                        ) ContentScale.FillHeight else ContentScale.FillWidth,
-                        modifier = Modifier
-                            .given(
-                                LocalConfiguration.current.orientation
-                                        != Configuration.ORIENTATION_LANDSCAPE
-                            ) {
-                                height(bannerHeight)
-                            }
-                            .given(
-                                LocalConfiguration.current.orientation
-                                        == Configuration.ORIENTATION_LANDSCAPE
-                            ) {
-                                fillMaxWidth()
-                            },
-                        alignment = Alignment.Center
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(media.bannerImage)
+                        .crossfade(CROSSFADE_DURATION)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(bannerHeight)
+                        .fillMaxWidth(),
+                    alignment = Alignment.Center,
+                    colorFilter = ColorFilter.tint(
+                        color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: 0).copy(alpha = 0.25f),
+                        blendMode = BlendMode.SrcAtop
                     )
-
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .given(
-                                LocalConfiguration.current.orientation
-                                        != Configuration.ORIENTATION_LANDSCAPE
-                            ) {
-                                height(bannerHeight)
-                            },
-                        color = Color(media.color?.let { android.graphics.Color.parseColor(it) } ?: 0).copy(alpha = 0.25f)
-                    ) { }
-                }
+                )
             } else {
                 Image(
                     painter = painterResource(Res.drawable.background),
@@ -135,7 +110,7 @@ fun MediaPage(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(dimensionResource(Res.dimen.banner_height)),
+                        .height(bannerHeight),
                     alignment = Alignment.TopCenter
                 )
             }
@@ -143,14 +118,8 @@ fun MediaPage(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(top = dimensionResource(Res.dimen.banner_height))
+                    .padding(top = bannerHeight)
                     .background(MaterialTheme.colorScheme.background)
-                    .given(
-                        LocalConfiguration.current.orientation
-                                == Configuration.ORIENTATION_LANDSCAPE
-                    ) {
-                        displayCutoutPadding()
-                    }
             ) {
                 Column {
                     Row {
