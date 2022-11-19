@@ -45,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.ColorFilter
@@ -63,6 +62,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.core.extensions.given
 import com.imashnake.animite.core.extensions.isNullOrZero
+import com.imashnake.animite.core.ui.scrim
 import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
@@ -156,51 +156,24 @@ fun MediaPage(
                                 overflow = TextOverflow.Ellipsis
                             )
 
-                            Box {
-                                Text(
-                                    // TODO: Some attributes are not applied.
-                                    text = Html
-                                        .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
-                                        .toString(),
-                                    color = MaterialTheme.colorScheme.onBackground.copy(
-                                        alpha = 0.6f
-                                    ),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    modifier = Modifier
-                                        .verticalScroll(rememberScrollState())
-                                        .padding(top = dimensionResource(Res.dimen.small_padding))
-                                )
+                            Text(
+                                // TODO: Some attributes are not applied.
+                                text = Html
+                                    .fromHtml(media.description, Html.FROM_HTML_MODE_COMPACT)
+                                    .toString(),
+                                color = MaterialTheme.colorScheme.onBackground.copy(
+                                    alpha = 0.6f
+                                ),
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier
+                                    .verticalScroll(rememberScrollState())
+                                    .scrim(
+                                        color = MaterialTheme.colorScheme.background,
+                                        height = dimensionResource(Res.dimen.small_padding)
+                                    )
+                                    .padding(vertical = dimensionResource(Res.dimen.small_padding))
 
-                                Box(
-                                    modifier = Modifier
-                                        .height(dimensionResource(Res.dimen.small_padding))
-                                        .fillMaxWidth()
-                                        .align(Alignment.TopCenter)
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(
-                                                    MaterialTheme.colorScheme.background,
-                                                    Transparent
-                                                )
-                                            )
-                                        )
-                                ) { }
-
-                                Box(
-                                    modifier = Modifier
-                                        .height(dimensionResource(Res.dimen.small_padding))
-                                        .fillMaxWidth()
-                                        .align(Alignment.BottomCenter)
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(
-                                                    Transparent,
-                                                    MaterialTheme.colorScheme.background
-                                                )
-                                            )
-                                        )
-                                ) { }
-                            }
+                            )
                         }
                     }
 
