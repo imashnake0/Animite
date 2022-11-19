@@ -3,10 +3,10 @@ package com.imashnake.animite.features.media
 import android.content.res.Configuration
 import android.text.Html
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutoutPadding
@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -66,8 +65,9 @@ fun MediaPage(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(top = bannerHeight)
-                    .background(MaterialTheme.colorScheme.background)
+                    .padding(top = bannerHeight, bottom = dimensionResource(Res.dimen.large_padding))
+                    .background(MaterialTheme.colorScheme.background),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
             ) {
                 MediaDetails(
                     title = media.title.orEmpty(),
@@ -96,8 +96,6 @@ fun MediaPage(
                 )
 
                 if (media.stats.none { it.score.isNullOrZero() }) {
-                    Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
-
                     MediaStats(
                         stats = media.stats,
                         modifier = Modifier
@@ -105,8 +103,6 @@ fun MediaPage(
                             .padding(horizontal = dimensionResource(Res.dimen.large_padding))
                     )
                 }
-
-                Spacer(Modifier.height(dimensionResource(Res.dimen.large_padding)))
 
                 if (!media.genres.isNullOrEmpty()) {
                     MediaGenres(
@@ -118,8 +114,6 @@ fun MediaPage(
                     )
                 }
 
-                Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
                 if (!media.characters.isNullOrEmpty()) {
                     MediaCharacters(
                         characters = media.characters,
@@ -127,16 +121,12 @@ fun MediaPage(
                     )
                 }
 
-                Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
-
                 if (!(media.trailer.link.isNullOrEmpty() || media.trailer.thumbnail.isNullOrEmpty())) { // De Morgan's law
                     MediaTrailer(
                         trailer = media.trailer,
                         modifier = Modifier.padding(horizontal = dimensionResource(Res.dimen.large_padding))
                     )
                 }
-
-                Spacer(Modifier.size(dimensionResource(Res.dimen.large_padding)))
             }
 
             Box(
