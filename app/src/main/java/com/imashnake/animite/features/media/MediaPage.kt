@@ -42,6 +42,7 @@ import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,12 +73,14 @@ import com.imashnake.animite.R as Res
 @Destination
 @Composable
 fun MediaPage(
-    id: Int?,
+    id: Int,
     mediaTypeArg: String,
     viewModel: MediaPageViewModel = hiltViewModel()
 ) {
-    val mediaType = MediaType.safeValueOf(mediaTypeArg)
-    viewModel.populateMediaPage(id, mediaType)
+    LaunchedEffect(id, mediaTypeArg) {
+        val mediaType = MediaType.safeValueOf(mediaTypeArg)
+        viewModel.populateMediaPage(id, mediaType)
+    }
 
     val media = viewModel.uiState
 

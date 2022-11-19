@@ -21,10 +21,8 @@ class MediaPageViewModel @Inject constructor(
     var uiState by mutableStateOf(MediaUiState())
         private set
 
-    private var fetchJob: Job? = null
     fun populateMediaPage(id: Int?, mediaType: MediaType) {
-        fetchJob?.cancel()
-        fetchJob = viewModelScope.launch {
+        viewModelScope.launch {
             try {
                 val media = mediaRepository.fetchMedia(id, mediaType)
 
