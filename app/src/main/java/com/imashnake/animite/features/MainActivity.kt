@@ -103,15 +103,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 engine = navHostEngine
             )
         }
-
-        SearchFrontDrop(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(horizontal = dimensionResource(R.dimen.large_padding))
-                .navigationBarsPadding(),
-            navController = navController
-        )
-
+        
         AnimatedVisibility(
             visible = navBarVisible,
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -120,5 +112,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
         ) {
             NavigationBar(navController = navController)
         }
+
+        SearchFrontDrop(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(horizontal = dimensionResource(R.dimen.large_padding))
+                .navigationBarsPadding(),
+            navController = navController
+        )
     }
 }
