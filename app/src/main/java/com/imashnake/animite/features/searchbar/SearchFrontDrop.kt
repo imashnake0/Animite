@@ -97,8 +97,10 @@ fun SearchFrontDrop(
                 .fillMaxSize()
         ) {
             if(isExpanded) {
+                val searchList = viewModel.uiState.searchList?.media
+
                 SearchList(
-                    viewModel = hiltViewModel(),
+                    searchList = searchList,
                     modifier = Modifier
                         .navigationBarsPadding()
                         .imePadding()
@@ -239,12 +241,11 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchList(
-    viewModel: SearchViewModel = viewModel(),
+    // TODO: Handle nullability in [#67](https://github.com/imashnake0/Animite/pull/67).
+    searchList: List<SearchQuery.Medium?>?,
     modifier: Modifier,
     onClick: (Int?) -> Unit
 ) {
-    val searchList = viewModel.uiState.searchList?.media
-
     // TODO: Improve this animation.
     if (!searchList.isNullOrEmpty()) {
         LazyColumn(
