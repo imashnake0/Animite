@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Dp
 /**
  * Draws vertical scrim (edge gradients) on scrolling Composables.
  */
-fun Modifier.scrim(
+fun Modifier.verticalEdgeGradient(
     color: Color,
     height: Dp
 ): Modifier {

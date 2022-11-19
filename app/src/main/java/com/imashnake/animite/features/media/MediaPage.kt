@@ -61,7 +61,7 @@ import coil.request.ImageRequest
 import com.imashnake.animite.R
 import com.imashnake.animite.core.extensions.given
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
-import com.imashnake.animite.core.ui.scrim
+import com.imashnake.animite.core.ui.verticalEdgeGradient
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
@@ -278,7 +278,7 @@ fun MediaDetails(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .scrim(
+                .verticalEdgeGradient(
                     color = MaterialTheme.colorScheme.background,
                     height = dimensionResource(R.dimen.small_padding)
                 )
