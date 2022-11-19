@@ -3,28 +3,33 @@ package com.imashnake.animite.features.media
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.repos.MediaRepository
+import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.type.MediaRankType
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class MediaPageViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val mediaRepository: MediaRepository
 ) : ViewModel() {
+    private val navArgs = MediaPageDestination.argsFrom(savedStateHandle)
+
     var uiState by mutableStateOf(MediaUiState())
         private set
 
-    fun populateMediaPage(id: Int?, mediaType: MediaType) {
+    init {
         viewModelScope.launch {
             try {
-                val media = mediaRepository.fetchMedia(id, mediaType)
+                val mediaType = MediaType.safeValueOf(navArgs.mediaType)
+                val media = mediaRepository.fetchMedia(navArgs.id, mediaType)
 
                 val score = listOf(Stat(StatLabel.SCORE, media?.averageScore))
 
@@ -45,8 +50,8 @@ class MediaPageViewModel @Inject constructor(
                         coverImage = media?.coverImage?.extraLarge,
                         color = media?.coverImage?.color,
                         title = media?.title?.romaji ?:
-                                media?.title?.english ?:
-                                media?.title?.native,
+                        media?.title?.english ?:
+                        media?.title?.native,
                         description = media?.description,
                         stats = score + ranks,
                         genres = media?.genres,

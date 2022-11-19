@@ -39,11 +39,11 @@ import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.core.extensions.given
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.features.destinations.MediaPageDestination
+import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
@@ -148,8 +148,10 @@ fun Home(
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
                                     ) {
                                         launchSingleTop = true
@@ -163,8 +165,10 @@ fun Home(
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
                                     ) {
                                         launchSingleTop = true
@@ -178,8 +182,10 @@ fun Home(
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
                                     ) {
                                         launchSingleTop = true
@@ -193,8 +199,10 @@ fun Home(
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
                                     ) {
                                         launchSingleTop = true

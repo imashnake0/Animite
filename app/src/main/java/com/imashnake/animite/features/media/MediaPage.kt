@@ -70,18 +70,11 @@ import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
-@Destination
+@Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
 fun MediaPage(
-    id: Int,
-    mediaTypeArg: String,
     viewModel: MediaPageViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(id, mediaTypeArg) {
-        val mediaType = MediaType.safeValueOf(mediaTypeArg)
-        viewModel.populateMediaPage(id, mediaType)
-    }
-
     val media = viewModel.uiState
 
     Box {
