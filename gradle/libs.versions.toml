@@ -209,6 +209,7 @@ junit = "4.13.2"
 dependencyAnalysis = "1.13.1"
 ##              ⬆ = "1.14.0"
 ##              ⬆ = "1.14.1"
+##              ⬆ = "1.15.0"
 
 [libraries]
 
