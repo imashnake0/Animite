@@ -35,7 +35,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -60,8 +59,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
 import com.imashnake.animite.core.extensions.given
+import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
-import com.imashnake.animite.core.ui.verticalEdgeGradient
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
@@ -270,20 +269,7 @@ fun MediaDetails(
             overflow = TextOverflow.Ellipsis
         )
 
-        Text(
-            text = description,
-            color = MaterialTheme.colorScheme.onBackground.copy(
-                alpha = ContentAlpha.medium
-            ),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .verticalEdgeGradient(
-                    color = MaterialTheme.colorScheme.background,
-                    height = dimensionResource(R.dimen.small_padding)
-                )
-                .padding(vertical = dimensionResource(R.dimen.small_padding))
-        )
+        ScrollableText(text = description)
     }
 }
 
