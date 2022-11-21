@@ -60,8 +60,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.imashnake.animite.dev.ext.given
-import com.imashnake.animite.dev.ext.isNullOrZero
+import com.imashnake.animite.core.extensions.given
+import com.imashnake.animite.core.extensions.isNullOrZero
 import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow

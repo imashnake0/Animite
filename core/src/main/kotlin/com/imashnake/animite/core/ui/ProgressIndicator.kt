@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.ui
+package com.imashnake.animite.core.ui
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -9,15 +9,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
-import com.imashnake.animite.R as Res
+import androidx.compose.ui.unit.dp
+import com.imashnake.animite.core.R
 
 @Composable
 fun ProgressIndicator() {
     LinearProgressIndicator(
         modifier = Modifier
             .clip(CircleShape)
-            .width(dimensionResource(Res.dimen.progress_indicator_width))
-            .height(dimensionResource(Res.dimen.progress_indicator_height)),
+            .width(dimensionResource(R.dimen.progress_indicator_width))
+            .height(dimensionResource(R.dimen.progress_indicator_height)),
         color = MaterialTheme.colorScheme.background,
         trackColor = MaterialTheme.colorScheme.primary
     )

@@ -2,7 +2,8 @@
 
 [plugins]
 
-agp = { id = "com.android.application", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kapt = { id = "kapt" }
 parcelize = { id = "plugin.parcelize" }
@@ -23,6 +24,7 @@ desugaring = "1.2.2"
 # https://github.com/google/accompanist/releases.
 accompanist = "0.26.5-rc"
 ##       ⬆ = "0.27.0"
+##       ⬆ = "0.27.1"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
@@ -87,6 +89,7 @@ espresso = "3.4.0"
 # https://github.com/apollographql/apollo-kotlin/releases.
 apollo = "3.6.2"
 ##  ⬆ = "3.7.0"
+##  ⬆ = "3.7.1"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
@@ -107,21 +110,9 @@ composeAnimation = "1.3.0-alpha03"
 composeCompiler = "1.3.2"
 # TODO: Replace this with [Appyx](https://github.com/bumble-tech/appyx).
 # https://github.com/raamcosta/compose-destinations/releases.
-composeDestinations = "1.6.22-beta"
-##               ⬆ = "1.6.23-beta"
-##               ⬆ = "1.6.25-beta"
-##               ⬆ = "1.6.26-beta"
-##               ⬆ = "1.7.15-beta"
-##               ⬆ = "1.7.16-beta"
-##               ⬆ = "1.7.17-beta"
-##               ⬆ = "1.7.18-beta"
-##               ⬆ = "1.7.19-beta"
-##               ⬆ = "1.7.20-beta"
-##               ⬆ = "1.7.21-beta"
-##               ⬆ = "1.7.22-beta"
-##               ⬆ = "1.7.23-beta"
-##               ⬆ = "1.7.25-beta"
+composeDestinations = "1.7.25-beta"
 ##               ⬆ = "1.7.26-beta"
+##               ⬆ = "1.7.27-beta"
 composeFoundation = "1.2.1"
 ##             ⬆ = "1.3.0-alpha01"
 ##             ⬆ = "1.3.0-alpha02"
@@ -203,6 +194,7 @@ coroutines = "1.6.4"
 ksp = "1.7.20-1.0.7"
 ##⬆ = "1.7.20-1.0.8"
 ##⬆ = "1.7.21-1.0.8"
+##⬆ = "1.8.0-Beta-1.0.8"
 
 # Snapper
 # https://github.com/chrisbanes/snapper/releases.
@@ -229,6 +221,8 @@ serialization = "1.4.1"
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.13.1"
 ##              ⬆ = "1.14.0"
+##              ⬆ = "1.14.1"
+##              ⬆ = "1.15.0"
 
 [libraries]
 
