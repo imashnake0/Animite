@@ -40,10 +40,9 @@ class MediaPageViewModel @Inject constructor(
                     MediaRankType.POPULAR to StatLabel.POPULARITY,
                 )
                 // TODO: This code is a little sus, see if we can create internal models.
-                val ranks = media?.rankings
-                    ?.filter { it != null && it.type in rankOptions.keys && it.allTime == true }
-                    ?.map { Stat(rankOptions[it!!.type] ?: StatLabel.UNKNOWN, it.rank) }
-                    ?: emptyList()
+                val ranks = media?.rankings.orEmpty()
+                    .filter { it != null && it.type in rankOptions.keys && it.allTime == true }
+                    .map { Stat(rankOptions[it!!.type] ?: StatLabel.UNKNOWN, it.rank) }
 
                 uiState = with(uiState) {
                     copy(
@@ -75,6 +74,7 @@ class MediaPageViewModel @Inject constructor(
     private fun MediaQuery.Trailer.toUiModel(): Trailer? {
         // Give up if we don't have the data we want
         if (site == null || thumbnail == null || id == null) return null
+        // TODO This could be an enum, or a sealed class to better capture data types
         return Trailer(
             link = when (site) {
                 "youtube" -> "https://www.youtube.com/watch?v=${id}"
