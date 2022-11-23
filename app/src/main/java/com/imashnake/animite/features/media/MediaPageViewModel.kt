@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.MediaQuery
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.data.repos.MediaRepository
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.type.MediaRankType
@@ -33,16 +34,16 @@ class MediaPageViewModel @Inject constructor(
                 val mediaType = MediaType.safeValueOf(navArgs.mediaType)
                 val media = mediaRepository.fetchMedia(navArgs.id, mediaType)
 
-                val score = media?.averageScore?.let { listOf(Stat(StatLabel.SCORE, it)) } ?: emptyList()
+                val score = media?.averageScore?.let { listOf(Stat(StatLabel.SCORE, it)) }
 
                 val rankOptions = mapOf(
                     MediaRankType.RATED to StatLabel.RATING,
                     MediaRankType.POPULAR to StatLabel.POPULARITY,
                 )
                 // TODO: This code is a little sus, see if we can create internal models.
-                val ranks = media?.rankings.orEmpty()
-                    .filter { it != null && it.type in rankOptions.keys && it.allTime == true }
-                    .map { Stat(rankOptions[it!!.type] ?: StatLabel.UNKNOWN, it.rank) }
+                val ranks = media?.rankings
+                    ?.filter { it != null && it.type in rankOptions.keys && it.allTime == true }
+                    ?.map { Stat(rankOptions[it!!.type] ?: StatLabel.UNKNOWN, it.rank) }
 
                 uiState = with(uiState) {
                     copy(
