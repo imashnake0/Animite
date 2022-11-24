@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.Resource
-import com.imashnake.animite.data.Status
 import com.imashnake.animite.data.repos.MediaListRepository
 import com.imashnake.animite.data.sauce.db.model.ListTag
 import com.imashnake.animite.dev.ext.nextSeason
@@ -45,7 +44,7 @@ class HomeViewModel @Inject constructor(
                 tag = ListTag.TRENDING
             )
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading(null))
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val popularMediaThisSeason = mediaType
         .filterNotNull()
@@ -59,7 +58,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.year
             )
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading(null))
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val upcomingMediaNextSeason = mediaType
         .filterNotNull()
@@ -73,7 +72,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.month.season.nextSeason(now).second
             )
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading(null))
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val allTimePopular = mediaType
         .filterNotNull()
@@ -84,9 +83,9 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading(null))
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { lists ->
-        emit(lists.any { it.status == Status.LOADING })
+        emit(lists.any { it is Resource.Loading })
     }
 }

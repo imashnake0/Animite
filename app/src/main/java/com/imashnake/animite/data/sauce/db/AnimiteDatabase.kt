@@ -9,7 +9,7 @@ import com.imashnake.animite.data.sauce.db.model.Media
 import com.imashnake.animite.data.sauce.db.model.MediaLink
 
 @Database(
-    version = 4,
+    version = 2,
     exportSchema = false,
     entities = [
         Media::class,

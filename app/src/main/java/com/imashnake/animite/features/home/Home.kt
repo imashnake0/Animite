@@ -1,6 +1,7 @@
 package com.imashnake.animite.features.home
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -79,6 +80,22 @@ fun Home(
         val popularList by viewModel.popularMediaThisSeason.collectAsStateWithLifecycle()
         val upcomingList by viewModel.upcomingMediaNextSeason.collectAsStateWithLifecycle()
         val allTimePopularList by viewModel.allTimePopular.collectAsStateWithLifecycle()
+
+        if (trendingList.message != null) {
+            Log.i("error", trendingList.message.orEmpty())
+        }
+
+        if (popularList.message != null) {
+            Log.i("error", popularList.message.orEmpty())
+        }
+
+        if (upcomingList.message != null) {
+            Log.i("error", upcomingList.message.orEmpty())
+        }
+
+        if (allTimePopularList.message != null) {
+            Log.i("error", allTimePopularList.message.orEmpty())
+        }
 
         val scrollState = rememberScrollState()
         Box {

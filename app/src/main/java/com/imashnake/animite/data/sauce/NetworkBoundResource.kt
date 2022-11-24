@@ -5,12 +5,14 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-fun <API, DB> networkBoundResource(
+fun <API, DB: Any> networkBoundResource(
     db: Flow<DB>,
     request: suspend () -> API,
     insert: suspend (API) -> Unit
@@ -25,9 +27,10 @@ fun <API, DB> networkBoundResource(
                     throw exception
                 }
                 val current = db.firstOrNull() // snapshot of current DB to show in UI
-                send(Resource.error(exception.message, current))
+
+                // TODO figure out a solution how to ensure emission of Resource.success are T! but can also allow Resource.error of T?
+                send(Resource.error(exception.message ?: "$exception", current))
             }
-            // TODO look into retry mechanisms here?
         }
 
         // emit changes from DB listener
