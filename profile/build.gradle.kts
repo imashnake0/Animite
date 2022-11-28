@@ -64,7 +64,7 @@ dependencies {
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
-    implementation(libs.androidx.lifecycleRuntimeKtx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     // Compose
     implementation(libs.compose.animation)
@@ -77,8 +77,8 @@ dependencies {
     implementation(libs.compose.ui.toolingPreview)
 
     // Kotlin
-    implementation(libs.kotlin.coroutines.android)
-    implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
 
     // Compose Destinations
     implementation(libs.compose.destinations)
