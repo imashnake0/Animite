@@ -1,6 +1,7 @@
 package com.imashnake.animite.features.media
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,11 +48,14 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -99,7 +104,6 @@ fun MediaPage(
                         top = bannerHeight,
                         bottom = dimensionResource(Res.dimen.large_padding)
                     )
-                    .landscapeCutoutPadding()
                     .background(MaterialTheme.colorScheme.background),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
             ) {
@@ -117,6 +121,7 @@ fun MediaPage(
                             top = dimensionResource(Res.dimen.medium_padding),
                             end = dimensionResource(Res.dimen.large_padding)
                         )
+                        .landscapeCutoutPadding()
                         .height(
                             WindowInsets.statusBars
                                 .asPaddingValues()
@@ -135,6 +140,7 @@ fun MediaPage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                            .landscapeCutoutPadding()
                     )
                 }
 
@@ -142,7 +148,13 @@ fun MediaPage(
                     MediaGenres(
                         genres = media.genres,
                         contentPadding = PaddingValues(
-                            horizontal = dimensionResource(Res.dimen.large_padding)
+                            start = dimensionResource(Res.dimen.large_padding) + if (
+                                LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                            ) {
+                                WindowInsets.displayCutout.asPaddingValues()
+                                    .calculateLeftPadding(LayoutDirection.Ltr)
+                            } else 0.dp,
+                            end = dimensionResource(Res.dimen.large_padding)
                         ),
                         color = Color(media.color ?: (0xFF152232).toInt()),
                     )
@@ -158,7 +170,9 @@ fun MediaPage(
                 if (media.trailer != null) {
                     MediaTrailer(
                         trailer = media.trailer,
-                        modifier = Modifier.padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                        modifier = Modifier
+                            .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                            .landscapeCutoutPadding()
                     )
                 }
             }
@@ -327,7 +341,9 @@ fun MediaCharacters(
             text = stringResource(R.string.characters),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(contentPadding)
+            modifier = Modifier
+                .padding(contentPadding)
+                .landscapeCutoutPadding()
         )
 
         Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
