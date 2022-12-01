@@ -226,35 +226,6 @@ fun MediaBanner(
 }
 
 @Composable
-fun MediaCharacters(
-    characters: List<Character>,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues()
-) {
-    Column(modifier) {
-        Text(
-            text = stringResource(R.string.characters),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(contentPadding)
-        )
-
-        Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
-
-        MediaSmallRow(
-            mediaList = characters
-        ) { character ->
-            MediaSmall(
-                image = character.image,
-                label = character.name,
-                onClick = { Log.d("CharacterId", "${character.id}") },
-                modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
-            )
-        }
-    }
-}
-
-@Composable
 fun MediaDetails(
     title: String,
     description: String,
@@ -270,6 +241,43 @@ fun MediaDetails(
         )
 
         ScrollableText(text = description)
+    }
+}
+
+@Composable
+fun MediaStats(
+    stats: List<Stat>,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = modifier
+    ) {
+        stats.forEach { stat ->
+            if (stat.label != StatLabel.UNKNOWN) {
+                Column(
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stat.label.value,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+
+                    Text(
+                        text = when (stat.label) {
+                            StatLabel.SCORE -> "${stat.score}%"
+                            StatLabel.RATING, StatLabel.POPULARITY -> "#${stat.score}"
+                            else -> ""
+                        },
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -314,38 +322,30 @@ fun MediaGenres(
 }
 
 @Composable
-fun MediaStats(
-    stats: List<Stat>,
-    modifier: Modifier = Modifier
+fun MediaCharacters(
+    characters: List<Character>,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = modifier
-    ) {
-        stats.forEach { stat ->
-            if (stat.label != StatLabel.UNKNOWN) {
-                Column(
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stat.label.value,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.labelSmall
-                    )
+    Column(modifier) {
+        Text(
+            text = stringResource(R.string.characters),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(contentPadding)
+        )
 
-                    Text(
-                        text = when (stat.label) {
-                            StatLabel.SCORE -> "${stat.score}%"
-                            StatLabel.RATING, StatLabel.POPULARITY -> "#${stat.score}"
-                            else -> ""
-                        },
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                }
-            }
+        Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
+
+        MediaSmallRow(
+            mediaList = characters
+        ) { character ->
+            MediaSmall(
+                image = character.image,
+                label = character.name,
+                onClick = { Log.d("CharacterId", "${character.id}") },
+                modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
+            )
         }
     }
 }
