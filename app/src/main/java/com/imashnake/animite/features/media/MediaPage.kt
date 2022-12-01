@@ -127,7 +127,7 @@ fun MediaPage(
                         .fillMaxSize()
                 )
 
-                if (media.stats != null) {
+                if (!media.stats.isNullOrEmpty()) {
                     MediaStats(
                         stats = media.stats,
                         modifier = Modifier
