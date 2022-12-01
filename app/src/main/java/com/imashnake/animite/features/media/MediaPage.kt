@@ -55,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
+import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
@@ -88,6 +89,7 @@ fun MediaPage(
                 modifier = Modifier
                     .height(bannerHeight)
                     .fillMaxWidth()
+                    .bannerParallax(scrollState)
             )
 
             Column(
