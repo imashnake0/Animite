@@ -1,7 +1,6 @@
 package com.imashnake.animite.features.media
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +46,6 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -58,7 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
-import com.imashnake.animite.core.extensions.given
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.dev.internal.Constants
@@ -100,6 +97,7 @@ fun MediaPage(
                         top = bannerHeight,
                         bottom = dimensionResource(Res.dimen.large_padding)
                     )
+                    .landscapeCutoutPadding()
                     .background(MaterialTheme.colorScheme.background),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
             ) {
@@ -171,12 +169,7 @@ fun MediaPage(
                         start = dimensionResource(Res.dimen.large_padding),
                         end = dimensionResource(Res.dimen.large_padding)
                     )
-                    .given(
-                        LocalConfiguration.current.orientation
-                                == Configuration.ORIENTATION_LANDSCAPE
-                    ) {
-                        displayCutoutPadding()
-                    }
+                    .landscapeCutoutPadding()
             ) {
                 MediaSmall(
                     image = media.coverImage,
