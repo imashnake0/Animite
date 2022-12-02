@@ -8,18 +8,12 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 
-fun Modifier.given(
-    boolean: Boolean, execute: Modifier.() -> Modifier
-): Modifier = if (boolean) {
-    then(execute(Modifier))
-} else {
-    this
-}
-
 fun Modifier.landscapeCutoutPadding() = composed {
-    Modifier.given(
-        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    ) { displayCutoutPadding() }
+    if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        displayCutoutPadding()
+    } else {
+        this
+    }
 }
 
 fun Modifier.bannerParallax(scrollState: ScrollState) = graphicsLayer {
