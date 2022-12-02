@@ -1,20 +1,20 @@
 package com.imashnake.animite.features.media
 
 data class MediaUiState(
-    val bannerImage: String? = "",
-    val coverImage: String? = "",
-    val color: String? = "",
-    val title: String? = "",
-    val description: String? = "",
-    val stats: List<Stat> = emptyList(),
-    val genres: List<String?>? = emptyList(),
-    val characters: List<Character>? = emptyList(),
-    val trailer: Trailer = Trailer("", "")
+    val bannerImage: String? = null,
+    val coverImage: String? = null,
+    val color: Int? = null,
+    val title: String? = null,
+    val description: String? = null,
+    val stats: List<Stat>? = null,
+    val genres: List<String>? = null,
+    val characters: List<Character>? = null,
+    val trailer: Trailer? = null
 )
 
 data class Stat(
     val label: StatLabel,
-    val score: Int?
+    val score: Int
 )
 
 enum class StatLabel(val value: String) {
@@ -31,6 +31,6 @@ data class Character(
 )
 
 data class Trailer(
-    val link: String?,
-    val thumbnail: String?
+    val link: String,
+    val thumbnail: String
 )

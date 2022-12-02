@@ -1,22 +1,17 @@
 package com.imashnake.animite.features.home
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -27,23 +22,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.MediaListQuery
-import com.imashnake.animite.core.extensions.given
+import com.imashnake.animite.core.extensions.bannerParallax
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
+import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.features.destinations.MediaPageDestination
+import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
@@ -69,7 +63,10 @@ fun Home(
         upcomingList != null &&
         allTimePopularList != null -> {
             val scrollState = rememberScrollState()
-            Box {
+            TranslucentStatusBarLayout(
+                scrollState = scrollState,
+                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height)
+            ) {
                 Box(
                     modifier = Modifier
                         .verticalScroll(scrollState)
@@ -82,9 +79,7 @@ fun Home(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(dimensionResource(Res.dimen.banner_height))
-                                .graphicsLayer {
-                                    translationY = 0.7f * scrollState.value
-                                },
+                                .bannerParallax(scrollState),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.TopCenter
                         )
@@ -115,28 +110,16 @@ fun Home(
                                     start = dimensionResource(Res.dimen.large_padding),
                                     bottom = dimensionResource(Res.dimen.medium_padding)
                                 )
-                                .given(
-                                    LocalConfiguration.current.orientation
-                                            == Configuration.ORIENTATION_LANDSCAPE
-                                ) {
-                                    displayCutoutPadding()
-                                }
+                                .landscapeCutoutPadding()
                         )
                     }
 
-                    // TODO: Use `padding` instead of the `Spacer`s.
                     Column {
                         Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
 
                         Column(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.background)
-                                .given(
-                                    LocalConfiguration.current.orientation
-                                            == Configuration.ORIENTATION_LANDSCAPE
-                                ) {
-                                    displayCutoutPadding()
-                                }
                                 .padding(vertical = dimensionResource(Res.dimen.large_padding))
                                 // TODO move this one out of Home when we can pass modifiers in
                                 .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
@@ -148,8 +131,10 @@ fun Home(
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
                                     ) {
                                         launchSingleTop = true
@@ -163,8 +148,10 @@ fun Home(
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
                                     ) {
                                         launchSingleTop = true
@@ -178,8 +165,10 @@ fun Home(
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
                                     ) {
                                         launchSingleTop = true
@@ -193,8 +182,10 @@ fun Home(
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
-                                            id = it.id,
-                                            mediaTypeArg = homeMediaType.rawValue
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
                                     ) {
                                         launchSingleTop = true
@@ -204,27 +195,6 @@ fun Home(
                         }
                     }
                 }
-
-                // Translucent status bar.
-                val bannerHeight = with(LocalDensity.current) {
-                    dimensionResource(Res.dimen.banner_height).toPx()
-                }
-                Box(
-                    modifier = Modifier
-                        .graphicsLayer {
-                            alpha = 0.75f * if (scrollState.value < bannerHeight) {
-                                scrollState.value.toFloat() / bannerHeight
-                            } else 1f
-                        }
-                        .background(color = MaterialTheme.colorScheme.background)
-                        .fillMaxWidth()
-                        .height(
-                            WindowInsets.statusBars
-                                .asPaddingValues()
-                                .calculateTopPadding()
-                        )
-                        .align(Alignment.TopCenter)
-                ) { }
             }
         }
 
@@ -255,6 +225,7 @@ fun HomeRow(
             modifier = Modifier.padding(
                 start = dimensionResource(Res.dimen.large_padding)
             )
+            .landscapeCutoutPadding()
         )
 
         Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
