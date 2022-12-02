@@ -45,6 +45,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.features.destinations.MediaPageDestination
+import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.navGraph
@@ -111,8 +112,10 @@ fun SearchFrontDrop(
                         // TODO: Double clicking makes the navigation happen twice.
                         navController.navigate(
                             MediaPageDestination(
-                                id = it,
-                                mediaTypeArg = MediaType.ANIME.rawValue
+                                MediaPageArgs(
+                                    it!!,
+                                    MediaType.ANIME.rawValue
+                                )
                             )
                         )
                     }

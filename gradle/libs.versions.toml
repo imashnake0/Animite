@@ -21,6 +21,7 @@ desugaring = "1.2.2"
 # https://github.com/google/accompanist/releases.
 accompanist = "0.26.5-rc"
 ##       ⬆ = "0.27.0"
+##       ⬆ = "0.27.1"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
@@ -88,6 +89,7 @@ espresso = "3.4.0"
 # https://github.com/apollographql/apollo-kotlin/releases.
 apollo = "3.6.2"
 ##  ⬆ = "3.7.0"
+##  ⬆ = "3.7.1"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
@@ -109,6 +111,8 @@ composeCompiler = "1.3.2"
 # TODO: Replace this with [Appyx](https://github.com/bumble-tech/appyx).
 # https://github.com/raamcosta/compose-destinations/releases.
 composeDestinations = "1.7.25-beta"
+##               ⬆ = "1.7.26-beta"
+##               ⬆ = "1.7.27-beta"
 composeFoundation = "1.2.1"
 ##             ⬆ = "1.3.0-alpha01"
 ##             ⬆ = "1.3.0-alpha02"
@@ -171,6 +175,8 @@ dagger = "2.42"
 ##  ⬆ = "2.43.1"
 ##  ⬆ = "2.43.2"
 ##  ⬆ = "2.44"
+##  ⬆ = "2.44.1"
+##  ⬆ = "2.44.2"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
@@ -180,6 +186,7 @@ hilt = "1.0.0"
 # https://kotlinlang.org/docs/releases.html#release-details.
 kotlin = "1.7.20"
 ##  ⬆ = "1.7.21"
+##  ⬆ = "1.8.0-Beta"
 coroutines = "1.6.4"
 
 # KSP
@@ -187,6 +194,7 @@ coroutines = "1.6.4"
 ksp = "1.7.20-1.0.7"
 ##⬆ = "1.7.20-1.0.8"
 ##⬆ = "1.7.21-1.0.8"
+##⬆ = "1.8.0-Beta-1.0.8"
 
 # Snapper
 # https://github.com/chrisbanes/snapper/releases.
@@ -199,6 +207,9 @@ junit = "4.13.2"
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.13.1"
+##              ⬆ = "1.14.0"
+##              ⬆ = "1.14.1"
+##              ⬆ = "1.15.0"
 
 [libraries]
 

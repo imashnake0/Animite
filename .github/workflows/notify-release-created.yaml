@@ -3,7 +3,7 @@ name: notify-build-debug-complete
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   on-complete:
