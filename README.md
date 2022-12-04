@@ -3,7 +3,7 @@
   <img src="resources/Media_Page_Pixel_5.png" width="49%" />
 </p>
 
-# Animite [![Build](https://github.com/imashnake0/Animite/actions/workflows/build.yaml/badge.svg)](https://github.com/imashnake0/Animite/actions/workflows/build.yaml)
+# Animite [![build-debug](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml/badge.svg)](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml)
 <a href="https://www.reddit.com/r/Animite/">
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="resources/reddit-assistive-chip-dark.svg">
