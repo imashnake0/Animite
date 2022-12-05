@@ -62,7 +62,7 @@ import com.imashnake.animite.R as Res
 )
 @Composable
 fun SearchFrontDrop(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     viewModel: SearchViewModel = viewModel(),
     navController: NavHostController
 ) {
@@ -246,7 +246,7 @@ fun ExpandedSearchBar(viewModel: SearchViewModel = viewModel()) {
 fun SearchList(
     // TODO: Handle nullability in [#67](https://github.com/imashnake0/Animite/pull/67).
     searchList: List<SearchQuery.Medium?>?,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     onClick: (Int?) -> Unit
 ) {
     // TODO: Improve this animation.
@@ -277,7 +277,11 @@ fun SearchList(
 }
 
 @Composable
-private fun SearchItem(item: SearchQuery.Medium?, onClick: (Int?) -> Unit, modifier: Modifier) {
+private fun SearchItem(
+    item: SearchQuery.Medium?,
+    onClick: (Int?) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Text(
         // TODO: Do something about this chain.
         text = item?.title?.romaji ?:
