@@ -22,6 +22,7 @@ desugaring = "1.2.2"
 accompanist = "0.26.5-rc"
 ##       ⬆ = "0.27.0"
 ##       ⬆ = "0.27.1"
+##       ⬆ = "0.28.0"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
@@ -41,6 +42,7 @@ agp = "7.3.1"
 ##⬆ = "7.4.0-beta03"
 ##⬆ = "7.4.0-beta04"
 ##⬆ = "7.4.0-beta05"
+##⬆ = "7.4.0-rc01"
 ##⬆ = "8.0.0-alpha01"
 ##⬆ = "8.0.0-alpha02"
 ##⬆ = "8.0.0-alpha03"
@@ -49,6 +51,7 @@ agp = "7.3.1"
 ##⬆ = "8.0.0-alpha06"
 ##⬆ = "8.0.0-alpha07"
 ##⬆ = "8.0.0-alpha08"
+##⬆ = "8.0.0-alpha09"
 
 # AndroidX
 # https://androidx.tech.
@@ -90,6 +93,7 @@ espresso = "3.4.0"
 apollo = "3.6.2"
 ##  ⬆ = "3.7.0"
 ##  ⬆ = "3.7.1"
+##  ⬆ = "3.7.2"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
@@ -104,8 +108,10 @@ composeAnimation = "1.3.0-alpha03"
 ##            ⬆ = "1.3.0-rc01"
 ##            ⬆ = "1.3.0"
 ##            ⬆ = "1.3.1"
+##            ⬆ = "1.3.2"
 ##            ⬆ = "1.4.0-alpha01"
 ##            ⬆ = "1.4.0-alpha02"
+##            ⬆ = "1.4.0-alpha03"
 # TODO: Create an issue!
 composeCompiler = "1.3.2"
 # TODO: Replace this with [Appyx](https://github.com/bumble-tech/appyx).
@@ -125,6 +131,7 @@ composeFoundation = "1.2.1"
 ##             ⬆ = "1.3.1"
 ##             ⬆ = "1.4.0-alpha01"
 ##             ⬆ = "1.4.0-alpha02"
+##             ⬆ = "1.4.0-alpha03"
 composeMaterial = "1.2.1"
 ##           ⬆ = "1.3.0-alpha01"
 ##           ⬆ = "1.3.0-alpha02"
@@ -137,12 +144,14 @@ composeMaterial = "1.2.1"
 ##           ⬆ = "1.3.1"
 ##           ⬆ = "1.4.0-alpha01"
 ##           ⬆ = "1.4.0-alpha02"
+##           ⬆ = "1.4.0-alpha03"
 composeMaterial3 = "1.0.0-beta03"
 ##            ⬆ = "1.0.0-rc01"
 ##            ⬆ = "1.0.0"
 ##            ⬆ = "1.0.1"
 ##            ⬆ = "1.1.0-alpha01"
 ##            ⬆ = "1.1.0-alpha02"
+##            ⬆ = "1.1.0-alpha03"
 composeRuntime = "1.2.1"
 ##          ⬆ = "1.3.0-alpha01"
 ##          ⬆ = "1.3.0-alpha02"
@@ -153,8 +162,10 @@ composeRuntime = "1.2.1"
 ##          ⬆ = "1.3.0-rc01"
 ##          ⬆ = "1.3.0"
 ##          ⬆ = "1.3.1"
+##          ⬆ = "1.3.2"
 ##          ⬆ = "1.4.0-alpha01"
 ##          ⬆ = "1.4.0-alpha02"
+##          ⬆ = "1.4.0-alpha03"
 composeUi = "1.2.1"
 ##     ⬆ = "1.3.0-alpha01"
 ##     ⬆ = "1.3.0-alpha02"
@@ -165,8 +176,10 @@ composeUi = "1.2.1"
 ##     ⬆ = "1.3.0-rc01"
 ##     ⬆ = "1.3.0"
 ##     ⬆ = "1.3.1"
+##     ⬆ = "1.3.2"
 ##     ⬆ = "1.4.0-alpha01"
 ##     ⬆ = "1.4.0-alpha02"
+##     ⬆ = "1.4.0-alpha03"
 
 # Dagger
 # https://github.com/google/dagger/releases.
@@ -181,12 +194,15 @@ dagger = "2.42"
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
 hilt = "1.0.0"
+##⬆ = "1.1.0-alpha01"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
 kotlin = "1.7.20"
 ##  ⬆ = "1.7.21"
+##  ⬆ = "1.7.22"
 ##  ⬆ = "1.8.0-Beta"
+##  ⬆ = "1.8.0-RC"
 coroutines = "1.6.4"
 
 # KSP
@@ -194,7 +210,9 @@ coroutines = "1.6.4"
 ksp = "1.7.20-1.0.7"
 ##⬆ = "1.7.20-1.0.8"
 ##⬆ = "1.7.21-1.0.8"
+##⬆ = "1.7.22-1.0.8"
 ##⬆ = "1.8.0-Beta-1.0.8"
+##⬆ = "1.8.0-RC-1.0.8"
 
 # Snapper
 # https://github.com/chrisbanes/snapper/releases.
@@ -210,6 +228,8 @@ dependencyAnalysis = "1.13.1"
 ##              ⬆ = "1.14.0"
 ##              ⬆ = "1.14.1"
 ##              ⬆ = "1.15.0"
+##              ⬆ = "1.16.0"
+##              ⬆ = "1.17.0"
 
 [libraries]
 
