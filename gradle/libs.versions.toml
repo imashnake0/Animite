@@ -80,22 +80,11 @@ composeDestinations = "1.7.27-beta"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.3.2"
-##            ⬆ = "1.4.0-alpha01"
-##            ⬆ = "1.4.0-alpha02"
-##            ⬆ = "1.4.0-alpha03"
+composeBom = "2022.12.00"
 # TODO: Create an issue!
 composeCompiler = "1.3.2"
 composeFoundation = "1.4.0-alpha03"
-composeMaterial = "1.3.1"
-##           ⬆ = "1.4.0-alpha01"
-##           ⬆ = "1.4.0-alpha02"
-##           ⬆ = "1.4.0-alpha03"
 composeMaterial3 = "1.1.0-alpha03"
-composeRuntime = "1.3.2"
-##          ⬆ = "1.4.0-alpha01"
-##          ⬆ = "1.4.0-alpha02"
-##          ⬆ = "1.4.0-alpha03"
 composeUi = "1.4.0-alpha03"
 
 # Dagger
@@ -146,13 +135,14 @@ androidx-coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "
 androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "composeDestinations" }
 compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "composeDestinations" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-animation = { group = "androidx.compose.animation", name = "animation" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
+compose-material = { group = "androidx.compose.material", name = "material" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
 compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
