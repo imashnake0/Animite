@@ -69,7 +69,9 @@ android {
 }
 
 apollo {
-    packageName.set("com.imashnake.animite")
+    service("anilist") {
+        packageName.set("com.imashnake.animite")
+    }
 }
 
 kapt {
