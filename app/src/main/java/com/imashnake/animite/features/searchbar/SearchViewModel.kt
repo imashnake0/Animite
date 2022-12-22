@@ -1,12 +1,12 @@
 package com.imashnake.animite.features.searchbar
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.repos.SearchRepository
-import com.imashnake.animite.features.searchbar.SearchUiState
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -32,13 +32,12 @@ class SearchViewModel @Inject constructor(
                     perPage = 10,
                     search = search
                 )
-
-                uiState = with(uiState) {
-                    copy(searchList = searchList)
-                }
+                uiState = uiState.copy(searchList = searchList)
             } catch (ioe: IOException) {
-                TODO()
+                Log.d("SearchViewModel", "Message: ${ioe.message ?: "Empty"}")
             }
         }
     }
+
+    fun clearList() { uiState = uiState.copy(searchList = null) }
 }
