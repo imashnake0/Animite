@@ -69,7 +69,9 @@ android {
 }
 
 apollo {
-    packageName.set("com.imashnake.animite")
+    service("anilist") {
+        packageName.set("com.imashnake.animite")
+    }
 }
 
 kapt {
@@ -91,6 +93,7 @@ dependencies {
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Compose
+    implementation(platform(libs.compose.bom))
     implementation(libs.compose.animation)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material)
@@ -133,5 +136,6 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espressoCore)
+    androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.test.ui.testJunit4)
 }
