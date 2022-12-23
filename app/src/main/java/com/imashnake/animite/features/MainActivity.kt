@@ -15,7 +15,12 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imeAnimationTarget
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
@@ -75,7 +80,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 @OptIn(
     ExperimentalAnimationApi::class,
-    ExperimentalMaterialNavigationApi::class
+    ExperimentalMaterialNavigationApi::class,
+    ExperimentalLayoutApi::class
 )
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberAnimatedNavController()
@@ -108,19 +114,29 @@ fun MainScreen(modifier: Modifier = Modifier) {
         }
 
         val searchBarBottomPadding: Dp by animateDpAsState(
-            targetValue = dimensionResource(R.dimen.large_padding) + if (
-                navBarVisible
-            ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp
+            targetValue = if (
+                // In case the navigation bar is visible, we additionally need the keyboard to not
+                // be visible *at all*.
+                // TODO: We can also instead use
+                //  max(searchBarPadding, WindowInsets.ime.asPaddingValues().calculateBottomPadding())
+                // Both have a slight jitter, but `imeAnimationTarget` feels snappier.
+                navBarVisible && WindowInsets
+                    .imeAnimationTarget
+                    .asPaddingValues()
+                    .calculateBottomPadding() == 0.dp
+            ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp,
         )
 
         SearchFrontDrop(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
+                .padding(bottom = dimensionResource(R.dimen.large_padding))
                 .padding(
                     start = dimensionResource(R.dimen.large_padding),
                     end = dimensionResource(R.dimen.large_padding),
                     bottom = searchBarBottomPadding
                 )
+                .imePadding()
                 .navigationBarsPadding(),
         )
 
