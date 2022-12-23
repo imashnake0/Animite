@@ -3,6 +3,7 @@ package com.imashnake.animite.core.ui
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -77,7 +78,11 @@ fun TextField(
             containerColor = backgroundColor,
             cursorColor = foregroundColor,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent
+            focusedIndicatorColor = Color.Transparent,
+            selectionColors = TextSelectionColors(
+                handleColor = foregroundColor,
+                backgroundColor = foregroundColor.copy(alpha = 0.3f)
+            )
         )
     )
 }
