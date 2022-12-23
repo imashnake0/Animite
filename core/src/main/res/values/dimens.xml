@@ -4,4 +4,6 @@
     <dimen name="progress_indicator_height">3dp</dimen>
 
     <dimen name="edge_gradient_size">8dp</dimen>
+
+    <dimen name="search_bar_icon_padding">16dp</dimen>
 </resources>
