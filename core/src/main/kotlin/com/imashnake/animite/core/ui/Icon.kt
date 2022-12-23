@@ -1,7 +1,7 @@
 package com.imashnake.animite.core.ui
 
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -27,7 +27,7 @@ fun IconButton(
 ) {
     IconButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.size(dimensionResource(R.dimen.icon_size)),
         colors = IconButtonDefaults.iconButtonColors(
             containerColor = backgroundColor,
             contentColor = foregroundColor
@@ -45,14 +45,14 @@ fun IconButton(
 fun Icon(
     imageVector: ImageVector,
     modifier: Modifier = Modifier,
-    contentDescription: String? = null,
-    tint: Color = MaterialTheme.colorScheme.onPrimary
+    tint: Color = MaterialTheme.colorScheme.onPrimary,
+    contentDescription: String? = null
 ) {
     Icon(
         imageVector = imageVector,
         contentDescription = contentDescription,
         modifier = modifier
-            .aspectRatio(1f)
+            .size(dimensionResource(R.dimen.icon_size))
             .padding(dimensionResource(R.dimen.search_bar_icon_padding)),
         tint = tint
     )

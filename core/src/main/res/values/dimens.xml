@@ -6,4 +6,5 @@
     <dimen name="edge_gradient_size">8dp</dimen>
 
     <dimen name="search_bar_icon_padding">16dp</dimen>
+    <dimen name="icon_size">56dp</dimen>
 </resources>
