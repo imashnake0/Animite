@@ -19,4 +19,5 @@
 
     <dimen name="search_bar_padding">16dp</dimen>
     <dimen name="search_list_padding">14dp</dimen>
+    <dimen name="search_bar_height">56dp</dimen>
 </resources>
