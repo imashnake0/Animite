@@ -22,12 +22,6 @@ object NetworkModule {
     @Provides
     fun providesNetworkDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
-    /*
-    todo apollo cache
-    @Provides
-    fun provideCacheFactory() = LruNormalizedCacheFactory(EvictionPolicy.builder().maxSizeBytes(10 * 1024 * 1024).build())*/
-
-
     @Provides
     @Singleton
     fun provideApolloClient(
