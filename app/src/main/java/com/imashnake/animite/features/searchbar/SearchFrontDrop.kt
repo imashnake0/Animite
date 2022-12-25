@@ -2,11 +2,15 @@ package com.imashnake.animite.features.searchbar
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -25,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,6 +44,7 @@ import com.imashnake.animite.R
 import com.imashnake.animite.core.ui.Icon
 import com.imashnake.animite.core.ui.IconButton
 import com.imashnake.animite.core.ui.TextField
+import com.imashnake.animite.dev.internal.Constants
 
 /**
  * TODO: Kdoc
@@ -52,14 +58,25 @@ fun SearchFrontDrop(
     hasExtraPadding: Boolean
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-
-    // This should ideally be in a modifier lambda to prevent recomposition. Unfortunately, we have
-    // nothing of the sort for padding. Open an issue?
+    // This should ideally be in a modifier lambda to prevent recomposition.
+    // Unfortunately, we have nothing of the sort for padding. Open an issue?
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = if (hasExtraPadding) {
             dimensionResource(R.dimen.navigation_bar_height)
-        } else 0.dp,
+        } else 0.dp
     )
+    var isFrontDropVisible by remember { mutableStateOf(false) }
+    val frontDropColor by animateColorAsState(
+        targetValue = MaterialTheme.colorScheme.background.copy(
+            alpha = if (isExpanded) 0.95f else 0f
+        ),
+        animationSpec = tween(Constants.CROSSFADE_DURATION),
+        finishedListener = {
+            isFrontDropVisible = false
+        }
+    )
+
+    Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
 
     Surface(
         color = MaterialTheme.colorScheme.primary,

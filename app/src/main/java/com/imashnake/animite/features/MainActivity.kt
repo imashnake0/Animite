@@ -82,7 +82,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         )
     )
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val navBarVisible = remember(currentBackStackEntry) {
+    val isNavBarVisible = remember(currentBackStackEntry) {
         currentBackStackEntry?.navGraph()?.startRoute == currentBackStackEntry?.route()
     }
 
@@ -111,11 +111,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     end = dimensionResource(R.dimen.large_padding),
                     bottom = dimensionResource(R.dimen.large_padding)
                 ),
-            hasExtraPadding = navBarVisible
+            hasExtraPadding = isNavBarVisible
         )
 
         AnimatedVisibility(
-            visible = navBarVisible,
+            visible = isNavBarVisible,
             modifier = Modifier.align(Alignment.BottomCenter),
             enter = slideInVertically { it },
             exit = slideOutVertically { it }
