@@ -22,12 +22,11 @@ import hct.Hct.Companion.from
  * A convenience class for retrieving colors that are constant in hue and chroma, but vary in tone.
  */
 class TonalPalette private constructor(hue: Double, chroma: Double) {
-    var cache: MutableMap<Int, Int>
+    var cache: MutableMap<Int, Int> = HashMap()
     var hue: Double
     var chroma: Double
 
     init {
-        cache = HashMap()
         this.hue = hue
         this.chroma = chroma
     }

@@ -39,7 +39,7 @@ import utils.ColorUtils
  * lighting environments.
  */
 class Hct private constructor(argb: Int) {
-    private var hue = 0.0
+    internal var hue = 0.0
     private var chroma = 0.0
     private var tone = 0.0
     private var argb = 0

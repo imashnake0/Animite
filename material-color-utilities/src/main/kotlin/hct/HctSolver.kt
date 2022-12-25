@@ -325,7 +325,7 @@ object HctSolver {
      */
     fun trueDelinearized(rgbComponent: Double): Double {
         val normalized = rgbComponent / 100.0
-        var delinearized: Double = if (normalized <= 0.0031308) {
+        val delinearized: Double = if (normalized <= 0.0031308) {
             normalized * 12.92
         } else {
             1.055 * normalized.pow(1.0 / 2.4) - 0.055
@@ -344,7 +344,7 @@ object HctSolver {
      * @param linrgb The linear RGB coordinates of a color.
      * @return The hue of the color in CAM16, in radians.
      */
-    fun hueOf(linrgb: DoubleArray?): Double {
+    fun hueOf(linrgb: DoubleArray): Double {
         val scaledDiscount = MathUtils.matrixMultiply(linrgb, SCALED_DISCOUNT_FROM_LINRGB)
         val rA = chromaticAdaptation(scaledDiscount[0])
         val gA = chromaticAdaptation(scaledDiscount[1])

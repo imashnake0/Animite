@@ -50,7 +50,8 @@ class Scheme {
     var inverseOnSurface = 0
     var inversePrimary = 0
 
-    constructor() {}
+    constructor()
+
     constructor(
         primary: Int,
         onPrimary: Int,
@@ -331,94 +332,91 @@ class Scheme {
         if (!super.equals(`object`)) {
             return false
         }
-        val scheme = `object`
-        if (primary != scheme.primary) {
+        if (primary != `object`.primary) {
             return false
         }
-        if (onPrimary != scheme.onPrimary) {
+        if (onPrimary != `object`.onPrimary) {
             return false
         }
-        if (primaryContainer != scheme.primaryContainer) {
+        if (primaryContainer != `object`.primaryContainer) {
             return false
         }
-        if (onPrimaryContainer != scheme.onPrimaryContainer) {
+        if (onPrimaryContainer != `object`.onPrimaryContainer) {
             return false
         }
-        if (secondary != scheme.secondary) {
+        if (secondary != `object`.secondary) {
             return false
         }
-        if (onSecondary != scheme.onSecondary) {
+        if (onSecondary != `object`.onSecondary) {
             return false
         }
-        if (secondaryContainer != scheme.secondaryContainer) {
+        if (secondaryContainer != `object`.secondaryContainer) {
             return false
         }
-        if (onSecondaryContainer != scheme.onSecondaryContainer) {
+        if (onSecondaryContainer != `object`.onSecondaryContainer) {
             return false
         }
-        if (tertiary != scheme.tertiary) {
+        if (tertiary != `object`.tertiary) {
             return false
         }
-        if (onTertiary != scheme.onTertiary) {
+        if (onTertiary != `object`.onTertiary) {
             return false
         }
-        if (tertiaryContainer != scheme.tertiaryContainer) {
+        if (tertiaryContainer != `object`.tertiaryContainer) {
             return false
         }
-        if (onTertiaryContainer != scheme.onTertiaryContainer) {
+        if (onTertiaryContainer != `object`.onTertiaryContainer) {
             return false
         }
-        if (error != scheme.error) {
+        if (error != `object`.error) {
             return false
         }
-        if (onError != scheme.onError) {
+        if (onError != `object`.onError) {
             return false
         }
-        if (errorContainer != scheme.errorContainer) {
+        if (errorContainer != `object`.errorContainer) {
             return false
         }
-        if (onErrorContainer != scheme.onErrorContainer) {
+        if (onErrorContainer != `object`.onErrorContainer) {
             return false
         }
-        if (background != scheme.background) {
+        if (background != `object`.background) {
             return false
         }
-        if (onBackground != scheme.onBackground) {
+        if (onBackground != `object`.onBackground) {
             return false
         }
-        if (surface != scheme.surface) {
+        if (surface != `object`.surface) {
             return false
         }
-        if (onSurface != scheme.onSurface) {
+        if (onSurface != `object`.onSurface) {
             return false
         }
-        if (surfaceVariant != scheme.surfaceVariant) {
+        if (surfaceVariant != `object`.surfaceVariant) {
             return false
         }
-        if (onSurfaceVariant != scheme.onSurfaceVariant) {
+        if (onSurfaceVariant != `object`.onSurfaceVariant) {
             return false
         }
-        if (outline != scheme.outline) {
+        if (outline != `object`.outline) {
             return false
         }
-        if (outlineVariant != scheme.outlineVariant) {
+        if (outlineVariant != `object`.outlineVariant) {
             return false
         }
-        if (shadow != scheme.shadow) {
+        if (shadow != `object`.shadow) {
             return false
         }
-        if (scrim != scheme.scrim) {
+        if (scrim != `object`.scrim) {
             return false
         }
-        if (inverseSurface != scheme.inverseSurface) {
+        if (inverseSurface != `object`.inverseSurface) {
             return false
         }
-        if (inverseOnSurface != scheme.inverseOnSurface) {
+        if (inverseOnSurface != `object`.inverseOnSurface) {
             return false
         }
-        return if (inversePrimary != scheme.inversePrimary) {
-            false
-        } else true
+        return inversePrimary == `object`.inversePrimary
     }
 
     override fun hashCode(): Int {

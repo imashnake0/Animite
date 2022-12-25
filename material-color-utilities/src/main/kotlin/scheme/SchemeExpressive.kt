@@ -29,10 +29,10 @@ class SchemeExpressive(sourceColorHct: Hct, isDark: Boolean, contrastLevel: Doub
         MathUtils.sanitizeDegreesDouble(sourceColorHct.hue + 120.0), 40.0
     ),
     TonalPalette.fromHueAndChroma(
-        DynamicScheme.Companion.getRotatedHue(sourceColorHct, HUES, SECONDARY_ROTATIONS), 24.0
+        getRotatedHue(sourceColorHct, HUES, SECONDARY_ROTATIONS), 24.0
     ),
     TonalPalette.fromHueAndChroma(
-        DynamicScheme.Companion.getRotatedHue(sourceColorHct, HUES, TERTIARY_ROTATIONS), 32.0
+        getRotatedHue(sourceColorHct, HUES, TERTIARY_ROTATIONS), 32.0
     ),
     TonalPalette.fromHueAndChroma(sourceColorHct.hue, 8.0),
     TonalPalette.fromHueAndChroma(sourceColorHct.hue, 12.0)

@@ -24,11 +24,11 @@ import kotlin.math.min
  * tones are generated, all except one use the same hue as the key color, and all vary in chroma.
  */
 class CorePalette private constructor(argb: Int, isContent: Boolean) {
-    var a1: TonalPalette? = null
-    var a2: TonalPalette? = null
-    var a3: TonalPalette? = null
-    var n1: TonalPalette? = null
-    var n2: TonalPalette? = null
+    var a1: TonalPalette
+    var a2: TonalPalette
+    var a3: TonalPalette
+    var n1: TonalPalette
+    var n2: TonalPalette
     var error: TonalPalette
 
     init {

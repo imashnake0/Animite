@@ -115,7 +115,7 @@ class Cam16
         val dA = astar - other.astar
         val dB = bstar - other.bstar
         val dEPrime = sqrt(dJ * dJ + dA * dA + dB * dB)
-        return 1.41 * Math.pow(dEPrime, 0.63)
+        return 1.41 * dEPrime.pow(0.63)
     }
 
     /**

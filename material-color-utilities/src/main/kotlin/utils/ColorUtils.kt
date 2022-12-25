@@ -244,7 +244,7 @@ object ColorUtils {
         val e = 216.0 / 24389.0
         val kappa = 24389.0 / 27.0
         return if (t > e) {
-            Math.pow(t, 1.0 / 3.0)
+            t.pow(1.0 / 3.0)
         } else {
             (kappa * t + 16) / 116
         }
