@@ -57,7 +57,7 @@ dependencies {
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Compose
     implementation(platform(libs.compose.bom))
@@ -71,8 +71,8 @@ dependencies {
     implementation(libs.compose.ui.toolingPreview)
 
     // Kotlin
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlin.coroutines.android)
+    implementation(libs.kotlin.coroutines.core)
 
     testImplementation(libs.test.junit)
 

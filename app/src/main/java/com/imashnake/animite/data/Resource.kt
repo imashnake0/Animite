@@ -5,12 +5,12 @@ sealed class Resource<T>(
     open val message: String? = null
 ) {
 
-    data class Success<T>(override val data: T & Any) : Resource<T>(data)
+    data class Success<T>(override val data: T) : Resource<T>(data)
     data class Error<T>(override val message: String?, override val data: T? = null) : Resource<T?>(data, message)
     class Loading<T> : Resource<T>(null)
 
     companion object {
-        fun <T> success(data: T & Any): Resource<T> {
+        fun <T> success(data: T): Resource<T> {
             return Success(data)
         }
 

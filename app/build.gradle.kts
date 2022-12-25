@@ -7,10 +7,8 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
-    kotlin(libs.plugins.parcelize.get().pluginId)
-    kotlin(libs.plugins.kapt.get().pluginId)
-    alias(libs.plugins.serialization)
+    alias(libs.plugins.ksp) version libs.versions.ksp.get()
+    kotlin("kapt")
 }
 
 android {
@@ -92,9 +90,7 @@ dependencies {
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.compose)
+    implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Compose
     implementation(platform(libs.compose.bom))
@@ -108,14 +104,16 @@ dependencies {
     implementation(libs.compose.ui.toolingPreview)
 
     // Apollo Kotlin
-    implementation(libs.apolloKotlin.runtime)
+    implementation(libs.apollo.runtime)
+    implementation(libs.apollo.cache.memory)
+    implementation(libs.apollo.cache.sqlite)
 
     // Coil
     implementation(libs.coil.compose)
 
     // Kotlin
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlin.coroutines.android)
+    implementation(libs.kotlin.coroutines.core)
     implementation(kotlin("reflect"))
 
     // Hilt
@@ -135,14 +133,6 @@ dependencies {
     // Compose Destinations
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)
-
-    // Room
-    implementation(libs.room)
-    implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
-
-    // Kotlin Serialization
-    implementation(libs.kotlinx.serialization)
 
     testImplementation(libs.test.junit)
 

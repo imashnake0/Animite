@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.repos.MediaListRepository
-import com.imashnake.animite.data.sauce.db.model.ListTag
 import com.imashnake.animite.dev.ext.nextSeason
 import com.imashnake.animite.dev.ext.season
 import com.imashnake.animite.type.MediaSort
@@ -41,7 +40,6 @@ class HomeViewModel @Inject constructor(
             mediaListRepository.getMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.TRENDING_DESC),
-                tag = ListTag.TRENDING
             )
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
@@ -53,7 +51,6 @@ class HomeViewModel @Inject constructor(
             mediaListRepository.getMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC),
-                tag = ListTag.POPULAR_SEASON,
                 season = now.month.season,
                 seasonYear = now.year
             )
@@ -66,7 +63,6 @@ class HomeViewModel @Inject constructor(
         .flatMapLatest { (mediaType, now) ->
             mediaListRepository.getMediaList(
                 mediaType = mediaType,
-                tag = ListTag.UPCOMING,
                 sort = listOf(MediaSort.POPULARITY_DESC),
                 season = now.month.season.nextSeason(now).first,
                 seasonYear = now.month.season.nextSeason(now).second
@@ -79,13 +75,13 @@ class HomeViewModel @Inject constructor(
         .flatMapLatest { mediaType ->
             mediaListRepository.getMediaList(
                 mediaType = mediaType,
-                tag = ListTag.POPULAR_ALL_TIME,
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
-    val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { lists ->
-        emit(lists.any { it is Resource.Loading })
-    }
+    val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) {
+        emit(it.any { it is Resource.Loading })
+    }.stateIn(viewModelScope, SharingStarted.Lazily, true)
+
 }

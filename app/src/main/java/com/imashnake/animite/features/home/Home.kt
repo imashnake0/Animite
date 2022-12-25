@@ -18,6 +18,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,6 +34,7 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
+import com.imashnake.animite.data.Resource
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
@@ -49,12 +52,12 @@ fun Home(
 ) {
     val homeMediaType = MediaType.ANIME
 
-    viewModel.populateMediaLists(homeMediaType)
+    viewModel.setMediaType(homeMediaType)
 
-    val trendingList = viewModel.uiState.trendingList?.media
-    val popularList = viewModel.uiState.popularList?.media
-    val upcomingList = viewModel.uiState.upcomingList?.media
-    val allTimePopularList = viewModel.uiState.allTimePopularList?.media
+    val trendingList by viewModel.trendingMedia.collectAsState()
+    val popularList by viewModel.popularMediaThisSeason.collectAsState()
+    val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
+    val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
     // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
     when {
@@ -126,7 +129,7 @@ fun Home(
                             verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
                         ) {
                             HomeRow(
-                                list = trendingList,
+                                list = (trendingList as? Resource.Success)?.data?.media.orEmpty(),
                                 title = stringResource(Res.string.trending_now),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -143,7 +146,7 @@ fun Home(
                             )
 
                             HomeRow(
-                                list = popularList,
+                                list = (popularList as? Resource.Success)?.data?.media.orEmpty(),
                                 title = stringResource(Res.string.popular_this_season),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -160,7 +163,7 @@ fun Home(
                             )
 
                             HomeRow(
-                                list = upcomingList,
+                                list = (upcomingList as? Resource.Success)?.data?.media.orEmpty(),
                                 title = stringResource(Res.string.upcoming_next_season),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -177,7 +180,7 @@ fun Home(
                             )
 
                             HomeRow(
-                                list = allTimePopularList,
+                                list = (allTimePopularList as? Resource.Success)?.data?.media.orEmpty(),
                                 title = stringResource(Res.string.all_time_popular),
                                 onItemClicked = {
                                     navigator.navigate(

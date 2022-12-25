@@ -8,6 +8,8 @@ import com.imashnake.animite.data.sauce.apis.MediaListApi
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlin.jvm.Throws
 
@@ -15,14 +17,14 @@ class ApolloMediaListApi @Inject constructor(
     private val apolloClient: ApolloClient
 ) : MediaListApi {
     @Throws(ApolloHttpException::class)
-    override suspend fun fetchMediaList(
+    override fun fetchMediaList(
         type: MediaType,
         page: Int,
         perPage: Int,
         sort: List<MediaSort>,
         season: MediaSeason?,
         seasonYear: Int?
-    ): MediaListQuery.Page? {
+    ): Flow<MediaListQuery.Page?> {
         return apolloClient
             .query(
                 MediaListQuery(
@@ -33,6 +35,8 @@ class ApolloMediaListApi @Inject constructor(
                     season = Optional.presentIfNotNull(season),
                     seasonYear = Optional.presentIfNotNull(seasonYear)
                 )
-            ).execute().data?.page
+            )
+            .toFlow()
+            .map { it.data?.page }
     }
 }

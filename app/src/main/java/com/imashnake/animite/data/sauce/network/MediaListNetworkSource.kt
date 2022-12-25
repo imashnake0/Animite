@@ -6,6 +6,7 @@ import com.imashnake.animite.data.sauce.apis.MediaListApi
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import kotlin.jvm.Throws
 
@@ -13,7 +14,7 @@ class MediaListNetworkSource @Inject constructor(
     private val mediaListApi: MediaListApi
 ) {
     @Throws(ApolloHttpException::class)
-    suspend fun fetchMediaList(
+    fun fetchMediaList(
         mediaType: MediaType,
         page: Int,
         perPage: Int,
@@ -21,7 +22,7 @@ class MediaListNetworkSource @Inject constructor(
         // Popular This Season.
         season: MediaSeason?,
         seasonYear: Int?
-    ): MediaListQuery.Page? {
+    ): Flow<MediaListQuery.Page?> {
         return mediaListApi.fetchMediaList(
             type = mediaType,
             page = page,
