@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2021 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package scheme;
+package utils
 
-/** Themes for Dynamic Color. */
-public enum Variant {
-  MONOCHROME,
-  NEUTRAL,
-  TONAL_SPOT,
-  VIBRANT,
-  EXPRESSIVE;
+/** Utility methods for string representations of colors.  */
+internal object StringUtils {
+    /**
+     * Hex string representing color, ex. #ff0000 for red.
+     *
+     * @param argb ARGB representation of a color.
+     */
+    fun hexFromArgb(argb: Int): String {
+        val red = ColorUtils.redFromArgb(argb)
+        val blue = ColorUtils.blueFromArgb(argb)
+        val green = ColorUtils.greenFromArgb(argb)
+        return String.format("#%02x%02x%02x", red, green, blue)
+    }
 }

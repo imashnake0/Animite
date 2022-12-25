@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package scheme
 
-package quantize;
-
-/** An interface to allow use of different color spaces by quantizers. */
-public interface PointProvider {
-  public double[] fromInt(int argb);
-
-  public int toInt(double[] point);
-
-  public double distance(double[] a, double[] b);
+/** Themes for Dynamic Color.  */
+enum class Variant {
+    MONOCHROME, NEUTRAL, TONAL_SPOT, VIBRANT, EXPRESSIVE
 }
