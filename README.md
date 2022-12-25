@@ -3,7 +3,7 @@
   <img src="resources/Media_Page_Pixel_5.png" width="49%" />
 </p>
 
-# Animite [![Build](https://github.com/imashnake0/Animite/actions/workflows/build.yaml/badge.svg)](https://github.com/imashnake0/Animite/actions/workflows/build.yaml)
+# Animite [![build-debug](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml/badge.svg)](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml)
 <a href="https://www.reddit.com/r/Animite/">
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="resources/reddit-assistive-chip-dark.svg">
@@ -28,79 +28,7 @@ The app tries to make use of the latest libraries and APIs:
 - **Gradle:** [Version catalogs](https://docs.gradle.org/current/userguide/platforms.html) and [refreshVersions](https://github.com/jmfayard/refreshVersions).
 
 ### Architecture
-At the moment, the app uses [Google's choice for app architecture](https://developer.android.com/topic/architecture), MVVM, since I don't know any better. The app has the following structure:
-<details>
-    <summary> 
-        <b> <code> tree </code> </b> 
-    </summary>
-    <p>
-        <pre>
-            <code>
-animite
-├── AnimiteApplication.kt
-├── data
-│   ├── repos
-│   │   ├── MediaListRepository.kt
-│   │   ├── MediaRepository.kt
-│   │   └── SearchRepository.kt
-│   └── sauce
-│       ├── apis
-│       │   ├── apollo
-│       │   │   ├── Apollo.kt
-│       │   │   ├── ApolloMediaApi.kt
-│       │   │   ├── ApolloMediaListApi.kt
-│       │   │   └── ApolloSearchApi.kt
-│       │   ├── MediaApi.kt
-│       │   ├── MediaListApi.kt
-│       │   └── SearchApi.kt
-│       ├── MediaListNetworkSource.kt
-│       ├── MediaNetworkSource.kt
-│       └── SearchNetworkSource.kt
-├── dev
-│   ├── ext
-│   │   ├── Int.kt
-│   │   ├── MediaSeason.kt
-│   │   ├── Modifier.kt
-│   │   ├── Month.kt
-│   │   └── String.kt
-│   └── internal
-│       └── Constants.kt
-├── di
-│   └── NetworkModule.kt
-└── features
-    ├── home
-    │   ├── Home.kt
-    │   ├── HomeTransitions.kt
-    │   ├── HomeUiState.kt
-    │   └── HomeViewModel.kt
-    ├── MainActivity.kt
-    ├── media
-    │   ├── MediaPage.kt
-    │   ├── MediaPageViewModel.kt
-    │   └── MediaUiState.kt
-    ├── navigationbar
-    │   └── NavigationBar.kt
-    ├── profile
-    │   ├── Profile.kt
-    │   └── ProfileTransitions.kt
-    ├── rslash
-    │   └── RSlash.kt
-    ├── searchbar
-    │   ├── SearchBar.kt
-    │   ├── SearchUiState.kt
-    │   └── SearchViewModel.kt
-    ├── theme
-    │   ├── Color.kt
-    │   ├── Shape.kt
-    │   ├── Theme.kt
-    │   └── Type.kt
-    └── ui
-        ├── MediaSmall.kt
-        └── ProgressIndicator.kt
-            </code>
-        </pre>
-    </p>
-</details>
+At the moment, the app uses [Google's choice for app architecture](https://developer.android.com/topic/architecture), MVVM, since I don't know any better.
 
 ## [License](https://github.com/imashnake0/Animite/blob/15eaac4a80c1e6eef3a4d6c861cab05670fb174b/LICENSE.txt)
 ```

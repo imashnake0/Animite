@@ -20,8 +20,8 @@ android {
         applicationId = "com.imashnake.animite"
         minSdk = 26
         targetSdk = 33
-        versionCode = 4
-        versionName = "0.0.1-alpha04"
+        versionCode = 5
+        versionName = "0.0.1-alpha05"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -71,7 +71,9 @@ android {
 }
 
 apollo {
-    packageName.set("com.imashnake.animite")
+    service("anilist") {
+        packageName.set("com.imashnake.animite")
+    }
 }
 
 kapt {
@@ -95,6 +97,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.compose)
 
     // Compose
+    implementation(platform(libs.compose.bom))
     implementation(libs.compose.animation)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material)
@@ -145,5 +148,6 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espressoCore)
+    androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.test.ui.testJunit4)
 }

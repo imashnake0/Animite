@@ -5,9 +5,6 @@
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kapt = { id = "kapt" }
-parcelize = { id = "plugin.parcelize" }
-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
@@ -22,9 +19,7 @@ desugaring = "1.2.2"
 
 # Accompanist
 # https://github.com/google/accompanist/releases.
-accompanist = "0.26.5-rc"
-##       ⬆ = "0.27.0"
-##       ⬆ = "0.27.1"
+accompanist = "0.28.0"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
@@ -44,6 +39,8 @@ agp = "7.3.1"
 ##⬆ = "7.4.0-beta03"
 ##⬆ = "7.4.0-beta04"
 ##⬆ = "7.4.0-beta05"
+##⬆ = "7.4.0-rc01"
+##⬆ = "7.4.0-rc02"
 ##⬆ = "8.0.0-alpha01"
 ##⬆ = "8.0.0-alpha02"
 ##⬆ = "8.0.0-alpha03"
@@ -52,149 +49,71 @@ agp = "7.3.1"
 ##⬆ = "8.0.0-alpha06"
 ##⬆ = "8.0.0-alpha07"
 ##⬆ = "8.0.0-alpha08"
+##⬆ = "8.0.0-alpha09"
+##⬆ = "8.0.0-alpha10"
 
 # AndroidX
 # https://androidx.tech.
-activity = "1.6.0"
-##    ⬆ = "1.6.1"
+activity = "1.6.1"
 ##    ⬆ = "1.7.0-alpha01"
 ##    ⬆ = "1.7.0-alpha02"
 core = "1.9.0"
-lifecycle = "2.6.0-alpha03"
-extJunit = "1.1.3"
-##    ⬆ = "1.1.4-alpha01"
-##    ⬆ = "1.1.4-alpha02"
-##    ⬆ = "1.1.4-alpha03"
-##    ⬆ = "1.1.4-alpha04"
-##    ⬆ = "1.1.4-alpha05"
-##    ⬆ = "1.1.4-alpha06"
-##    ⬆ = "1.1.4-alpha07"
-##    ⬆ = "1.1.4-beta01"
-##    ⬆ = "1.1.4-rc01"
-##    ⬆ = "1.1.4"
-espresso = "3.4.0"
-##    ⬆ = "3.5.0-alpha01"
-##    ⬆ = "3.5.0-alpha02"
-##    ⬆ = "3.5.0-alpha03"
-##    ⬆ = "3.5.0-alpha04"
-##    ⬆ = "3.5.0-alpha05"
-##    ⬆ = "3.5.0-alpha06"
-##    ⬆ = "3.5.0-alpha07"
-##    ⬆ = "3.5.0-beta01"
-##    ⬆ = "3.5.0-beta02"
-##    ⬆ = "3.5.0-rc01"
-##    ⬆ = "3.5.0"
+lifecycle = "2.5.1"
+##     ⬆ = "2.6.0-alpha01"
+##     ⬆ = "2.6.0-alpha02"
+##     ⬆ = "2.6.0-alpha03"
+extJunit = "1.1.4"
+espresso = "3.5.0"
 
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
-apollo = "3.6.2"
-##  ⬆ = "3.7.0"
-##  ⬆ = "3.7.1"
+apollo = "3.7.3"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
 coil = "2.2.2"
 
+# TODO: Replace this with [Appyx](https://github.com/bumble-tech/appyx).
+# Compose Destinations
+# https://github.com/raamcosta/compose-destinations/releases.
+composeDestinations = "1.7.27-beta"
+
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.3.0-alpha03"
-##            ⬆ = "1.3.0-beta01"
-##            ⬆ = "1.3.0-beta02"
-##            ⬆ = "1.3.0-beta03"
-##            ⬆ = "1.3.0-rc01"
-##            ⬆ = "1.3.0"
-##            ⬆ = "1.3.1"
-##            ⬆ = "1.4.0-alpha01"
-##            ⬆ = "1.4.0-alpha02"
+composeBom = "2022.12.00"
 # TODO: Create an issue!
 composeCompiler = "1.3.2"
-# TODO: Replace this with [Appyx](https://github.com/bumble-tech/appyx).
-# https://github.com/raamcosta/compose-destinations/releases.
-composeDestinations = "1.7.25-beta"
-##               ⬆ = "1.7.26-beta"
-##               ⬆ = "1.7.27-beta"
-composeFoundation = "1.2.1"
-##             ⬆ = "1.3.0-alpha01"
-##             ⬆ = "1.3.0-alpha02"
-##             ⬆ = "1.3.0-alpha03"
-##             ⬆ = "1.3.0-beta01"
-##             ⬆ = "1.3.0-beta02"
-##             ⬆ = "1.3.0-beta03"
-##             ⬆ = "1.3.0-rc01"
-##             ⬆ = "1.3.0"
-##             ⬆ = "1.3.1"
-##             ⬆ = "1.4.0-alpha01"
-##             ⬆ = "1.4.0-alpha02"
-composeMaterial = "1.2.1"
-##           ⬆ = "1.3.0-alpha01"
-##           ⬆ = "1.3.0-alpha02"
-##           ⬆ = "1.3.0-alpha03"
-##           ⬆ = "1.3.0-beta01"
-##           ⬆ = "1.3.0-beta02"
-##           ⬆ = "1.3.0-beta03"
-##           ⬆ = "1.3.0-rc01"
-##           ⬆ = "1.3.0"
-##           ⬆ = "1.3.1"
-##           ⬆ = "1.4.0-alpha01"
-##           ⬆ = "1.4.0-alpha02"
-composeMaterial3 = "1.0.0-beta03"
-##            ⬆ = "1.0.0-rc01"
-##            ⬆ = "1.0.0"
-##            ⬆ = "1.0.1"
-##            ⬆ = "1.1.0-alpha01"
-##            ⬆ = "1.1.0-alpha02"
-composeRuntime = "1.2.1"
-##          ⬆ = "1.3.0-alpha01"
-##          ⬆ = "1.3.0-alpha02"
-##          ⬆ = "1.3.0-alpha03"
-##          ⬆ = "1.3.0-beta01"
-##          ⬆ = "1.3.0-beta02"
-##          ⬆ = "1.3.0-beta03"
-##          ⬆ = "1.3.0-rc01"
-##          ⬆ = "1.3.0"
-##          ⬆ = "1.3.1"
-##          ⬆ = "1.4.0-alpha01"
-##          ⬆ = "1.4.0-alpha02"
-composeUi = "1.2.1"
-##     ⬆ = "1.3.0-alpha01"
-##     ⬆ = "1.3.0-alpha02"
-##     ⬆ = "1.3.0-alpha03"
-##     ⬆ = "1.3.0-beta01"
-##     ⬆ = "1.3.0-beta02"
-##     ⬆ = "1.3.0-beta03"
-##     ⬆ = "1.3.0-rc01"
-##     ⬆ = "1.3.0"
-##     ⬆ = "1.3.1"
-##     ⬆ = "1.4.0-alpha01"
-##     ⬆ = "1.4.0-alpha02"
+composeFoundation = "1.4.0-alpha03"
+composeMaterial3 = "1.1.0-alpha03"
+composeUi = "1.4.0-alpha03"
 
 # Dagger
 # https://github.com/google/dagger/releases.
-dagger = "2.42"
-##  ⬆ = "2.43"
-##  ⬆ = "2.43.1"
-##  ⬆ = "2.43.2"
-##  ⬆ = "2.44"
-##  ⬆ = "2.44.1"
-##  ⬆ = "2.44.2"
+dagger = "2.44.2"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
 hilt = "1.0.0"
+##⬆ = "1.1.0-alpha01"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
 kotlin = "1.7.20"
 ##  ⬆ = "1.7.21"
+##  ⬆ = "1.7.22"
 ##  ⬆ = "1.8.0-Beta"
+##  ⬆ = "1.8.0-RC"
+##  ⬆ = "1.8.0-RC2"
 coroutines = "1.6.4"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "1.7.20-1.0.7"
-##⬆ = "1.7.20-1.0.8"
+ksp = "1.7.20-1.0.8"
 ##⬆ = "1.7.21-1.0.8"
+##⬆ = "1.7.22-1.0.8"
 ##⬆ = "1.8.0-Beta-1.0.8"
+##⬆ = "1.8.0-RC-1.0.8"
+##⬆ = "1.8.0-RC2-1.0.8"
 
 # Snapper
 # https://github.com/chrisbanes/snapper/releases.
@@ -219,37 +138,32 @@ serialization = "1.4.1"
 
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
-dependencyAnalysis = "1.13.1"
-##              ⬆ = "1.14.0"
-##              ⬆ = "1.14.1"
-##              ⬆ = "1.15.0"
+dependencyAnalysis = "1.17.0"
 
 [libraries]
 
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
 androidx-activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidx-coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
-androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
-androidx-lifecycle-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "composeDestinations" }
 compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "composeDestinations" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-animation = { group = "androidx.compose.animation", name = "animation" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
-compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
+compose-material = { group = "androidx.compose.material", name = "material" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
 compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
 compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
 apolloKotlin-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
-kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
