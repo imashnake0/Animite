@@ -123,10 +123,6 @@ snapper = "0.3.0"
 # https://github.com/junit-team/junit4/releases.
 junit = "4.13.2"
 
-# Kotlinx-Serialization
-# https://kotlinlang.org/docs/serialization.html#example-json-serialization.
-serialization = "1.4.1"
-
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.17.0"
