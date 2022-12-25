@@ -2,10 +2,15 @@ package com.imashnake.animite.features.searchbar
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -27,6 +32,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
@@ -34,19 +40,36 @@ import com.imashnake.animite.core.ui.Icon
 import com.imashnake.animite.core.ui.IconButton
 import com.imashnake.animite.core.ui.TextField
 
-@OptIn(ExperimentalAnimationApi::class)
+/**
+ * TODO: Kdoc
+ * @param hasExtraPadding TODO: This causes recomposition! Probably wrap it in a lambda.
+ */
+@OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun SearchFrontDrop(
     modifier: Modifier = Modifier,
-    viewModel: SearchViewModel = viewModel()
+    viewModel: SearchViewModel = viewModel(),
+    hasExtraPadding: Boolean
 ) {
     var isExpanded by remember { mutableStateOf(false) }
+
+    // This should ideally be in a modifier lambda to prevent recomposition. Unfortunately, we have
+    // nothing of the sort for padding. Open an issue?
+    val searchBarBottomPadding: Dp by animateDpAsState(
+        targetValue = if (hasExtraPadding) {
+            dimensionResource(R.dimen.navigation_bar_height)
+        } else 0.dp,
+    )
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier
-            .imePadding()
+            .padding(bottom = searchBarBottomPadding)
             .navigationBarsPadding()
+            .consumeWindowInsets(
+                PaddingValues(bottom = searchBarBottomPadding)
+            )
+            .imePadding()
             .height(dimensionResource(R.dimen.search_bar_height)),
         shadowElevation = 20.dp,
         shape = CircleShape

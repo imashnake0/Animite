@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,11 +14,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -78,8 +71,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 @OptIn(
     ExperimentalAnimationApi::class,
-    ExperimentalMaterialNavigationApi::class,
-    ExperimentalLayoutApi::class
+    ExperimentalMaterialNavigationApi::class
 )
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberAnimatedNavController()
@@ -111,29 +103,15 @@ fun MainScreen(modifier: Modifier = Modifier) {
             )
         }
 
-        val searchBarBottomPadding: Dp by animateDpAsState(
-            targetValue = if (
-                // In case the navigation bar is visible, we additionally need the keyboard to not
-                // be visible *at all*.
-                // TODO: We can also instead use
-                //  max(searchBarPadding, WindowInsets.ime.asPaddingValues().calculateBottomPadding())
-                // Both have a slight jitter, but `imeAnimationTarget` feels snappier.
-                navBarVisible && WindowInsets
-                    .imeAnimationTarget
-                    .asPaddingValues()
-                    .calculateBottomPadding() == 0.dp
-            ) dimensionResource(R.dimen.navigation_bar_height) else 0.dp,
-        )
-
         SearchFrontDrop(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = dimensionResource(R.dimen.large_padding))
                 .padding(
                     start = dimensionResource(R.dimen.large_padding),
                     end = dimensionResource(R.dimen.large_padding),
-                    bottom = searchBarBottomPadding
+                    bottom = dimensionResource(R.dimen.large_padding)
                 ),
+            hasExtraPadding = navBarVisible
         )
 
         AnimatedVisibility(
