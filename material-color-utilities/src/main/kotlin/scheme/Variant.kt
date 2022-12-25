@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package scheme;
+package scheme
 
-/** Themes for Dynamic Color. */
-public enum Variant {
-  MONOCHROME,
-  NEUTRAL,
-  TONAL_SPOT,
-  VIBRANT,
-  EXPRESSIVE;
+/** Themes for Dynamic Color.  */
+enum class Variant {
+    MONOCHROME, NEUTRAL, TONAL_SPOT, VIBRANT, EXPRESSIVE
 }
