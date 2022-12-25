@@ -104,7 +104,9 @@ dependencies {
     implementation(libs.compose.ui.toolingPreview)
 
     // Apollo Kotlin
-    implementation(libs.apolloKotlin.runtime)
+    implementation(libs.apollo.runtime)
+    implementation(libs.apollo.cache.memory)
+    implementation(libs.apollo.cache.sqlite)
 
     // Coil
     implementation(libs.coil.compose)
