@@ -20,8 +20,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imeAnimationTarget
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -135,9 +133,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     start = dimensionResource(R.dimen.large_padding),
                     end = dimensionResource(R.dimen.large_padding),
                     bottom = searchBarBottomPadding
-                )
-                .imePadding()
-                .navigationBarsPadding(),
+                ),
         )
 
         AnimatedVisibility(

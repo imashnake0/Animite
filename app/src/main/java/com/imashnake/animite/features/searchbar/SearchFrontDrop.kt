@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -42,7 +44,10 @@ fun SearchFrontDrop(
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
-        modifier = modifier.height(dimensionResource(R.dimen.search_bar_height)),
+        modifier = modifier
+            .imePadding()
+            .navigationBarsPadding()
+            .height(dimensionResource(R.dimen.search_bar_height)),
         shadowElevation = 20.dp,
         shape = CircleShape
     ) {
