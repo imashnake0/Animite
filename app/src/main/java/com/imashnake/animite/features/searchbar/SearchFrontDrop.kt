@@ -70,14 +70,28 @@ fun SearchFrontDrop(
             dimensionResource(R.dimen.navigation_bar_height)
         } else 0.dp
     )
+    var isFrontDropVisible by remember { mutableStateOf(false) }
     val frontDropColor by animateColorAsState(
         targetValue = MaterialTheme.colorScheme.background.copy(
             alpha = if (isExpanded) 0.95f else 0f
         ),
-        animationSpec = tween(Constants.CROSSFADE_DURATION)
+        animationSpec = tween(Constants.CROSSFADE_DURATION),
+        finishedListener = {
+            isFrontDropVisible = false
+        }
     )
 
-    Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
+    if (isExpanded || isFrontDropVisible) {
+        Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) }) {
+            if (isExpanded) {
+                val searchList = viewModel.uiState.searchList?.media
+                SearchList(
+                    searchList = searchList,
+                    onClick = {}
+                )
+            }
+        }
+    }
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
@@ -95,7 +109,11 @@ fun SearchFrontDrop(
         AnimatedContent(targetState = isExpanded) { targetExpanded ->
             if (targetExpanded) {
                 ExpandedSearchBarContent(
-                    collapse = { isExpanded = !isExpanded },
+                    collapse = {
+                        isExpanded = !isExpanded
+                        isFrontDropVisible = !isFrontDropVisible
+                        viewModel.clearList()
+                    },
                     clearText = { viewModel.clearList() },
                     searchText = { viewModel.searchAnime(it) }
                 )
