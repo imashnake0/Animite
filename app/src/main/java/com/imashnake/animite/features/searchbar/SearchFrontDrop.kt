@@ -70,15 +70,11 @@ fun SearchFrontDrop(
             dimensionResource(R.dimen.navigation_bar_height)
         } else 0.dp
     )
-    var isFrontDropVisible by remember { mutableStateOf(false) }
     val frontDropColor by animateColorAsState(
         targetValue = MaterialTheme.colorScheme.background.copy(
             alpha = if (isExpanded) 0.95f else 0f
         ),
-        animationSpec = tween(Constants.CROSSFADE_DURATION),
-        finishedListener = {
-            isFrontDropVisible = false
-        }
+        animationSpec = tween(Constants.CROSSFADE_DURATION)
     )
 
     Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
