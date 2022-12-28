@@ -46,6 +46,7 @@ val AnimiteTypography = Typography(
         letterSpacing = 0.2.sp
     ),
     // - [MediaPage]: Media description.
+    // - [SearchItem]: Search list item footer.
     bodyMedium = TextStyle(
         fontSize = 14.sp,
         fontFamily = manropeFamily,
@@ -53,6 +54,7 @@ val AnimiteTypography = Typography(
         lineHeight = 22.sp
     ),
     // - [MediaPage]: Stat label.
+    // - [SearchItem]: Search list item season year.
     labelSmall = TextStyle(
         fontSize = 12.sp,
         fontFamily = manropeFamily,
@@ -65,6 +67,7 @@ val AnimiteTypography = Typography(
         fontWeight = FontWeight.Bold
     ),
     // - [MediaPage]: Genre.
+    // - [SearchItem]: Search list item labels.
     labelMedium = TextStyle(
         fontWeight = FontWeight.Medium,
         letterSpacing = (1.3).sp

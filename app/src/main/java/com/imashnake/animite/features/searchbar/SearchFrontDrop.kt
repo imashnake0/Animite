@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.searchbar
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -10,20 +11,29 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
@@ -46,6 +56,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -55,6 +66,8 @@ import com.imashnake.animite.core.ui.Icon
 import com.imashnake.animite.core.ui.IconButton
 import com.imashnake.animite.core.ui.TextField
 import com.imashnake.animite.dev.internal.Constants
+import com.imashnake.animite.features.ui.MediaSmall
+import com.imashnake.animite.type.MediaFormat
 
 /**
  * TODO: Kdoc
@@ -91,8 +104,12 @@ fun SearchFrontDrop(
     ) {
         SearchList(
             searchList = viewModel.uiState.searchList?.media,
-            modifier = Modifier.imeNestedScroll().statusBarsPadding().fillMaxSize(),
-            onClick = {}
+            modifier = Modifier
+                .imeNestedScroll()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .fillMaxSize(),
+            onItemClick = {}
         )
     }
 
@@ -190,23 +207,26 @@ fun SearchList(
     // TODO: Handle nullability in [#67](https://github.com/imashnake0/Animite/pull/67).
     searchList: List<SearchQuery.Medium?>?,
     modifier: Modifier = Modifier,
-    onClick: (Int?) -> Unit
+    onItemClick: (Int?) -> Unit
 ) {
     if (!searchList.isNullOrEmpty()) {
         LazyColumn(
             modifier = modifier,
             contentPadding = PaddingValues(
-                start = dimensionResource(R.dimen.medium_padding),
-                end = dimensionResource(R.dimen.medium_padding),
+                start = dimensionResource(R.dimen.large_padding),
+                end = dimensionResource(R.dimen.large_padding),
+                top = dimensionResource(R.dimen.large_padding),
                 bottom = dimensionResource(R.dimen.search_bar_height)
                         + dimensionResource(R.dimen.large_padding)
                         + dimensionResource(R.dimen.large_padding)
-            )
+                        + dimensionResource(R.dimen.navigation_bar_height)
+            ),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
         ) {
             items(searchList.size, key = { searchList[it]!!.id }) {
                 SearchItem(
                     item = searchList[it],
-                    onClick = onClick,
+                    onClick = onItemClick,
                     modifier = Modifier.animateItemPlacement()
                 )
             }
@@ -220,20 +240,69 @@ private fun SearchItem(
     onClick: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Text(
-        // TODO: Do something about this chain.
-        text = item?.title?.romaji ?:
-        item?.title?.english ?:
-        item?.title?.native.orEmpty(),
-        color = MaterialTheme.colorScheme.onBackground,
-        style = MaterialTheme.typography.labelLarge,
-        maxLines = 1,
+    Row(
         modifier = modifier
-            .clip(CircleShape)
-            .clickable {
-                onClick(item?.id)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
+            .clickable { onClick(item?.id) }
+    ) {
+        MediaSmall(
+            image = item?.coverImage?.extraLarge,
+            onClick = { Log.d("CharacterId", "${item?.id}") },
+            modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
+        )
+
+        Column(Modifier.padding(horizontal = dimensionResource(R.dimen.small_padding))) {
+            Text(
+                // TODO: Do something about this chain.
+                text = item?.title?.romaji ?:
+                item?.title?.english ?:
+                item?.title?.native.orEmpty(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 2
+            )
+            Text(
+                text = "${item?.season?.rawValue?.lowercase()?.replaceFirstChar { it.uppercase() }} ${item?.seasonYear}",
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelSmall
+            )
+
+            Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
+
+            if (item?.studios?.nodes?.isEmpty() == false) {
+                Text(
+                    text = item.studios.nodes.map { it?.name }.joinToString(separator = ", "),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
-            .padding(dimensionResource(R.dimen.search_list_padding))
-            .fillMaxSize()
-    )
+            Row(horizontalArrangement = Arrangement.SpaceAround) {
+                if (item?.format != null && item.format != MediaFormat.UNKNOWN__) {
+                    Text(
+                        text = "${item.format.rawValue.replace("_", " ")} ꞏ " ,
+                        color = MaterialTheme.colorScheme.onBackground.copy(
+                            alpha = ContentAlpha.medium
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                if (item?.episodes != null) {
+                    Text(
+                        text = "${item.episodes} episodes",
+                        color = MaterialTheme.colorScheme.onBackground.copy(
+                            alpha = ContentAlpha.medium
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
 }
