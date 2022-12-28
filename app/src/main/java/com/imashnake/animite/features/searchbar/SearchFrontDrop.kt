@@ -1,10 +1,13 @@
 package com.imashnake.animite.features.searchbar
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,9 +16,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -70,27 +75,25 @@ fun SearchFrontDrop(
             dimensionResource(R.dimen.navigation_bar_height)
         } else 0.dp
     )
-    var isFrontDropVisible by remember { mutableStateOf(false) }
     val frontDropColor by animateColorAsState(
         targetValue = MaterialTheme.colorScheme.background.copy(
             alpha = if (isExpanded) 0.95f else 0f
         ),
-        animationSpec = tween(Constants.CROSSFADE_DURATION),
-        finishedListener = {
-            isFrontDropVisible = false
-        }
+        animationSpec = tween(Constants.CROSSFADE_DURATION)
     )
 
-    if (isExpanded || isFrontDropVisible) {
-        Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) }) {
-            if (isExpanded) {
-                val searchList = viewModel.uiState.searchList?.media
-                SearchList(
-                    searchList = searchList,
-                    onClick = {}
-                )
-            }
-        }
+    Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
+
+    AnimatedVisibility(
+        visible = isExpanded,
+        enter = fadeIn(tween(Constants.CROSSFADE_DURATION)),
+        exit = fadeOut(tween(Constants.CROSSFADE_DURATION))
+    ) {
+        SearchList(
+            searchList = viewModel.uiState.searchList?.media,
+            modifier = Modifier.imeNestedScroll().statusBarsPadding().fillMaxSize(),
+            onClick = {}
+        )
     }
 
     Surface(
@@ -111,7 +114,6 @@ fun SearchFrontDrop(
                 ExpandedSearchBarContent(
                     collapse = {
                         isExpanded = !isExpanded
-                        isFrontDropVisible = !isFrontDropVisible
                         viewModel.clearList()
                     },
                     clearText = { viewModel.clearList() },
