@@ -33,12 +33,16 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
+import com.imashnake.animite.features.destinations.MediaPageDestination
+import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
+import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.utils.navGraph
 import com.ramcosta.composedestinations.utils.route
 import dagger.hilt.android.AndroidEntryPoint
@@ -111,7 +115,17 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     end = dimensionResource(R.dimen.large_padding),
                     bottom = dimensionResource(R.dimen.large_padding)
                 ),
-            hasExtraPadding = isNavBarVisible
+            hasExtraPadding = isNavBarVisible,
+            onItemClick = {
+                navController.navigate(
+                    MediaPageDestination(
+                        MediaPageArgs(
+                            it!!,
+                            MediaType.ANIME.rawValue
+                        )
+                    )
+                )
+            }
         )
 
         AnimatedVisibility(

@@ -1,6 +1,5 @@
 package com.imashnake.animite.features.searchbar
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -78,7 +77,8 @@ import com.imashnake.animite.type.MediaFormat
 fun SearchFrontDrop(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = viewModel(),
-    hasExtraPadding: Boolean
+    hasExtraPadding: Boolean,
+    onItemClick: (Int?) -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     // This should ideally be in a modifier lambda to prevent recomposition.
@@ -109,7 +109,11 @@ fun SearchFrontDrop(
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .fillMaxSize(),
-            onItemClick = {}
+            onItemClick = {
+                isExpanded = !isExpanded
+                viewModel.clearList()
+                onItemClick(it)
+            }
         )
     }
 
@@ -248,7 +252,7 @@ private fun SearchItem(
     ) {
         MediaSmall(
             image = item?.coverImage?.extraLarge,
-            onClick = { Log.d("CharacterId", "${item?.id}") },
+            onClick = { onClick(item?.id) },
             modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
         )
 
