@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
     val trendingMedia = mediaType
         .filterNotNull()
         .map { mediaType ->
-            mediaListRepository.getMediaList(
+            mediaListRepository.fetchMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.TRENDING_DESC),
             )
@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
         .filterNotNull()
         .combine(now, ::Pair)
         .map { (mediaType, now) ->
-            mediaListRepository.getMediaList(
+            mediaListRepository.fetchMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC),
                 season = now.month.season,
@@ -61,7 +61,7 @@ class HomeViewModel @Inject constructor(
         .filterNotNull()
         .combine(now, ::Pair)
         .map { (mediaType, now) ->
-            mediaListRepository.getMediaList(
+            mediaListRepository.fetchMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC),
                 season = now.month.season.nextSeason(now).first,
@@ -73,7 +73,7 @@ class HomeViewModel @Inject constructor(
     val allTimePopular = mediaType
         .filterNotNull()
         .map { mediaType ->
-            mediaListRepository.getMediaList(
+            mediaListRepository.fetchMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )
