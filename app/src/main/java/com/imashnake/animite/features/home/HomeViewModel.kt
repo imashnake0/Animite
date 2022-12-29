@@ -15,13 +15,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-@OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel @Inject constructor(
     private val mediaListRepository: MediaListRepository,
     private val savedStateHandle: SavedStateHandle
@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(
 
     val trendingMedia = mediaType
         .filterNotNull()
-        .flatMapLatest { mediaType ->
+        .map { mediaType ->
             mediaListRepository.getMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.TRENDING_DESC),
@@ -47,7 +47,7 @@ class HomeViewModel @Inject constructor(
     val popularMediaThisSeason = mediaType
         .filterNotNull()
         .combine(now, ::Pair)
-        .flatMapLatest { (mediaType, now) ->
+        .map { (mediaType, now) ->
             mediaListRepository.getMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC),
@@ -60,7 +60,7 @@ class HomeViewModel @Inject constructor(
     val upcomingMediaNextSeason = mediaType
         .filterNotNull()
         .combine(now, ::Pair)
-        .flatMapLatest { (mediaType, now) ->
+        .map { (mediaType, now) ->
             mediaListRepository.getMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC),
@@ -72,7 +72,7 @@ class HomeViewModel @Inject constructor(
 
     val allTimePopular = mediaType
         .filterNotNull()
-        .flatMapLatest { mediaType ->
+        .map { mediaType ->
             mediaListRepository.getMediaList(
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC)
