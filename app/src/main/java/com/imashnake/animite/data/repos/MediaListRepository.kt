@@ -3,17 +3,16 @@ package com.imashnake.animite.data.repos
 import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.Resource.Companion.asResource
-import com.imashnake.animite.data.sauce.network.MediaListNetworkSource
+import com.imashnake.animite.data.sauce.apis.MediaListApi
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 import javax.inject.Inject
 
 class MediaListRepository @Inject constructor(
-    private val mediaListNetworkSource: MediaListNetworkSource
+    private val mediaListApi: MediaListApi
 ) {
-
-    suspend fun getMediaList(
+    suspend fun fetchMediaList(
         mediaType: MediaType,
         sort: List<MediaSort>,
         page: Int = 0,
@@ -21,8 +20,8 @@ class MediaListRepository @Inject constructor(
         season: MediaSeason? = null,
         seasonYear: Int? = null
     ): Resource<MediaListQuery.Page?> {
-        return mediaListNetworkSource.fetchMediaList(
-            mediaType = mediaType,
+        return mediaListApi.fetchMediaList(
+            type = mediaType,
             page = page,
             perPage = perPage,
             sort = sort,
