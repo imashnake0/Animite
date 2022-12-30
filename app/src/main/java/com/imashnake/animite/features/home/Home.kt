@@ -62,9 +62,9 @@ fun Home(
     // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
     when {
         trendingList is Resource.Success &&
-            popularList is Resource.Success &&
-            upcomingList is Resource.Success &&
-            allTimePopularList is Resource.Success -> {
+        popularList is Resource.Success &&
+        upcomingList is Resource.Success &&
+        allTimePopularList is Resource.Success -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
