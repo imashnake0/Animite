@@ -77,10 +77,10 @@ import com.imashnake.animite.type.MediaFormat
 @OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun SearchFrontDrop(
-    modifier: Modifier = Modifier,
-    viewModel: SearchViewModel = viewModel(),
     hasExtraPadding: Boolean,
-    onItemClick: (Int?) -> Unit
+    onItemClick: (Int?) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SearchViewModel = viewModel()
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     val searchBarBottomPadding: Dp by animateDpAsState(

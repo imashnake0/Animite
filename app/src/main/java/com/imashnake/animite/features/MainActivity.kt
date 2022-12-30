@@ -108,13 +108,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
         }
 
         SearchFrontDrop(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    start = dimensionResource(R.dimen.large_padding),
-                    end = dimensionResource(R.dimen.large_padding),
-                    bottom = dimensionResource(R.dimen.large_padding)
-                ),
             hasExtraPadding = isNavBarVisible,
             onItemClick = {
                 navController.navigate(
@@ -125,7 +118,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         )
                     )
                 )
-            }
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(
+                    start = dimensionResource(R.dimen.large_padding),
+                    end = dimensionResource(R.dimen.large_padding),
+                    bottom = dimensionResource(R.dimen.large_padding)
+                )
         )
 
         AnimatedVisibility(
