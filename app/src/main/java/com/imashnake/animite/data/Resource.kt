@@ -39,11 +39,11 @@ sealed class Resource<T>(
          * TODO: Should require a mapper rather than a higher order lambda to provide access to the [ApolloResponse.data]
          */
         fun <T : Operation.Data, R> Flow<ApolloResponse<T>>.asResource(mapper: (T) -> R = { it as R }): Flow<Resource<R?>> {
-            return map {
-                if (it.data != null) {
-                    success<R?>(mapper(it.dataAssertNoErrors))
-                } else if (it.hasErrors()) {
-                    error(it.errors?.toString().orEmpty())
+            return map { response ->
+                if (response.data != null) {
+                    success<R?>(mapper(response.dataAssertNoErrors))
+                } else if (response.hasErrors()) {
+                    error(response.errors!!.joinToString { it.toString() })
                 } else {
                     noDataError()
                 }
