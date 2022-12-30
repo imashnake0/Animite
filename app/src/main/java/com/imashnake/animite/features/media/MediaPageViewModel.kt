@@ -68,7 +68,6 @@ class MediaPageViewModel @Inject constructor(
                     )
                 }
             } catch(ioe: IOException) {
-                ioe.printStackTrace()
                 TODO()
             }
         }
