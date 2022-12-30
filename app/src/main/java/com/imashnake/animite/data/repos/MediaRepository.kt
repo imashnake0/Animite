@@ -17,6 +17,6 @@ class MediaRepository @Inject constructor(
         // TODO: Is there a better way to "wait for animations to complete"?
         return mediaApi.fetchMedia(id, mediaType)
             .onStart { delay(100) }
-            .asResource { it.media }
+            .asResource { data -> data.media }
     }
 }

@@ -28,6 +28,6 @@ class MediaListRepository @Inject constructor(
             sort = sort,
             season = season,
             seasonYear = seasonYear
-        ).asResource { it.page }
+        ).asResource { data -> data.page }
     }
 }
