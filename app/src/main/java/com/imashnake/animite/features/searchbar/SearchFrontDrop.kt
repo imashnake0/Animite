@@ -83,8 +83,6 @@ fun SearchFrontDrop(
     onItemClick: (Int?) -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    // This should ideally be in a modifier lambda to prevent recomposition.
-    // Unfortunately, we have nothing of the sort for padding. Open an issue?
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = if (hasExtraPadding) {
             dimensionResource(R.dimen.navigation_bar_height)
