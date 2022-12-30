@@ -20,7 +20,7 @@ class ApolloMediaApi @Inject constructor(
     private val apolloClient: ApolloClient
 ) : MediaApi {
 
-    override suspend fun fetchMedia(id: Int?, mediaType: MediaType): Flow<ApolloResponse<MediaQuery.Data>> {
+    override fun fetchMedia(id: Int?, mediaType: MediaType): Flow<ApolloResponse<MediaQuery.Data>> {
         return apolloClient
             .query(
                 MediaQuery(

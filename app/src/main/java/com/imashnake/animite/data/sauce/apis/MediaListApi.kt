@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MediaListApi {
 
-    suspend fun fetchMediaList(
+    fun fetchMediaList(
         type: MediaType,
         page: Int,
         perPage: Int,

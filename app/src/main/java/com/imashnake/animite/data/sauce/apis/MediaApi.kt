@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface MediaApi {
 
-    suspend fun fetchMedia(id: Int?, mediaType: MediaType): Flow<ApolloResponse<MediaQuery.Data>>
+    fun fetchMedia(id: Int?, mediaType: MediaType): Flow<ApolloResponse<MediaQuery.Data>>
 }

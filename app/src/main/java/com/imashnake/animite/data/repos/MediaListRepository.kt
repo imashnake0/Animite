@@ -13,7 +13,7 @@ import javax.inject.Inject
 class MediaListRepository @Inject constructor(
     private val mediaListApi: MediaListApi
 ) {
-    suspend fun fetchMediaList(
+    fun fetchMediaList(
         mediaType: MediaType,
         sort: List<MediaSort>,
         page: Int = 0,

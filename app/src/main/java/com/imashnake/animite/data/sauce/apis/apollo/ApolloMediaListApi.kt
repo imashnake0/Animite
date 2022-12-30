@@ -16,7 +16,7 @@ class ApolloMediaListApi @Inject constructor(
     private val apolloClient: ApolloClient
 ) : MediaListApi {
 
-    override suspend fun fetchMediaList(
+    override fun fetchMediaList(
         type: MediaType,
         page: Int,
         perPage: Int,
