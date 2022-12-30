@@ -3,11 +3,13 @@ package com.imashnake.animite.data.sauce.apis.apollo
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.cache.normalized.executeCacheAndNetwork
 import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.data.sauce.apis.MediaListApi
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ApolloMediaListApi @Inject constructor(
@@ -21,7 +23,7 @@ class ApolloMediaListApi @Inject constructor(
         sort: List<MediaSort>,
         season: MediaSeason?,
         seasonYear: Int?
-    ): ApolloResponse<MediaListQuery.Data> {
+    ): Flow<ApolloResponse<MediaListQuery.Data>> {
         return apolloClient
             .query(
                 MediaListQuery(
@@ -33,6 +35,6 @@ class ApolloMediaListApi @Inject constructor(
                     seasonYear = Optional.presentIfNotNull(seasonYear)
                 )
             )
-            .execute()
+            .executeCacheAndNetwork()
     }
 }

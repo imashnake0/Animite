@@ -5,6 +5,7 @@ import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
+import kotlinx.coroutines.flow.Flow
 
 interface MediaListApi {
 
@@ -15,7 +16,7 @@ interface MediaListApi {
         sort: List<MediaSort>,
         season: MediaSeason?,
         seasonYear: Int?
-    ): ApolloResponse<MediaListQuery.Data>
+    ): Flow<ApolloResponse<MediaListQuery.Data>>
 
     // And potentially other functions that help sort/modify the list.
 }

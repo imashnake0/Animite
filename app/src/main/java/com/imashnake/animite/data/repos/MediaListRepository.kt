@@ -7,6 +7,7 @@ import com.imashnake.animite.data.sauce.apis.MediaListApi
 import com.imashnake.animite.type.MediaSeason
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MediaListRepository @Inject constructor(
@@ -19,7 +20,7 @@ class MediaListRepository @Inject constructor(
         perPage: Int = 10,
         season: MediaSeason? = null,
         seasonYear: Int? = null
-    ): Resource<MediaListQuery.Page?> {
+    ): Flow<Resource<MediaListQuery.Page?>> {
         return mediaListApi.fetchMediaList(
             type = mediaType,
             page = page,

@@ -14,6 +14,7 @@ import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.type.MediaRankType
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -32,7 +33,7 @@ class MediaPageViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val mediaType = MediaType.safeValueOf(navArgs.mediaType)
-                val media = mediaRepository.fetchMedia(navArgs.id, mediaType)
+                val media = mediaRepository.fetchMedia(navArgs.id, mediaType).singleOrNull()?.data // temporary until this VM is switched to StateFlows
 
                 val score = media?.averageScore?.let { listOf(Stat(StatLabel.SCORE, it)) }
 
@@ -67,6 +68,7 @@ class MediaPageViewModel @Inject constructor(
                     )
                 }
             } catch(ioe: IOException) {
+                ioe.printStackTrace()
                 TODO()
             }
         }
