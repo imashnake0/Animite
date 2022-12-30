@@ -80,8 +80,8 @@ class HomeViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
-    val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) {
-        emit(it.any { it is Resource.Loading })
+    val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { resources ->
+        emit(!resources.none { it is Resource.Loading })
     }.stateIn(viewModelScope, SharingStarted.Lazily, true)
 
 }

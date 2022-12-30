@@ -58,152 +58,158 @@ fun Home(
     val popularList by viewModel.popularMediaThisSeason.collectAsState()
     val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
 
     // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
-    if (!isLoading) {
-        val scrollState = rememberScrollState()
-        TranslucentStatusBarLayout(
-            scrollState = scrollState,
-            distanceUntilAnimated = dimensionResource(Res.dimen.banner_height)
-        ) {
-            Box(
-                modifier = Modifier
-                    .verticalScroll(scrollState)
-                    .navigationBarsPadding()
+    when {
+        trendingList is Resource.Success &&
+            popularList is Resource.Success &&
+            upcomingList is Resource.Success &&
+            allTimePopularList is Resource.Success -> {
+            val scrollState = rememberScrollState()
+            TranslucentStatusBarLayout(
+                scrollState = scrollState,
+                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height)
             ) {
-                Box {
-                    Image(
-                        painter = painterResource(Res.drawable.background),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(dimensionResource(Res.dimen.banner_height))
-                            .bannerParallax(scrollState),
-                        contentScale = ContentScale.Crop,
-                        alignment = Alignment.TopCenter
-                    )
+                Box(
+                    modifier = Modifier
+                        .verticalScroll(scrollState)
+                        .navigationBarsPadding()
+                ) {
+                    Box {
+                        Image(
+                            painter = painterResource(Res.drawable.background),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(dimensionResource(Res.dimen.banner_height))
+                                .bannerParallax(scrollState),
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.TopCenter
+                        )
 
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        Color.Transparent,
-                                        MaterialTheme.colorScheme.secondaryContainer.copy(
-                                            alpha = 0.5f
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(
+                                            Color.Transparent,
+                                            MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                alpha = 0.5f
+                                            )
                                         )
                                     )
                                 )
+                                .fillMaxWidth()
+                                .height(dimensionResource(Res.dimen.banner_height))
+                        ) { }
+
+                        Text(
+                            text = stringResource(Res.string.okaeri),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                            style = MaterialTheme.typography.displayMedium,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(
+                                    start = dimensionResource(Res.dimen.large_padding),
+                                    bottom = dimensionResource(Res.dimen.medium_padding)
+                                )
+                                .landscapeCutoutPadding()
+                        )
+                    }
+
+                    Column {
+                        Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
+
+                        Column(
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(vertical = dimensionResource(Res.dimen.large_padding))
+                                // TODO move this one out of Home when we can pass modifiers in
+                                .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                        ) {
+                            HomeRow(
+                                list = (trendingList as? Resource.Success)?.data?.media.orEmpty(),
+                                title = stringResource(Res.string.trending_now),
+                                onItemClicked = {
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
+                                        )
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                }
                             )
-                            .fillMaxWidth()
-                            .height(dimensionResource(Res.dimen.banner_height))
-                    ) { }
 
-                    Text(
-                        text = stringResource(Res.string.okaeri),
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        style = MaterialTheme.typography.displayMedium,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(
-                                start = dimensionResource(Res.dimen.large_padding),
-                                bottom = dimensionResource(Res.dimen.medium_padding)
+                            HomeRow(
+                                list = (popularList as? Resource.Success)?.data?.media.orEmpty(),
+                                title = stringResource(Res.string.popular_this_season),
+                                onItemClicked = {
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
+                                        )
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                }
                             )
-                            .landscapeCutoutPadding()
-                    )
-                }
 
-                Column {
-                    Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
-
-                    Column(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(vertical = dimensionResource(Res.dimen.large_padding))
-                            // TODO move this one out of Home when we can pass modifiers in
-                            .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
-                        verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
-                    ) {
-                        HomeRow(
-                            list = (trendingList as? Resource.Success)?.data?.media.orEmpty(),
-                            title = stringResource(Res.string.trending_now),
-                            onItemClicked = {
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        MediaPageArgs(
-                                            it.id,
-                                            homeMediaType.rawValue
+                            HomeRow(
+                                list = (upcomingList as? Resource.Success)?.data?.media.orEmpty(),
+                                title = stringResource(Res.string.upcoming_next_season),
+                                onItemClicked = {
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
-                                    )
-                                ) {
-                                    launchSingleTop = true
+                                    ) {
+                                        launchSingleTop = true
+                                    }
                                 }
-                            }
-                        )
+                            )
 
-                        HomeRow(
-                            list = (popularList as? Resource.Success)?.data?.media.orEmpty(),
-                            title = stringResource(Res.string.popular_this_season),
-                            onItemClicked = {
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        MediaPageArgs(
-                                            it.id,
-                                            homeMediaType.rawValue
+                            HomeRow(
+                                list = (allTimePopularList as? Resource.Success)?.data?.media.orEmpty(),
+                                title = stringResource(Res.string.all_time_popular),
+                                onItemClicked = {
+                                    navigator.navigate(
+                                        MediaPageDestination(
+                                            MediaPageArgs(
+                                                it.id,
+                                                homeMediaType.rawValue
+                                            )
                                         )
-                                    )
-                                ) {
-                                    launchSingleTop = true
+                                    ) {
+                                        launchSingleTop = true
+                                    }
                                 }
-                            }
-                        )
-
-                        HomeRow(
-                            list = (upcomingList as? Resource.Success)?.data?.media.orEmpty(),
-                            title = stringResource(Res.string.upcoming_next_season),
-                            onItemClicked = {
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        MediaPageArgs(
-                                            it.id,
-                                            homeMediaType.rawValue
-                                        )
-                                    )
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            }
-                        )
-
-                        HomeRow(
-                            list = (allTimePopularList as? Resource.Success)?.data?.media.orEmpty(),
-                            title = stringResource(Res.string.all_time_popular),
-                            onItemClicked = {
-                                navigator.navigate(
-                                    MediaPageDestination(
-                                        MediaPageArgs(
-                                            it.id,
-                                            homeMediaType.rawValue
-                                        )
-                                    )
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
         }
-    } else {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            ProgressIndicator()
+
+        else -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                ProgressIndicator()
+            }
         }
     }
 }
