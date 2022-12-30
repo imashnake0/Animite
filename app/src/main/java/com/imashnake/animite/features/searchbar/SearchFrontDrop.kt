@@ -44,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +58,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
@@ -64,6 +66,7 @@ import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.core.ui.Icon
 import com.imashnake.animite.core.ui.IconButton
 import com.imashnake.animite.core.ui.TextField
+import com.imashnake.animite.dev.ext.string
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.type.MediaFormat
@@ -263,14 +266,20 @@ private fun SearchItem(
                 item?.title?.english ?:
                 item?.title?.native.orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelMedium,
+                // TODO: Why does this not use manrope?
+                style = MaterialTheme.typography.labelMedium.copy(
+                    letterSpacing = TextUnit.Unspecified
+                ),
                 maxLines = 2
             )
-            Text(
-                text = "${item?.season?.rawValue?.lowercase()?.replaceFirstChar { it.uppercase() }} ${item?.seasonYear}",
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall
-            )
+            if (item?.season?.rawValue != null || item?.seasonYear != null) {
+                Text(
+                    text = item.season?.string?.plus(" ").orEmpty()
+                            + item.seasonYear?.toString().orEmpty(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
 
             Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
 
