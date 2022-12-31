@@ -38,7 +38,7 @@ sealed class Resource<T>(
          *
          * TODO: Should require a mapper rather than a higher order lambda to provide access to the [ApolloResponse.data]
          */
-        fun <T : Operation.Data, R> Flow<ApolloResponse<T>>.asResource(mapper: (T) -> R = { it as R }): Flow<Resource<R?>> {
+        fun <T : Operation.Data, R> Flow<ApolloResponse<T>>.asResource(mapper: (T) -> R): Flow<Resource<R?>> {
             return map { response ->
                 if (response.data != null) {
                     success<R?>(mapper(response.dataAssertNoErrors))
@@ -62,6 +62,6 @@ sealed class Resource<T>(
 
         private fun <T> networkError() = error<T>("Network error, please check your connection and try again.")
         private fun <T> defaultError() = error<T>("Unknown error occurred, please try again later.")
-        private fun <T> noDataError() = error<T>("Unknown error occurred, no data or errors received")
+        private fun <T> noDataError() = error<T>("Unknown error occurred, no data or errors received.")
     }
 }

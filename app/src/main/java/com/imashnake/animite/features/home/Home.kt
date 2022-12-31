@@ -129,7 +129,7 @@ fun Home(
                             verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
                         ) {
                             HomeRow(
-                                list = (trendingList as? Resource.Success)?.data?.media.orEmpty(),
+                                list = trendingList.data?.media.orEmpty(),
                                 title = stringResource(Res.string.trending_now),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -146,7 +146,7 @@ fun Home(
                             )
 
                             HomeRow(
-                                list = (popularList as? Resource.Success)?.data?.media.orEmpty(),
+                                list = popularList.data?.media.orEmpty(),
                                 title = stringResource(Res.string.popular_this_season),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -163,7 +163,7 @@ fun Home(
                             )
 
                             HomeRow(
-                                list = (upcomingList as? Resource.Success)?.data?.media.orEmpty(),
+                                list = upcomingList.data?.media.orEmpty(),
                                 title = stringResource(Res.string.upcoming_next_season),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -180,7 +180,7 @@ fun Home(
                             )
 
                             HomeRow(
-                                list = (allTimePopularList as? Resource.Success)?.data?.media.orEmpty(),
+                                list = allTimePopularList.data?.media.orEmpty(),
                                 title = stringResource(Res.string.all_time_popular),
                                 onItemClicked = {
                                     navigator.navigate(
