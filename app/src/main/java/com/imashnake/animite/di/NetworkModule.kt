@@ -5,6 +5,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.api.MemoryCacheFactory
 import com.apollographql.apollo3.cache.normalized.normalizedCache
 import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
+import com.apollographql.apollo3.network.http.LoggingInterceptor
 import com.imashnake.animite.dev.internal.Constants
 import dagger.Module
 import dagger.Provides
@@ -34,6 +35,7 @@ object NetworkModule {
         return ApolloClient.Builder()
             .dispatcher(dispatcher)
             .serverUrl(Constants.ANILIST_BASE_URL)
+            .addHttpInterceptor(LoggingInterceptor(LoggingInterceptor.Level.BODY))
             .normalizedCache(cacheFactory)
             .build()
     }
