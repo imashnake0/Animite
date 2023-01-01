@@ -38,7 +38,6 @@ import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
-import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
@@ -109,12 +108,12 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
         SearchFrontDrop(
             hasExtraPadding = isNavBarVisible,
-            onItemClick = {
+            onItemClick = { id, mediaType ->
                 navController.navigate(
                     MediaPageDestination(
                         MediaPageArgs(
-                            it!!,
-                            MediaType.ANIME.rawValue
+                            id!!,
+                            mediaType.rawValue
                         )
                     )
                 )

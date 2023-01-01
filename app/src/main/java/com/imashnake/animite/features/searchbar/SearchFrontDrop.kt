@@ -41,6 +41,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +70,7 @@ import com.imashnake.animite.dev.ext.string
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.type.MediaFormat
+import com.imashnake.animite.type.MediaType
 
 /**
  * TODO: Kdoc
@@ -78,10 +80,16 @@ import com.imashnake.animite.type.MediaFormat
 @Composable
 fun SearchFrontDrop(
     hasExtraPadding: Boolean,
-    onItemClick: (Int?) -> Unit,
+    onItemClick: (Int?, MediaType) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = viewModel()
 ) {
+    val searchMediaType = MediaType.ANIME
+
+    viewModel.setMediaType(searchMediaType)
+
+    val searchList by viewModel.searchList.collectAsState()
+
     var isExpanded by remember { mutableStateOf(false) }
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = if (hasExtraPadding) {
@@ -95,7 +103,10 @@ fun SearchFrontDrop(
         animationSpec = tween(Constants.CROSSFADE_DURATION)
     )
 
-    Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
+    Box(
+        Modifier
+            .fillMaxSize()
+            .drawBehind { drawRect(frontDropColor) })
 
     AnimatedVisibility(
         visible = isExpanded,
@@ -103,7 +114,7 @@ fun SearchFrontDrop(
         exit = fadeOut(tween(Constants.CROSSFADE_DURATION))
     ) {
         SearchList(
-            searchList = viewModel.uiState.searchList?.media,
+            searchList = searchList.data?.media,
             modifier = Modifier
                 .imeNestedScroll()
                 .statusBarsPadding()
@@ -111,8 +122,8 @@ fun SearchFrontDrop(
                 .fillMaxSize(),
             onItemClick = {
                 isExpanded = !isExpanded
-                viewModel.clearList()
-                onItemClick(it)
+                viewModel.setQuery(null)
+                onItemClick(it, searchMediaType)
             }
         )
     }
@@ -135,10 +146,10 @@ fun SearchFrontDrop(
                 ExpandedSearchBarContent(
                     collapse = {
                         isExpanded = !isExpanded
-                        viewModel.clearList()
+                        viewModel.setQuery(null)
                     },
-                    clearText = { viewModel.clearList() },
-                    searchText = { viewModel.searchAnime(it) }
+                    clearText = { viewModel.setQuery(null) },
+                    searchText = { viewModel.setQuery(it) }
                 )
             } else {
                 CollapsedSearchBarContent(

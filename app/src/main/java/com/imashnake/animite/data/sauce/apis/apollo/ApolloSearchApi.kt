@@ -1,20 +1,23 @@
 package com.imashnake.animite.data.sauce.apis.apollo
 
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Optional
+import com.apollographql.apollo3.cache.normalized.executeCacheAndNetwork
 import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.data.sauce.apis.SearchApi
 import com.imashnake.animite.type.MediaType
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ApolloSearchApi @Inject constructor(
     private val apolloClient: ApolloClient
 ) : SearchApi {
-    override suspend fun search(
+    override fun search(
         type: MediaType,
         perPage: Int,
-        search: String
-    ): SearchQuery.Page? {
+        search: String?
+    ): Flow<ApolloResponse<SearchQuery.Data>> {
         return apolloClient
             .query(
                 SearchQuery(
@@ -22,6 +25,6 @@ class ApolloSearchApi @Inject constructor(
                     perPage = Optional.presentIfNotNull(perPage),
                     search = Optional.presentIfNotNull(search)
                 )
-            ).execute().data?.page
+            ).executeCacheAndNetwork()
     }
 }
