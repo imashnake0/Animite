@@ -75,7 +75,6 @@ import com.imashnake.animite.type.MediaType
 
 /**
  * TODO: Kdoc
- * @param hasExtraPadding TODO: This causes recomposition! Probably wrap it in a lambda.
  */
 @OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -122,7 +121,7 @@ fun SearchFrontDrop(
                 .navigationBarsPadding()
                 .fillMaxSize(),
             onItemClick = {
-                isExpanded = !isExpanded
+                isExpanded = false
                 viewModel.setQuery(null)
                 onItemClick(it, searchMediaType)
             }
@@ -146,7 +145,7 @@ fun SearchFrontDrop(
             if (targetExpanded) {
                 ExpandedSearchBarContent(
                     collapse = {
-                        isExpanded = !isExpanded
+                        isExpanded = false
                         viewModel.setQuery(null)
                     },
                     clearText = { viewModel.setQuery(null) },
@@ -154,7 +153,7 @@ fun SearchFrontDrop(
                 )
             } else {
                 CollapsedSearchBarContent(
-                    expand = { isExpanded = !isExpanded }
+                    expand = { isExpanded = true }
                 )
             }
         }
