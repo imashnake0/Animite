@@ -63,14 +63,11 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
-import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.core.ui.Icon
 import com.imashnake.animite.core.ui.IconButton
 import com.imashnake.animite.core.ui.TextField
-import com.imashnake.animite.dev.ext.string
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
-import com.imashnake.animite.type.MediaFormat
 import com.imashnake.animite.type.MediaType
 
 /**
@@ -110,19 +107,21 @@ fun SearchFrontDrop(
         enter = fadeIn(tween(Constants.CROSSFADE_DURATION)),
         exit = fadeOut(tween(Constants.CROSSFADE_DURATION))
     ) {
-        SearchList(
-            searchList = searchList.data?.media,
-            modifier = Modifier
-                .imeNestedScroll()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .fillMaxSize(),
-            onItemClick = {
-                isExpanded = false
-                viewModel.setQuery(null)
-                onItemClick(it, searchMediaType)
-            }
-        )
+        searchList.data?.let { searchList ->
+            SearchList(
+                searchList = searchList,
+                modifier = Modifier
+                    .imeNestedScroll()
+                    .statusBarsPadding()
+                    .navigationBarsPadding()
+                    .fillMaxSize(),
+                onItemClick = {
+                    isExpanded = false
+                    viewModel.setQuery(null)
+                    onItemClick(it, searchMediaType)
+                }
+            )
+        }
     }
 
     Surface(
@@ -217,11 +216,11 @@ fun ExpandedSearchBarContent(
 @Composable
 fun SearchList(
     // TODO: Handle nullability in [#67](https://github.com/imashnake0/Animite/pull/67).
-    searchList: List<SearchQuery.Medium?>?,
+    searchList: List<SearchItem>,
     modifier: Modifier = Modifier,
     onItemClick: (Int?) -> Unit
 ) {
-    if (!searchList.isNullOrEmpty()) {
+    if (searchList.isNotEmpty()) {
         LazyColumn(
             modifier = modifier,
             contentPadding = PaddingValues(
@@ -235,7 +234,7 @@ fun SearchList(
             ),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
         ) {
-            items(searchList.size, key = { searchList[it]!!.id }) {
+            items(searchList.size, key = { searchList[it].id }) {
                 SearchItem(
                     item = searchList[it],
                     onClick = onItemClick,
@@ -248,7 +247,7 @@ fun SearchList(
 
 @Composable
 private fun SearchItem(
-    item: SearchQuery.Medium?,
+    item: SearchItem,
     onClick: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -256,20 +255,18 @@ private fun SearchItem(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
-            .clickable { onClick(item?.id) }
+            .clickable { onClick(item.id) }
     ) {
         MediaSmall(
-            image = item?.coverImage?.extraLarge,
-            onClick = { onClick(item?.id) },
+            image = item.image,
+            onClick = { onClick(item.id) },
             modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
         )
 
         Column(Modifier.padding(horizontal = dimensionResource(R.dimen.small_padding))) {
             Text(
                 // TODO: Do something about this chain.
-                text = item?.title?.romaji ?:
-                item?.title?.english ?:
-                item?.title?.native.orEmpty(),
+                text = item.title.orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
                 // TODO: Why does this not use manrope?
                 style = MaterialTheme.typography.labelMedium.copy(
@@ -277,10 +274,9 @@ private fun SearchItem(
                 ),
                 maxLines = 2
             )
-            if (item?.season?.rawValue != null || item?.seasonYear != null) {
+            item.seasonYear?.let {
                 Text(
-                    text = item.season?.string?.plus(" ").orEmpty()
-                            + item.seasonYear?.toString().orEmpty(),
+                    text = it,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -288,38 +284,25 @@ private fun SearchItem(
 
             Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
 
-            if (item?.studios?.nodes?.isEmpty() == false) {
+            item.studios?.let {
                 Text(
-                    text = item.studios.nodes.map { it?.name }.joinToString(separator = ", "),
+                    text = it,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Row(horizontalArrangement = Arrangement.SpaceAround) {
-                if (item?.format != null && item.format != MediaFormat.UNKNOWN__) {
-                    Text(
-                        text = "${item.format.rawValue.replace("_", " ")} ꞏ " ,
-                        color = MaterialTheme.colorScheme.onBackground.copy(
-                            alpha = ContentAlpha.medium
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                if (item?.episodes != null) {
-                    Text(
-                        text = "${item.episodes} episodes",
-                        color = MaterialTheme.colorScheme.onBackground.copy(
-                            alpha = ContentAlpha.medium
-                        ),
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            item.footer?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.onBackground.copy(
+                        alpha = ContentAlpha.medium
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

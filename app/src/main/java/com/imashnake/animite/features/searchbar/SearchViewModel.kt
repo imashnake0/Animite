@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.repos.SearchRepository
+import com.imashnake.animite.dev.ext.string
+import com.imashnake.animite.type.MediaFormat
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -40,5 +43,31 @@ class SearchViewModel @Inject constructor(
                 mediaType = mediaType,
                 search = query
             )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+        }
+        .map { resource ->
+            if (resource is Resource.Success) {
+                Resource.success(
+                    resource.data?.media?.mapNotNull {
+                        it?.let {
+                            SearchItem(
+                                id = it.id,
+                                image = it.coverImage?.extraLarge,
+                                title = it.title?.romaji ?: it.title?.english ?: it.title?.romaji,
+                                seasonYear = listOfNotNull(it.season?.string, it.seasonYear).joinToString(separator = " "),
+                                studios = it.studios?.nodes?.filterNotNull()?.joinToString(separator = ", "),
+                                footer = listOfNotNull(
+                                    it.format?.takeIf {
+                                            format -> format != MediaFormat.UNKNOWN__
+                                    }?.rawValue?.replace("_", " "),
+                                    it.episodes?.let { ep -> "$ep ${if (ep == 1) "episode" else "episodes"}"}
+                                ).joinToString(separator = " ꞏ ")
+                            )
+                        }
+                    }
+                )
+            } else {
+                Resource.error("")
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 }
