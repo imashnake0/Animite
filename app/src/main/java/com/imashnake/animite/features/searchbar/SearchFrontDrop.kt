@@ -103,10 +103,7 @@ fun SearchFrontDrop(
         animationSpec = tween(Constants.CROSSFADE_DURATION)
     )
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .drawBehind { drawRect(frontDropColor) })
+    Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
 
     AnimatedVisibility(
         visible = isExpanded,

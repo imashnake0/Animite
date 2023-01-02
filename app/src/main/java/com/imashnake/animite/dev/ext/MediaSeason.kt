@@ -24,5 +24,8 @@ fun MediaSeason.nextSeason(now: LocalDate): Pair<MediaSeason, Int> {
     }
 }
 
-val MediaSeason?.string
-    get() = this?.rawValue?.lowercase()?.replaceFirstChar { it.uppercase() }
+/**
+ * Returns a capitalized [MediaSeason.rawValue].
+ */
+val MediaSeason.string
+    get() = this.rawValue.lowercase().replaceFirstChar { it.uppercase() }
