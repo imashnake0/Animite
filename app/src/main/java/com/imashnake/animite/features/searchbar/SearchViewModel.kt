@@ -54,7 +54,7 @@ class SearchViewModel @Inject constructor(
                                 image = it.coverImage?.extraLarge,
                                 title = it.title?.romaji ?: it.title?.english ?: it.title?.romaji,
                                 seasonYear = listOfNotNull(it.season?.string, it.seasonYear).joinToString(separator = " "),
-                                studios = it.studios?.nodes?.filterNotNull()?.joinToString(separator = ", "),
+                                studios = it.studios?.nodes?.mapNotNull { studio -> studio?.name }?.joinToString(separator = ", "),
                                 footer = listOfNotNull(
                                     it.format?.takeIf {
                                             format -> format != MediaFormat.UNKNOWN__
