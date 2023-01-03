@@ -1,13 +1,10 @@
 package com.imashnake.animite.features.searchbar
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,16 +14,19 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.Icon
 import com.imashnake.animite.core.ui.IconButton
 import com.imashnake.animite.core.ui.TextField
@@ -102,31 +103,24 @@ fun SearchFrontDrop(
 
     Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
 
-    AnimatedVisibility(
-        visible = isExpanded,
-        enter = fadeIn(tween(Constants.CROSSFADE_DURATION)),
-        exit = fadeOut(tween(Constants.CROSSFADE_DURATION))
-    ) {
-        searchList.data?.let { searchList ->
-            SearchList(
-                searchList = searchList,
-                modifier = Modifier
-                    .imeNestedScroll()
-                    .statusBarsPadding()
-                    .navigationBarsPadding()
-                    .fillMaxSize(),
-                onItemClick = {
-                    isExpanded = false
-                    viewModel.setQuery(null)
-                    onItemClick(it, searchMediaType)
-                }
-            )
-        }
+    searchList.data?.let {
+        SearchList(
+            searchList = it,
+            modifier = Modifier
+                .imeNestedScroll()
+                .landscapeCutoutPadding(),
+            onItemClick = { id ->
+                isExpanded = false
+                viewModel.setQuery(null)
+                onItemClick(id, searchMediaType)
+            }
+        )
     }
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier
+            .landscapeCutoutPadding()
             .padding(bottom = searchBarBottomPadding)
             .navigationBarsPadding()
             .consumeWindowInsets(
@@ -226,11 +220,13 @@ fun SearchList(
             contentPadding = PaddingValues(
                 start = dimensionResource(R.dimen.large_padding),
                 end = dimensionResource(R.dimen.large_padding),
-                top = dimensionResource(R.dimen.large_padding),
+                top = dimensionResource(R.dimen.large_padding)
+                        + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
                 bottom = dimensionResource(R.dimen.search_bar_height)
                         + dimensionResource(R.dimen.large_padding)
                         + dimensionResource(R.dimen.large_padding)
                         + dimensionResource(R.dimen.navigation_bar_height)
+                        + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
             ),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
         ) {
