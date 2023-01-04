@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.searchbar
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
@@ -89,9 +90,7 @@ fun SearchFrontDrop(
     viewModel: SearchViewModel = viewModel()
 ) {
     val searchMediaType = MediaType.ANIME
-
     viewModel.setMediaType(searchMediaType)
-
     val searchList by viewModel.searchList.collectAsState()
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -153,6 +152,11 @@ fun SearchFrontDrop(
                 )
             }
         }
+    }
+
+    BackHandler(isExpanded) {
+        viewModel.setQuery(null)
+        isExpanded = false
     }
 }
 
