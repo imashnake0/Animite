@@ -56,10 +56,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
@@ -267,9 +267,8 @@ private fun SearchItem(
             Text(
                 text = item.title.orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
-                // TODO: Why does this not use manrope?
-                style = MaterialTheme.typography.labelMedium.copy(
-                    letterSpacing = TextUnit.Unspecified
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold
                 ),
                 maxLines = 2
             )
