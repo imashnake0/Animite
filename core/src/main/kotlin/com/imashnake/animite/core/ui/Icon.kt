@@ -65,7 +65,7 @@ fun Icon(
         contentDescription = contentDescription,
         modifier = modifier
             .size(dimensionResource(R.dimen.icon_size))
-            .padding(dimensionResource(R.dimen.search_bar_icon_padding)),
+            .padding(dimensionResource(R.dimen.icon_padding)),
         tint = tint
     )
 }
