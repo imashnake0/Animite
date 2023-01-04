@@ -19,7 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.imashnake.animite.core.R
 
 /**
- * TODO: Kdoc.
+ * Wrapper for [IconButton]. Flattens an [IconButton] with an [Icon].
+ *
+ * @param onClick called when this icon button is clicked.
+ * @param imageVector [ImageVector] to draw inside this icon.
+ * @param modifier the [Modifier] to be applied to this icon button.
+ * @param foregroundColor the color of the [Icon].
+ * @param backgroundColor the background color of the [IconButton].
+ * @param contentDescription text used by accessibility services to describe what this icon.
  */
 @Composable
 fun IconButton(

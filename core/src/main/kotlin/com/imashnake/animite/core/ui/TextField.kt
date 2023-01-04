@@ -17,7 +17,18 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.VisualTransformation
 
 /**
- * TODO: Kdoc.
+ * Wrapper for [TextField].
+ *
+ * @param value the input text to be shown in the text field.
+ * @param onValueChange the callback that is triggered when the input service updates the text. An
+ * updated text comes as a parameter of the callback.
+ * @param modifier the [Modifier] to be applied to this text field.
+ * @param placeholder the optional placeholder to be displayed when the text field is in focus and
+ * the input text is empty.
+ * @param foregroundColor configures the foreground color of the [TextField] text and cursor.
+ * @param backgroundColor background color of the [TextField].
+ *
+ * @see [TextField]
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -72,7 +72,13 @@ import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.type.MediaType
 
 /**
- * TODO: Kdoc
+ * Search bar along with a Front Drop list.
+ *
+ * @param hasExtraPadding if the search bar should have extra bottom padding to accommodate the
+ * [com.imashnake.animite.features.navigationbar.NavigationBar].
+ * @param onItemClick called when media with an ID and [MediaType] is clicked.
+ * @param modifier the [Modifier] to be applied to this Front Drop.
+ * @param viewModel [SearchViewModel] instance.
  */
 @OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -170,7 +176,6 @@ fun ExpandedSearchBarContent(
     clearText: () -> Unit,
     searchText: (String) -> Unit
 ) {
-    // TODO: How does this work?
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(focusRequester) {
         focusRequester.requestFocus()
@@ -209,7 +214,6 @@ fun ExpandedSearchBarContent(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchList(
-    // TODO: Handle nullability in [#67](https://github.com/imashnake0/Animite/pull/67).
     searchList: List<SearchItem>,
     modifier: Modifier = Modifier,
     onItemClick: (Int?) -> Unit
@@ -261,7 +265,6 @@ private fun SearchItem(
 
         Column(Modifier.padding(horizontal = dimensionResource(R.dimen.small_padding))) {
             Text(
-                // TODO: Do something about this chain.
                 text = item.title.orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
                 // TODO: Why does this not use manrope?
