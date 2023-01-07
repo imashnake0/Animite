@@ -238,9 +238,9 @@ fun SearchList(
             ),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
         ) {
-            items(searchList.size, key = { searchList[it].id }) {
+            items(searchList.size, key = { searchList[it].id }) { index ->
                 SearchItem(
-                    item = searchList[it],
+                    item = searchList[index],
                     onClick = onItemClick,
                     modifier = Modifier.animateItemPlacement()
                 )
