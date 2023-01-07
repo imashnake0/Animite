@@ -48,7 +48,7 @@ class SearchViewModel @Inject constructor(
             if (resource is Resource.Success) {
                 Resource.success(
                     resource.data?.media?.mapNotNull {
-                        it?.let {
+                        if (it != null) {
                             SearchItem(
                                 id = it.id,
                                 image = it.coverImage?.extraLarge,
@@ -60,7 +60,7 @@ class SearchViewModel @Inject constructor(
                                     it.episodes?.let { ep -> "$ep ${if (ep == 1) "episode" else "episodes"}"}
                                 ).joinToString(separator = " ꞏ ")
                             )
-                        }
+                        } else null
                     }
                 )
             } else {
