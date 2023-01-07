@@ -85,7 +85,7 @@ import com.imashnake.animite.type.MediaType
 @Composable
 fun SearchFrontDrop(
     hasExtraPadding: Boolean,
-    onItemClick: (Int?, MediaType) -> Unit,
+    onItemClick: (Int, MediaType) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = viewModel()
 ) {
@@ -220,7 +220,7 @@ fun ExpandedSearchBarContent(
 fun SearchList(
     searchList: List<SearchItem>,
     modifier: Modifier = Modifier,
-    onItemClick: (Int?) -> Unit
+    onItemClick: (Int) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -250,7 +250,7 @@ fun SearchList(
 @Composable
 private fun SearchItem(
     item: SearchItem,
-    onClick: (Int?) -> Unit,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
