@@ -108,9 +108,9 @@ fun SearchFrontDrop(
 
     Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
 
-    searchList.data?.let {
+    if (!searchList.data.isNullOrEmpty()) {
         SearchList(
-            searchList = it,
+            searchList = searchList.data!!,
             modifier = Modifier
                 .imeNestedScroll()
                 .landscapeCutoutPadding(),
@@ -222,29 +222,27 @@ fun SearchList(
     modifier: Modifier = Modifier,
     onItemClick: (Int?) -> Unit
 ) {
-    if (searchList.isNotEmpty()) {
-        LazyColumn(
-            modifier = modifier,
-            contentPadding = PaddingValues(
-                start = dimensionResource(R.dimen.large_padding),
-                end = dimensionResource(R.dimen.large_padding),
-                top = dimensionResource(R.dimen.large_padding)
-                        + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
-                bottom = dimensionResource(R.dimen.search_bar_height)
-                        + dimensionResource(R.dimen.large_padding)
-                        + dimensionResource(R.dimen.large_padding)
-                        + dimensionResource(R.dimen.navigation_bar_height)
-                        + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            ),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
-        ) {
-            items(searchList.size, key = { searchList[it].id }) { index ->
-                SearchItem(
-                    item = searchList[index],
-                    onClick = onItemClick,
-                    modifier = Modifier.animateItemPlacement()
-                )
-            }
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(
+            start = dimensionResource(R.dimen.large_padding),
+            end = dimensionResource(R.dimen.large_padding),
+            top = dimensionResource(R.dimen.large_padding)
+                    + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
+            bottom = dimensionResource(R.dimen.search_bar_height)
+                    + dimensionResource(R.dimen.large_padding)
+                    + dimensionResource(R.dimen.large_padding)
+                    + dimensionResource(R.dimen.navigation_bar_height)
+                    + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        ),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
+    ) {
+        items(searchList.size, key = { searchList[it].id }) { index ->
+            SearchItem(
+                item = searchList[index],
+                onClick = onItemClick,
+                modifier = Modifier.animateItemPlacement()
+            )
         }
     }
 }
@@ -276,9 +274,9 @@ private fun SearchItem(
                 ),
                 maxLines = 2
             )
-            item.seasonYear?.let {
+            if (item.seasonYear != null) {
                 Text(
-                    text = it,
+                    text = item.seasonYear,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -286,18 +284,18 @@ private fun SearchItem(
 
             Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
 
-            item.studios?.let {
+            if (item.studios != null) {
                 Text(
-                    text = it,
+                    text = item.studios,
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            item.footer?.let {
+            if (item.footer != null) {
                 Text(
-                    text = it,
+                    text = item.footer,
                     color = MaterialTheme.colorScheme.onBackground.copy(
                         alpha = ContentAlpha.medium
                     ),
