@@ -3,6 +3,7 @@ package com.imashnake.animite.features.searchbar
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.repos.SearchRepository
 import com.imashnake.animite.dev.ext.string
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -39,10 +41,14 @@ class SearchViewModel @Inject constructor(
         .filterNotNull()
         .combine(query, ::Pair)
         .flatMapLatest { (mediaType, query) ->
-            searchRepository.search(
-                mediaType = mediaType,
-                search = query
-            )
+            if (query.isNullOrEmpty()) {
+                flowOf(Resource.success(SearchQuery.Page(emptyList())))
+            } else {
+                searchRepository.search(
+                    mediaType = mediaType,
+                    search = query
+                )
+            }
         }
         .map { resource ->
             if (resource is Resource.Success) {
