@@ -347,9 +347,9 @@ private fun SearchItem(
             }
             Text(
                 text = item.footer(
-                    item.episodes?.let{ episodes ->
-                        pluralStringResource(R.plurals.episodes, episodes, episodes)
-                    }
+                    if (item.episodes != null) {
+                        pluralStringResource(R.plurals.episodes, item.episodes, item.episodes)
+                    } else null
                 ),
                 color = MaterialTheme.colorScheme.onBackground.copy(
                     alpha = ContentAlpha.medium
