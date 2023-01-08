@@ -55,6 +55,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -63,6 +64,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -296,6 +298,7 @@ fun SearchList(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchItem(
     item: SearchItem,
@@ -342,17 +345,19 @@ private fun SearchItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            if (item.footer != null) {
-                Text(
-                    text = item.footer,
-                    color = MaterialTheme.colorScheme.onBackground.copy(
-                        alpha = ContentAlpha.medium
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            Text(
+                text = item.footer(
+                    item.episodes?.let{ episodes ->
+                        pluralStringResource(R.plurals.episodes, episodes, episodes)
+                    }
+                ),
+                color = MaterialTheme.colorScheme.onBackground.copy(
+                    alpha = ContentAlpha.medium
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }

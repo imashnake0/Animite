@@ -62,10 +62,8 @@ class SearchViewModel @Inject constructor(
                                 title = it.title?.romaji ?: it.title?.english ?: it.title?.romaji,
                                 seasonYear = listOfNotNull(it.season?.string, it.seasonYear).joinToString(separator = " "),
                                 studios = it.studios?.nodes?.mapNotNull { studio -> studio?.name }?.joinToString(separator = ", "),
-                                footer = listOfNotNull(
-                                    it.format?.takeIf { format -> format != MediaFormat.UNKNOWN__ }?.rawValue?.replace("_", " "),
-                                    it.episodes?.let { ep -> "$ep ${if (ep == 1) "episode" else "episodes"}"}
-                                ).joinToString(separator = " ꞏ ")
+                                format = it.format?.takeIf { format -> format != MediaFormat.UNKNOWN__ }?.rawValue?.replace("_", " "),
+                                episodes = it.episodes
                             )
                         } else null
                     }
