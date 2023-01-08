@@ -7,6 +7,7 @@ import com.imashnake.animite.SearchQuery
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.repos.SearchRepository
 import com.imashnake.animite.dev.ext.string
+import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.type.MediaFormat
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,15 +27,15 @@ class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
-    private val mediaType = savedStateHandle.getStateFlow<MediaType?>("mediaType", null)
-    private val query = savedStateHandle.getStateFlow<String?>("query", null)
+    private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
+    private val query = savedStateHandle.getStateFlow<String?>(QUERY, null)
 
     fun setMediaType(mediaType: MediaType) {
-        savedStateHandle["mediaType"] = mediaType
+        savedStateHandle[Constants.MEDIA_TYPE] = mediaType
     }
 
     fun setQuery(query: String?) {
-        savedStateHandle["query"] = query
+        savedStateHandle[QUERY] = query
     }
 
     val searchList = mediaType
@@ -74,4 +75,8 @@ class SearchViewModel @Inject constructor(
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+
+    companion object {
+        const val QUERY = "query"
+    }
 }
