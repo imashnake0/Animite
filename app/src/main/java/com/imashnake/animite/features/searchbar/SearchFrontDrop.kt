@@ -108,9 +108,9 @@ fun SearchFrontDrop(
 
     Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
 
-    if (!searchList.data.isNullOrEmpty()) {
+    searchList.data?.let {
         SearchList(
-            searchList = searchList.data!!,
+            searchList = it,
             modifier = Modifier
                 .imeNestedScroll()
                 .landscapeCutoutPadding(),
