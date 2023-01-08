@@ -1,15 +1,12 @@
 package com.imashnake.animite.core.ui
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Face
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,23 +50,6 @@ fun IconButton(
     }
 }
 
-@Composable
-fun Icon(
-    imageVector: ImageVector,
-    modifier: Modifier = Modifier,
-    tint: Color = MaterialTheme.colorScheme.onPrimary,
-    contentDescription: String? = null
-) {
-    Icon(
-        imageVector = imageVector,
-        contentDescription = contentDescription,
-        modifier = modifier
-            .size(dimensionResource(R.dimen.icon_size))
-            .padding(dimensionResource(R.dimen.icon_padding)),
-        tint = tint
-    )
-}
-
 @Preview
 @Composable
 fun PreviewIconButton() {
@@ -80,16 +60,4 @@ fun PreviewIconButton() {
         backgroundColor = MaterialTheme.colorScheme.primary,
         contentDescription = "Account"
     )
-}
-
-@Preview
-@Composable
-fun PreviewIcon() {
-    Surface(color = MaterialTheme.colorScheme.primary) {
-        com.imashnake.animite.core.ui.Icon(
-            imageVector = Icons.Rounded.Face,
-            tint = MaterialTheme.colorScheme.onPrimary,
-            contentDescription = "Face"
-        )
-    }
 }

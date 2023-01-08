@@ -37,6 +37,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -65,7 +66,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
-import com.imashnake.animite.core.ui.Icon
 import com.imashnake.animite.core.ui.IconButton
 import com.imashnake.animite.core.ui.TextField
 import com.imashnake.animite.dev.internal.Constants
@@ -168,7 +168,10 @@ fun CollapsedSearchBarContent(
     Icon(
         imageVector = ImageVector.vectorResource(R.drawable.search),
         contentDescription = stringResource(R.string.search),
-        modifier = modifier.clickable { expand() }
+        modifier = modifier
+            .clickable { expand() }
+            .padding(dimensionResource(R.dimen.search_bar_icon_padding)),
+        tint = MaterialTheme.colorScheme.onPrimary
     )
 }
 
