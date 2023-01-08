@@ -29,21 +29,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,12 +55,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -67,10 +70,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
-import com.imashnake.animite.core.ui.TextField
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.type.MediaType
@@ -179,6 +182,7 @@ fun CollapsedSearchBarContent(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpandedSearchBarContent(
     modifier: Modifier = Modifier,
@@ -198,11 +202,29 @@ fun ExpandedSearchBarContent(
             text = it
             searchText(it)
         },
-        placeholder = stringResource(R.string.search),
+        modifier = modifier.focusRequester(focusRequester),
+        textStyle = MaterialTheme.typography.labelLarge.copy(
+            color = MaterialTheme.colorScheme.onPrimary,
+            lineHeight = 12.sp
+        ),
+        placeholder = {
+            Text(
+                text = stringResource(R.string.search),
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5F),
+                style = MaterialTheme.typography.labelLarge.copy(lineHeight = 12.sp)
+            )
+        },
         singleLine = true,
-        modifier = modifier
-            .focusRequester(focusRequester)
-            .height(dimensionResource(R.dimen.search_bar_height)),
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            cursorColor = MaterialTheme.colorScheme.onPrimary,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            selectionColors = TextSelectionColors(
+                handleColor = MaterialTheme.colorScheme.onPrimary,
+                backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f)
+            )
+        ),
         keyboardOptions = KeyboardOptions(autoCorrect = false, imeAction = ImeAction.Search),
         leadingIcon = {
             IconButton(

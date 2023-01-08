@@ -5,11 +5,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.sp
 import com.imashnake.animite.R
 
 /**
  * [Manrope](https://manropefont.com/).
+ *
+ * TODO:
+ *  Use [Downloadable fonts](https://developer.android.com/jetpack/compose/text#downloadable-fonts)?
  */
 val manropeFamily = FontFamily(
     Font(R.font.manrope_extrabold, FontWeight.ExtraBold),
@@ -21,6 +25,7 @@ val manropeFamily = FontFamily(
     Font(R.font.manrope_extralight, FontWeight.ExtraLight)
 )
 
+const val baselineShift = 0.2f
 val AnimiteTypography = Typography(
     // - [Home]: Media list headings.
     // - [MediaPage]: Media section headings.
@@ -28,7 +33,8 @@ val AnimiteTypography = Typography(
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 15.sp,
-        letterSpacing = 0.2.sp
+        letterSpacing = 0.2.sp,
+        baselineShift = BaselineShift(baselineShift)
     ),
     // - [Home]: Media list item labels.
     // - [MediaPage]: Character names.
@@ -36,14 +42,16 @@ val AnimiteTypography = Typography(
         fontSize = 12.sp,
         fontFamily = manropeFamily,
         fontWeight = FontWeight.SemiBold,
-        lineHeight = 18.sp
+        lineHeight = 18.sp,
+        baselineShift = BaselineShift(baselineShift)
     ),
     // - [MediaPage]: Media title.
     titleLarge = TextStyle(
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
-        letterSpacing = 0.2.sp
+        letterSpacing = 0.2.sp,
+        baselineShift = BaselineShift(baselineShift)
     ),
     // - [MediaPage]: Media description.
     // - [SearchItem]: Search list item titles.
@@ -53,24 +61,28 @@ val AnimiteTypography = Typography(
         fontSize = 14.sp,
         fontFamily = manropeFamily,
         fontWeight = FontWeight.Medium,
-        lineHeight = 22.sp
+        lineHeight = 22.sp,
+        baselineShift = BaselineShift(baselineShift)
     ),
     // - [MediaPage]: Stat label.
     // - [SearchItem]: Search list item season and year.
     labelSmall = TextStyle(
         fontSize = 12.sp,
         fontFamily = manropeFamily,
-        fontWeight = FontWeight.Medium
+        fontWeight = FontWeight.Medium,
+        baselineShift = BaselineShift(baselineShift)
     ),
     // - [MediaPage]: Stat score.
     displaySmall = TextStyle(
         fontSize = 24.sp,
         fontFamily = manropeFamily,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        baselineShift = BaselineShift(baselineShift)
     ),
     // - [MediaPage]: Genre.
     labelMedium = TextStyle(
         fontWeight = FontWeight.Medium,
-        letterSpacing = (1.3).sp
+        letterSpacing = (1.3).sp,
+        baselineShift = BaselineShift(baselineShift)
     )
 )
