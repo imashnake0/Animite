@@ -23,3 +23,10 @@ fun MediaSeason.nextSeason(now: LocalDate): Pair<MediaSeason, Int> {
         else -> MediaSeason.UNKNOWN__ to 0
     }
 }
+
+/**
+ * Returns a capitalized [MediaSeason.rawValue].
+ * TODO: Make a UI model instead.
+ */
+val MediaSeason.string
+    get() = this.rawValue.lowercase().replaceFirstChar { it.uppercase() }

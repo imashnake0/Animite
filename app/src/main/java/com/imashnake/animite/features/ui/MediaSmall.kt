@@ -77,9 +77,9 @@ fun <T> MediaSmallRow(
 @Composable
 fun MediaSmall(
     image: String?,
-    label: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    label: String? = null,
 ) {
     Card(
         modifier = modifier,

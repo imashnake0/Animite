@@ -13,11 +13,23 @@ query Search(
             search: $search
         ) {
             id
+            coverImage {
+                extraLarge
+            }
             title {
                 romaji
                 english
                 native
             }
+            season
+            seasonYear
+            studios(sort: [FAVOURITES_DESC], isMain: true) {
+                nodes {
+                    name
+                }
+            }
+            format
+            episodes
         }
     }
 }

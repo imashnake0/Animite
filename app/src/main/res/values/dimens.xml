@@ -17,6 +17,7 @@
     <dimen name="character_card_width">96dp</dimen>
     <dimen name="trailer_corner_radius">30dp</dimen>
 
-    <dimen name="search_bar_padding">16dp</dimen>
+    <dimen name="search_bar_icon_padding">16dp</dimen>
     <dimen name="search_list_padding">14dp</dimen>
+    <dimen name="search_bar_height">56dp</dimen>
 </resources>

@@ -16,8 +16,12 @@
     <string name="characters">Characters</string>
     <string name="trailer">Trailer</string>
 
-    <!-- SearchBar -->
+    <!-- SearchFrontDrop -->
     <string name="search">Search</string>
     <string name="collapse">Collapse</string>
     <string name="close">Close</string>
+    <plurals name="episodes">
+       <item quantity="one">%1$d episode</item>
+       <item quantity="other">%1$d episodes</item>
+    </plurals>
 </resources>

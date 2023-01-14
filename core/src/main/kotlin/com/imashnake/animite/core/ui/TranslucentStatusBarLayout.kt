@@ -23,7 +23,7 @@ fun TranslucentStatusBarLayout(
     targetColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit
 ) {
-    // TODO Can this be a modifier?
+    // TODO: Can this be a modifier?
     val distanceUntilAnimatedPx = with(LocalDensity.current) { distanceUntilAnimated.toPx() }
     val statusBarInsets = WindowInsets.statusBars
     Box(

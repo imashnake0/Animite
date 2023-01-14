@@ -7,6 +7,7 @@ import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.repos.MediaListRepository
 import com.imashnake.animite.dev.ext.nextSeason
 import com.imashnake.animite.dev.ext.season
+import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.type.MediaSort
 import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,11 +28,11 @@ class HomeViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val mediaType = savedStateHandle.getStateFlow<MediaType?>("mediaType", null)
-    private val now = savedStateHandle.getStateFlow("now", LocalDate.now())
+    private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
+    private val now = savedStateHandle.getStateFlow(NOW, LocalDate.now())
 
     fun setMediaType(mediaType: MediaType) {
-        savedStateHandle["mediaType"] = mediaType
+        savedStateHandle[Constants.MEDIA_TYPE] = mediaType
     }
 
     val trendingMedia = mediaType
@@ -83,4 +84,8 @@ class HomeViewModel @Inject constructor(
     val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { resources ->
         emit(!resources.none { it is Resource.Loading })
     }.stateIn(viewModelScope, SharingStarted.Lazily, true)
+
+    companion object {
+        const val NOW = "now"
+    }
 }
