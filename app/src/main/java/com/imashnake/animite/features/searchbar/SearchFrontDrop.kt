@@ -63,6 +63,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -89,7 +90,11 @@ import com.imashnake.animite.type.MediaType
  * @param modifier the [Modifier] to be applied to this Front Drop.
  * @param viewModel [SearchViewModel] instance.
  */
-@OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalLayoutApi::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun SearchFrontDrop(
     hasExtraPadding: Boolean,
@@ -144,12 +149,14 @@ fun SearchFrontDrop(
         shadowElevation = 20.dp,
         shape = CircleShape
     ) {
+        val keyboardController = LocalSoftwareKeyboardController.current
         AnimatedContent(targetState = isExpanded) { targetExpanded ->
             if (targetExpanded) {
                 ExpandedSearchBarContent(
                     collapse = {
                         isExpanded = false
                         viewModel.setQuery(null)
+                        keyboardController?.hide()
                     },
                     clearText = { viewModel.setQuery(null) },
                     searchText = { viewModel.setQuery(it) }
