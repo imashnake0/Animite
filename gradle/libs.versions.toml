@@ -20,6 +20,7 @@ desugaring = "1.2.2"
 # Accompanist
 # https://github.com/google/accompanist/releases.
 accompanist = "0.28.0"
+##       ⬆ = "0.29.0-alpha"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
@@ -41,6 +42,8 @@ agp = "7.3.1"
 ##⬆ = "7.4.0-beta05"
 ##⬆ = "7.4.0-rc01"
 ##⬆ = "7.4.0-rc02"
+##⬆ = "7.4.0-rc03"
+##⬆ = "7.4.0"
 ##⬆ = "8.0.0-alpha01"
 ##⬆ = "8.0.0-alpha02"
 ##⬆ = "8.0.0-alpha03"
@@ -51,23 +54,30 @@ agp = "7.3.1"
 ##⬆ = "8.0.0-alpha08"
 ##⬆ = "8.0.0-alpha09"
 ##⬆ = "8.0.0-alpha10"
+##⬆ = "8.0.0-alpha11"
 
 # AndroidX
 # https://androidx.tech.
 activity = "1.6.1"
 ##    ⬆ = "1.7.0-alpha01"
 ##    ⬆ = "1.7.0-alpha02"
+##    ⬆ = "1.7.0-alpha03"
 core = "1.9.0"
+##⬆ = "1.10.0-alpha01"
 lifecycle = "2.5.1"
 ##     ⬆ = "2.6.0-alpha01"
 ##     ⬆ = "2.6.0-alpha02"
 ##     ⬆ = "2.6.0-alpha03"
+##     ⬆ = "2.6.0-alpha04"
 extJunit = "1.1.4"
+##    ⬆ = "1.1.5"
 espresso = "3.5.0"
+##    ⬆ = "3.5.1"
 
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
 apollo = "3.7.3"
+##  ⬆ = "3.7.4"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
@@ -77,15 +87,22 @@ coil = "2.2.2"
 # Compose Destinations
 # https://github.com/raamcosta/compose-destinations/releases.
 composeDestinations = "1.7.27-beta"
+##               ⬆ = "1.7.30-beta"
+##               ⬆ = "1.7.32-beta"
+##               ⬆ = "1.8.32-beta"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
 composeBom = "2022.12.00"
+##      ⬆ = "2023.01.00"
 # TODO: Create an issue!
 composeCompiler = "1.3.2"
 composeFoundation = "1.4.0-alpha03"
+##             ⬆ = "1.4.0-alpha04"
 composeMaterial3 = "1.1.0-alpha03"
+##            ⬆ = "1.1.0-alpha04"
 composeUi = "1.4.0-alpha03"
+##     ⬆ = "1.4.0-alpha04"
 
 # Dagger
 # https://github.com/google/dagger/releases.
@@ -104,6 +121,7 @@ kotlin = "1.7.20"
 ##  ⬆ = "1.8.0-Beta"
 ##  ⬆ = "1.8.0-RC"
 ##  ⬆ = "1.8.0-RC2"
+##  ⬆ = "1.8.0"
 coroutines = "1.6.4"
 
 # KSP
@@ -114,6 +132,7 @@ ksp = "1.7.20-1.0.8"
 ##⬆ = "1.8.0-Beta-1.0.8"
 ##⬆ = "1.8.0-RC-1.0.8"
 ##⬆ = "1.8.0-RC2-1.0.8"
+##⬆ = "1.8.0-1.0.8"
 
 # Snapper
 # https://github.com/chrisbanes/snapper/releases.
@@ -126,6 +145,7 @@ junit = "4.13.2"
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.17.0"
+##              ⬆ = "1.18.0"
 
 [libraries]
 
