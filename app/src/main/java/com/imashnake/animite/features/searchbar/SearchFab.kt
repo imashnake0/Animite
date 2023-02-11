@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -122,22 +123,7 @@ fun ExpandedSearchBarContent(
             )
         },
         singleLine = true,
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.Transparent,
-            cursorColor = LocalContentColor.current,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            selectionColors = TextSelectionColors(
-                handleColor = LocalContentColor.current,
-                backgroundColor = LocalContentColor.current.copy(alpha = 0.3f)
-            ),
-            focusedLeadingIconColor = LocalContentColor.current,
-            unfocusedLeadingIconColor = LocalContentColor.current,
-            textColor = LocalContentColor.current,
-            unfocusedTrailingIconColor = LocalContentColor.current,
-            focusedTrailingIconColor = LocalContentColor.current,
-            placeholderColor = LocalContentColor.current.copy(alpha = 0.5F)
-        ),
+        colors = searchTextFieldColors(),
         keyboardOptions = KeyboardOptions(autoCorrect = false, imeAction = ImeAction.Search),
         leadingIcon = {
             IconButton(
@@ -171,4 +157,27 @@ fun ExpandedSearchBarContent(
         clearText()
         collapse()
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun searchTextFieldColors(
+    contentColor: Color = LocalContentColor.current
+): TextFieldColors {
+    return TextFieldDefaults.textFieldColors(
+        containerColor = Color.Transparent,
+        cursorColor = contentColor,
+        unfocusedIndicatorColor = Color.Transparent,
+        focusedIndicatorColor = Color.Transparent,
+        selectionColors = TextSelectionColors(
+            handleColor = contentColor,
+            backgroundColor = contentColor.copy(alpha = 0.3f)
+        ),
+        focusedLeadingIconColor = contentColor,
+        unfocusedLeadingIconColor = contentColor,
+        textColor = contentColor,
+        unfocusedTrailingIconColor = contentColor,
+        focusedTrailingIconColor = contentColor,
+        placeholderColor = contentColor.copy(alpha = 0.5F)
+    )
 }
