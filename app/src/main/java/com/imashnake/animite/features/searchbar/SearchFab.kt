@@ -43,12 +43,22 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.R
 
+/**
+ * A Floating Action Button-esque collapsible search bar. When collapsed, it displays a search icon.
+ * Expanding it reveals a text field with collapse and clear buttons.
+ *
+ * @param isExpanded Whether the search FAB is currently "expanded".
+ * @param setExpanded Called when [isExpanded] should be updated.
+ * @param onSearched Called when the user searches for something. The query may be null, which
+ * suggests nothing was entered in the text field.
+ * @param modifier [Modifier].
+ */
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SearchFab(
     isExpanded: Boolean,
-    setExpanded: (Boolean) -> Unit,
-    onSearched: (String?) -> Unit,
+    setExpanded: (expanded: Boolean) -> Unit,
+    onSearched: (query: String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -80,7 +90,7 @@ fun SearchFab(
 }
 
 @Composable
-fun CollapsedSearchBarContent(
+internal fun CollapsedSearchBarContent(
     expand: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -95,7 +105,7 @@ fun CollapsedSearchBarContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpandedSearchBarContent(
+internal fun ExpandedSearchBarContent(
     collapse: () -> Unit,
     clearText: () -> Unit,
     searchText: (String) -> Unit,
