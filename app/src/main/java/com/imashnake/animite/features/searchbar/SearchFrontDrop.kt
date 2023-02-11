@@ -119,7 +119,10 @@ fun SearchFrontDrop(
         animationSpec = tween(Constants.CROSSFADE_DURATION)
     )
 
-    Box(Modifier.fillMaxSize().drawBehind { drawRect(frontDropColor) })
+    Box(
+        Modifier
+            .fillMaxSize()
+            .drawBehind { drawRect(frontDropColor) })
 
     searchList.data?.let {
         SearchList(
@@ -135,8 +138,10 @@ fun SearchFrontDrop(
         )
     }
 
-    Surface(
-        color = MaterialTheme.colorScheme.primary,
+    SearchFab(
+        isExpanded = isExpanded,
+        setExpanded = { isExpanded = it },
+        onSearched = viewModel::setQuery,
         modifier = modifier
             .landscapeCutoutPadding()
             .padding(bottom = searchBarBottomPadding)
@@ -145,131 +150,7 @@ fun SearchFrontDrop(
                 PaddingValues(bottom = searchBarBottomPadding)
             )
             .imePadding()
-            .height(dimensionResource(R.dimen.search_bar_height)),
-        shadowElevation = 20.dp,
-        shape = CircleShape
-    ) {
-        val keyboardController = LocalSoftwareKeyboardController.current
-        AnimatedContent(targetState = isExpanded) { targetExpanded ->
-            if (targetExpanded) {
-                ExpandedSearchBarContent(
-                    collapse = {
-                        isExpanded = false
-                        viewModel.setQuery(null)
-                        keyboardController?.hide()
-                    },
-                    clearText = { viewModel.setQuery(null) },
-                    searchText = { viewModel.setQuery(it) }
-                )
-            } else {
-                CollapsedSearchBarContent(
-                    expand = { isExpanded = true }
-                )
-            }
-        }
-    }
-
-    BackHandler(isExpanded) {
-        viewModel.setQuery(null)
-        isExpanded = false
-    }
-}
-
-@Composable
-fun CollapsedSearchBarContent(
-    modifier: Modifier = Modifier,
-    expand: () -> Unit
-) {
-    Icon(
-        imageVector = ImageVector.vectorResource(R.drawable.search),
-        contentDescription = stringResource(R.string.search),
-        modifier = modifier
-            .clickable { expand() }
-            .padding(dimensionResource(R.dimen.search_bar_icon_padding)),
-        tint = MaterialTheme.colorScheme.onPrimary
-    )
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExpandedSearchBarContent(
-    modifier: Modifier = Modifier,
-    collapse: () -> Unit,
-    clearText: () -> Unit,
-    searchText: (String) -> Unit
-) {
-    val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(focusRequester) {
-        focusRequester.requestFocus()
-    }
-
-    var text by rememberSaveable { mutableStateOf("") }
-    TextField(
-        value = text,
-        onValueChange = {
-            text = it
-            searchText(it)
-        },
-        modifier = modifier.focusRequester(focusRequester),
-        textStyle = MaterialTheme.typography.labelLarge.copy(
-            color = MaterialTheme.colorScheme.onPrimary,
-            lineHeight = 12.sp
-        ),
-        placeholder = {
-            Text(
-                text = stringResource(R.string.search),
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5F),
-                style = MaterialTheme.typography.labelLarge.copy(lineHeight = 12.sp)
-            )
-        },
-        singleLine = true,
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            cursorColor = MaterialTheme.colorScheme.onPrimary,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            selectionColors = TextSelectionColors(
-                handleColor = MaterialTheme.colorScheme.onPrimary,
-                backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f)
-            )
-        ),
-        keyboardOptions = KeyboardOptions(autoCorrect = false, imeAction = ImeAction.Search),
-        leadingIcon = {
-            IconButton(
-                onClick = collapse,
-                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size)),
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        },
-        trailingIcon = {
-            IconButton(
-                onClick = {
-                    text = ""
-                    clearText()
-                },
-                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size)),
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        }
+            .height(dimensionResource(R.dimen.search_bar_height))
     )
 }
 
