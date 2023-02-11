@@ -9,13 +9,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -71,7 +72,8 @@ fun SearchFab(
                 )
             } else {
                 CollapsedSearchBarContent(
-                    expand = { setExpanded(true) }
+                    expand = { setExpanded(true) },
+                    modifier = Modifier.padding(dimensionResource(R.dimen.search_bar_icon_padding))
                 )
             }
         }
@@ -86,10 +88,9 @@ fun CollapsedSearchBarContent(
     Icon(
         imageVector = ImageVector.vectorResource(R.drawable.search),
         contentDescription = stringResource(R.string.search),
-        modifier = modifier
+        modifier = Modifier
             .clickable(onClick = expand)
-            .padding(dimensionResource(R.dimen.search_bar_icon_padding)),
-        tint = MaterialTheme.colorScheme.onPrimary
+            .then(modifier)
     )
 }
 
@@ -114,42 +115,40 @@ fun ExpandedSearchBarContent(
             searchText(it)
         },
         modifier = modifier.focusRequester(focusRequester),
-        textStyle = MaterialTheme.typography.labelLarge.copy(
-            color = MaterialTheme.colorScheme.onPrimary,
-            lineHeight = 12.sp
-        ),
+        textStyle = MaterialTheme.typography.labelLarge,
         placeholder = {
             Text(
                 text = stringResource(R.string.search),
-                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5F),
-                style = MaterialTheme.typography.labelLarge.copy(lineHeight = 12.sp)
+                color = LocalContentColor.current.copy(alpha = 0.5F),
+                style = MaterialTheme.typography.labelLarge
             )
         },
         singleLine = true,
         colors = TextFieldDefaults.textFieldColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            cursorColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = Color.Transparent,
+            cursorColor = LocalContentColor.current,
             unfocusedIndicatorColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             selectionColors = TextSelectionColors(
-                handleColor = MaterialTheme.colorScheme.onPrimary,
-                backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f)
-            )
+                handleColor = LocalContentColor.current,
+                backgroundColor = LocalContentColor.current.copy(alpha = 0.3f)
+            ),
+            focusedLeadingIconColor = LocalContentColor.current,
+            unfocusedLeadingIconColor = LocalContentColor.current,
+            textColor = LocalContentColor.current,
+            unfocusedTrailingIconColor = LocalContentColor.current,
+            focusedTrailingIconColor = LocalContentColor.current,
+            placeholderColor = LocalContentColor.current.copy(alpha = 0.5F)
         ),
         keyboardOptions = KeyboardOptions(autoCorrect = false, imeAction = ImeAction.Search),
         leadingIcon = {
             IconButton(
                 onClick = collapse,
-                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size)),
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size))
             ) {
                 Icon(
                     imageVector = Icons.Rounded.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    contentDescription = null
                 )
             }
         },
@@ -159,23 +158,18 @@ fun ExpandedSearchBarContent(
                     text = ""
                     clearText()
                 },
-                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size)),
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size))
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    contentDescription = null
                 )
             }
         }
     )
 
-
     BackHandler {
+        text = ""
         clearText()
         collapse()
     }
