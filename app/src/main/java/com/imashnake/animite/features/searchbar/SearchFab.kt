@@ -118,7 +118,6 @@ fun ExpandedSearchBarContent(
         placeholder = {
             Text(
                 text = stringResource(R.string.search),
-                color = LocalContentColor.current.copy(alpha = 0.5F),
                 style = MaterialTheme.typography.labelLarge
             )
         },
