@@ -50,9 +50,9 @@ android {
 
 dependencies {
     // Apollo Kotlin
-    api(libs.apollo.runtime)
-    api(libs.apollo.cache.memory)
-    api(libs.apollo.cache.sqlite)
+    implementation(libs.apollo.runtime)
+    implementation(libs.apollo.cache.memory)
+    implementation(libs.apollo.cache.sqlite)
 
     // Hilt
     implementation(libs.hilt.android)
