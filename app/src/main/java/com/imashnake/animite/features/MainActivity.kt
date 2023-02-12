@@ -112,7 +112,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 navController.navigate(
                     MediaPageDestination(
                         MediaPageArgs(
-                            id!!,
+                            id,
                             mediaType.rawValue
                         )
                     )
