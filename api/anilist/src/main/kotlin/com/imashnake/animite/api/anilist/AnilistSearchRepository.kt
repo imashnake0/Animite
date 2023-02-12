@@ -14,7 +14,7 @@ class AnilistSearchRepository @Inject constructor(
         type: MediaType,
         perPage: Int,
         search: String?
-    ): Flow<Result<SearchQuery.Data>> {
+    ): Flow<Result<SearchQuery.Page>> {
         return apolloClient
             .query(
                 SearchQuery(
@@ -23,6 +23,6 @@ class AnilistSearchRepository @Inject constructor(
                     search = Optional.presentIfNotNull(search)
                 )
             ).executeCacheAndNetwork()
-            .asResult()
+            .asResult { it.page!! }
     }
 }

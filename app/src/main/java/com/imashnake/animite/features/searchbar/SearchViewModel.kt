@@ -50,13 +50,13 @@ class SearchViewModel @Inject constructor(
                     type = mediaType,
                     perPage = 10,
                     search = query
-                ).asResource { it.page }
+                ).asResource()
             }
         }
         .map { resource ->
             if (resource is Resource.Success) {
                 Resource.success(
-                    resource.data?.media?.mapNotNull {
+                    resource.data.media?.mapNotNull {
                         if (it != null) {
                             SearchItem(
                                 id = it.id,
