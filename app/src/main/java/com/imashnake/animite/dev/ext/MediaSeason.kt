@@ -1,6 +1,6 @@
 package com.imashnake.animite.dev.ext
 
-import com.imashnake.animite.type.MediaSeason
+import com.imashnake.animite.api.anilist.type.MediaSeason
 import java.time.LocalDate
 import java.time.Month
 

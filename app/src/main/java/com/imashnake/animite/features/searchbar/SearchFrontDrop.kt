@@ -49,10 +49,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
-import com.imashnake.animite.type.MediaType
 
 /**
  * Search bar along with a Front Drop list.

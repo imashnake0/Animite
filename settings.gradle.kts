@@ -23,6 +23,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Animite"
 include(
+    ":api:anilist",
     ":material-color-utilities",
     ":core",
     ":profile",

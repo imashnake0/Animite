@@ -1,10 +1,10 @@
 package com.imashnake.animite.data.sauce.apis
 
 import com.apollographql.apollo3.api.ApolloResponse
-import com.imashnake.animite.MediaListQuery
-import com.imashnake.animite.type.MediaSeason
-import com.imashnake.animite.type.MediaSort
-import com.imashnake.animite.type.MediaType
+import com.imashnake.animite.api.anilist.MediaListQuery
+import com.imashnake.animite.api.anilist.type.MediaSeason
+import com.imashnake.animite.api.anilist.type.MediaSort
+import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 
 interface MediaListApi {

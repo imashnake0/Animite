@@ -5,7 +5,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp) version libs.versions.ksp.get()
     kotlin("kapt")
@@ -68,12 +67,6 @@ android {
     }
 }
 
-apollo {
-    service("anilist") {
-        packageName.set("com.imashnake.animite")
-    }
-}
-
 kapt {
     correctErrorTypes = true
 }
@@ -83,6 +76,7 @@ ksp {
 }
 
 dependencies {
+    implementation(project(":api:anilist"))
     implementation(project(":core"))
     implementation(project(":profile"))
     implementation(project(":rslash"))
@@ -102,11 +96,6 @@ dependencies {
     implementation(libs.compose.ui)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
-
-    // Apollo Kotlin
-    implementation(libs.apollo.runtime)
-    implementation(libs.apollo.cache.memory)
-    implementation(libs.apollo.cache.sqlite)
 
     // Coil
     implementation(libs.coil.compose)

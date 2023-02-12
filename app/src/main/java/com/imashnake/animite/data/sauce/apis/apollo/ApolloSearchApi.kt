@@ -4,9 +4,9 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.executeCacheAndNetwork
-import com.imashnake.animite.SearchQuery
+import com.imashnake.animite.api.anilist.SearchQuery
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.sauce.apis.SearchApi
-import com.imashnake.animite.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

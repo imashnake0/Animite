@@ -3,13 +3,13 @@ package com.imashnake.animite.features.searchbar
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imashnake.animite.SearchQuery
+import com.imashnake.animite.api.anilist.SearchQuery
+import com.imashnake.animite.api.anilist.type.MediaFormat
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.repos.SearchRepository
 import com.imashnake.animite.dev.ext.string
 import com.imashnake.animite.dev.internal.Constants
-import com.imashnake.animite.type.MediaFormat
-import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted

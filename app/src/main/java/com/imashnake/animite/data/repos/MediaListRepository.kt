@@ -1,12 +1,12 @@
 package com.imashnake.animite.data.repos
 
-import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.api.anilist.MediaListQuery
+import com.imashnake.animite.api.anilist.type.MediaSeason
+import com.imashnake.animite.api.anilist.type.MediaSort
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.Resource.Companion.asResource
 import com.imashnake.animite.data.sauce.apis.MediaListApi
-import com.imashnake.animite.type.MediaSeason
-import com.imashnake.animite.type.MediaSort
-import com.imashnake.animite.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

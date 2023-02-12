@@ -1,10 +1,10 @@
 package com.imashnake.animite.data.repos
 
-import com.imashnake.animite.SearchQuery
+import com.imashnake.animite.api.anilist.SearchQuery
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.Resource.Companion.asResource
 import com.imashnake.animite.data.sauce.apis.SearchApi
-import com.imashnake.animite.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
