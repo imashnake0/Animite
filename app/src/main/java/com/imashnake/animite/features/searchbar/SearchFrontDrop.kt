@@ -91,7 +91,8 @@ fun SearchFrontDrop(
     Box(
         Modifier
             .fillMaxSize()
-            .drawBehind { drawRect(frontDropColor) })
+            .drawBehind { drawRect(frontDropColor) }
+    )
 
     searchList.data?.let {
         SearchList(
