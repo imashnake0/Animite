@@ -568,7 +568,7 @@ object HctSolver {
         // ===========================================================
         // Operations inlined from Cam16 to avoid repeated calculation
         // ===========================================================
-        val viewingConditions: ViewingConditions = ViewingConditions.Companion.DEFAULT
+        val viewingConditions: ViewingConditions = ViewingConditions.DEFAULT
         val tInnerCoeff = 1 / (1.64 - 0.29.pow(viewingConditions.n)).pow(0.73)
         val eHue = 0.25 * (cos(hueRadians + 2.0) + 3.8)
         val p1 = eHue * (50000.0 / 13.0) * viewingConditions.nc * viewingConditions.ncb
