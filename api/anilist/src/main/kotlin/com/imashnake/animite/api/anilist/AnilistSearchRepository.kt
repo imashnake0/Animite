@@ -22,7 +22,8 @@ class AnilistSearchRepository @Inject constructor(
                     perPage = Optional.presentIfNotNull(perPage),
                     search = Optional.presentIfNotNull(search)
                 )
-            ).executeCacheAndNetwork()
+            )
+            .executeCacheAndNetwork()
             .asResult { it.page!! }
     }
 }
