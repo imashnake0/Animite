@@ -156,7 +156,6 @@ fun SearchList(
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun SearchItem(
     item: SearchItem,

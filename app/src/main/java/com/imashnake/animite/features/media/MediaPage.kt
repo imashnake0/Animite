@@ -290,7 +290,6 @@ fun MediaStats(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaGenres(
     genres: List<String>,
