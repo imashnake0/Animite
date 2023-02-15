@@ -1,5 +1,6 @@
 package com.imashnake.animite.features
 
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -10,11 +11,16 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -36,6 +43,7 @@ import com.imashnake.animite.R
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.navigationbar.NavigationBar
+import com.imashnake.animite.features.navigationbar.NavigationRail
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -74,7 +82,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 @OptIn(
     ExperimentalAnimationApi::class,
-    ExperimentalMaterialNavigationApi::class
+    ExperimentalMaterialNavigationApi::class, ExperimentalLayoutApi::class
 )
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberAnimatedNavController()
@@ -107,7 +115,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
         }
 
         SearchFrontDrop(
-            hasExtraPadding = isNavBarVisible,
+            hasExtraPadding = isNavBarVisible &&
+                    (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT),
             onItemClick = { id, mediaType ->
                 navController.navigate(
                     MediaPageDestination(
@@ -127,13 +136,24 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 )
         )
 
-        AnimatedVisibility(
-            visible = isNavBarVisible,
-            modifier = Modifier.align(Alignment.BottomCenter),
-            enter = slideInVertically { it },
-            exit = slideOutVertically { it }
-        ) {
-            NavigationBar(navController = navController)
+        if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            AnimatedVisibility(
+                visible = isNavBarVisible,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = slideInVertically { it },
+                exit = slideOutVertically { it }
+            ) {
+                NavigationBar(navController = navController)
+            }
+        } else {
+            AnimatedVisibility(
+                visible = isNavBarVisible && !WindowInsets.isImeVisible,
+                modifier = Modifier.align(Alignment.CenterStart),
+                enter = slideInHorizontally { -it },
+                exit = slideOutHorizontally { -it }
+            ) {
+                NavigationRail(navController = navController)
+            }
         }
     }
 }

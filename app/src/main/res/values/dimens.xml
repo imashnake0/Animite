@@ -9,6 +9,7 @@
     <dimen name="media_card_text_padding_vertical">10dp</dimen>
 
     <dimen name="navigation_bar_height">65dp</dimen>
+    <dimen name="navigation_rail_width">80dp</dimen>
 
     <dimen name="banner_height">168dp</dimen>
     <dimen name="media_card_width">140dp</dimen>

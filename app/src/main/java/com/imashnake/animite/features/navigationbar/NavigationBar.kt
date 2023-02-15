@@ -1,9 +1,7 @@
 package com.imashnake.animite.features.navigationbar
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -18,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -36,20 +33,16 @@ import com.imashnake.animite.R as Res
 // TODO: Ripple where?
 @Composable
 fun NavigationBar(
-    navController: NavController
+    navController: NavController,
+    modifier: Modifier = Modifier
 ) {
-    // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
-        Modifier.height(
+        modifier.height(
             dimensionResource(Res.dimen.navigation_bar_height) + WindowInsets
                 .navigationBars
                 .asPaddingValues()
                 .calculateBottomPadding()
-        ),
-        // TODO: Use a `NavigationRail` instead.
-        windowInsets = if (LocalConfiguration.current.orientation
-            == Configuration.ORIENTATION_LANDSCAPE
-        ) { WindowInsets.displayCutout } else { WindowInsets(0.dp) }
+        )
     ) {
         val currentDestination by navController.currentDestinationAsState()
 

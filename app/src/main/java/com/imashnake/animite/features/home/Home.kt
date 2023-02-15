@@ -1,11 +1,14 @@
 package com.imashnake.animite.features.home
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,11 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.R
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
@@ -103,98 +109,121 @@ fun Home(
                                 .height(dimensionResource(Res.dimen.banner_height))
                         ) { }
 
-                        Text(
-                            text = stringResource(Res.string.okaeri),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            style = MaterialTheme.typography.displayMedium,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(
-                                    start = dimensionResource(Res.dimen.large_padding),
-                                    bottom = dimensionResource(Res.dimen.medium_padding)
+                        Row(Modifier.align(Alignment.BottomStart)) {
+                            // TODO: Add `padding` and `contentPadding` instead.
+                            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                                Spacer(
+                                    Modifier
+                                        .width(dimensionResource(R.dimen.navigation_rail_width))
+                                        .fillMaxHeight()
                                 )
-                                .landscapeCutoutPadding()
-                        )
+                            Text(
+                                text = stringResource(Res.string.okaeri),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                style = MaterialTheme.typography.displayMedium,
+                                modifier = Modifier
+                                    .padding(
+                                        start = dimensionResource(Res.dimen.large_padding),
+                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                    )
+                                    .landscapeCutoutPadding()
+                            )
+                        }
                     }
 
-                    Column {
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
-
-                        Column(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(vertical = dimensionResource(Res.dimen.large_padding))
-                                // TODO move this one out of Home when we can pass modifiers in
-                                .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
-                            verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
-                        ) {
-                            HomeRow(
-                                list = trendingList.data?.media.orEmpty(),
-                                title = stringResource(Res.string.trending_now),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
+                    Row {
+                        // TODO: Add `padding` and `contentPadding` instead. This causes `HomeRow`s
+                        //  to scroll behind the spacer.
+                        if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                            Spacer(
+                                Modifier
+                                    .width(dimensionResource(R.dimen.navigation_rail_width))
+                                    .fillMaxHeight()
                             )
 
-                            HomeRow(
-                                list = popularList.data?.media.orEmpty(),
-                                title = stringResource(Res.string.popular_this_season),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
+                        Column {
+                            Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
 
-                            HomeRow(
-                                list = upcomingList.data?.media.orEmpty(),
-                                title = stringResource(Res.string.upcoming_next_season),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.rawValue
+                            Column(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(vertical = dimensionResource(Res.dimen.large_padding))
+                                    // TODO move this one out of Home when we can pass modifiers in
+                                    .padding(
+                                        bottom = if (
+                                            LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
+                                        ) dimensionResource(Res.dimen.navigation_bar_height) else 0.dp
+                                    ),
+                                verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                            ) {
+                                HomeRow(
+                                    list = trendingList.data?.media.orEmpty(),
+                                    title = stringResource(Res.string.trending_now),
+                                    onItemClicked = {
+                                        navigator.navigate(
+                                            MediaPageDestination(
+                                                MediaPageArgs(
+                                                    it.id,
+                                                    homeMediaType.rawValue
+                                                )
                                             )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
+                                        ) {
+                                            launchSingleTop = true
+                                        }
                                     }
-                                }
-                            )
+                                )
 
-                            HomeRow(
-                                list = allTimePopularList.data?.media.orEmpty(),
-                                title = stringResource(Res.string.all_time_popular),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.rawValue
+                                HomeRow(
+                                    list = popularList.data?.media.orEmpty(),
+                                    title = stringResource(Res.string.popular_this_season),
+                                    onItemClicked = {
+                                        navigator.navigate(
+                                            MediaPageDestination(
+                                                MediaPageArgs(
+                                                    it.id,
+                                                    homeMediaType.rawValue
+                                                )
                                             )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
+                                        ) {
+                                            launchSingleTop = true
+                                        }
                                     }
-                                }
-                            )
+                                )
+
+                                HomeRow(
+                                    list = upcomingList.data?.media.orEmpty(),
+                                    title = stringResource(Res.string.upcoming_next_season),
+                                    onItemClicked = {
+                                        navigator.navigate(
+                                            MediaPageDestination(
+                                                MediaPageArgs(
+                                                    it.id,
+                                                    homeMediaType.rawValue
+                                                )
+                                            )
+                                        ) {
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                )
+
+                                HomeRow(
+                                    list = allTimePopularList.data?.media.orEmpty(),
+                                    title = stringResource(Res.string.all_time_popular),
+                                    onItemClicked = {
+                                        navigator.navigate(
+                                            MediaPageDestination(
+                                                MediaPageArgs(
+                                                    it.id,
+                                                    homeMediaType.rawValue
+                                                )
+                                            )
+                                        ) {
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
                 }
