@@ -33,7 +33,7 @@ class AnilistMediaRepository @Inject constructor(
                 )
             )
             .executeCacheAndNetwork()
-            .asResult{ it.page!! }
+            .asResult { it.page!! }
     }
 
     fun fetchMedia(id: Int?, mediaType: MediaType): Flow<Result<MediaQuery.Media>> {
