@@ -34,8 +34,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.imashnake.animite.MediaListQuery
 import com.imashnake.animite.R
+import com.imashnake.animite.api.anilist.MediaListQuery
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
@@ -45,7 +46,6 @@ import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
-import com.imashnake.animite.type.MediaType
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
