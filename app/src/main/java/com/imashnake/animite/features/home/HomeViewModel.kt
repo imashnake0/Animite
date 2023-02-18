@@ -3,13 +3,14 @@ package com.imashnake.animite.features.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.type.MediaSort
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.Resource
-import com.imashnake.animite.data.repos.MediaListRepository
+import com.imashnake.animite.data.Resource.Companion.asResource
 import com.imashnake.animite.dev.ext.nextSeason
 import com.imashnake.animite.dev.ext.season
 import com.imashnake.animite.dev.internal.Constants
-import com.imashnake.animite.type.MediaSort
-import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel @Inject constructor(
-    private val mediaListRepository: MediaListRepository,
+    private val mediaListRepository: AnilistMediaRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -43,6 +44,7 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.TRENDING_DESC),
             )
         }
+        .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val popularMediaThisSeason = mediaType
@@ -56,6 +58,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.year
             )
         }
+        .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val upcomingMediaNextSeason = mediaType
@@ -69,6 +72,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.month.season.nextSeason(now).second
             )
         }
+        .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val allTimePopular = mediaType
@@ -79,10 +83,11 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )
         }
+        .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { resources ->
-        emit(!resources.none { it is Resource.Loading })
+        emit(!resources.none { it is Resource.Loading<*> })
     }.stateIn(viewModelScope, SharingStarted.Lazily, true)
 
     companion object {

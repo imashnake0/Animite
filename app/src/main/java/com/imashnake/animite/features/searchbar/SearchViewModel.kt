@@ -3,13 +3,14 @@ package com.imashnake.animite.features.searchbar
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imashnake.animite.SearchQuery
+import com.imashnake.animite.api.anilist.AnilistSearchRepository
+import com.imashnake.animite.api.anilist.SearchQuery
+import com.imashnake.animite.api.anilist.type.MediaFormat
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.Resource
-import com.imashnake.animite.data.repos.SearchRepository
+import com.imashnake.animite.data.Resource.Companion.asResource
 import com.imashnake.animite.dev.ext.string
 import com.imashnake.animite.dev.internal.Constants
-import com.imashnake.animite.type.MediaFormat
-import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchRepository: SearchRepository,
+    private val searchRepository: AnilistSearchRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
@@ -45,16 +46,17 @@ class SearchViewModel @Inject constructor(
             if (query.isNullOrEmpty()) {
                 flowOf(Resource.success(SearchQuery.Page(emptyList())))
             } else {
-                searchRepository.search(
-                    mediaType = mediaType,
+                searchRepository.fetchSearch(
+                    type = mediaType,
+                    perPage = 10,
                     search = query
-                )
+                ).asResource()
             }
         }
         .map { resource ->
             if (resource is Resource.Success) {
                 Resource.success(
-                    resource.data?.media?.mapNotNull {
+                    resource.data.media?.mapNotNull {
                         if (it != null) {
                             SearchItem(
                                 id = it.id,

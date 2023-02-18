@@ -34,9 +34,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.imashnake.animite.MediaListQuery
+import com.imashnake.animite.api.anilist.MediaListQuery
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
-import com.imashnake.animite.type.MediaType
 import com.imashnake.animite.R as Res
 
 /**
