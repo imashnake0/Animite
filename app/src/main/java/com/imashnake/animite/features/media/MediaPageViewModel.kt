@@ -7,12 +7,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imashnake.animite.MediaQuery
+import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.MediaQuery
+import com.imashnake.animite.api.anilist.type.MediaRankType
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.plus
-import com.imashnake.animite.data.repos.MediaRepository
 import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.type.MediaRankType
-import com.imashnake.animite.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MediaPageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val mediaRepository: MediaRepository
+    private val mediaRepository: AnilistMediaRepository
 ) : ViewModel() {
     private val navArgs = MediaPageDestination.argsFrom(savedStateHandle)
 
@@ -33,7 +33,7 @@ class MediaPageViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val mediaType = MediaType.safeValueOf(navArgs.mediaType)
-                val media = mediaRepository.fetchMedia(navArgs.id, mediaType).firstOrNull()?.data // temporary until this VM is switched to StateFlows
+                val media = mediaRepository.fetchMedia(navArgs.id, mediaType).firstOrNull()?.getOrNull() // temporary until this VM is switched to StateFlows
 
                 val score = media?.averageScore?.let { listOf(Stat(StatLabel.SCORE, it)) }
 
@@ -87,7 +87,7 @@ class MediaPageViewModel @Inject constructor(
                 // TODO: Does a high resolution image always exist?
                 "youtube" -> "https://img.youtube.com/vi/${id}/maxresdefault.jpg"
                 // TODO: Change the icon and handle this properly.
-                "dailymotion" -> thumbnail
+                "dailymotion" -> thumbnail!!
                 else -> error("This site type ($site) is not supported!")
             }
         )
