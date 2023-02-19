@@ -1,6 +1,6 @@
 package com.imashnake.animite.features.media
 
-data class MediaUiState(
+data class Media(
     val bannerImage: String? = null,
     val coverImage: String? = null,
     val color: Int? = null,
@@ -10,7 +10,11 @@ data class MediaUiState(
     val genres: List<String>? = null,
     val characters: List<Character>? = null,
     val trailer: Trailer? = null
-)
+) {
+    companion object {
+        val Placeholder = Media()
+    }
+}
 
 data class Stat(
     val label: StatLabel,

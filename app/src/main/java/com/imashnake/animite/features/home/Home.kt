@@ -36,8 +36,8 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.data.Resource
-import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.media.MediaPageArgs
+import com.imashnake.animite.features.destinations.MediaScreenDestination
+import com.imashnake.animite.features.media.MediaScreenArgs
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
@@ -133,8 +133,8 @@ fun Home(
                                 title = stringResource(Res.string.trending_now),
                                 onItemClicked = {
                                     navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
+                                        MediaScreenDestination(
+                                            MediaScreenArgs(
                                                 it.id,
                                                 homeMediaType.rawValue
                                             )
@@ -150,8 +150,8 @@ fun Home(
                                 title = stringResource(Res.string.popular_this_season),
                                 onItemClicked = {
                                     navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
+                                        MediaScreenDestination(
+                                            MediaScreenArgs(
                                                 it.id,
                                                 homeMediaType.rawValue
                                             )
@@ -167,8 +167,8 @@ fun Home(
                                 title = stringResource(Res.string.upcoming_next_season),
                                 onItemClicked = {
                                     navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
+                                        MediaScreenDestination(
+                                            MediaScreenArgs(
                                                 it.id,
                                                 homeMediaType.rawValue
                                             )
@@ -184,8 +184,8 @@ fun Home(
                                 title = stringResource(Res.string.all_time_popular),
                                 onItemClicked = {
                                     navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
+                                        MediaScreenDestination(
+                                            MediaScreenArgs(
                                                 it.id,
                                                 homeMediaType.rawValue
                                             )

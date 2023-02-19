@@ -1,7 +1,7 @@
 package com.imashnake.animite.features
 
 import com.imashnake.animite.features.destinations.HomeDestination
-import com.imashnake.animite.features.destinations.MediaPageDestination
+import com.imashnake.animite.features.destinations.MediaScreenDestination
 import com.imashnake.animite.profile.ProfileNavGraph
 import com.imashnake.animite.rslash.RslashNavGraph
 import com.ramcosta.composedestinations.spec.DestinationSpec
@@ -14,7 +14,7 @@ object RootNavGraph : NavGraphSpec {
     // TODO Once Home is refactored to a module, turn off compose-destinations code gen for app module
     override val destinationsByRoute: Map<String, DestinationSpec<*>> = mapOf(
         HomeDestination.route to HomeDestination,
-        MediaPageDestination.route to MediaPageDestination
+        MediaScreenDestination.route to MediaScreenDestination
     )
 
     override val startRoute: Route = HomeDestination

@@ -1,6 +1,6 @@
 package com.imashnake.animite.features.media
 
-data class MediaPageArgs(
+data class MediaScreenArgs(
     val id: Int,
     val mediaType: String
 )

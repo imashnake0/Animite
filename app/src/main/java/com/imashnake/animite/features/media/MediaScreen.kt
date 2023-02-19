@@ -35,12 +35,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,21 +65,37 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
+import com.imashnake.animite.data.Resource
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
-@Destination(navArgsDelegate = MediaPageArgs::class)
+@Destination(navArgsDelegate = MediaScreenArgs::class)
+@Composable
+fun MediaScreen(
+    viewModel: MediaScreenViewModel = hiltViewModel()
+) {
+    val media by viewModel.media.collectAsState()
+
+    when (media) {
+        is Resource.Success -> {
+            MediaPage(media = media.data!!) // TODO Why do we need double bangs here?
+        }
+        is Resource.Error -> TODO()
+        is Resource.Loading -> {
+            MediaPage(media = Media.Placeholder)
+        }
+    }
+}
+
 @Composable
 fun MediaPage(
-    viewModel: MediaPageViewModel = hiltViewModel()
+    media: Media
 ) {
     val scrollState = rememberScrollState()
     val bannerHeight = dimensionResource(Res.dimen.banner_height)
-
-    val media = viewModel.uiState
 
     // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
     TranslucentStatusBarLayout(scrollState = scrollState, distanceUntilAnimated = bannerHeight) {

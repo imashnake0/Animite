@@ -33,8 +33,8 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
-import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.media.MediaPageArgs
+import com.imashnake.animite.features.destinations.MediaScreenDestination
+import com.imashnake.animite.features.media.MediaScreenArgs
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
@@ -110,8 +110,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
             hasExtraPadding = isNavBarVisible,
             onItemClick = { id, mediaType ->
                 navController.navigate(
-                    MediaPageDestination(
-                        MediaPageArgs(
+                    MediaScreenDestination(
+                        MediaScreenArgs(
                             id,
                             mediaType.rawValue
                         )
