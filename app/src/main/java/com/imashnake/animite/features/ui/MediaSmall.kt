@@ -85,7 +85,7 @@ fun MediaSmall(
         modifier = modifier,
         onClick = onClick,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
     ) {
@@ -106,7 +106,6 @@ fun MediaSmall(
             Box {
                 Text(
                     text = " \n ",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge,
                     maxLines = 2,
                     modifier = Modifier.padding(
@@ -116,7 +115,6 @@ fun MediaSmall(
 
                 Text(
                     text = label,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge,
                     maxLines = 2,
                     // TODO: Add a custom overflow indicator:

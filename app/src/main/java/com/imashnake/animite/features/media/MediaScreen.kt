@@ -373,7 +373,6 @@ fun MediaGenres(
                 label = {
                     Text(
                         text = genre.lowercase(),
-                        color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.padding(
                             vertical = dimensionResource(R.dimen.small_padding)
@@ -383,7 +382,7 @@ fun MediaGenres(
                 onClick = { },
                 shape = CircleShape,
                 colors = SuggestionChipDefaults.suggestionChipColors(
-                    containerColor = color.copy(alpha = 0.25f)
+                    containerColor = color
                 ),
                 border = SuggestionChipDefaults.suggestionChipBorder(
                     borderColor = Color.Transparent
