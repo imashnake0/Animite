@@ -99,6 +99,7 @@ compose-material = { group = "androidx.compose.material", name = "material" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
+compose-ui-text-googleFonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "composeUi" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
 compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
 compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
