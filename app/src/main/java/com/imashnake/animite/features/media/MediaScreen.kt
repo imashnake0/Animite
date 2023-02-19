@@ -82,8 +82,8 @@ import com.imashnake.animite.R as Res
 @Destination(navArgsDelegate = MediaScreenArgs::class)
 @Composable
 fun MediaScreen(
+    modifier: Modifier = Modifier,
     viewModel: MediaScreenViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
 ) {
     val media by viewModel.media.collectAsState()
 
@@ -126,7 +126,7 @@ fun MediaPage(
         Box(Modifier.verticalScroll(scrollState).then(modifier)) {
             MediaBanner(
                 imageUrl = media.bannerImage,
-                tintColor = MaterialTheme.colorScheme.primary,
+                tintColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
                 modifier = Modifier
                     .height(bannerHeight)
                     .fillMaxWidth()
