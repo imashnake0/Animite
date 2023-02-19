@@ -4,7 +4,7 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import scheme.DynamicScheme
 
-fun DynamicScheme.toMaterialColorScheme(isDark: Boolean): ColorScheme {
+fun DynamicScheme.toMaterialColorScheme(): ColorScheme {
     return if (!isDark) ColorScheme(
         primary = Color(primaryPalette.tone(40)),
         primaryContainer = Color(primaryPalette.tone(90)),

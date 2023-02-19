@@ -81,7 +81,7 @@ import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import contrast.Contrast
 import hct.Hct
-import scheme.SchemeVibrant
+import scheme.SchemeNeutral
 import com.imashnake.animite.R as Res
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -102,10 +102,10 @@ fun MediaScreen(
             is Resource.Success -> {
                 // Calculate a new theme
                 // TODO Do this in the ViewModel
-                val newTheme = remember(it) {
+                val newTheme = remember(it, isDark) {
                     it.data.baseColor?.let { baseColor ->
-                        SchemeVibrant(Hct.fromInt(baseColor.toArgb()), isDark, Contrast.RATIO_30)
-                    }?.toMaterialColorScheme(isDark)
+                        SchemeNeutral(Hct.fromInt(baseColor.toArgb()), isDark, Contrast.RATIO_MAX)
+                    }?.toMaterialColorScheme()
                 }
                 // If no theme could be calculated, fall back to the app default
                 if (newTheme != null) {
