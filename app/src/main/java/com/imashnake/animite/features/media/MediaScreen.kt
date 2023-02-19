@@ -152,10 +152,11 @@ fun MediaPage(
         Box(
             Modifier
                 .verticalScroll(scrollState)
-                .then(modifier)) {
+                .then(modifier)
+        ) {
             MediaBanner(
                 imageUrl = media.bannerImage,
-                tintColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
+                tintColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .height(bannerHeight)
                     .fillMaxWidth()
@@ -279,7 +280,7 @@ fun MediaBanner(
             modifier = modifier,
             alignment = Alignment.Center,
             colorFilter = ColorFilter.tint(
-                color = tintColor,
+                color = tintColor.copy(alpha = 0.25f),
                 blendMode = BlendMode.SrcAtop
             )
         )
@@ -291,7 +292,7 @@ fun MediaBanner(
             modifier = modifier,
             alignment = Alignment.TopCenter,
             colorFilter = ColorFilter.tint(
-                color = tintColor,
+                color = tintColor.copy(alpha = 0.25f),
                 blendMode = BlendMode.SrcAtop
             )
         )
