@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.media
 
+import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -51,7 +52,8 @@ class MediaScreenViewModel @Inject constructor(
                         name = it?.name?.full
                     )
                 },
-                trailer = media.trailer?.toUiModel()
+                trailer = media.trailer?.toUiModel(),
+                baseColor = media.coverImage?.color?.let { Color.valueOf(Color.parseColor(it)) }
             )
         }
         .stateIn(

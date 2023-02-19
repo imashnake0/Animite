@@ -1,5 +1,7 @@
 package com.imashnake.animite.features.media
 
+import android.graphics.Color
+
 data class Media(
     val bannerImage: String? = null,
     val coverImage: String? = null,
@@ -8,7 +10,8 @@ data class Media(
     val stats: List<Stat>? = null,
     val genres: List<String>? = null,
     val characters: List<Character>? = null,
-    val trailer: Trailer? = null
+    val trailer: Trailer? = null,
+    val baseColor: Color? = null
 ) {
     companion object {
         val Placeholder = Media()

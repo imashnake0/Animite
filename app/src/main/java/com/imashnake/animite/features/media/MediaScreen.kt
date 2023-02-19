@@ -14,6 +14,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +49,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,9 +75,12 @@ import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.dev.internal.Constants
+import com.imashnake.animite.features.theme.toMaterialColorScheme
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
+import hct.Hct
+import scheme.SchemeVibrant
 import com.imashnake.animite.R as Res
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -86,6 +91,7 @@ fun MediaScreen(
     viewModel: MediaScreenViewModel = hiltViewModel(),
 ) {
     val media by viewModel.media.collectAsState()
+    val isDark = isSystemInDarkTheme()
 
     AnimatedContent(
         targetState = media,
@@ -93,12 +99,31 @@ fun MediaScreen(
     ) {
         when (it) {
             is Resource.Success -> {
-                MediaPage(
-                    media = it.data,
-                    modifier = modifier
-                        .fillMaxSize()
-                        .navigationBarsPadding()
-                )
+                // Calculate a new theme
+                // TODO Do this in the ViewModel
+                val newTheme = remember(it) {
+                    it.data.baseColor?.let { baseColor ->
+                        SchemeVibrant(Hct.fromInt(baseColor.toArgb()), isDark, 0.4)
+                    }?.toMaterialColorScheme(isDark)
+                }
+                // If no theme could be calculated, fall back to the app default
+                if (newTheme != null) {
+                    MaterialTheme(colorScheme = newTheme) {
+                        MediaPage(
+                            media = it.data,
+                            modifier = modifier
+                                .fillMaxSize()
+                                .navigationBarsPadding()
+                        )
+                    }
+                } else {
+                    MediaPage(
+                        media = it.data,
+                        modifier = modifier
+                            .fillMaxSize()
+                            .navigationBarsPadding()
+                    )
+                }
             }
             is Resource.Error -> TODO()
             is Resource.Loading -> {
@@ -123,7 +148,10 @@ fun MediaPage(
 
     // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
     TranslucentStatusBarLayout(scrollState = scrollState, distanceUntilAnimated = bannerHeight) {
-        Box(Modifier.verticalScroll(scrollState).then(modifier)) {
+        Box(
+            Modifier
+                .verticalScroll(scrollState)
+                .then(modifier)) {
             MediaBanner(
                 imageUrl = media.bannerImage,
                 tintColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
