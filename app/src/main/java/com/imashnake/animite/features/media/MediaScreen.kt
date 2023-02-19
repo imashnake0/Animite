@@ -5,6 +5,11 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -72,6 +77,7 @@ import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
+@OptIn(ExperimentalAnimationApi::class)
 @Destination(navArgsDelegate = MediaScreenArgs::class)
 @Composable
 fun MediaScreen(
@@ -79,13 +85,18 @@ fun MediaScreen(
 ) {
     val media by viewModel.media.collectAsState()
 
-    when (media) {
-        is Resource.Success -> {
-            MediaPage(media = media.data!!) // TODO Why do we need double bangs here?
-        }
-        is Resource.Error -> TODO()
-        is Resource.Loading -> {
-            MediaPage(media = Media.Placeholder)
+    AnimatedContent(
+        targetState = media,
+        transitionSpec = { fadeIn() with fadeOut() }
+    ) {
+        when (it) {
+            is Resource.Success -> {
+                MediaPage(media = it.data)
+            }
+            is Resource.Error -> TODO()
+            is Resource.Loading -> {
+                MediaPage(media = Media.Placeholder)
+            }
         }
     }
 }
