@@ -118,7 +118,7 @@ fun MediaPage(
         ) {
             MediaBanner(
                 imageUrl = media.bannerImage,
-                tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
+                tintColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .height(bannerHeight)
                     .fillMaxWidth()
@@ -184,7 +184,6 @@ fun MediaPage(
                             } else 0.dp,
                             end = dimensionResource(Res.dimen.large_padding)
                         ),
-                        color = Color(media.color ?: (0xFF152232).toInt()),
                     )
                 }
 

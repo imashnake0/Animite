@@ -3,7 +3,6 @@ package com.imashnake.animite.features.media
 data class Media(
     val bannerImage: String? = null,
     val coverImage: String? = null,
-    val color: Int? = null,
     val title: String? = null,
     val description: String? = null,
     val stats: List<Stat>? = null,
