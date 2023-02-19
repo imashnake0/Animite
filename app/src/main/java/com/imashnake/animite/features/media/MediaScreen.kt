@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.with
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -81,7 +82,8 @@ import com.imashnake.animite.R as Res
 @Destination(navArgsDelegate = MediaScreenArgs::class)
 @Composable
 fun MediaScreen(
-    viewModel: MediaScreenViewModel = hiltViewModel()
+    viewModel: MediaScreenViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
 ) {
     val media by viewModel.media.collectAsState()
 
@@ -91,11 +93,21 @@ fun MediaScreen(
     ) {
         when (it) {
             is Resource.Success -> {
-                MediaPage(media = it.data)
+                MediaPage(
+                    media = it.data,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .navigationBarsPadding()
+                )
             }
             is Resource.Error -> TODO()
             is Resource.Loading -> {
-                MediaPage(media = Media.Placeholder)
+                MediaPage(
+                    media = Media.Placeholder,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .navigationBarsPadding()
+                )
             }
         }
     }
@@ -103,19 +115,15 @@ fun MediaScreen(
 
 @Composable
 fun MediaPage(
-    media: Media
+    media: Media,
+    modifier: Modifier = Modifier,
+    scrollState: ScrollState = rememberScrollState()
 ) {
-    val scrollState = rememberScrollState()
     val bannerHeight = dimensionResource(Res.dimen.banner_height)
 
     // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
     TranslucentStatusBarLayout(scrollState = scrollState, distanceUntilAnimated = bannerHeight) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .navigationBarsPadding()
-        ) {
+        Box(Modifier.verticalScroll(scrollState).then(modifier)) {
             MediaBanner(
                 imageUrl = media.bannerImage,
                 tintColor = MaterialTheme.colorScheme.primary,
