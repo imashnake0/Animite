@@ -94,7 +94,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
-    implementation(libs.compose.ui.text.googlefonts)
+    implementation(libs.compose.ui.text.googleFonts)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
