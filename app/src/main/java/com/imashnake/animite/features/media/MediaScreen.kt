@@ -113,7 +113,8 @@ fun MediaScreen(
                         MediaPage(
                             media = it.data,
                             modifier = modifier
-                                .fillMaxSize()
+                                .fillMaxSize() // TODO size and padding should be provided externally
+                                .background(MaterialTheme.colorScheme.background)
                                 .navigationBarsPadding()
                         )
                     }
@@ -122,6 +123,7 @@ fun MediaScreen(
                         media = it.data,
                         modifier = modifier
                             .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
                             .navigationBarsPadding()
                     )
                 }
@@ -132,6 +134,7 @@ fun MediaScreen(
                     media = Media.Placeholder,
                     modifier = modifier
                         .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
                         .navigationBarsPadding()
                 )
             }
@@ -169,8 +172,7 @@ fun MediaPage(
                     .padding(
                         top = bannerHeight,
                         bottom = dimensionResource(Res.dimen.large_padding)
-                    )
-                    .background(MaterialTheme.colorScheme.background),
+                    ),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
             ) {
                 MediaDetails(
