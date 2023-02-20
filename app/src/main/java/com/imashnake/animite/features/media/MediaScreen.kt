@@ -88,7 +88,6 @@ import com.imashnake.animite.R as Res
 @Destination(navArgsDelegate = MediaScreenArgs::class)
 @Composable
 fun MediaScreen(
-    modifier: Modifier = Modifier,
     viewModel: MediaScreenViewModel = hiltViewModel(),
 ) {
     val media by viewModel.media.collectAsState()
@@ -112,8 +111,8 @@ fun MediaScreen(
                     MaterialTheme(colorScheme = newTheme) {
                         MediaPage(
                             media = it.data,
-                            modifier = modifier
-                                .fillMaxSize() // TODO size and padding should be provided externally
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .background(MaterialTheme.colorScheme.background)
                                 .navigationBarsPadding()
                         )
@@ -121,7 +120,7 @@ fun MediaScreen(
                 } else {
                     MediaPage(
                         media = it.data,
-                        modifier = modifier
+                        modifier = Modifier
                             .fillMaxSize()
                             .background(MaterialTheme.colorScheme.background)
                             .navigationBarsPadding()
@@ -132,7 +131,7 @@ fun MediaScreen(
             is Resource.Loading -> {
                 MediaPage(
                     media = Media.Placeholder,
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                         .navigationBarsPadding()
@@ -169,10 +168,9 @@ fun MediaPage(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(
-                        top = bannerHeight,
-                        bottom = dimensionResource(Res.dimen.large_padding)
-                    ),
+                    .padding(top = bannerHeight)
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
             ) {
                 MediaDetails(
