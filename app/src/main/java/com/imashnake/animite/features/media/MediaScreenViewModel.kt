@@ -39,21 +39,16 @@ class MediaScreenViewModel @Inject constructor(
             Media(
                 bannerImage = media.bannerImage,
                 coverImage = media.coverImage?.extraLarge,
-                title = media.title?.romaji ?:
-                media.title?.english ?:
-                media.title?.native,
+                title = media.title?.getLocalizedTitle(),
                 description = media.description,
                 stats = score + ranks,
                 genres = media.genres?.filterNotNull(),
-                characters = media.characters?.nodes?.map {
-                    Character(
-                        id = it?.id,
-                        image = it?.image?.large,
-                        name = it?.name?.full
-                    )
-                },
+                characters = media.characters?.nodes
+                    ?.filterNotNull()
+                    ?.map { it.toCharacter() }
+                    .orEmpty(),
                 trailer = media.trailer?.toUiModel(),
-                baseColor = media.coverImage?.color?.let { Color.valueOf(Color.parseColor(it)) }
+                baseColor = media.coverImage?.color?.parseColor()
             )
         }
         .stateIn(
@@ -61,6 +56,8 @@ class MediaScreenViewModel @Inject constructor(
             SharingStarted.Eagerly,
             Resource.loading()
         )
+
+    private fun String.parseColor(): Int = Color.parseColor(this)
 
     private fun MediaQuery.Trailer.toUiModel(): Trailer? {
         // Give up if we don't have the data we want
@@ -79,6 +76,17 @@ class MediaScreenViewModel @Inject constructor(
                 "dailymotion" -> thumbnail!!
                 else -> error("This site type ($site) is not supported!")
             }
+        )
+    }
+
+    private fun MediaQuery.Title.getLocalizedTitle(): String {
+        return this.romaji ?: this.english ?: this.native ?: error("No title found!")
+    }
+    private fun MediaQuery.Node.toCharacter(): Character {
+        return Character(
+            id = id,
+            image = image?.large,
+            name = name?.full
         )
     }
 }

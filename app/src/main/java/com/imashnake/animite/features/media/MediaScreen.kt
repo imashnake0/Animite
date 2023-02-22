@@ -93,7 +93,7 @@ fun MediaScreen(
         when (it) {
             is Resource.Success -> {
                 // Calculate a new theme
-                val mediaColorScheme = rememberColorSchemeFor(color = it.data.baseColor?.toArgb())
+                val mediaColorScheme = rememberColorSchemeFor(color = it.data.baseColor)
                 MaterialTheme(colorScheme = mediaColorScheme) {
                     MediaPage(
                         media = it.data,
@@ -202,7 +202,7 @@ fun MediaPage(
                     )
                 }
 
-                if (media.characters != null) {
+                if (!media.characters.isNullOrEmpty()) {
                     MediaCharacters(
                         characters = media.characters,
                         contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
