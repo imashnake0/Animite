@@ -101,7 +101,7 @@ class Media(
                 trailer = Trailer(
                     url = if(query.trailer?.site == null || query.trailer.id == null) {
                         null
-                    } else listOf(query.trailer.site, query.trailer.id).joinToString(),
+                    } else "${Trailer.Site.valueOf(query.trailer.site.uppercase()).baseUrl}${query.trailer.id}",
                     thumbnail = query.trailer?.thumbnail
                 )
             )
