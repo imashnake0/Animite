@@ -69,7 +69,7 @@ class Media(
             Media(
                 bannerImage = query.bannerImage,
                 coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
-                color = query.coverImage?.color?.let { Color.parseColor(null) } ?: Color.TRANSPARENT,
+                color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
                 title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
                 description = query.description.orEmpty(),
                 rankings = if (query.rankings == null) { emptyList() } else {
