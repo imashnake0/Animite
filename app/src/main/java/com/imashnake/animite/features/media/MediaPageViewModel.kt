@@ -54,24 +54,4 @@ class MediaPageViewModel @Inject constructor(
             }
         }
     }
-
-    private fun MediaQuery.Trailer.toUiModel(): Trailer? {
-        // Give up if we don't have the data we want
-        if (site == null || thumbnail == null || id == null) return null
-        // TODO This could be an enum, or a sealed class to better capture data types
-        return Trailer(
-            link = when (site) {
-                "youtube" -> "https://www.youtube.com/watch?v=${id}"
-                "dailymotion" -> "https://www.dailymotion.com/video/${id}"
-                else -> error("This site type ($site) is not supported!")
-            },
-            thumbnail = when (site) {
-                // TODO: Does a high resolution image always exist?
-                "youtube" -> "https://img.youtube.com/vi/${id}/maxresdefault.jpg"
-                // TODO: Change the icon and handle this properly.
-                "dailymotion" -> thumbnail!!
-                else -> error("This site type ($site) is not supported!")
-            }
-        )
-    }
 }

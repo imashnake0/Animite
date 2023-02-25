@@ -112,7 +112,7 @@ fun MediaPage(
                     description = Html
                         .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
                         .toString(),
-                    // TODO Can we do something about this Modifier chain?
+                    // TODO: Can we do something about this Modifier chain?
                     modifier = Modifier
                         .padding(
                             start = dimensionResource(Res.dimen.large_padding)
@@ -144,7 +144,7 @@ fun MediaPage(
                     )
                 }
 
-                if (media.genres != null) {
+                if (!media.genres.isNullOrEmpty()) {
                     MediaGenres(
                         genres = media.genres,
                         contentPadding = PaddingValues(
@@ -160,7 +160,7 @@ fun MediaPage(
                     )
                 }
 
-                if (media.characters != null) {
+                if (!media.characters.isNullOrEmpty()) {
                     MediaCharacters(
                         characters = media.characters,
                         contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
