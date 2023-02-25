@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.ksp) version libs.versions.ksp.get()
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -84,6 +85,17 @@ dependencies {
     // Compose Destinations
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)
+
+    // kotlinx.serialization JSON
+    implementation(libs.kotlinx.serialization.json)
+
+    // Compose Navigation
+    implementation(libs.navigation.compose)
+
+    // Safer Navigation Compose
+    // TODO: Resolve Safer Navigation Compose from JitPack when it's up again
+    implementation(project(":safer-navigation-compose:core"))
+    implementation(project(":safer-navigation-compose:navigation-compose"))
 
     testImplementation(libs.test.junit)
 
