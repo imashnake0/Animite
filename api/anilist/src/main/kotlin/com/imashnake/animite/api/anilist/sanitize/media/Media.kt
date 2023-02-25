@@ -3,16 +3,17 @@ package com.imashnake.animite.api.anilist.sanitize.media
 import android.graphics.Color
 import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
+import com.imashnake.animite.api.anilist.type.MediaRankType
 
 class Media(
     /** @see MediaQuery.Media.bannerImage */
-    val bannerImage: String,
+    val bannerImage: String?,
     /** @see MediaQuery.Media.coverImage */
-    val coverImage: String,
+    val coverImage: String?,
     /** @see MediaQuery.CoverImage.color */
     val color: Int,
     /** @see MediaQuery.Media.title */
-    val title: String,
+    val title: String?,
     /** TODO: https://github.com/imashnake0/Animite/issues/58.
      * @see MediaQuery.Media.description */
     val description: String,
@@ -29,72 +30,79 @@ class Media(
         /** @see MediaQuery.Ranking.rank */
         val rank: Int,
         /** @see MediaQuery.Ranking.type */
-        val type: MediaRankType,
-    )
-
-    /** @see MediaQuery.Ranking.type */
-    enum class MediaRankType(name: String) {
-        RATED("Rated"),
-        POPULAR("Popular"),
-        SCORE("Score")
+        val type: Type,
+    ) {
+        /** @see MediaQuery.Ranking.type */
+        enum class Type(name: String) {
+            RATED("Rated"),
+            POPULAR("Popular"),
+            SCORE("Score")
+        }
     }
 
     data class Character(
         /** @see MediaQuery.Node.id */
         val id: Int,
         /** @see MediaQuery.Node.image */
-        val image: String,
+        val image: String?,
         /** @see MediaQuery.Node.name */
-        val name: String,
+        val name: String?,
     )
 
     data class Trailer(
         /** @see MediaQuery.Trailer.id
          * @see MediaQuery.Trailer.site */
-        val url: String,
+        val url: String?,
         /** @see MediaQuery.Trailer.thumbnail */
-        val thumbnail: String,
-    )
-
-    /** @see MediaQuery.Trailer.thumbnail */
-    enum class Site(val baseUrl: String) {
-        YOUTUBE("https://www.youtube.com/watch?v="),
-        DAILYMOTION("https://www.dailymotion.com/video/"),
-        UNKNOWN("")
+        val thumbnail: String?,
+    ) {
+        /** @see MediaQuery.Trailer.thumbnail */
+        enum class Site(val baseUrl: String) {
+            YOUTUBE("https://www.youtube.com/watch?v="),
+            DAILYMOTION("https://www.dailymotion.com/video/"),
+            UNKNOWN("")
+        }
     }
 
     companion object {
-        // TODO: You fool you're not supposed to sanitize all of it.
         fun sanitize(query: MediaQuery.Media) =
             Media(
-                bannerImage = query.bannerImage.orEmpty(),
-                coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium.orEmpty(),
-                color = Color.parseColor(query.coverImage?.color ?: Color.TRANSPARENT.toString()),
-                title = query.title?.romaji ?: query.title?.english ?: query.title?.native.orEmpty(),
+                bannerImage = query.bannerImage,
+                coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
+                color = query.coverImage?.color?.let { Color.parseColor(null) } ?: Color.TRANSPARENT,
+                title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
                 description = query.description.orEmpty(),
-                rankings = query.rankings?.filter { it != null && it.allTime == true }?.mapNotNull {
-                    it?.let {
+                rankings = if (query.rankings == null) { emptyList() } else {
+                    // TODO: Is this filter valid?
+                    query.rankings.filter {
+                        it?.allTime == true && it.type != MediaRankType.UNKNOWN__
+                    }.map {
                         Ranking(
-                            rank = it.rank,
-                            type = MediaRankType.valueOf(it.type.name)
+                            rank = it!!.rank,
+                            type = Ranking.Type.valueOf(it.type.name)
                         )
-                    }
-                }.orEmpty() + listOfNotNull(query.averageScore?.let { Ranking(rank = it, type = MediaRankType.SCORE) }),
+                    } + listOfNotNull(
+                        query.averageScore?.let {
+                            Ranking(rank = it, type = Ranking.Type.SCORE)
+                        }
+                    )
+                },
                 genres = query.genres?.filterNotNull().orEmpty(),
-                characters = query.characters?.nodes?.mapNotNull {
-                    it?.let {
+                characters = if (query.characters?.nodes == null) { emptyList() } else {
+                    // TODO: Is this filter valid?
+                    query.characters.nodes.filter { it?.name != null }.map {
                         Character(
-                            id = it.id,
-                            image = it.image?.large.orEmpty(),
-                            name = it.name?.full.orEmpty()
+                            id = it!!.id,
+                            image = it.image?.large,
+                            name = it.name?.full
                         )
                     }
-                }.orEmpty(),
+                },
                 trailer = Trailer(
-                    url = listOf(query.trailer?.site, query.trailer?.id).takeIf {
-                            ti -> ti.all { it != null }
-                    }?.joinToString().orEmpty(),
-                    thumbnail = query.trailer?.thumbnail.orEmpty()
+                    url = if(query.trailer?.site == null || query.trailer.id == null) {
+                        null
+                    } else listOf(query.trailer.site, query.trailer.id).joinToString(),
+                    thumbnail = query.trailer?.thumbnail
                 )
             )
     }
@@ -103,28 +111,28 @@ class Media(
         /** @see MediaListQuery.Medium.id */
         val id: Int,
         /** @see MediaListQuery.Medium.type */
-        val type: MediaType,
+        val type: Type,
         /** @see MediaListQuery.Medium.title */
-        val title: String,
+        val title: String?,
         /** @see MediaListQuery.Medium.coverImage */
-        val coverImage: String
+        val coverImage: String?
     ) {
+        /** @see MediaListQuery.Medium.type */
+        enum class Type(val type: String) {
+            ANIME("Anime"),
+            MANGA("Manga"),
+            UNKNOWN("")
+        }
+
         companion object {
             fun sanitize(query: MediaListQuery.Medium) =
                 Medium(
                     id = query.id,
-                    type = MediaType.valueOf(query.type?.name ?: "UNKNOWN"),
-                    coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: "",
+                    type = Type.valueOf(query.type?.name ?: "UNKNOWN"),
+                    coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large,
                     title = query.title?.romaji ?: query.title?.english
-                    ?: query.title?.native.orEmpty()
+                    ?: query.title?.native
                 )
         }
-    }
-
-    /** @see MediaListQuery.Medium.type */
-    enum class MediaType(name: String = "") {
-        ANIME("Anime"),
-        MANGA("Manga"),
-        UNKNOWN
     }
 }
