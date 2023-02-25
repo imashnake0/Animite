@@ -33,7 +33,7 @@ class Media(
         val type: Type,
     ) {
         /** @see MediaQuery.Ranking.type */
-        enum class Type(name: String) {
+        enum class Type(val string: String) {
             RATED("Rated"),
             POPULAR("Popular"),
             SCORE("Score")
