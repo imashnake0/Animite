@@ -45,7 +45,11 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.TRENDING_DESC),
             )
         }
-        .asResource()
+        .asResource { page ->
+            page.media.orEmpty().filterNotNull().map {
+                Media.Medium.sanitize(it)
+            }
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val popularMediaThisSeason = mediaType
@@ -59,7 +63,11 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.year
             )
         }
-        .asResource()
+        .asResource { page ->
+            page.media.orEmpty().filterNotNull().map {
+                Media.Medium.sanitize(it)
+            }
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val upcomingMediaNextSeason = mediaType
@@ -73,7 +81,11 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.month.season.nextSeason(now).second
             )
         }
-        .asResource()
+        .asResource { page ->
+            page.media.orEmpty().filterNotNull().map {
+                Media.Medium.sanitize(it)
+            }
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val allTimePopular = mediaType

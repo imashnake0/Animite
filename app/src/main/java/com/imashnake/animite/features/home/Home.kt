@@ -29,7 +29,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.bannerParallax
@@ -125,12 +124,12 @@ fun Home(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.background)
                                 .padding(vertical = dimensionResource(Res.dimen.large_padding))
-                                // TODO move this one out of Home when we can pass modifiers in
+                                // TODO: Move this one out of Home when we can pass modifiers in.
                                 .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
                             verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
                         ) {
                             HomeRow(
-                                list = trendingList.data?.media.orEmpty(),
+                                list = trendingList.data.orEmpty(),
                                 title = stringResource(Res.string.trending_now),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -147,7 +146,7 @@ fun Home(
                             )
 
                             HomeRow(
-                                list = popularList.data?.media.orEmpty(),
+                                list = popularList.data.orEmpty(),
                                 title = stringResource(Res.string.popular_this_season),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -164,7 +163,7 @@ fun Home(
                             )
 
                             HomeRow(
-                                list = upcomingList.data?.media.orEmpty(),
+                                list = upcomingList.data.orEmpty(),
                                 title = stringResource(Res.string.upcoming_next_season),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -180,7 +179,7 @@ fun Home(
                                 }
                             )
 
-                            SanitizedHomeRow(
+                            HomeRow(
                                 list = allTimePopularList.data.orEmpty(),
                                 title = stringResource(Res.string.all_time_popular),
                                 onItemClicked = {
@@ -217,43 +216,6 @@ fun Home(
 
 @Composable
 fun HomeRow(
-    list: List<MediaListQuery.Medium?>,
-    title: String,
-    onItemClicked: (MediaListQuery.Medium) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(
-                    start = dimensionResource(Res.dimen.large_padding)
-                )
-                .landscapeCutoutPadding()
-        )
-
-        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-        MediaSmallRow(
-            mediaList = list,
-            content = { media ->
-                MediaSmall(
-                    image = media?.coverImage?.extraLarge,
-                    // TODO: Do something about this chain.
-                    label = media?.title?.romaji ?: media?.title?.english ?: media?.title?.native ?: "",
-                    onClick = {
-                        onItemClicked(media!!)
-                    },
-                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                )
-            }
-        )
-    }
-}
-
-@Composable
-fun SanitizedHomeRow(
     list: List<Media.Medium>,
     title: String,
     onItemClicked: (Media.Medium) -> Unit,
