@@ -19,7 +19,7 @@ sealed interface AnimiteRoute : NavRoute {
 }
 
 val navBarVisibleRoutes = listOf(
-    AnimiteRoute.Home::class.route,
-    AnimiteRoute.Profile::class.route,
-    AnimiteRoute.RSlash::class.route,
+    AnimiteRoute.Home.route,
+    AnimiteRoute.Profile.route,
+    AnimiteRoute.RSlash.route,
 )
