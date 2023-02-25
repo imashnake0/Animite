@@ -1,0 +1,28 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.serialization)
+}
+
+android {
+    namespace "com.github.uragiristereo.safer.compose.navigation.compose"
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 21
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.composeCompiler.get()
+    }
+}
+
+dependencies {
+    implementation(project(":safer-navigation-compose:core"))
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+}

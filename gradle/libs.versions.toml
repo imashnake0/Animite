@@ -7,6 +7,7 @@ apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 
 [versions]
@@ -81,6 +82,17 @@ junit = "4.13.2"
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.19.0"
 
+# Safer Navigation Compose
+# https://github.com/uragiristereo/safer-navigation-compose/releases
+saferNavigation = "1.1.0"
+
+# Jetpack Navigation
+# https://developer.android.com/jetpack/androidx/releases/navigation
+navigation = "2.5.3"
+
+# kotlinx.serialization
+# https://github.com/Kotlin/kotlinx.serialization/releases
+kotlinxSerialization = "1.4.1"
 
 [libraries]
 
@@ -116,3 +128,9 @@ accompanist-systemUiController = { group = "com.google.accompanist", name = "acc
 accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist" }
 chrisbanes-snapper = { group = "dev.chrisbanes.snapper", name = "snapper", version.ref = "snapper" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+# TODO: Resolve Safer Navigation Compose from JitPack when it's up again
+#safer-navigation-core = { group = "com.github.uragiristereo.safer.navigation.compose", name = "core", version.ref = "saferNavigation" }
+#safer-navigation-compose = { group = "com.github.uragiristereo.safer.navigation.compose", name = "navigation-compose", version.ref = "saferNavigation" }

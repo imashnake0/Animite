@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.dependencyAnalysis)
+    alias(libs.plugins.kotlin.serialization) apply false
 }
 
 tasks.register("clean", Delete::class) {

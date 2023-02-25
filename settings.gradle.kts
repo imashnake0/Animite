@@ -13,6 +13,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { setUrl("https://jitpack.io") }
     }
 }
 
@@ -23,5 +24,7 @@ include(
     ":core",
     ":profile",
     ":rslash",
-    ":app"
+    ":app",
+    ":safer-navigation-compose:core",
+    ":safer-navigation-compose:navigation-compose"
 )
