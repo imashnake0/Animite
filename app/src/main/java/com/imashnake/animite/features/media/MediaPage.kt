@@ -167,7 +167,7 @@ fun MediaPage(
                     )
                 }
 
-                if (media.trailer != null) {
+                if (media.trailer?.url != null) {
                     MediaTrailer(
                         trailer = media.trailer,
                         modifier = Modifier
