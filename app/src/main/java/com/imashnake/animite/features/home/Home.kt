@@ -36,19 +36,17 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.data.Resource
-import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.media.MediaPageArgs
+import com.imashnake.animite.features.route.AnimiteRoute
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
 @Destination
 @Composable
 fun Home(
     viewModel: HomeViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
+    onNavigateToMediaPage: (AnimiteRoute.MediaPage) -> Unit,
 ) {
     val homeMediaType = MediaType.ANIME
 
@@ -62,9 +60,9 @@ fun Home(
     // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
     when {
         trendingList is Resource.Success &&
-        popularList is Resource.Success &&
-        upcomingList is Resource.Success &&
-        allTimePopularList is Resource.Success -> {
+                popularList is Resource.Success &&
+                upcomingList is Resource.Success &&
+                allTimePopularList is Resource.Success -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
@@ -132,16 +130,12 @@ fun Home(
                                 list = trendingList.data?.media.orEmpty(),
                                 title = stringResource(Res.string.trending_now),
                                 onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.rawValue
-                                            )
+                                    onNavigateToMediaPage(
+                                        AnimiteRoute.MediaPage(
+                                            id = it.id,
+                                            mediaType = homeMediaType.rawValue
                                         )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                    )
                                 }
                             )
 
@@ -149,16 +143,12 @@ fun Home(
                                 list = popularList.data?.media.orEmpty(),
                                 title = stringResource(Res.string.popular_this_season),
                                 onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.rawValue
-                                            )
+                                    onNavigateToMediaPage(
+                                        AnimiteRoute.MediaPage(
+                                            id = it.id,
+                                            mediaType = homeMediaType.rawValue
                                         )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                    )
                                 }
                             )
 
@@ -166,16 +156,12 @@ fun Home(
                                 list = upcomingList.data?.media.orEmpty(),
                                 title = stringResource(Res.string.upcoming_next_season),
                                 onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.rawValue
-                                            )
+                                    onNavigateToMediaPage(
+                                        AnimiteRoute.MediaPage(
+                                            id = it.id,
+                                            mediaType = homeMediaType.rawValue
                                         )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                    )
                                 }
                             )
 
@@ -183,16 +169,12 @@ fun Home(
                                 list = allTimePopularList.data?.media.orEmpty(),
                                 title = stringResource(Res.string.all_time_popular),
                                 onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.rawValue
-                                            )
+                                    onNavigateToMediaPage(
+                                        AnimiteRoute.MediaPage(
+                                            id = it.id,
+                                            mediaType = homeMediaType.rawValue
                                         )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                    )
                                 }
                             )
                         }
@@ -219,7 +201,7 @@ fun HomeRow(
     list: List<MediaListQuery.Medium?>,
     title: String,
     onItemClicked: (MediaListQuery.Medium) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(

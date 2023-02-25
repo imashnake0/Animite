@@ -65,12 +65,12 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.dev.internal.Constants
+import com.imashnake.animite.features.route.AnimiteRoute
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
-@Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
 fun MediaPage(
     viewModel: MediaPageViewModel = hiltViewModel()
