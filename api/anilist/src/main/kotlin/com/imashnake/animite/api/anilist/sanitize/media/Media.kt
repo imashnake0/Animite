@@ -111,7 +111,7 @@ class Media(
         /** @see MediaListQuery.Medium.id */
         val id: Int,
         /** @see MediaListQuery.Medium.type */
-        val type: Type,
+        val type: Type?,
         /** @see MediaListQuery.Medium.title */
         val title: String?,
         /** @see MediaListQuery.Medium.coverImage */
@@ -127,10 +127,9 @@ class Media(
             fun sanitize(query: MediaListQuery.Medium) =
                 Medium(
                     id = query.id,
-                    type = Type.valueOf(query.type?.name ?: "UNKNOWN"),
+                    type = query.type?.name?.let { Type.valueOf(it) },
                     coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large,
-                    title = query.title?.romaji ?: query.title?.english
-                    ?: query.title?.native
+                    title = query.title?.romaji ?: query.title?.english ?: query.title?.native
                 )
         }
     }
