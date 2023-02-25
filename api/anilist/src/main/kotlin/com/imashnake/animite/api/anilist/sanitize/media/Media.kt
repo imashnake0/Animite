@@ -120,8 +120,7 @@ class Media(
         /** @see MediaListQuery.Medium.type */
         enum class Type(val type: String) {
             ANIME("Anime"),
-            MANGA("Manga"),
-            UNKNOWN("")
+            MANGA("Manga")
         }
 
         companion object {

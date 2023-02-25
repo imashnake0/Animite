@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.MediaListQuery
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
@@ -179,8 +180,8 @@ fun Home(
                                 }
                             )
 
-                            HomeRow(
-                                list = allTimePopularList.data?.media.orEmpty(),
+                            SanitizedHomeRow(
+                                list = allTimePopularList.data.orEmpty(),
                                 title = stringResource(Res.string.all_time_popular),
                                 onItemClicked = {
                                     navigator.navigate(
@@ -244,6 +245,38 @@ fun HomeRow(
                     onClick = {
                         onItemClicked(media!!)
                     },
+                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+                )
+            }
+        )
+    }
+}
+
+@Composable
+fun SanitizedHomeRow(
+    list: List<Media.Medium>,
+    title: String,
+    onItemClicked: (Media.Medium) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(start = dimensionResource(Res.dimen.large_padding))
+                .landscapeCutoutPadding()
+        )
+
+        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+        MediaSmallRow(
+            mediaList = list,
+            content = { media ->
+                MediaSmall(
+                    image = media.coverImage,
+                    label = media.title,
+                    onClick = { onItemClicked(media) },
                     modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                 )
             }

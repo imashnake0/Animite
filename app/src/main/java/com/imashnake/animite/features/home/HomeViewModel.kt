@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.Resource
@@ -83,7 +84,11 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )
         }
-        .asResource()
+        .asResource { page ->
+            page.media.orEmpty().filterNotNull().map {
+                Media.Medium.sanitize(it)
+            }
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { resources ->
