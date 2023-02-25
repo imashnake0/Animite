@@ -13,26 +13,3 @@ data class MediaUiState(
     val characters: List<Media.Character>? = null,
     val trailer: Media.Trailer? = null
 )
-
-data class Stat(
-    val label: StatLabel,
-    val score: Int
-)
-
-enum class StatLabel(val value: String) {
-    SCORE("SCORE"),
-    RATING("RATING"),
-    POPULARITY("POPULARITY"),
-    UNKNOWN("UNKNOWN")
-}
-
-data class Character(
-    val id: Int?,
-    val image: String?,
-    val name: String?
-)
-
-data class Trailer(
-    val link: String,
-    val thumbnail: String
-)
