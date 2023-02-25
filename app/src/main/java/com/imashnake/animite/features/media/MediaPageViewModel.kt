@@ -34,6 +34,7 @@ class MediaPageViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val mediaType = MediaType.safeValueOf(navArgs.mediaType)
+                // TODO: Switch to StateFlows.
                 val media = mediaRepository
                     .fetchMedia(navArgs.id, mediaType)
                     .firstOrNull()?.getOrNull()?.let { Media.sanitize(it) }
