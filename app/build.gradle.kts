@@ -88,13 +88,8 @@ dependencies {
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Compose
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.animation)
-    implementation(libs.compose.foundation)
+    implementation(libs.bundles.compose)
     implementation(libs.compose.material)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.runtime)
-    implementation(libs.compose.ui)
     implementation(libs.compose.ui.text.googleFonts)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
@@ -105,7 +100,6 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
-    implementation(kotlin("reflect"))
 
     // Hilt
     implementation(libs.hilt.android)
@@ -115,9 +109,6 @@ dependencies {
     // Accompanist
     implementation(libs.accompanist.systemUiController)
     implementation(libs.accompanist.placeholder)
-
-    // Snapper
-    implementation(libs.chrisbanes.snapper)
 
     coreLibraryDesugaring(libs.android.desugaring)
 
@@ -141,6 +132,5 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espressoCore)
-    androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.test.ui.testJunit4)
 }
