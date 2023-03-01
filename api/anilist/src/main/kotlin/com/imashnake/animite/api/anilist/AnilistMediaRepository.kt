@@ -36,7 +36,7 @@ class AnilistMediaRepository @Inject constructor(
             .executeCacheAndNetwork()
             .asResult {
                 it.page!!.media.orEmpty().filterNotNull().map {
-                    cringe -> Media.Medium.sanitize(cringe)
+                    cringe -> Media.Medium(cringe)
                 }
             }
     }
@@ -50,6 +50,6 @@ class AnilistMediaRepository @Inject constructor(
                 )
             )
             .executeCacheAndNetwork()
-            .asResult { Media.sanitize(it.media!!) }
+            .asResult { Media(it.media!!) }
     }
 }

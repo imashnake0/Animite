@@ -5,7 +5,7 @@ import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.type.MediaRankType
 
-class Media(
+data class Media(
     /** @see MediaQuery.Media.bannerImage */
     val bannerImage: String?,
     /** @see MediaQuery.Media.coverImage */
@@ -64,48 +64,45 @@ class Media(
         }
     }
 
-    companion object {
-        fun sanitize(query: MediaQuery.Media) =
-            Media(
-                bannerImage = query.bannerImage,
-                coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
-                color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
-                title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
-                description = query.description.orEmpty(),
-                rankings = if (query.rankings == null) { emptyList() } else {
-                    // TODO: Is this filter valid?
-                    query.rankings.filter {
-                        it?.allTime == true && it.type != MediaRankType.UNKNOWN__
-                    }.map {
-                        Ranking(
-                            rank = it!!.rank,
-                            type = Ranking.Type.valueOf(it.type.name)
-                        )
-                    } + listOfNotNull(
-                        query.averageScore?.let {
-                            Ranking(rank = it, type = Ranking.Type.SCORE)
-                        }
-                    )
-                },
-                genres = query.genres?.filterNotNull().orEmpty(),
-                characters = if (query.characters?.nodes == null) { emptyList() } else {
-                    // TODO: Is this filter valid?
-                    query.characters.nodes.filter { it?.name != null }.map {
-                        Character(
-                            id = it!!.id,
-                            image = it.image?.large,
-                            name = it.name?.full
-                        )
-                    }
-                },
-                trailer = Trailer(
-                    url = if(query.trailer?.site == null || query.trailer.id == null) {
-                        null
-                    } else "${Trailer.Site.valueOf(query.trailer.site.uppercase()).baseUrl}${query.trailer.id}",
-                    thumbnail = query.trailer?.thumbnail
+    internal constructor(query: MediaQuery.Media) : this(
+        bannerImage = query.bannerImage,
+        coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
+        color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
+        title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
+        description = query.description.orEmpty(),
+        rankings = if (query.rankings == null) { emptyList() } else {
+            // TODO: Is this filter valid?
+            query.rankings.filter {
+                it?.allTime == true && it.type != MediaRankType.UNKNOWN__
+            }.map {
+                Ranking(
+                    rank = it!!.rank,
+                    type = Ranking.Type.valueOf(it.type.name)
                 )
+            } + listOfNotNull(
+                query.averageScore?.let {
+                    Ranking(rank = it, type = Ranking.Type.SCORE)
+                }
             )
-    }
+        },
+        genres = query.genres?.filterNotNull().orEmpty(),
+        characters = if (query.characters?.nodes == null) { emptyList() } else {
+            // TODO: Is this filter valid?
+            query.characters.nodes.filter { it?.name != null }.map {
+                Character(
+                    id = it!!.id,
+                    image = it.image?.large,
+                    name = it.name?.full
+                )
+            }
+        },
+        trailer = Trailer(
+            url = if(query.trailer?.site == null || query.trailer.id == null) {
+                null
+            } else "${Trailer.Site.valueOf(query.trailer.site.uppercase()).baseUrl}${query.trailer.id}",
+            thumbnail = query.trailer?.thumbnail
+        )
+    )
 
     data class Medium(
         /** @see MediaListQuery.Medium.id */
@@ -123,14 +120,11 @@ class Media(
             MANGA("Manga")
         }
 
-        companion object {
-            fun sanitize(query: MediaListQuery.Medium) =
-                Medium(
-                    id = query.id,
-                    type = query.type?.name?.let { Type.valueOf(it) },
-                    coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large,
-                    title = query.title?.romaji ?: query.title?.english ?: query.title?.native
-                )
-        }
+        internal constructor(query: MediaListQuery.Medium) : this(
+            id = query.id,
+            type = query.type?.name?.let { Type.valueOf(it) },
+            coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large,
+            title = query.title?.romaji ?: query.title?.english ?: query.title?.native
+        )
     }
 }
