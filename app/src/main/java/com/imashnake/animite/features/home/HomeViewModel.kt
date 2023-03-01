@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
-import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.Resource
@@ -45,11 +44,7 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.TRENDING_DESC),
             )
         }
-        .asResource { page ->
-            page.media.orEmpty().filterNotNull().map {
-                Media.Medium.sanitize(it)
-            }
-        }
+        .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val popularMediaThisSeason = mediaType
@@ -63,11 +58,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.year
             )
         }
-        .asResource { page ->
-            page.media.orEmpty().filterNotNull().map {
-                Media.Medium.sanitize(it)
-            }
-        }
+        .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val upcomingMediaNextSeason = mediaType
@@ -81,11 +72,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.month.season.nextSeason(now).second
             )
         }
-        .asResource { page ->
-            page.media.orEmpty().filterNotNull().map {
-                Media.Medium.sanitize(it)
-            }
-        }
+        .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val allTimePopular = mediaType
@@ -96,11 +83,7 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )
         }
-        .asResource { page ->
-            page.media.orEmpty().filterNotNull().map {
-                Media.Medium.sanitize(it)
-            }
-        }
+        .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { resources ->

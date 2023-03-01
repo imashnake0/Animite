@@ -7,7 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
-import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +32,7 @@ class MediaPageViewModel @Inject constructor(
                 // TODO: Switch to StateFlows.
                 val media = mediaRepository
                     .fetchMedia(navArgs.id, mediaType)
-                    .firstOrNull()?.getOrNull()?.let { Media.sanitize(it) }
+                    .firstOrNull()?.getOrNull()
 
                 uiState = uiState.copy(
                     bannerImage = media?.bannerImage,
