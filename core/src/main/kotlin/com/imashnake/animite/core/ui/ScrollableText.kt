@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.Dp
 import com.imashnake.animite.core.R
 
 @Composable
-fun ScrollableText(
+fun HamuroKoitoScrollableText(
     text: String,
     modifier: Modifier = Modifier,
     gradientSize: Dp = dimensionResource(R.dimen.edge_gradient_size),
