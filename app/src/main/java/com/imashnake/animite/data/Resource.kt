@@ -5,12 +5,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
 
-sealed class Resource<T>(
+sealed class HamuroResource<T>(
     open val data: T?,
     open val message: String? = null
 ) {
 
-    data class Success<T>(override val data: T) : Resource<T>(data)
+    data class HamuroSuccess<T>(override val data: T) : Resource<T>(data)
     data class Error<T>(override val message: String?, override val data: T? = null) : Resource<T>(data, message)
     class Loading<T> : Resource<T>(null)
 
