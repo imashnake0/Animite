@@ -37,18 +37,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
+import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.dev.internal.Constants
@@ -127,7 +126,7 @@ fun SearchFrontDrop(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchList(
-    searchList: List<SearchItem>,
+    searchList: List<Search>,
     modifier: Modifier = Modifier,
     onItemClick: (Int) -> Unit
 ) {
@@ -158,7 +157,7 @@ fun SearchList(
 
 @Composable
 private fun SearchItem(
-    item: SearchItem,
+    item: Search,
     onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -169,7 +168,7 @@ private fun SearchItem(
             .clickable { onClick(item.id) }
     ) {
         MediaSmall(
-            image = item.image,
+            image = item.coverImage,
             onClick = { onClick(item.id) },
             modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
         )
@@ -185,7 +184,7 @@ private fun SearchItem(
             )
             if (item.seasonYear != null) {
                 Text(
-                    text = item.seasonYear,
+                    text = item.seasonYear.toString(),
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -193,21 +192,18 @@ private fun SearchItem(
 
             Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
 
-            if (item.studios != null) {
-                Text(
-                    text = item.studios,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
             Text(
-                text = item.footer(
-                    if (item.episodes != null) {
-                        pluralStringResource(R.plurals.episodes, item.episodes, item.episodes)
-                    } else null
-                ),
+                text = item.studios.joinToString(", "),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = listOfNotNull(
+                    item.format.string.takeIf { it.isNotEmpty() },
+                    item.episodes?.let { "$it episodes" }
+                ).joinToString(" ꞏ "),
                 color = MaterialTheme.colorScheme.onBackground.copy(
                     alpha = ContentAlpha.medium
                 ),

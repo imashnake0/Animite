@@ -30,7 +30,7 @@ data class Search(
     }
 
     /** @see SearchQuery.Medium.format */
-    enum class Format(val format: String) {
+    enum class Format(val string: String) {
         TV("TV"),
         TV_SHORT("TV SHORT"),
         MOVIE("MOVIE"),
