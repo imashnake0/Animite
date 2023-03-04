@@ -4,8 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistSearchRepository
-import com.imashnake.animite.api.anilist.SearchQuery
-import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.data.Resource.Companion.asResource
