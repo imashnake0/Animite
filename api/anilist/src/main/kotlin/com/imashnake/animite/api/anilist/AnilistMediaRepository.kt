@@ -35,9 +35,7 @@ class AnilistMediaRepository @Inject constructor(
             )
             .executeCacheAndNetwork()
             .asResult {
-                it.page!!.media.orEmpty().filterNotNull().map {
-                    cringe -> Media.Medium(cringe)
-                }
+                it.page!!.media.orEmpty().filterNotNull().map { query -> Media.Medium(query) }
             }
     }
 
