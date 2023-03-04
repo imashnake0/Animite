@@ -78,13 +78,15 @@ fun SearchFrontDrop(
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = if (hasExtraPadding) {
             dimensionResource(R.dimen.navigation_bar_height)
-        } else 0.dp
+        } else 0.dp,
+        label = "translate_search_bar"
     )
     val frontDropColor by animateColorAsState(
         targetValue = MaterialTheme.colorScheme.background.copy(
             alpha = if (isExpanded) 0.95f else 0f
         ),
-        animationSpec = tween(Constants.CROSSFADE_DURATION)
+        animationSpec = tween(Constants.CROSSFADE_DURATION),
+        label = "show_front_drop"
     )
 
     Box(
