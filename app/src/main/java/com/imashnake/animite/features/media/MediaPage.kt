@@ -89,7 +89,6 @@ fun MediaPage(
                 Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState)
-                    .navigationBarsPadding()
             ) {
                 MediaBanner(
                     imageUrl = media.bannerImage,
@@ -103,11 +102,10 @@ fun MediaPage(
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .padding(
-                            top = bannerHeight,
-                            bottom = dimensionResource(Res.dimen.large_padding)
-                        )
-                        .background(MaterialTheme.colorScheme.background),
+                        .padding(top = bannerHeight)
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(bottom = dimensionResource(Res.dimen.large_padding))
+                        .navigationBarsPadding(),
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
                 ) {
                     MediaDetails(
