@@ -83,7 +83,8 @@ fun MediaPage(
         // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
         TranslucentStatusBarLayout(
             scrollState = scrollState,
-            distanceUntilAnimated = bannerHeight
+            distanceUntilAnimated = bannerHeight,
+            modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
             Box(
                 Modifier
