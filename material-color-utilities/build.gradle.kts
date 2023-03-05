@@ -33,5 +33,3 @@ android {
 
     namespace = "com.google.material3.color"
 }
-
-dependencies { }
