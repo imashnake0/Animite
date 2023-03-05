@@ -55,7 +55,7 @@ object ThemeUtils {
         )
     }
 
-    internal fun byteArrayToTheme(pixels: ByteArray, hasAlpha: Boolean, vararg customColors: CustomColor): Theme {
+    fun byteArrayToTheme(pixels: ByteArray, hasAlpha: Boolean, vararg customColors: CustomColor): Theme {
         val pixelColors: MutableList<Int> = mutableListOf()
 
         if (hasAlpha) {

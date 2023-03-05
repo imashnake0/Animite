@@ -4,7 +4,7 @@ package quantize
 class QuantizerMap : Quantizer {
     var colorToCount: Map<Int, Int>? = null
 
-    override fun quantize(pixels: IntArray?, colorCount: Int): QuantizerResult {
+    override fun quantize(pixels: IntArray?, maxColors: Int): QuantizerResult {
         val pixelByCount: MutableMap<Int, Int> = LinkedHashMap()
         for (pixel in pixels!!) {
             val currentPixelCount = pixelByCount[pixel]

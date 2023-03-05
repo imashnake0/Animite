@@ -80,6 +80,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":profile"))
     implementation(project(":rslash"))
+    implementation(project(":material-color-utilities"))
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
