@@ -1,33 +1,17 @@
-/*
- * Copyright 2022 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package contrast
 
-import utils.ColorUtils
+import utils.ColorUtils.lstarFromY
+import utils.ColorUtils.yFromLstar
 import kotlin.math.abs
 import kotlin.math.max
 
 /**
  * Color science for contrast utilities.
  *
- *
- * Utility methods for calculating contrast given two colors, or calculating a color given one
+ * <p>Utility methods for calculating contrast given two colors, or calculating a color given one
  * color and a contrast ratio.
  *
- *
- * Contrast ratio is calculated using XYZ's Y. When linearized to match human perception, Y
+ * <p>Contrast ratio is calculated using XYZ's Y. When linearized to match human perception, Y
  * becomes HCT's tone and L*a*b*'s' L*.
  */
 object Contrast {
@@ -92,7 +76,7 @@ object Contrast {
      * The equation is ratio = lighter Y + 5 / darker Y + 5.
      */
     fun ratioOfYs(y1: Double, y2: Double): Double {
-        val lighter = max(y1, y2)
+        val lighter: Double = max(y1, y2)
         val darker = if (lighter == y2) y1 else y2
         return (lighter + 5.0) / (darker + 5.0)
     }
@@ -115,7 +99,7 @@ object Contrast {
      * with hex codes.
      */
     fun ratioOfTones(t1: Double, t2: Double): Double {
-        return ratioOfYs(ColorUtils.yFromLstar(t1), ColorUtils.yFromLstar(t2))
+        return ratioOfYs(yFromLstar(t1), yFromLstar(t2))
     }
 
     /**
@@ -130,7 +114,7 @@ object Contrast {
             return -1.0
         }
         // Invert the contrast ratio equation to determine lighter Y given a ratio and darker Y.
-        val darkY = ColorUtils.yFromLstar(tone)
+        val darkY = yFromLstar(tone)
         val lightY = ratio * (darkY + 5.0) - 5.0
         if (lightY < 0.0 || lightY > 100.0) {
             return -1.0
@@ -140,7 +124,7 @@ object Contrast {
         if (realContrast < ratio && delta > CONTRAST_RATIO_EPSILON) {
             return -1.0
         }
-        val returnValue = ColorUtils.lstarFromY(lightY) + LUMINANCE_GAMUT_MAP_TOLERANCE
+        val returnValue = lstarFromY(lightY) + LUMINANCE_GAMUT_MAP_TOLERANCE
         // NOMUTANTS--important validation step; functions it is calling may change implementation.
         return if (returnValue < 0 || returnValue > 100) {
             -1.0
@@ -174,7 +158,7 @@ object Contrast {
             return -1.0
         }
         // Invert the contrast ratio equation to determine darker Y given a ratio and lighter Y.
-        val lightY = ColorUtils.yFromLstar(tone)
+        val lightY = yFromLstar(tone)
         val darkY = (lightY + 5.0) / ratio - 5.0
         if (darkY < 0.0 || darkY > 100.0) {
             return -1.0
@@ -186,7 +170,7 @@ object Contrast {
         }
 
         // For information on 0.4 constant, see comment in lighter(tone, ratio).
-        val returnValue = ColorUtils.lstarFromY(darkY) - LUMINANCE_GAMUT_MAP_TOLERANCE
+        val returnValue = lstarFromY(darkY) - LUMINANCE_GAMUT_MAP_TOLERANCE
         // NOMUTANTS--important validation step; functions it is calling may change implementation.
         return if (returnValue < 0 || returnValue > 100) {
             -1.0

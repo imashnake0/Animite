@@ -1,49 +1,22 @@
-/*
- * Copyright 2021 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package hct
 
 import utils.ColorUtils
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.expm1
-import kotlin.math.hypot
-import kotlin.math.ln1p
-import kotlin.math.max
-import kotlin.math.pow
-import kotlin.math.sign
-import kotlin.math.sin
-import kotlin.math.sqrt
+import utils.MathUtils
+import kotlin.math.*
 
 /**
  * CAM16, a color appearance model. Colors are not just defined by their hex code, but rather, a hex
  * code and viewing conditions.
  *
- *
- * CAM16 instances also have coordinates in the CAM16-UCS space, called J*, a*, b*, or jstar,
+ * <p>CAM16 instances also have coordinates in the CAM16-UCS space, called J*, a*, b*, or jstar,
  * astar, bstar in code. CAM16-UCS is included in the CAM16 specification, and should be used when
  * measuring distances between colors.
  *
- *
- * In traditional color spaces, a color can be identified solely by the observer's measurement of
+ * <p>In traditional color spaces, a color can be identified solely by the observer's measurement of
  * the color. Color appearance models such as CAM16 also use information about the environment where
  * the color was observed, known as the viewing conditions.
  *
- *
- * For example, white under the traditional assumption of a midday sun white point is accurately
+ * <p>For example, white under the traditional assumption of a midday sun white point is accurately
  * measured as a slightly chromatic blue by CAM16. (roughly, hue 203, chroma 3, lightness 100)
  */
 class Cam16
@@ -105,6 +78,9 @@ class Cam16
     val bstar: Double
 ) {
 
+    // Avoid allocations during conversion by pre-allocating an array.
+    private val tempArray = doubleArrayOf(0.0, 0.0, 0.0)
+
     /**
      * CAM16 instances also have coordinates in the CAM16-UCS space, called J*, a*, b*, or jstar,
      * astar, bstar in code. CAM16-UCS is included in the CAM16 specification, and is used to measure
@@ -133,38 +109,50 @@ class Cam16
      * @return ARGB representation of color
      */
     fun viewed(viewingConditions: ViewingConditions): Int {
+        val xyz = xyzInViewingConditions(viewingConditions, tempArray)
+        return ColorUtils.argbFromXyz(xyz[0], xyz[1], xyz[2])
+    }
+
+    fun xyzInViewingConditions(viewingConditions: ViewingConditions, returnArray: DoubleArray?): DoubleArray {
         val alpha = if (chroma == 0.0 || j == 0.0) 0.0 else chroma / sqrt(
             j / 100.0
         )
         val t = (alpha / (1.64 - 0.29.pow(viewingConditions.n)).pow(0.73)).pow(1.0 / 0.9)
-        val hRad = Math.toRadians(hue)
+        val hRad = MathUtils.toRadians(hue)
         val eHue = 0.25 * (cos(hRad + 2.0) + 3.8)
-        val ac = (viewingConditions.aw
+        val ac: Double = (viewingConditions.aw
                 * (j / 100.0).pow(1.0 / viewingConditions.c / viewingConditions.z))
-        val p1 = eHue * (50000.0 / 13.0) * viewingConditions.nc * viewingConditions.ncb
-        val p2 = ac / viewingConditions.nbb
+        val p1: Double = eHue * (50000.0 / 13.0) * viewingConditions.nc * viewingConditions.ncb
+        val p2: Double = ac / viewingConditions.nbb
         val hSin = sin(hRad)
         val hCos = cos(hRad)
         val gamma = 23.0 * (p2 + 0.305) * t / (23.0 * p1 + 11.0 * t * hCos + 108.0 * t * hSin)
         val a = gamma * hCos
         val b = gamma * hSin
-        val rA = 460.0 * p2 + 451.0 * a + 288.0 * b / 1403.0
-        val gA = 460.0 * p2 - 891.0 * a - 261.0 * b / 1403.0
-        val bA = 460.0 * p2 - 220.0 * a - 6300.0 * b / 1403.0
-        val rCBase = max(0.0, 27.13 * abs(rA) / (400.0 - abs(rA)))
-        val rC = sign(rA) * (100.0 / viewingConditions.fl) * rCBase.pow(1.0 / 0.42)
-        val gCBase = max(0.0, 27.13 * abs(gA) / (400.0 - abs(gA)))
-        val gC = sign(gA) * (100.0 / viewingConditions.fl) * gCBase.pow(1.0 / 0.42)
-        val bCBase = max(0.0, 27.13 * abs(bA) / (400.0 - abs(bA)))
-        val bC = sign(bA) * (100.0 / viewingConditions.fl) * bCBase.pow(1.0 / 0.42)
-        val rF = rC / viewingConditions.rgbD[0]
-        val gF = gC / viewingConditions.rgbD[1]
-        val bF = bC / viewingConditions.rgbD[2]
+        val rA = (460.0 * p2 + 451.0 * a + 288.0 * b) / 1403.0
+        val gA = (460.0 * p2 - 891.0 * a - 261.0 * b) / 1403.0
+        val bA = (460.0 * p2 - 220.0 * a - 6300.0 * b) / 1403.0
+        val rCBase: Double = max(0.0, 27.13 * abs(rA) / (400.0 - abs(rA)))
+        val rC: Double = sign(rA) * (100.0 / viewingConditions.fl) * rCBase.pow(1.0 / 0.42)
+        val gCBase: Double = max(0.0, 27.13 * abs(gA) / (400.0 - abs(gA)))
+        val gC: Double = sign(gA) * (100.0 / viewingConditions.fl) * gCBase.pow(1.0 / 0.42)
+        val bCBase: Double = max(0.0, 27.13 * abs(bA) / (400.0 - abs(bA)))
+        val bC: Double = sign(bA) * (100.0 / viewingConditions.fl) * bCBase.pow(1.0 / 0.42)
+        val rF: Double = rC / viewingConditions.rgbD[0]
+        val gF: Double = gC / viewingConditions.rgbD[1]
+        val bF: Double = bC / viewingConditions.rgbD[2]
         val matrix = CAM16RGB_TO_XYZ
         val x = rF * matrix[0][0] + gF * matrix[0][1] + bF * matrix[0][2]
         val y = rF * matrix[1][0] + gF * matrix[1][1] + bF * matrix[1][2]
         val z = rF * matrix[2][0] + gF * matrix[2][1] + bF * matrix[2][2]
-        return ColorUtils.argbFromXyz(x, y, z)
+        return if (returnArray != null) {
+            returnArray[0] = x
+            returnArray[1] = y
+            returnArray[2] = z
+            returnArray
+        } else {
+            doubleArrayOf(x, y, z)
+        }
     }
 
     companion object {
@@ -211,7 +199,12 @@ class Cam16
             val x = 0.41233895 * redL + 0.35762064 * greenL + 0.18051042 * blueL
             val y = 0.2126 * redL + 0.7152 * greenL + 0.0722 * blueL
             val z = 0.01932141 * redL + 0.11916382 * greenL + 0.95034478 * blueL
+            return fromXyzInViewingConditions(x, y, z, viewingConditions)
+        }
 
+        fun fromXyzInViewingConditions(
+            x: Double, y: Double, z: Double, viewingConditions: ViewingConditions
+        ): Cam16 {
             // Transform XYZ to 'cone'/'rgb' responses
             val matrix = XYZ_TO_CAM16RGB
             val rT = x * matrix[0][0] + y * matrix[0][1] + z * matrix[0][2]
@@ -219,9 +212,9 @@ class Cam16
             val bT = x * matrix[2][0] + y * matrix[2][1] + z * matrix[2][2]
 
             // Discount illuminant
-            val rD = viewingConditions.rgbD[0] * rT
-            val gD = viewingConditions.rgbD[1] * gT
-            val bD = viewingConditions.rgbD[2] * bT
+            val rD: Double = viewingConditions.rgbD[0] * rT
+            val gD: Double = viewingConditions.rgbD[1] * gT
+            val bD: Double = viewingConditions.rgbD[2] * bT
 
             // Chromatic adaptation
             val rAF = (viewingConditions.fl * abs(rD) / 100.0).pow(0.42)
@@ -237,37 +230,36 @@ class Cam16
             val b = (rA + gA - 2.0 * bA) / 9.0
 
             // auxiliary components
-            val u = 20.0 * rA + 20.0 * gA + 21.0 * bA / 20.0
+            val u = (20.0 * rA + 20.0 * gA + 21.0 * bA) / 20.0
             val p2 = (40.0 * rA + 20.0 * gA + bA) / 20.0
 
             // hue
             val atan2 = atan2(b, a)
-            val atanDegrees = Math.toDegrees(atan2)
+            val atanDegrees = MathUtils.toDegrees(atan2)
             val hue =
                 if (atanDegrees < 0) atanDegrees + 360.0 else if (atanDegrees >= 360) atanDegrees - 360.0 else atanDegrees
-            val hueRadians = Math.toRadians(hue)
+            val hueRadians = MathUtils.toRadians(hue)
 
             // achromatic response to color
-            val ac = p2 * viewingConditions.nbb
+            val ac: Double = p2 * viewingConditions.nbb
 
             // CAM16 lightness and brightness
             val j = (100.0
                     * (ac / viewingConditions.aw).pow(viewingConditions.c * viewingConditions.z))
-            val q = ((4.0
+            val q: Double = ((4.0
                     / viewingConditions.c) * sqrt(j / 100.0)
                     * (viewingConditions.aw + 4.0)
                     * viewingConditions.flRoot)
 
             // CAM16 chroma, colorfulness, and saturation.
             val huePrime = if (hue < 20.14) hue + 360 else hue
-            val eHue = 0.25 * (cos(Math.toRadians(huePrime) + 2.0) + 3.8)
-            val p1 = 50000.0 / 13.0 * eHue * viewingConditions.nc * viewingConditions.ncb
+            val eHue = 0.25 * (cos(MathUtils.toRadians(huePrime) + 2.0) + 3.8)
+            val p1: Double = 50000.0 / 13.0 * eHue * viewingConditions.nc * viewingConditions.ncb
             val t = p1 * hypot(a, b) / (u + 0.305)
-            val alpha =
-                (1.64 - 0.29.pow(viewingConditions.n)).pow(0.73) * t.pow(0.9)
+            val alpha = (1.64 - 0.29.pow(viewingConditions.n)).pow(0.73) * t.pow(0.9)
             // CAM16 chroma, colorfulness, saturation
             val c = alpha * sqrt(j / 100.0)
-            val m = c * viewingConditions.flRoot
+            val m: Double = c * viewingConditions.flRoot
             val s = 50.0 * sqrt(alpha * viewingConditions.c / (viewingConditions.aw + 4.0))
 
             // CAM16-UCS components
@@ -296,14 +288,14 @@ class Cam16
         private fun fromJchInViewingConditions(
             j: Double, c: Double, h: Double, viewingConditions: ViewingConditions
         ): Cam16 {
-            val q = ((4.0
+            val q: Double = ((4.0
                     / viewingConditions.c) * sqrt(j / 100.0)
                     * (viewingConditions.aw + 4.0)
                     * viewingConditions.flRoot)
-            val m = c * viewingConditions.flRoot
+            val m: Double = c * viewingConditions.flRoot
             val alpha = c / sqrt(j / 100.0)
             val s = 50.0 * sqrt(alpha * viewingConditions.c / (viewingConditions.aw + 4.0))
-            val hueRadians = Math.toRadians(h)
+            val hueRadians = MathUtils.toRadians(h)
             val jstar = (1.0 + 100.0 * 0.007) * j / (1.0 + 0.007 * j)
             val mstar = 1.0 / 0.0228 * ln1p(0.0228 * m)
             val astar = mstar * cos(hueRadians)
@@ -321,12 +313,7 @@ class Cam16
          * axis.
          */
         fun fromUcs(jstar: Double, astar: Double, bstar: Double): Cam16 {
-            return fromUcsInViewingConditions(
-                jstar,
-                astar,
-                bstar,
-                ViewingConditions.DEFAULT
-            )
+            return fromUcsInViewingConditions(jstar, astar, bstar, ViewingConditions.DEFAULT)
         }
 
         /**
@@ -344,8 +331,8 @@ class Cam16
         ): Cam16 {
             val m = hypot(astar, bstar)
             val m2 = expm1(m * 0.0228) / 0.0228
-            val c = m2 / viewingConditions.flRoot
-            var h = atan2(bstar, astar) * (180.0 / Math.PI)
+            val c: Double = m2 / viewingConditions.flRoot
+            var h = atan2(bstar, astar) * (180.0 / PI)
             if (h < 0.0) {
                 h += 360.0
             }
