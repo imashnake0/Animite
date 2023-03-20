@@ -6,12 +6,13 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,11 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.R
@@ -65,10 +64,10 @@ fun SearchFab(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier,
         shadowElevation = 20.dp,
-        shape = CircleShape
+        shape = RoundedCornerShape(16.dp),
     ) {
         val keyboardController = LocalSoftwareKeyboardController.current
-        AnimatedContent(targetState = isExpanded) { targetExpanded ->
+        AnimatedContent(targetState = isExpanded, label = "Animated search bar") { targetExpanded ->
             if (targetExpanded) {
                 ExpandedSearchBarContent(
                     collapse = {
@@ -95,11 +94,12 @@ internal fun CollapsedSearchBarContent(
     modifier: Modifier = Modifier,
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(R.drawable.search),
+        imageVector = Icons.Rounded.Search,
         contentDescription = stringResource(R.string.search),
         modifier = Modifier
             .clickable(onClick = expand)
-            .then(modifier)
+            .then(modifier),
+        tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
     )
 }
 
@@ -141,7 +141,8 @@ internal fun ExpandedSearchBarContent(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.KeyboardArrowRight,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
                 )
             }
         },
@@ -154,8 +155,9 @@ internal fun ExpandedSearchBarContent(
                 modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size))
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = null
+                    imageVector = Icons.Rounded.Clear,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f)
                 )
             }
         }

@@ -207,6 +207,8 @@ fun MediaBanner(
     tintColor: Color,
     modifier: Modifier = Modifier
 ) {
+    // TODO: Add a back button overlapped on banner.
+
     if (!imageUrl.isNullOrEmpty()) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)

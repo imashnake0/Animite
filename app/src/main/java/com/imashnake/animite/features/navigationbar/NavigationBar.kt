@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Icon
@@ -17,6 +18,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
@@ -38,18 +40,23 @@ import com.imashnake.animite.R as Res
 fun NavigationBar(
     navController: NavController
 ) {
-    // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
-        Modifier.height(
-            dimensionResource(Res.dimen.navigation_bar_height) + WindowInsets
-                .navigationBars
-                .asPaddingValues()
-                .calculateBottomPadding()
-        ),
+        modifier = Modifier
+            .height(
+                dimensionResource(Res.dimen.navigation_bar_height) + WindowInsets
+                    .navigationBars
+                    .asPaddingValues()
+                    .calculateBottomPadding()
+            )
+            .clip(shape = RoundedCornerShape(topStart = 18.dp, topEnd = 18.dp)),
         // TODO: Use a `NavigationRail` instead.
         windowInsets = if (LocalConfiguration.current.orientation
             == Configuration.ORIENTATION_LANDSCAPE
-        ) { WindowInsets.displayCutout } else { WindowInsets(0.dp) }
+        ) {
+            WindowInsets.displayCutout
+        } else {
+            WindowInsets(0.dp)
+        }
     ) {
         val currentDestination by navController.currentDestinationAsState()
 

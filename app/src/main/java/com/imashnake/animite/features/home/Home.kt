@@ -101,7 +101,7 @@ fun Home(
                                 )
                                 .fillMaxWidth()
                                 .height(dimensionResource(Res.dimen.banner_height))
-                        ) { }
+                        )
 
                         Text(
                             text = stringResource(Res.string.okaeri),
@@ -224,7 +224,7 @@ fun HomeRow(
     Column(modifier) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .padding(
                     start = dimensionResource(Res.dimen.large_padding)
@@ -239,8 +239,9 @@ fun HomeRow(
             content = { media ->
                 MediaSmall(
                     image = media?.coverImage?.extraLarge,
-                    // TODO: Do something about this chain.
-                    label = media?.title?.romaji ?: media?.title?.english ?: media?.title?.native ?: "",
+                    label = media?.title?.run {
+                        romaji ?: english ?: native ?: ""
+                    },
                     onClick = {
                         onItemClicked(media!!)
                     },
