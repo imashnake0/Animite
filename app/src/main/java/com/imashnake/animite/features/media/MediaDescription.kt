@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.media
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -28,13 +29,23 @@ fun MediaDescription(
     val back = remember {
         mutableStateOf(false)
     }
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
+                shape = MaterialTheme.shapes.medium
+            )
+            .padding(4.dp)
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { back.value = true }
             ) {
                 Icon(
                     imageVector = Icons.Rounded.ArrowBack,
                     contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                 )
             }
 
@@ -42,13 +53,15 @@ fun MediaDescription(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 1
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.onBackground,
             )
         }
         Text(
             text = HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_COMPACT).toString(),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
         )
     }
     if (back.value) {

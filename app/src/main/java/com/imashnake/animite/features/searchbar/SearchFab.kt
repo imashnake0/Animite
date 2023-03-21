@@ -103,7 +103,6 @@ internal fun CollapsedSearchBarContent(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ExpandedSearchBarContent(
     collapse: () -> Unit,
@@ -188,5 +187,7 @@ fun searchTextFieldColors(
         unfocusedLeadingIconColor = contentColor,
         unfocusedTrailingIconColor = contentColor,
         focusedTrailingIconColor = contentColor,
+        focusedTextColor = contentColor,
+        focusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
     )
 }
