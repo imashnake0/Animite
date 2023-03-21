@@ -143,14 +143,12 @@ fun MediaPage(
                             .fillMaxSize()
                     )
 
-                    if (openDescription.value) {
-                        AnimatedVisibility(visible = openDescription.value) {
-                            MediaDescription(
-                                title = media.title.orEmpty(),
-                                description = media.description.orEmpty()
-                            ) {
-                                openDescription.value = false
-                            }
+                    AnimatedVisibility(visible = openDescription.value) {
+                        MediaDescription(
+                            title = media.title.orEmpty(),
+                            description = media.description.orEmpty()
+                        ) {
+                            openDescription.value = false
                         }
                     }
                     if (!media.stats.isNullOrEmpty()) {

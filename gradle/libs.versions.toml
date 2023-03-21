@@ -21,13 +21,13 @@ accompanist = "0.28.0"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "7.4.1"
+agp = "7.4.2"
 
 # AndroidX
 # https://androidx.tech.
 activity = "1.6.1"
 core = "1.9.0"
-lifecycle = "2.5.1"
+lifecycle = "2.6.0"
 extJunit = "1.1.5"
 espresso = "3.5.1"
 
@@ -46,13 +46,13 @@ composeDestinations = "1.8.33-beta"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.4.0-beta01"
+composeAnimation = "1.4.0-rc01"
 composeCompiler = "1.4.2"
-composeFoundation = "1.4.0-beta01"
-composeMaterial = "1.4.0-beta01"
-composeMaterial3 = "1.1.0-alpha06"
-composeRuntime = "1.4.0-beta01"
-composeUi = "1.4.0-beta01"
+composeFoundation = "1.4.0-rc01"
+composeMaterial = "1.4.0-rc01"
+composeMaterial3 = "1.1.0-alpha08"
+composeRuntime = "1.4.0-rc01"
+composeUi = "1.4.0-rc01"
 
 # Dagger
 # https://github.com/google/dagger/releases.
