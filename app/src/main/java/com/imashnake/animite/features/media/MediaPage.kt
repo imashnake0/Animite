@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,6 +41,8 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -109,6 +112,7 @@ fun MediaPage(
                         .navigationBarsPadding(),
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
                 ) {
+                    val openDescription = remember { mutableStateOf(false) }
                     MediaDetails(
                         title = media.title.orEmpty(),
                         description = Html
@@ -116,6 +120,9 @@ fun MediaPage(
                             .toString(),
                         // TODO Can we do something about this Modifier chain?
                         modifier = Modifier
+                            .clickable(enabled = true) {
+                                openDescription.value = true
+                            }
                             .padding(
                                 start = dimensionResource(Res.dimen.large_padding)
                                         + dimensionResource(Res.dimen.media_card_width)
@@ -136,6 +143,16 @@ fun MediaPage(
                             .fillMaxSize()
                     )
 
+                    if (openDescription.value) {
+                        AnimatedVisibility(visible = openDescription.value) {
+                            MediaDescription(
+                                title = media.title.orEmpty(),
+                                description = media.description.orEmpty()
+                            ) {
+                                openDescription.value = false
+                            }
+                        }
+                    }
                     if (!media.stats.isNullOrEmpty()) {
                         MediaStats(
                             stats = media.stats,
@@ -243,7 +260,7 @@ fun MediaBanner(
 fun MediaDetails(
     title: String,
     description: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(
@@ -251,7 +268,7 @@ fun MediaDetails(
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleLarge,
             maxLines = 4,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
 
         ScrollableText(text = description)
