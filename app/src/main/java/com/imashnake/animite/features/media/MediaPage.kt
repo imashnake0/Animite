@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -62,7 +63,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
-import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
@@ -79,6 +79,7 @@ fun MediaPage(
 ) {
     val scrollState = rememberScrollState()
     val bannerHeight = dimensionResource(Res.dimen.banner_height)
+    val openDescription = remember { mutableStateOf(false) }
 
     val media = viewModel.uiState
 
@@ -94,14 +95,6 @@ fun MediaPage(
                     .fillMaxSize()
                     .verticalScroll(scrollState)
             ) {
-                MediaBanner(
-                    imageUrl = media.bannerImage,
-                    tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
-                    modifier = Modifier
-                        .height(bannerHeight)
-                        .fillMaxWidth()
-                        .bannerParallax(scrollState)
-                )
 
                 Column(
                     modifier = Modifier
@@ -112,7 +105,6 @@ fun MediaPage(
                         .navigationBarsPadding(),
                     verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
                 ) {
-                    val openDescription = remember { mutableStateOf(false) }
                     MediaDetails(
                         title = media.title.orEmpty(),
                         description = Html
@@ -143,14 +135,6 @@ fun MediaPage(
                             .fillMaxSize()
                     )
 
-                    AnimatedVisibility(visible = openDescription.value) {
-                        MediaDescription(
-                            title = media.title.orEmpty(),
-                            description = media.description.orEmpty()
-                        ) {
-                            openDescription.value = false
-                        }
-                    }
                     if (!media.stats.isNullOrEmpty()) {
                         MediaStats(
                             stats = media.stats,
@@ -209,6 +193,23 @@ fun MediaPage(
                         label = null,
                         onClick = {},
                         modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+                    )
+                }
+            }
+
+            AnimatedVisibility(visible = openDescription.value) {
+                BackHandler(enabled = true) {
+                    openDescription.value = false
+                }
+                DescriptionBottomSheet(
+                    title = media.title.orEmpty(),
+                    description = media.description.orEmpty()
+                ) {
+                    MediaBanner(
+                        imageUrl = media.bannerImage,
+                        tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
                 }
             }

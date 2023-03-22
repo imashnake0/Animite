@@ -17,7 +17,7 @@ desugaring = "2.0.2"
 
 # Accompanist
 # https://github.com/google/accompanist/releases.
-accompanist = "0.28.0"
+accompanist = "0.29.2-rc"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
