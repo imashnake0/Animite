@@ -116,6 +116,8 @@ dependencies {
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)
 
+    implementation(libs.simpleStack.compose)
+
     testImplementation(libs.test.junit)
 
     androidTestImplementation(libs.androidx.test.junit)

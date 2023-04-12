@@ -78,6 +78,7 @@ junit = "4.13.2"
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.19.0"
+simpleStackCompose = "0.12.0"
 
 
 [libraries]
@@ -111,6 +112,7 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 accompanist-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist" }
+simpleStack-compose = { module = "com.github.Zhuinden:simple-stack-compose-integration", version.ref = "simpleStackCompose" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [bundles]

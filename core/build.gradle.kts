@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
 
+    implementation(libs.simpleStack.compose)
+
     testImplementation(libs.test.junit)
 
     androidTestImplementation(libs.androidx.test.junit)
