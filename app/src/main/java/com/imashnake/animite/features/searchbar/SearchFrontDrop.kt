@@ -195,7 +195,7 @@ private fun SearchItem(
             Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
 
             Text(
-                text = item.studios.joinToString(", "),
+                text = item.studios.joinToString(),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
