@@ -17,8 +17,8 @@ android {
         applicationId = "com.imashnake.animite"
         minSdk = 26
         targetSdk = 33
-        versionCode = 6
-        versionName = "0.0.1-alpha06"
+        versionCode = 7
+        versionName = "0.0.1-alpha07"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -80,6 +80,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":profile"))
     implementation(project(":rslash"))
+    implementation(project(":material-color-utilities"))
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
@@ -87,13 +88,8 @@ dependencies {
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Compose
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.animation)
-    implementation(libs.compose.foundation)
+    implementation(libs.bundles.compose)
     implementation(libs.compose.material)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.runtime)
-    implementation(libs.compose.ui)
     implementation(libs.compose.ui.text.googleFonts)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
@@ -104,7 +100,6 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
-    implementation(kotlin("reflect"))
 
     // Hilt
     implementation(libs.hilt.android)
@@ -114,9 +109,6 @@ dependencies {
     // Accompanist
     implementation(libs.accompanist.systemUiController)
     implementation(libs.accompanist.placeholder)
-
-    // Snapper
-    implementation(libs.chrisbanes.snapper)
 
     coreLibraryDesugaring(libs.android.desugaring)
 
@@ -128,6 +120,5 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espressoCore)
-    androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.test.ui.testJunit4)
 }

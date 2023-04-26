@@ -46,10 +46,12 @@ composeDestinations = "1.8.33-beta"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeBom = "2023.01.00"
+composeAnimation = "1.4.0-beta01"
 composeCompiler = "1.4.2"
 composeFoundation = "1.4.0-beta01"
+composeMaterial = "1.4.0-beta01"
 composeMaterial3 = "1.1.0-alpha06"
+composeRuntime = "1.4.0-beta01"
 composeUi = "1.4.0-beta01"
 
 # Dagger
@@ -68,10 +70,6 @@ coroutines = "1.6.4"
 # KSP
 # https://github.com/google/ksp/releases.
 ksp = "1.8.10-1.0.9"
-
-# Snapper
-# https://github.com/chrisbanes/snapper/releases.
-snapper = "0.3.0"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
@@ -92,12 +90,11 @@ androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-destinations = { group = "io.github.raamcosta.compose-destinations", name = "animations-core", version.ref = "composeDestinations" }
 compose-destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "composeDestinations" }
-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-compose-animation = { group = "androidx.compose.animation", name = "animation" }
+compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
-compose-material = { group = "androidx.compose.material", name = "material" }
+compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
 compose-ui-text-googleFonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "composeUi" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
@@ -114,5 +111,14 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 accompanist-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist" }
-chrisbanes-snapper = { group = "dev.chrisbanes.snapper", name = "snapper", version.ref = "snapper" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+[bundles]
+
+compose = [
+    "compose-animation",
+    "compose-foundation",
+    "compose-material3",
+    "compose-runtime",
+    "compose-ui",
+]
