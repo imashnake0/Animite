@@ -138,7 +138,7 @@ fun MediaPage(
                     )
 
                     if (!media.ranks.isNullOrEmpty()) {
-                        MediaStats(
+                        MediaRankings(
                             rankings = media.ranks,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -258,7 +258,7 @@ fun MediaDetails(
 }
 
 @Composable
-fun MediaStats(
+fun MediaRankings(
     rankings: List<Media.Ranking>,
     modifier: Modifier = Modifier
 ) {
