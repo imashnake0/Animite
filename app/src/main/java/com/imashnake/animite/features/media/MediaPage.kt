@@ -147,7 +147,7 @@ fun MediaPage(
                         )
                     }
 
-                    if (media.genres != null) {
+                    if (!media.genres.isNullOrEmpty()) {
                         MediaGenres(
                             genres = media.genres,
                             contentPadding = PaddingValues(
@@ -163,7 +163,7 @@ fun MediaPage(
                         )
                     }
 
-                    if (media.characters != null) {
+                    if (!media.characters.isNullOrEmpty()) {
                         MediaCharacters(
                             characters = media.characters,
                             contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
