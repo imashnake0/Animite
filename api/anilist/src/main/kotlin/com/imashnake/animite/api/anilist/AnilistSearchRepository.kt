@@ -3,6 +3,7 @@ package com.imashnake.animite.api.anilist
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.executeCacheAndNetwork
+import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -14,7 +15,7 @@ class AnilistSearchRepository @Inject constructor(
         type: MediaType,
         perPage: Int,
         search: String?
-    ): Flow<Result<SearchQuery.Page>> {
+    ): Flow<Result<List<Search>>> {
         return apolloClient
             .query(
                 SearchQuery(
@@ -24,6 +25,6 @@ class AnilistSearchRepository @Inject constructor(
                 )
             )
             .executeCacheAndNetwork()
-            .asResult { it.page!! }
+            .asResult { it.page!!.media.orEmpty().filterNotNull().map { query -> Search(query) } }
     }
 }

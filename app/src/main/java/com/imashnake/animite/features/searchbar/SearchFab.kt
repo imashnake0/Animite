@@ -68,7 +68,7 @@ fun SearchFab(
         shape = CircleShape
     ) {
         val keyboardController = LocalSoftwareKeyboardController.current
-        AnimatedContent(targetState = isExpanded) { targetExpanded ->
+        AnimatedContent(targetState = isExpanded, label = "expand_search_fab") { targetExpanded ->
             if (targetExpanded) {
                 ExpandedSearchBarContent(
                     collapse = {

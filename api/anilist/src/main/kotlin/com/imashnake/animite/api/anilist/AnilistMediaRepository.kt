@@ -3,6 +3,7 @@ package com.imashnake.animite.api.anilist
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.executeCacheAndNetwork
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -20,7 +21,7 @@ class AnilistMediaRepository @Inject constructor(
         perPage: Int = 10,
         season: MediaSeason? = null,
         seasonYear: Int? = null
-    ): Flow<Result<MediaListQuery.Page>> {
+    ): Flow<Result<List<Media.Medium>>> {
         return apolloClient
             .query(
                 MediaListQuery(
@@ -33,10 +34,12 @@ class AnilistMediaRepository @Inject constructor(
                 )
             )
             .executeCacheAndNetwork()
-            .asResult { it.page!! }
+            .asResult {
+                it.page!!.media.orEmpty().filterNotNull().map { query -> Media.Medium(query) }
+            }
     }
 
-    fun fetchMedia(id: Int?, mediaType: MediaType): Flow<Result<MediaQuery.Media>> {
+    fun fetchMedia(id: Int?, mediaType: MediaType): Flow<Result<Media>> {
         return apolloClient
             .query(
                 MediaQuery(
@@ -45,6 +48,6 @@ class AnilistMediaRepository @Inject constructor(
                 )
             )
             .executeCacheAndNetwork()
-            .asResult { it.media!! }
+            .asResult { Media(it.media!!) }
     }
 }

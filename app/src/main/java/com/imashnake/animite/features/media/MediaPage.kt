@@ -59,6 +59,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
@@ -136,9 +137,9 @@ fun MediaPage(
                             .fillMaxSize()
                     )
 
-                    if (!media.stats.isNullOrEmpty()) {
-                        MediaStats(
-                            stats = media.stats,
+                    if (!media.ranks.isNullOrEmpty()) {
+                        MediaRankings(
+                            rankings = media.ranks,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = dimensionResource(Res.dimen.large_padding))
@@ -146,7 +147,7 @@ fun MediaPage(
                         )
                     }
 
-                    if (media.genres != null) {
+                    if (!media.genres.isNullOrEmpty()) {
                         MediaGenres(
                             genres = media.genres,
                             contentPadding = PaddingValues(
@@ -162,7 +163,7 @@ fun MediaPage(
                         )
                     }
 
-                    if (media.characters != null) {
+                    if (!media.characters.isNullOrEmpty()) {
                         MediaCharacters(
                             characters = media.characters,
                             contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
@@ -257,8 +258,8 @@ fun MediaDetails(
 }
 
 @Composable
-fun MediaStats(
-    stats: List<Stat>,
+fun MediaRankings(
+    rankings: List<Media.Ranking>,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -266,28 +267,25 @@ fun MediaStats(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = modifier
     ) {
-        stats.forEach { stat ->
-            if (stat.label != StatLabel.UNKNOWN) {
-                Column(
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stat.label.value,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.labelSmall
-                    )
+        rankings.forEach { ranking ->
+            Column(
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = ranking.type.name,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelSmall
+                )
 
-                    Text(
-                        text = when (stat.label) {
-                            StatLabel.SCORE -> "${stat.score}%"
-                            StatLabel.RATING, StatLabel.POPULARITY -> "#${stat.score}"
-                            else -> ""
-                        },
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                }
+                Text(
+                    text = when (ranking.type) {
+                        Media.Ranking.Type.SCORE -> "${ranking.rank}%"
+                        Media.Ranking.Type.RATED, Media.Ranking.Type.POPULAR -> "#${ranking.rank}"
+                    },
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.displaySmall
+                )
             }
         }
     }
@@ -334,7 +332,7 @@ fun MediaGenres(
 
 @Composable
 fun MediaCharacters(
-    characters: List<Character>,
+    characters: List<Media.Character>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -365,7 +363,7 @@ fun MediaCharacters(
 
 @Composable
 fun MediaTrailer(
-    trailer: Trailer,
+    trailer: Media.Trailer,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -383,7 +381,7 @@ fun MediaTrailer(
                 .wrapContentSize()
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
                 .clickable {
-                    val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(trailer.link))
+                    val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(trailer.url))
                     context.startActivity(appIntent)
                 }
         ) {
