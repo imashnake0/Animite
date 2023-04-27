@@ -21,7 +21,7 @@ accompanist = "0.28.0"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "8.2.0-alpha01"
+agp = "8.0.0"
 
 # AndroidX
 # https://androidx.tech.
