@@ -1,5 +1,3 @@
-// TODO: Remove this after https://github.com/gradle/gradle/issues/22797 is resolved.
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
