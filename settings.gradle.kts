@@ -1,4 +1,4 @@
-@file:Suppress("SpellCheckingInspection", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
 pluginManagement {
     repositories {

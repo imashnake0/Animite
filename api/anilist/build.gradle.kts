@@ -1,7 +1,5 @@
-@file:Suppress("SpellCheckingInspection", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
-// TODO: Remove this after https://youtrack.jetbrains.com/issue/KTIJ-19369 is resolved.
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
@@ -15,8 +13,6 @@ android {
 
     defaultConfig {
         minSdk = 26
-        targetSdk = 33
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -28,12 +24,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     namespace = "com.imashnake.animite.api.anilist"
