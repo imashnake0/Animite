@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -29,13 +28,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -53,7 +50,7 @@ import com.imashnake.animite.R
  * suggests nothing was entered in the text field.
  * @param modifier [Modifier].
  */
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SearchFab(
     isExpanded: Boolean,
@@ -67,14 +64,12 @@ fun SearchFab(
         shadowElevation = 20.dp,
         shape = CircleShape
     ) {
-        val keyboardController = LocalSoftwareKeyboardController.current
         AnimatedContent(targetState = isExpanded, label = "expand_search_fab") { targetExpanded ->
             if (targetExpanded) {
                 ExpandedSearchBarContent(
                     collapse = {
                         setExpanded(false)
                         onSearched(null)
-                        keyboardController?.hide()
                     },
                     clearText = { onSearched(null) },
                     searchText = { onSearched(it) }
@@ -103,7 +98,6 @@ internal fun CollapsedSearchBarContent(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ExpandedSearchBarContent(
     collapse: () -> Unit,
@@ -168,13 +162,13 @@ internal fun ExpandedSearchBarContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun searchTextFieldColors(
     contentColor: Color = LocalContentColor.current
 ): TextFieldColors {
-    return TextFieldDefaults.textFieldColors(
-        containerColor = Color.Transparent,
+    return TextFieldDefaults.colors(
+        unfocusedContainerColor = Color.Transparent,
+        focusedContainerColor = Color.Transparent,
         cursorColor = contentColor,
         unfocusedIndicatorColor = Color.Transparent,
         focusedIndicatorColor = Color.Transparent,
@@ -184,9 +178,9 @@ fun searchTextFieldColors(
         ),
         focusedLeadingIconColor = contentColor,
         unfocusedLeadingIconColor = contentColor,
-        textColor = contentColor,
+        focusedTextColor = contentColor,
         unfocusedTrailingIconColor = contentColor,
         focusedTrailingIconColor = contentColor,
-        placeholderColor = contentColor.copy(alpha = 0.5F)
+        focusedPlaceholderColor = contentColor.copy(alpha = 0.5F)
     )
 }
