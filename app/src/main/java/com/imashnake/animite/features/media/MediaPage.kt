@@ -17,16 +17,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
@@ -35,17 +39,28 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -70,6 +85,7 @@ import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
 fun MediaPage(
@@ -78,125 +94,157 @@ fun MediaPage(
     val scrollState = rememberScrollState()
     val bannerHeight = dimensionResource(Res.dimen.banner_height)
 
+    var isBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
+    val bottomSheetState = rememberSheetState()
+
     val media = viewModel.uiState
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(color = media.color)) {
-        // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
-        TranslucentStatusBarLayout(
-            scrollState = scrollState,
-            distanceUntilAnimated = bannerHeight,
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
-        ) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
+        Box(Modifier.fillMaxSize()) {
+            // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
+            TranslucentStatusBarLayout(
+                scrollState = scrollState,
+                distanceUntilAnimated = bannerHeight,
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
             ) {
-                MediaBanner(
-                    imageUrl = media.bannerImage,
-                    tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
-                    modifier = Modifier
-                        .height(bannerHeight)
-                        .fillMaxWidth()
-                        .bannerParallax(scrollState)
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(top = bannerHeight)
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(bottom = dimensionResource(Res.dimen.large_padding))
-                        .navigationBarsPadding(),
-                    verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
                 ) {
-                    MediaDetails(
-                        title = media.title.orEmpty(),
-                        description = Html
-                            .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
-                            .toString(),
-                        // TODO Can we do something about this Modifier chain?
+                    MediaBanner(
+                        imageUrl = media.bannerImage,
+                        tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
                         modifier = Modifier
+                            .height(bannerHeight)
+                            .fillMaxWidth()
+                            .bannerParallax(scrollState)
+                    )
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(top = bannerHeight)
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(bottom = dimensionResource(Res.dimen.large_padding))
+                            .navigationBarsPadding(),
+                        verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                    ) {
+                        MediaDetails(
+                            title = media.title.orEmpty(),
+                            description = Html
+                                .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
+                                .toString(),
+                            onScrollableTextClicked = {
+                                isBottomSheetVisible = !isBottomSheetVisible
+                            },
+                            // TODO: Can we do something about this Modifier chain?
+                            modifier = Modifier
+                                .padding(
+                                    start = dimensionResource(Res.dimen.large_padding)
+                                            + dimensionResource(Res.dimen.media_card_width)
+                                            + dimensionResource(Res.dimen.large_padding),
+                                    top = dimensionResource(Res.dimen.medium_padding),
+                                    end = dimensionResource(Res.dimen.large_padding)
+                                )
+                                .landscapeCutoutPadding()
+                                .height(
+                                    WindowInsets.statusBars
+                                        .asPaddingValues()
+                                        .calculateTopPadding()
+                                            + dimensionResource(Res.dimen.media_card_top_padding)
+                                            + dimensionResource(Res.dimen.media_card_height)
+                                            - dimensionResource(Res.dimen.banner_height)
+                                            - dimensionResource(Res.dimen.medium_padding)
+                                )
+                                .fillMaxSize()
+                        )
+
+                        if (!media.ranks.isNullOrEmpty()) {
+                            MediaRankings(
+                                rankings = media.ranks,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                                    .landscapeCutoutPadding()
+                            )
+                        }
+
+                        if (!media.genres.isNullOrEmpty()) {
+                            MediaGenres(
+                                genres = media.genres,
+                                contentPadding = PaddingValues(
+                                    start = dimensionResource(Res.dimen.large_padding) + if (
+                                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                                    ) {
+                                        WindowInsets.displayCutout.asPaddingValues()
+                                            .calculateLeftPadding(LayoutDirection.Ltr)
+                                    } else 0.dp,
+                                    end = dimensionResource(Res.dimen.large_padding)
+                                ),
+                                color = Color(media.color ?: (0xFF152232).toInt()),
+                            )
+                        }
+
+                        if (!media.characters.isNullOrEmpty()) {
+                            MediaCharacters(
+                                characters = media.characters,
+                                contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
+                            )
+                        }
+
+                        if (media.trailer != null) {
+                            MediaTrailer(
+                                trailer = media.trailer,
+                                modifier = Modifier
+                                    .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                                    .landscapeCutoutPadding()
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .statusBarsPadding()
                             .padding(
-                                start = dimensionResource(Res.dimen.large_padding)
-                                        + dimensionResource(Res.dimen.media_card_width)
-                                        + dimensionResource(Res.dimen.large_padding),
-                                top = dimensionResource(Res.dimen.medium_padding),
+                                top = dimensionResource(Res.dimen.media_card_top_padding),
+                                start = dimensionResource(Res.dimen.large_padding),
                                 end = dimensionResource(Res.dimen.large_padding)
                             )
                             .landscapeCutoutPadding()
-                            .height(
-                                WindowInsets.statusBars
-                                    .asPaddingValues()
-                                    .calculateTopPadding()
-                                        + dimensionResource(Res.dimen.media_card_top_padding)
-                                        + dimensionResource(Res.dimen.media_card_height)
-                                        - dimensionResource(Res.dimen.banner_height)
-                                        - dimensionResource(Res.dimen.medium_padding)
-                            )
-                            .fillMaxSize()
-                    )
-
-                    if (!media.ranks.isNullOrEmpty()) {
-                        MediaRankings(
-                            rankings = media.ranks,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = dimensionResource(Res.dimen.large_padding))
-                                .landscapeCutoutPadding()
-                        )
-                    }
-
-                    if (!media.genres.isNullOrEmpty()) {
-                        MediaGenres(
-                            genres = media.genres,
-                            contentPadding = PaddingValues(
-                                start = dimensionResource(Res.dimen.large_padding) + if (
-                                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                                ) {
-                                    WindowInsets.displayCutout.asPaddingValues()
-                                        .calculateLeftPadding(LayoutDirection.Ltr)
-                                } else 0.dp,
-                                end = dimensionResource(Res.dimen.large_padding)
-                            ),
-                            color = Color(media.color ?: (0xFF152232).toInt()),
-                        )
-                    }
-
-                    if (!media.characters.isNullOrEmpty()) {
-                        MediaCharacters(
-                            characters = media.characters,
-                            contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
-                        )
-                    }
-
-                    if (media.trailer != null) {
-                        MediaTrailer(
-                            trailer = media.trailer,
-                            modifier = Modifier
-                                .padding(horizontal = dimensionResource(Res.dimen.large_padding))
-                                .landscapeCutoutPadding()
+                    ) {
+                        MediaSmall(
+                            image = media.coverImage,
+                            label = null,
+                            onClick = {},
+                            modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                         )
                     }
                 }
+            }
 
-                Box(
+            MediaDetailsBottomSheet(
+                sheetState = bottomSheetState,
+                isVisible = isBottomSheetVisible,
+                dismiss = {
+                    isBottomSheetVisible = false
+                },
+                scrimColor = Color.Transparent,
+                modifier = Modifier
+                    .consumeWindowInsets(WindowInsets.systemBars)
+                    .fillMaxSize()
+                    .align(Alignment.BottomStart)
+                    .padding(horizontal = dimensionResource(R.dimen.medium_padding))
+            ) {
+                Text(
+                    text = Html
+                        .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
+                        .toString(),
                     modifier = Modifier
-                        .statusBarsPadding()
-                        .padding(
-                            top = dimensionResource(Res.dimen.media_card_top_padding),
-                            start = dimensionResource(Res.dimen.large_padding),
-                            end = dimensionResource(Res.dimen.large_padding)
-                        )
-                        .landscapeCutoutPadding()
-                ) {
-                    MediaSmall(
-                        image = media.coverImage,
-                        label = null,
-                        onClick = {},
-                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                    )
-                }
+                        .fillMaxWidth()
+                        .padding(horizontal = dimensionResource(R.dimen.large_padding))
+                        .padding(bottom = dimensionResource(R.dimen.large_padding))
+                )
             }
         }
     }
@@ -242,6 +290,7 @@ fun MediaBanner(
 fun MediaDetails(
     title: String,
     description: String,
+    onScrollableTextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -253,7 +302,33 @@ fun MediaDetails(
             overflow = TextOverflow.Ellipsis
         )
 
-        ScrollableText(text = description)
+        ScrollableText(
+            text = description,
+            modifier = Modifier.clickable { onScrollableTextClicked() }
+        )
+    }
+}
+
+// TODO: Use a scaffold.
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MediaDetailsBottomSheet(
+    sheetState: SheetState,
+    isVisible: Boolean,
+    dismiss: () -> Unit,
+    scrimColor: Color,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    if(isVisible) {
+        ModalBottomSheet(
+            onDismissRequest = dismiss,
+            sheetState = sheetState,
+            scrimColor = scrimColor,
+            modifier = modifier
+        ) {
+            content()
+        }
     }
 }
 
