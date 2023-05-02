@@ -5,11 +5,6 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,27 +35,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -87,9 +74,10 @@ import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.launch
 import com.imashnake.animite.R as Res
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
 fun MediaPage(
@@ -98,13 +86,37 @@ fun MediaPage(
     val scrollState = rememberScrollState()
     val bannerHeight = dimensionResource(Res.dimen.banner_height)
 
-    var isBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
-    val bottomSheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Hidden, skipHiddenState = false)
+    val scope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        skipHalfExpanded = false
+    )
 
     val media = viewModel.uiState
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(color = media.color)) {
-        Box(Modifier.fillMaxSize()) {
+        val bottomSheetColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
+        ModalBottomSheetLayout(
+            sheetState = bottomSheetState,
+            sheetContent = {
+                Text(
+                    text = Html
+                        .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
+                        .toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(dimensionResource(R.dimen.large_padding))
+                        .padding(
+                            bottom = dimensionResource(id = Res.dimen.large_padding) +
+                                    dimensionResource(Res.dimen.search_bar_height)
+                        )
+                        .navigationBarsPadding()
+                )
+            },
+            sheetBackgroundColor = bottomSheetColor
+        ) {
             // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
@@ -140,7 +152,7 @@ fun MediaPage(
                                 .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
                                 .toString(),
                             onScrollableTextClicked = {
-                                isBottomSheetVisible = !isBottomSheetVisible
+                                scope.launch { bottomSheetState.show() }
                             },
                             // TODO: Can we do something about this Modifier chain?
                             modifier = Modifier
@@ -226,69 +238,6 @@ fun MediaPage(
                     }
                 }
             }
-
-            // YOU'RE A HACK
-            // TODO: We create our own scrim because of https://issuetracker.google.com/issues/280000338.
-            val scrimColor by animateColorAsState(
-                targetValue = if (bottomSheetState.targetValue != SheetValue.Hidden) {
-                    MaterialTheme.colorScheme.background.copy(alpha = ContentAlpha.medium)
-                } else {
-                    Color.Transparent
-                },
-                animationSpec = tween(500),
-                label = "scrim_color"
-            )
-
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .drawBehind { drawRect(scrimColor) }
-            )
-
-            MediaDetailsBottomSheet(
-                sheetState = bottomSheetState,
-                isVisible = isBottomSheetVisible,
-                dismiss = {
-                    isBottomSheetVisible = false
-                },
-                // TODO: Pass in a `scrimColor` once https://issuetracker.google.com/issues/280000338 is fixed.
-                scrimColor = Color.Transparent,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = dimensionResource(R.dimen.medium_padding))
-            ) {
-                Text(
-                    text = Html
-                        .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
-                        .toString(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = dimensionResource(R.dimen.large_padding))
-                        .padding(bottom = dimensionResource(R.dimen.large_padding))
-                )
-            }
-
-            // YOU'RE A HACK
-            // TODO: We cover the ugly navigation bar because of https://issuetracker.google.com/issues/280000338.
-            AnimatedVisibility(
-                visible = isBottomSheetVisible,
-                enter = fadeIn(tween(500)),
-                exit = slideOutVertically(tween(100)) { it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .height(
-                        WindowInsets
-                            .navigationBars
-                            .asPaddingValues()
-                            .calculateBottomPadding()
-                    )
-            ) {
-                Surface(
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
-                shadowElevation = 40.dp,
-                ) {}
-            }
         }
     }
 }
@@ -349,28 +298,6 @@ fun MediaDetails(
             text = description,
             modifier = Modifier.clickable { onScrollableTextClicked() }
         )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MediaDetailsBottomSheet(
-    sheetState: SheetState,
-    isVisible: Boolean,
-    dismiss: () -> Unit,
-    scrimColor: Color,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-    if(isVisible) {
-        ModalBottomSheet(
-            onDismissRequest = dismiss,
-            sheetState = sheetState,
-            scrimColor = scrimColor,
-            modifier = modifier
-        ) {
-            content()
-        }
     }
 }
 
