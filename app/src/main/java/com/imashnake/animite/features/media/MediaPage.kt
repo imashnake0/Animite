@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,6 +38,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
@@ -237,6 +239,10 @@ fun MediaPage(
                         )
                     }
                 }
+            }
+
+            BackHandler(enabled = bottomSheetState.targetValue != ModalBottomSheetValue.Hidden) {
+                scope.launch { bottomSheetState.hide() }
             }
         }
     }
