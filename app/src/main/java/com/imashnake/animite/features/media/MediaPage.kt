@@ -38,7 +38,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
@@ -116,6 +115,10 @@ fun MediaPage(
                         )
                         .navigationBarsPadding()
                 )
+
+                BackHandler(bottomSheetState.isVisible) {
+                    scope.launch { bottomSheetState.hide() }
+                }
             },
             sheetBackgroundColor = bottomSheetColor
         ) {
@@ -239,10 +242,6 @@ fun MediaPage(
                         )
                     }
                 }
-            }
-
-            BackHandler(enabled = bottomSheetState.targetValue != ModalBottomSheetValue.Hidden) {
-                scope.launch { bottomSheetState.hide() }
             }
         }
     }
