@@ -51,8 +51,8 @@ composeCompiler = "1.4.2"
 composeFoundation = "1.4.0-beta01"
 composeMaterial = "1.4.0-beta01"
 composeRuntime = "1.4.0-beta01"
-composeUi = "1.4.0-beta01"
 composeMaterial3 = "1.1.0"
+composeUi = "1.4.3"
 
 # Dagger
 # https://github.com/google/dagger/releases.
