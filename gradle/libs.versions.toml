@@ -13,7 +13,7 @@ dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.re
 
 # Core Library Desugaring
 # https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
-desugaring = "2.0.2"
+desugaring = "2.0.3"
 
 # Accompanist
 # https://github.com/google/accompanist/releases.
