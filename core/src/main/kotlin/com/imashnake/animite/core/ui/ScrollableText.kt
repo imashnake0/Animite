@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import com.imashnake.animite.core.R
 
@@ -24,6 +25,7 @@ import com.imashnake.animite.core.R
 fun ScrollableText(
     text: String,
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     gradientSize: Dp = dimensionResource(R.dimen.edge_gradient_size),
     gradientColor: Color = MaterialTheme.colorScheme.background
 ) {
@@ -33,7 +35,7 @@ fun ScrollableText(
             color = MaterialTheme.colorScheme.onBackground.copy(
                 alpha = ContentAlpha.medium
             ),
-            style = MaterialTheme.typography.bodyMedium,
+            style = textStyle,
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .padding(vertical = gradientSize)
