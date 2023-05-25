@@ -2,7 +2,6 @@ package com.imashnake.animite.features.searchbar
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,13 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -52,7 +49,6 @@ import com.imashnake.animite.R
  * suggests nothing was entered in the text field.
  * @param modifier [Modifier].
  */
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SearchFab(
     isExpanded: Boolean,
@@ -66,14 +62,12 @@ fun SearchFab(
         shadowElevation = 20.dp,
         shape = CircleShape
     ) {
-        val keyboardController = LocalSoftwareKeyboardController.current
         AnimatedContent(targetState = isExpanded, label = "expand_search_fab") { targetExpanded ->
             if (targetExpanded) {
                 ExpandedSearchBarContent(
                     collapse = {
                         setExpanded(false)
                         onSearched(null)
-                        keyboardController?.hide()
                     },
                     clearText = { onSearched(null) },
                     searchText = { onSearched(it) }
