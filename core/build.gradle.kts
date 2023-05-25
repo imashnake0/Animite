@@ -38,15 +38,6 @@ android {
     }
 
     namespace = "com.imashnake.animite.core"
-
-    // Workaround for KSP generated sources not being indexable by the IDE
-    libraryVariants.all {
-        kotlin.sourceSets {
-            getByName(name) {
-                kotlin.srcDir("build/generated/ksp/$name/kotlin")
-            }
-        }
-    }
 }
 
 dependencies {
