@@ -47,8 +47,8 @@ composeDestinations = "1.8.33-beta"
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
 composeAnimation = "1.4.0-beta01"
-composeCompiler = "1.4.2"
-composeFoundation = "1.4.0-beta01"
+composeCompiler = "1.4.7"
+composeFoundation = "1.4.3"
 composeMaterial = "1.4.3"
 composeMaterial3 = "1.1.0"
 composeRuntime = "1.4.3"
@@ -64,12 +64,12 @@ hilt = "1.0.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "1.8.10"
+kotlin = "1.8.21"
 coroutines = "1.6.4"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "1.8.10-1.0.9"
+ksp = "1.8.21-1.0.11"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
