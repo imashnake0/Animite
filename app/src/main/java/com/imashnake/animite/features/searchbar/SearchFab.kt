@@ -28,15 +28,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import com.imashnake.animite.R
 
 /**
@@ -49,7 +52,7 @@ import com.imashnake.animite.R
  * suggests nothing was entered in the text field.
  * @param modifier [Modifier].
  */
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun SearchFab(
     isExpanded: Boolean,
@@ -60,14 +63,17 @@ fun SearchFab(
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier,
+        shadowElevation = 20.dp,
         shape = CircleShape
     ) {
+        val keyboardController = LocalSoftwareKeyboardController.current
         AnimatedContent(targetState = isExpanded, label = "expand_search_fab") { targetExpanded ->
             if (targetExpanded) {
                 ExpandedSearchBarContent(
                     collapse = {
                         setExpanded(false)
                         onSearched(null)
+                        keyboardController?.hide()
                     },
                     clearText = { onSearched(null) },
                     searchText = { onSearched(it) }
@@ -165,20 +171,23 @@ fun searchTextFieldColors(
     contentColor: Color = LocalContentColor.current
 ): TextFieldColors {
     return TextFieldDefaults.colors(
-        unfocusedContainerColor = Color.Transparent,
+        unfocusedTextColor = contentColor,
+        focusedTextColor = contentColor,
         focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
         cursorColor = contentColor,
-        unfocusedIndicatorColor = Color.Transparent,
-        focusedIndicatorColor = Color.Transparent,
         selectionColors = TextSelectionColors(
             handleColor = contentColor,
             backgroundColor = contentColor.copy(alpha = 0.3f)
         ),
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
         focusedLeadingIconColor = contentColor,
         unfocusedLeadingIconColor = contentColor,
-        focusedTextColor = contentColor,
-        unfocusedTrailingIconColor = contentColor,
         focusedTrailingIconColor = contentColor,
-        focusedPlaceholderColor = contentColor.copy(alpha = 0.5F)
+        unfocusedTrailingIconColor = contentColor,
+        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
+        focusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
     )
 }
