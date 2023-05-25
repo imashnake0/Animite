@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -103,7 +102,6 @@ internal fun CollapsedSearchBarContent(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ExpandedSearchBarContent(
     collapse: () -> Unit,
@@ -168,25 +166,28 @@ internal fun ExpandedSearchBarContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun searchTextFieldColors(
     contentColor: Color = LocalContentColor.current
 ): TextFieldColors {
-    return TextFieldDefaults.textFieldColors(
-        containerColor = Color.Transparent,
+    return TextFieldDefaults.colors(
+        unfocusedTextColor = contentColor,
+        focusedTextColor = contentColor,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
         cursorColor = contentColor,
-        unfocusedIndicatorColor = Color.Transparent,
-        focusedIndicatorColor = Color.Transparent,
         selectionColors = TextSelectionColors(
             handleColor = contentColor,
             backgroundColor = contentColor.copy(alpha = 0.3f)
         ),
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
         focusedLeadingIconColor = contentColor,
         unfocusedLeadingIconColor = contentColor,
-        textColor = contentColor,
-        unfocusedTrailingIconColor = contentColor,
         focusedTrailingIconColor = contentColor,
-        placeholderColor = contentColor.copy(alpha = 0.5F)
+        unfocusedTrailingIconColor = contentColor,
+        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
+        focusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
     )
 }
