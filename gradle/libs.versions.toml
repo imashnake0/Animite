@@ -42,7 +42,7 @@ coil = "2.4.0"
 # TODO: Replace this with [Appyx](https://github.com/bumble-tech/appyx).
 # Compose Destinations
 # https://github.com/raamcosta/compose-destinations/releases.
-composeDestinations = "1.8.39-beta"
+composeDestinations = "1.9.42-beta"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
@@ -50,9 +50,9 @@ composeAnimation = "1.4.3"
 composeCompiler = "1.4.7"
 composeFoundation = "1.4.3"
 composeMaterial = "1.4.3"
-composeMaterial3 = "1.1.0"
+composeMaterial3 = "1.2.0-alpha02"
 composeRuntime = "1.4.3"
-composeUi = "1.4.3"
+composeUi = "1.5.0-beta01"
 
 # Dagger
 # https://github.com/google/dagger/releases.
