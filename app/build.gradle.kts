@@ -68,8 +68,6 @@ ksp {
 
 dependencies {
 
-
-
     implementation(project(":api:anilist"))
     implementation(project(":core"))
     implementation(project(":profile"))
