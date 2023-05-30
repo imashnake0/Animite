@@ -20,7 +20,7 @@ fun TranslucentStatusBarLayout(
     distanceUntilAnimated: Dp,
     modifier: Modifier = Modifier,
     targetAlpha: Float = ContentAlpha.medium,
-    targetColor: Color = MaterialTheme.colorScheme.background,
+    targetColor: Color = MaterialTheme.colorScheme.scrim,
     content: @Composable () -> Unit
 ) {
     // TODO: Can this be a modifier?
