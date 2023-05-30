@@ -94,28 +94,13 @@ fun MediaPage(
 
     val media = viewModel.uiState
 
-    val defaultStatusBarBitmapColor =
-        BitmapFactory.decodeResource(LocalContext.current.resources, Res.drawable.background)
-
-    val defaultBackground = MaterialTheme.colorScheme.background
-    var statusBarColor by remember { mutableStateOf(defaultBackground) }
-
-    LaunchedEffect(media.bannerImage) {
-        launch(Dispatchers.IO) {
-            statusBarColor = getStatusBarColorFromMediaImage(
-                media.bannerImage ?: "",
-                defaultStatusBarBitmapColor
-            )
-        }
-    }
-
     MaterialTheme(colorScheme = rememberColorSchemeFor(color = media.color)) {
         // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             distanceUntilAnimated = bannerHeight,
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            targetColor = statusBarColor
+            targetColor = MaterialTheme.colorScheme.scrim
             //MaterialTheme.colorScheme.background
         ) {
             Box(
@@ -440,25 +425,3 @@ fun MediaTrailer(
         }
     }
 }
-
-suspend fun getStatusBarColorFromMediaImage(url: String, defaultBitmap: Bitmap) =
-    suspendCoroutine { scope ->
-        try {
-            val bitmapImage = BitmapFactory.decodeStream(URL(url).openConnection().getInputStream())
-            Palette.Builder(bitmapImage).generate {
-                it?.let { palette ->
-                    val color = palette.getDarkMutedColor(0).toColor().toArgb()
-                    scope.resume(Color(color))
-                }
-            }
-        } catch (e: Exception) {
-            Palette.Builder(defaultBitmap).generate {
-                it?.let { palette ->
-                    val color = palette.getDarkMutedColor(0).toColor().toArgb()
-                    scope.resume(Color(color))
-                }
-
-            }
-        }
-
-    }

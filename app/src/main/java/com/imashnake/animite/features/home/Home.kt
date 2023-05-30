@@ -59,16 +59,6 @@ fun Home(
 ) {
     val homeMediaType = MediaType.ANIME
 
-    val defaultBackground = MaterialTheme.colorScheme.background
-    var statusBarColor by remember { mutableStateOf(defaultBackground) }
-
-    val bitMap = BitmapFactory.decodeResource(LocalContext.current.resources, Res.drawable.background)
-
-    Palette.Builder(bitMap).generate {it?.let { palette ->
-        statusBarColor = Color(palette.getDarkMutedColor(0).toColor().toArgb())
-        }
-    }
-
     viewModel.setMediaType(homeMediaType)
 
     val trendingList by viewModel.trendingMedia.collectAsState()
@@ -86,7 +76,7 @@ fun Home(
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
                 distanceUntilAnimated = dimensionResource(Res.dimen.banner_height),
-                targetColor = statusBarColor
+                targetColor = MaterialTheme.colorScheme.scrim
             ) {
                 Box(
                     modifier = Modifier

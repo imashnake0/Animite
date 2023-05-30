@@ -116,6 +116,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.espressoCore)
     androidTestImplementation(libs.compose.test.ui.testJunit4)
 
-    // Palette
-    implementation ("androidx.palette:palette:1.0.0")
 }
