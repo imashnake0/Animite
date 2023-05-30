@@ -48,7 +48,7 @@ import com.imashnake.animite.R as Res
 @Composable
 fun Home(
     viewModel: HomeViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator,
+    navigator: DestinationsNavigator
 ) {
     val homeMediaType = MediaType.ANIME
 
