@@ -62,12 +62,13 @@ fun Home(
     // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
     when {
         trendingList is Resource.Success &&
-                allTimePopularList is Resource.Success -> {
+        popularList is Resource.Success &&
+        upcomingList is Resource.Success &&
+        allTimePopularList is Resource.Success -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
-                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height),
-                targetColor = MaterialTheme.colorScheme.scrim
+                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height)
             ) {
                 Box(
                     modifier = Modifier
@@ -218,7 +219,7 @@ fun HomeRow(
     list: List<Media.Medium>,
     title: String,
     onItemClicked: (Media.Medium) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(

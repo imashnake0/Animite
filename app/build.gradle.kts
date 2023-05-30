@@ -67,7 +67,6 @@ ksp {
 }
 
 dependencies {
-
     implementation(project(":api:anilist"))
     implementation(project(":core"))
     implementation(project(":profile"))
@@ -113,5 +112,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espressoCore)
     androidTestImplementation(libs.compose.test.ui.testJunit4)
-
 }

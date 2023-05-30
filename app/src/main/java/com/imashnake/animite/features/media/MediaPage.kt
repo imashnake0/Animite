@@ -73,7 +73,7 @@ import com.imashnake.animite.R as Res
 @Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
 fun MediaPage(
-    viewModel: MediaPageViewModel = hiltViewModel(),
+    viewModel: MediaPageViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
     val bannerHeight = dimensionResource(Res.dimen.banner_height)
@@ -206,7 +206,7 @@ fun MediaPage(
 fun MediaBanner(
     imageUrl: String?,
     tintColor: Color,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     if (!imageUrl.isNullOrEmpty()) {
         AsyncImage(
@@ -242,7 +242,7 @@ fun MediaBanner(
 fun MediaDetails(
     title: String,
     description: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -260,7 +260,7 @@ fun MediaDetails(
 @Composable
 fun MediaRankings(
     rankings: List<Media.Ranking>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -296,7 +296,7 @@ fun MediaGenres(
     genres: List<String>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
-    color: Color = MaterialTheme.colorScheme.primaryContainer,
+    color: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(
@@ -334,7 +334,7 @@ fun MediaGenres(
 fun MediaCharacters(
     characters: List<Media.Character>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(),
+    contentPadding: PaddingValues = PaddingValues()
 ) {
     Column(modifier) {
         Text(
@@ -364,7 +364,7 @@ fun MediaCharacters(
 @Composable
 fun MediaTrailer(
     trailer: Media.Trailer,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
