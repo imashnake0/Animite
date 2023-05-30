@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.home
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,15 +21,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.core.graphics.toColor
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.palette.graphics.Palette
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.bannerParallax
@@ -48,9 +55,19 @@ import com.imashnake.animite.R as Res
 @Composable
 fun Home(
     viewModel: HomeViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
 ) {
     val homeMediaType = MediaType.ANIME
+
+    val defaultBackground = MaterialTheme.colorScheme.background
+    var statusBarColor by remember { mutableStateOf(defaultBackground) }
+
+    val bitMap = BitmapFactory.decodeResource(LocalContext.current.resources, Res.drawable.background)
+
+    Palette.Builder(bitMap).generate {it?.let { palette ->
+        statusBarColor = Color(palette.getDarkMutedColor(0).toColor().toArgb())
+        }
+    }
 
     viewModel.setMediaType(homeMediaType)
 
@@ -62,13 +79,14 @@ fun Home(
     // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
     when {
         trendingList is Resource.Success &&
-        popularList is Resource.Success &&
-        upcomingList is Resource.Success &&
-        allTimePopularList is Resource.Success -> {
+                popularList is Resource.Success &&
+                upcomingList is Resource.Success &&
+                allTimePopularList is Resource.Success -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
-                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height)
+                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height),
+                targetColor = statusBarColor
             ) {
                 Box(
                     modifier = Modifier
@@ -219,7 +237,7 @@ fun HomeRow(
     list: List<Media.Medium>,
     title: String,
     onItemClicked: (Media.Medium) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(

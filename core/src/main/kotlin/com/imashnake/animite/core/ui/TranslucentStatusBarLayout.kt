@@ -20,8 +20,8 @@ fun TranslucentStatusBarLayout(
     distanceUntilAnimated: Dp,
     modifier: Modifier = Modifier,
     targetAlpha: Float = ContentAlpha.medium,
-    targetColor: Color = MaterialTheme.colorScheme.background,
-    content: @Composable () -> Unit
+    targetColor: Color,
+    content: @Composable () -> Unit,
 ) {
     // TODO: Can this be a modifier?
     val distanceUntilAnimatedPx = with(LocalDensity.current) { distanceUntilAnimated.toPx() }

@@ -2,6 +2,8 @@ package com.imashnake.animite.features.media
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.text.Html
 import android.util.Log
@@ -40,6 +42,11 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,7 +62,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColor
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.palette.graphics.Palette
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
@@ -68,24 +77,46 @@ import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.net.URL
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import com.imashnake.animite.R as Res
 
 @Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
 fun MediaPage(
-    viewModel: MediaPageViewModel = hiltViewModel()
+    viewModel: MediaPageViewModel = hiltViewModel(),
 ) {
     val scrollState = rememberScrollState()
     val bannerHeight = dimensionResource(Res.dimen.banner_height)
 
     val media = viewModel.uiState
 
+    val defaultStatusBarBitmapColor =
+        BitmapFactory.decodeResource(LocalContext.current.resources, Res.drawable.background)
+
+    val defaultBackground = MaterialTheme.colorScheme.background
+    var statusBarColor by remember { mutableStateOf(defaultBackground) }
+
+    LaunchedEffect(media.bannerImage) {
+        launch(Dispatchers.IO) {
+            statusBarColor = getStatusBarColorFromMediaImage(
+                media.bannerImage ?: "",
+                defaultStatusBarBitmapColor
+            )
+        }
+    }
+
     MaterialTheme(colorScheme = rememberColorSchemeFor(color = media.color)) {
         // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             distanceUntilAnimated = bannerHeight,
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+            targetColor = statusBarColor
+            //MaterialTheme.colorScheme.background
         ) {
             Box(
                 Modifier
@@ -206,7 +237,7 @@ fun MediaPage(
 fun MediaBanner(
     imageUrl: String?,
     tintColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (!imageUrl.isNullOrEmpty()) {
         AsyncImage(
@@ -242,7 +273,7 @@ fun MediaBanner(
 fun MediaDetails(
     title: String,
     description: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(
@@ -260,7 +291,7 @@ fun MediaDetails(
 @Composable
 fun MediaRankings(
     rankings: List<Media.Ranking>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -296,7 +327,7 @@ fun MediaGenres(
     genres: List<String>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
-    color: Color = MaterialTheme.colorScheme.primaryContainer
+    color: Color = MaterialTheme.colorScheme.primaryContainer,
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(
@@ -334,7 +365,7 @@ fun MediaGenres(
 fun MediaCharacters(
     characters: List<Media.Character>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues()
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     Column(modifier) {
         Text(
@@ -364,7 +395,7 @@ fun MediaCharacters(
 @Composable
 fun MediaTrailer(
     trailer: Media.Trailer,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
         Text(
@@ -409,3 +440,25 @@ fun MediaTrailer(
         }
     }
 }
+
+suspend fun getStatusBarColorFromMediaImage(url: String, defaultBitmap: Bitmap) =
+    suspendCoroutine { scope ->
+        try {
+            val bitmapImage = BitmapFactory.decodeStream(URL(url).openConnection().getInputStream())
+            Palette.Builder(bitmapImage).generate {
+                it?.let { palette ->
+                    val color = palette.getDarkMutedColor(0).toColor().toArgb()
+                    scope.resume(Color(color))
+                }
+            }
+        } catch (e: Exception) {
+            Palette.Builder(defaultBitmap).generate {
+                it?.let { palette ->
+                    val color = palette.getDarkMutedColor(0).toColor().toArgb()
+                    scope.resume(Color(color))
+                }
+
+            }
+        }
+
+    }
