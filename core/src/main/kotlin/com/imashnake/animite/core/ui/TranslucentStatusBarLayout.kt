@@ -1,6 +1,7 @@
 package com.imashnake.animite.core.ui
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
@@ -20,8 +21,9 @@ fun TranslucentStatusBarLayout(
     distanceUntilAnimated: Dp,
     modifier: Modifier = Modifier,
     targetAlpha: Float = ContentAlpha.medium,
-    targetColor: Color = MaterialTheme.colorScheme.background,
-    content: @Composable () -> Unit
+    targetColor: Color = if (isSystemInDarkTheme()) MaterialTheme.colorScheme.background
+        else MaterialTheme.colorScheme.background.copy(0.7f,0.77f, 0.69f, 0.65f),
+    content: @Composable () -> Unit,
 ) {
     // TODO: Can this be a modifier?
     val distanceUntilAnimatedPx = with(LocalDensity.current) { distanceUntilAnimated.toPx() }
