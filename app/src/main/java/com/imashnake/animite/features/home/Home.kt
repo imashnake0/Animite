@@ -2,9 +2,11 @@ package com.imashnake.animite.features.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,12 +16,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -28,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -50,9 +61,9 @@ fun Home(
     viewModel: HomeViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
-    val homeMediaType = MediaType.ANIME
+    val homeMediaType = remember { mutableStateOf(MediaType.ANIME) }
 
-    viewModel.setMediaType(homeMediaType)
+    viewModel.setMediaType(homeMediaType.value)
 
     val trendingList by viewModel.trendingMedia.collectAsState()
     val popularList by viewModel.popularMediaThisSeason.collectAsState()
@@ -115,6 +126,18 @@ fun Home(
                                 )
                                 .landscapeCutoutPadding()
                         )
+
+                        MediaTypeSelector(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(
+                                    end = dimensionResource(Res.dimen.large_padding),
+                                    bottom = dimensionResource(Res.dimen.medium_padding)
+                                )
+                                .landscapeCutoutPadding(),
+                            selectedOption = homeMediaType,
+                            viewModel = viewModel
+                        )
                     }
 
                     Column {
@@ -136,7 +159,7 @@ fun Home(
                                         MediaPageDestination(
                                             MediaPageArgs(
                                                 it.id,
-                                                homeMediaType.rawValue
+                                                homeMediaType.value.rawValue
                                             )
                                         )
                                     ) {
@@ -153,7 +176,7 @@ fun Home(
                                         MediaPageDestination(
                                             MediaPageArgs(
                                                 it.id,
-                                                homeMediaType.rawValue
+                                                homeMediaType.value.rawValue
                                             )
                                         )
                                     ) {
@@ -170,7 +193,7 @@ fun Home(
                                         MediaPageDestination(
                                             MediaPageArgs(
                                                 it.id,
-                                                homeMediaType.rawValue
+                                                homeMediaType.value.rawValue
                                             )
                                         )
                                     ) {
@@ -187,7 +210,7 @@ fun Home(
                                         MediaPageDestination(
                                             MediaPageArgs(
                                                 it.id,
-                                                homeMediaType.rawValue
+                                                homeMediaType.value.rawValue
                                             )
                                         )
                                     ) {
@@ -241,6 +264,67 @@ fun HomeRow(
                     onClick = { onItemClicked(media) },
                     modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                 )
+            }
+        )
+    }
+}
+
+@Composable
+private fun MediaTypeSelector(
+    modifier: Modifier = Modifier,
+    selectedOption: MutableState<MediaType>,
+    viewModel: HomeViewModel
+) {
+    Row(modifier = modifier) {
+        Icon(
+            imageVector = Icons.Rounded.PlayArrow,
+            contentDescription = null,
+            modifier = Modifier
+                .size(48.dp)
+                .clickable {
+                    if (selectedOption.value != MediaType.ANIME) {
+                        viewModel.setMediaType(MediaType.ANIME)
+                    }
+                    selectedOption.value = MediaType.ANIME
+                }
+                .background(
+                    color = if (selectedOption.value == MediaType.ANIME) {
+                        Color.Black
+                    } else {
+                        Color.Transparent
+                    },
+                    shape = RoundedCornerShape(32.dp)
+                ),
+            tint = if (selectedOption.value == MediaType.ANIME) {
+                Color.White
+            } else {
+                Color.Black
+            }
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Icon(
+            imageVector = Icons.Rounded.Build,
+            contentDescription = null,
+            modifier = Modifier
+                .size(48.dp)
+                .clickable {
+                    if (selectedOption.value != MediaType.MANGA) {
+                        viewModel.setMediaType(MediaType.MANGA)
+                    }
+                    selectedOption.value = MediaType.MANGA
+                }
+                .background(
+                    color = if (selectedOption.value == MediaType.MANGA) {
+                        Color.Black
+                    } else {
+                        Color.Transparent
+                    },
+                    shape = RoundedCornerShape(32.dp)
+                ),
+            tint = if (selectedOption.value == MediaType.MANGA) {
+                Color.White
+            } else {
+                Color.Black
             }
         )
     }
