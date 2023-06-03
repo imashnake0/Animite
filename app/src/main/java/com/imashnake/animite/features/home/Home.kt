@@ -2,7 +2,6 @@ package com.imashnake.animite.features.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -272,6 +273,7 @@ fun HomeRow(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MediaTypeSelector(
     modifier: Modifier = Modifier,
@@ -284,60 +286,50 @@ private fun MediaTypeSelector(
                 color = Color.LightGray,
                 shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round))
             )
-            .padding(dimensionResource(id = Res.dimen.small_padding))
+            .padding(dimensionResource(id = Res.dimen.small_padding)),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = Icons.Rounded.PlayArrow,
-            contentDescription = null,
-            modifier = Modifier
-                .size(dimensionResource(id = Res.dimen.media_type_selector_size))
-                .clickable {
-                    if (selectedOption.value != MediaType.ANIME) {
-                        viewModel.setMediaType(MediaType.ANIME)
+        MediaType.knownValues().forEach { mediaType ->
+            Card(
+                onClick = {
+                    if (selectedOption.value != mediaType) {
+                        viewModel.setMediaType(mediaType)
+                        selectedOption.value = mediaType
                     }
-                    selectedOption.value = MediaType.ANIME
-                }
-                .background(
-                    color = if (selectedOption.value == MediaType.ANIME) {
+                },
+                modifier = Modifier
+                    .padding(horizontal = dimensionResource(id = Res.dimen.ultra_tiny_padding))
+                    .size(dimensionResource(id = Res.dimen.media_type_selector_size)),
+                shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round)),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (selectedOption.value == mediaType) {
                         MaterialTheme.colorScheme.primary
                     } else {
                         Color.Transparent
-                    },
-                    shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round))
-                )
-                .padding(dimensionResource(id = Res.dimen.small_padding)),
-            tint = if (selectedOption.value == MediaType.ANIME) {
-                Color.White
-            } else {
-                MaterialTheme.colorScheme.primary
-            }
-        )
-        Spacer(modifier = Modifier.width(dimensionResource(id = Res.dimen.tiny_padding)))
-        Icon(
-            imageVector = ImageVector.vectorResource(id = Res.drawable.manga),
-            contentDescription = null,
-            modifier = Modifier
-                .size(dimensionResource(id = Res.dimen.media_type_selector_size))
-                .clickable {
-                    if (selectedOption.value != MediaType.MANGA) {
-                        viewModel.setMediaType(MediaType.MANGA)
                     }
-                    selectedOption.value = MediaType.MANGA
-                }
-                .background(
-                    color = if (selectedOption.value == MediaType.MANGA) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        Color.Transparent
-                    },
-                    shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round))
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = dimensionResource(id = Res.dimen.zero)
                 )
-                .padding(dimensionResource(id = Res.dimen.small_padding)),
-            tint = if (selectedOption.value == MediaType.MANGA) {
-                Color.White
-            } else {
-                MaterialTheme.colorScheme.primary
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        imageVector = if (mediaType == MediaType.ANIME) {
+                            Icons.Rounded.PlayArrow
+                        } else {
+                            ImageVector.vectorResource(id = Res.drawable.manga)
+                        },
+                        contentDescription = mediaType.name,
+                        modifier = Modifier.align(Alignment.Center),
+                        tint = if (selectedOption.value == mediaType) {
+                            Color.White
+                        } else {
+                            MaterialTheme.colorScheme.primary
+                        }
+                    )
+                }
             }
-        )
+        }
     }
 }
