@@ -245,28 +245,30 @@ fun HomeRow(
     onItemClicked: (Media.Medium) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(start = dimensionResource(Res.dimen.large_padding))
-                .landscapeCutoutPadding()
-        )
+    if (list.isNotEmpty()) {
+        Column(modifier) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .padding(start = dimensionResource(Res.dimen.large_padding))
+                    .landscapeCutoutPadding()
+            )
 
-        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
 
-        MediaSmallRow(
-            mediaList = list,
-            content = { media ->
-                MediaSmall(
-                    image = media.coverImage,
-                    label = media.title,
-                    onClick = { onItemClicked(media) },
-                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                )
-            }
-        )
+            MediaSmallRow(
+                mediaList = list,
+                content = { media ->
+                    MediaSmall(
+                        image = media.coverImage,
+                        label = media.title,
+                        onClick = { onItemClicked(media) },
+                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+                    )
+                }
+            )
+        }
     }
 }
 
