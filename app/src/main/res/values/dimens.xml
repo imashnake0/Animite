@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="tiny_padding">4dp</dimen>
     <dimen name="small_padding">8dp</dimen>
     <dimen name="medium_padding">16dp</dimen>
     <dimen name="large_padding">24dp</dimen>
@@ -20,4 +21,7 @@
     <dimen name="search_bar_icon_padding">16dp</dimen>
     <dimen name="search_list_padding">14dp</dimen>
     <dimen name="search_bar_height">56dp</dimen>
+
+    <dimen name="media_type_selector_size">42dp</dimen>
+    <dimen name="media_type_selector_round">32dp</dimen>
 </resources>

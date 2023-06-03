@@ -34,11 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -275,12 +276,19 @@ private fun MediaTypeSelector(
     selectedOption: MutableState<MediaType>,
     viewModel: HomeViewModel
 ) {
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier
+            .background(
+                color = Color.LightGray,
+                shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round))
+            )
+            .padding(dimensionResource(id = Res.dimen.small_padding))
+    ) {
         Icon(
             imageVector = Icons.Rounded.PlayArrow,
             contentDescription = null,
             modifier = Modifier
-                .size(48.dp)
+                .size(dimensionResource(id = Res.dimen.media_type_selector_size))
                 .clickable {
                     if (selectedOption.value != MediaType.ANIME) {
                         viewModel.setMediaType(MediaType.ANIME)
@@ -289,24 +297,25 @@ private fun MediaTypeSelector(
                 }
                 .background(
                     color = if (selectedOption.value == MediaType.ANIME) {
-                        Color.Black
+                        MaterialTheme.colorScheme.primary
                     } else {
                         Color.Transparent
                     },
-                    shape = RoundedCornerShape(32.dp)
-                ),
+                    shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round))
+                )
+                .padding(dimensionResource(id = Res.dimen.small_padding)),
             tint = if (selectedOption.value == MediaType.ANIME) {
                 Color.White
             } else {
-                Color.Black
+                MaterialTheme.colorScheme.primary
             }
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(dimensionResource(id = Res.dimen.tiny_padding)))
         Icon(
-            imageVector = Icons.Rounded.Build,
+            imageVector = ImageVector.vectorResource(id = Res.drawable.manga),
             contentDescription = null,
             modifier = Modifier
-                .size(48.dp)
+                .size(dimensionResource(id = Res.dimen.media_type_selector_size))
                 .clickable {
                     if (selectedOption.value != MediaType.MANGA) {
                         viewModel.setMediaType(MediaType.MANGA)
@@ -315,16 +324,17 @@ private fun MediaTypeSelector(
                 }
                 .background(
                     color = if (selectedOption.value == MediaType.MANGA) {
-                        Color.Black
+                        MaterialTheme.colorScheme.primary
                     } else {
                         Color.Transparent
                     },
-                    shape = RoundedCornerShape(32.dp)
-                ),
+                    shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round))
+                )
+                .padding(dimensionResource(id = Res.dimen.small_padding)),
             tint = if (selectedOption.value == MediaType.MANGA) {
                 Color.White
             } else {
-                Color.Black
+                MaterialTheme.colorScheme.primary
             }
         )
     }
