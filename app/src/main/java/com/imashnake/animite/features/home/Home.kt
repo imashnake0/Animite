@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.home
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,13 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Card
@@ -33,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -42,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -273,47 +280,47 @@ fun HomeRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MediaTypeSelector(
     modifier: Modifier = Modifier,
     selectedOption: MutableState<MediaType>,
     viewModel: HomeViewModel
 ) {
-    Row(
+    Box(
         modifier = modifier
             .background(
                 color = MaterialTheme.colorScheme.onBackground,
                 shape = CircleShape
             )
-            .height(dimensionResource(Res.dimen.media_type_selector_height))
-            .width(dimensionResource(Res.dimen.media_type_selector_width))
-            .padding(dimensionResource(Res.dimen.media_type_selector_padding)),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        MediaType.knownValues().forEach { mediaType ->
-            Card(
-                onClick = {
-                    if (selectedOption.value != mediaType) {
-                        viewModel.setMediaType(mediaType)
-                        selectedOption.value = mediaType
-                    }
-                },
-                modifier = Modifier.size(dimensionResource(Res.dimen.media_type_choice_size)),
-                shape = CircleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = if (selectedOption.value == mediaType) {
-                        MaterialTheme.colorScheme.background
-                    } else {
-                        Color.Transparent
-                    }
-                ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = dimensionResource(id = Res.dimen.zero)
-                )
-            ) {
-                Box(modifier = Modifier.fillMaxSize()) {
+        // Indicator
+        Surface(
+            modifier = Modifier
+                .padding(dimensionResource(Res.dimen.media_type_selector_padding))
+                .size(dimensionResource(Res.dimen.media_type_choice_size))
+                .offset(animateDpAsState(targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp).value),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.background
+        ) { }
+
+        Row(
+            modifier = Modifier
+                .height(dimensionResource(Res.dimen.media_type_selector_height))
+                .width(dimensionResource(Res.dimen.media_type_selector_width))
+                .padding(dimensionResource(Res.dimen.media_type_selector_padding)),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            MediaType.knownValues().forEach { mediaType ->
+                IconButton(
+                    onClick = {
+                        if (selectedOption.value != mediaType) {
+                            viewModel.setMediaType(mediaType)
+                            selectedOption.value = mediaType
+                        }
+                    },
+                    modifier = Modifier.size(dimensionResource(Res.dimen.media_type_choice_size))
+                ) {
                     Icon(
                         imageVector = if (mediaType == MediaType.ANIME) {
                             Icons.Rounded.PlayArrow
@@ -321,7 +328,6 @@ private fun MediaTypeSelector(
                             ImageVector.vectorResource(id = Res.drawable.manga)
                         },
                         contentDescription = mediaType.name,
-                        modifier = Modifier.align(Alignment.Center),
                         tint = if (selectedOption.value == mediaType) {
                             MaterialTheme.colorScheme.primary
                         } else {
