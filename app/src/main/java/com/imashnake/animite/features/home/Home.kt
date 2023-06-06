@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
@@ -41,6 +41,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -283,11 +284,13 @@ private fun MediaTypeSelector(
     Row(
         modifier = modifier
             .background(
-                color = Color.LightGray,
-                shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round))
+                color = MaterialTheme.colorScheme.onBackground,
+                shape = CircleShape
             )
-            .padding(dimensionResource(id = Res.dimen.small_padding)),
-        horizontalArrangement = Arrangement.Center,
+            .height(dimensionResource(Res.dimen.media_type_selector_height))
+            .width(dimensionResource(Res.dimen.media_type_selector_width))
+            .padding(dimensionResource(Res.dimen.media_type_selector_padding)),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         MediaType.knownValues().forEach { mediaType ->
@@ -298,13 +301,11 @@ private fun MediaTypeSelector(
                         selectedOption.value = mediaType
                     }
                 },
-                modifier = Modifier
-                    .padding(horizontal = dimensionResource(id = Res.dimen.ultra_tiny_padding))
-                    .size(dimensionResource(id = Res.dimen.media_type_selector_size)),
-                shape = RoundedCornerShape(dimensionResource(id = Res.dimen.media_type_selector_round)),
+                modifier = Modifier.size(dimensionResource(Res.dimen.media_type_choice_size)),
+                shape = CircleShape,
                 colors = CardDefaults.cardColors(
                     containerColor = if (selectedOption.value == mediaType) {
-                        MaterialTheme.colorScheme.primary
+                        MaterialTheme.colorScheme.background
                     } else {
                         Color.Transparent
                     }
@@ -323,9 +324,9 @@ private fun MediaTypeSelector(
                         contentDescription = mediaType.name,
                         modifier = Modifier.align(Alignment.Center),
                         tint = if (selectedOption.value == mediaType) {
-                            Color.White
-                        } else {
                             MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.background
                         }
                     )
                 }
