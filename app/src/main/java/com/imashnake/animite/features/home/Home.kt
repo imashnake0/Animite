@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -117,30 +118,36 @@ fun Home(
                                 .height(dimensionResource(Res.dimen.banner_height))
                         ) { }
 
-                        Text(
-                            text = stringResource(Res.string.okaeri),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            style = MaterialTheme.typography.displayMedium,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(
-                                    start = dimensionResource(Res.dimen.large_padding),
-                                    bottom = dimensionResource(Res.dimen.medium_padding)
-                                )
-                                .landscapeCutoutPadding()
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.okaeri),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                style = MaterialTheme.typography.displayMedium,
+                                modifier = Modifier
+                                    .padding(
+                                        start = dimensionResource(Res.dimen.large_padding),
+                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                    )
+                                    .landscapeCutoutPadding()
+                                    .weight(1f, fill = false),
+                                maxLines = 1
+                            )
 
-                        MediaTypeSelector(
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(
-                                    end = dimensionResource(Res.dimen.large_padding),
-                                    bottom = dimensionResource(Res.dimen.medium_padding)
-                                )
-                                .landscapeCutoutPadding(),
-                            selectedOption = homeMediaType,
-                            viewModel = viewModel
-                        )
+                            MediaTypeSelector(
+                                modifier = Modifier
+                                    .padding(
+                                        end = dimensionResource(Res.dimen.large_padding),
+                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                    )
+                                    .landscapeCutoutPadding(),
+                                selectedOption = homeMediaType,
+                                viewModel = viewModel
+                            )
+                        }
                     }
 
                     Column {
@@ -313,7 +320,7 @@ private fun MediaTypeSelector(
                             selectedOption.value = mediaType
                         }
                     },
-                    modifier = Modifier.size(dimensionResource(Res.dimen.media_type_choice_size))
+                    modifier = Modifier.requiredWidth(dimensionResource(Res.dimen.media_type_choice_size))
                 ) {
                     Icon(
                         imageVector = if (mediaType == MediaType.ANIME) {
