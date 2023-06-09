@@ -1,33 +1,49 @@
 package com.imashnake.animite.features.home
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -50,9 +66,8 @@ fun Home(
     viewModel: HomeViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
-    val homeMediaType = MediaType.ANIME
-
-    viewModel.setMediaType(homeMediaType)
+    val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
+    viewModel.setMediaType(homeMediaType.value)
 
     val trendingList by viewModel.trendingMedia.collectAsState()
     val popularList by viewModel.popularMediaThisSeason.collectAsState()
@@ -103,18 +118,36 @@ fun Home(
                                 .height(dimensionResource(Res.dimen.banner_height))
                         ) { }
 
-                        Text(
-                            text = stringResource(Res.string.okaeri),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            style = MaterialTheme.typography.displayMedium,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(
-                                    start = dimensionResource(Res.dimen.large_padding),
-                                    bottom = dimensionResource(Res.dimen.medium_padding)
-                                )
-                                .landscapeCutoutPadding()
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.okaeri),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                style = MaterialTheme.typography.displayMedium,
+                                modifier = Modifier
+                                    .padding(
+                                        start = dimensionResource(Res.dimen.large_padding),
+                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                    )
+                                    .landscapeCutoutPadding()
+                                    .weight(1f, fill = false),
+                                maxLines = 1
+                            )
+
+                            MediaTypeSelector(
+                                modifier = Modifier
+                                    .padding(
+                                        end = dimensionResource(Res.dimen.large_padding),
+                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                    )
+                                    .landscapeCutoutPadding(),
+                                selectedOption = homeMediaType,
+                                viewModel = viewModel
+                            )
+                        }
                     }
 
                     Column {
@@ -136,7 +169,7 @@ fun Home(
                                         MediaPageDestination(
                                             MediaPageArgs(
                                                 it.id,
-                                                homeMediaType.rawValue
+                                                homeMediaType.value.rawValue
                                             )
                                         )
                                     ) {
@@ -153,7 +186,7 @@ fun Home(
                                         MediaPageDestination(
                                             MediaPageArgs(
                                                 it.id,
-                                                homeMediaType.rawValue
+                                                homeMediaType.value.rawValue
                                             )
                                         )
                                     ) {
@@ -170,7 +203,7 @@ fun Home(
                                         MediaPageDestination(
                                             MediaPageArgs(
                                                 it.id,
-                                                homeMediaType.rawValue
+                                                homeMediaType.value.rawValue
                                             )
                                         )
                                     ) {
@@ -187,7 +220,7 @@ fun Home(
                                         MediaPageDestination(
                                             MediaPageArgs(
                                                 it.id,
-                                                homeMediaType.rawValue
+                                                homeMediaType.value.rawValue
                                             )
                                         )
                                     ) {
@@ -221,27 +254,89 @@ fun HomeRow(
     onItemClicked: (Media.Medium) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
+    if (list.isNotEmpty()) {
+        Column(modifier) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .padding(start = dimensionResource(Res.dimen.large_padding))
+                    .landscapeCutoutPadding()
+            )
+
+            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+
+            MediaSmallRow(
+                mediaList = list,
+                content = { media ->
+                    MediaSmall(
+                        image = media.coverImage,
+                        label = media.title,
+                        onClick = { onItemClicked(media) },
+                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun MediaTypeSelector(
+    modifier: Modifier = Modifier,
+    selectedOption: MutableState<MediaType>,
+    viewModel: HomeViewModel
+) {
+    Box(
+        modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.onBackground,
+                shape = CircleShape
+            )
+    ) {
+        // Indicator
+        Surface(
             modifier = Modifier
-                .padding(start = dimensionResource(Res.dimen.large_padding))
-                .landscapeCutoutPadding()
-        )
+                .padding(dimensionResource(Res.dimen.media_type_selector_padding))
+                .size(dimensionResource(Res.dimen.media_type_choice_size))
+                .offset(animateDpAsState(targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp).value),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.background
+        ) { }
 
-        Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
-
-        MediaSmallRow(
-            mediaList = list,
-            content = { media ->
-                MediaSmall(
-                    image = media.coverImage,
-                    label = media.title,
-                    onClick = { onItemClicked(media) },
-                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                )
+        Row(
+            modifier = Modifier
+                .height(dimensionResource(Res.dimen.media_type_selector_height))
+                .width(dimensionResource(Res.dimen.media_type_selector_width))
+                .padding(dimensionResource(Res.dimen.media_type_selector_padding)),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            MediaType.knownValues().forEach { mediaType ->
+                IconButton(
+                    onClick = {
+                        if (selectedOption.value != mediaType) {
+                            viewModel.setMediaType(mediaType)
+                            selectedOption.value = mediaType
+                        }
+                    },
+                    modifier = Modifier.requiredWidth(dimensionResource(Res.dimen.media_type_choice_size))
+                ) {
+                    Icon(
+                        imageVector = if (mediaType == MediaType.ANIME) {
+                            Icons.Rounded.PlayArrow
+                        } else {
+                            ImageVector.vectorResource(id = Res.drawable.manga)
+                        },
+                        contentDescription = mediaType.name,
+                        tint = if (selectedOption.value == mediaType) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.background
+                        }
+                    )
+                }
             }
-        )
+        }
     }
 }
