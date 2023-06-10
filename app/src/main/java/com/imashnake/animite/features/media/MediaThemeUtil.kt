@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.imashnake.animite.dev.ext.from
+import com.imashnake.animite.dev.ext.pastelize
 import utils.ThemeUtils
 
 /**
@@ -28,7 +29,7 @@ fun rememberColorSchemeFor(
                 if (isDark)
                     ThemeUtils.themeFromSourceColor(color).schemes.dark
                 else
-                    ThemeUtils.themeFromSourceColor(color).schemes.light
+                    ThemeUtils.themeFromSourceColor(color).schemes.light.pastelize()
             )
         } else {
             fallbackColorScheme
