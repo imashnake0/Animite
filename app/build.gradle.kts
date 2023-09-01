@@ -9,12 +9,8 @@ plugins {
 }
 
 android {
-    compileSdk = 33
-
     defaultConfig {
         applicationId = "com.imashnake.animite"
-        minSdk = 26
-        targetSdk = 33
         versionCode = 7
         versionName = "0.0.1-alpha07"
 

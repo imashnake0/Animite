@@ -1,4 +1,5 @@
 @file:Suppress("UnstableApiUsage")
+import com.android.build.api.dsl.SettingsExtension
 
 pluginManagement {
     repositories {
@@ -16,6 +17,10 @@ dependencyResolutionManagement {
     }
 }
 
+plugins {
+    id("com.android.settings") version("8.1.1")
+}
+
 rootProject.name = "Animite"
 include(
     ":api:anilist",
@@ -25,3 +30,9 @@ include(
     ":rslash",
     ":app"
 )
+
+configure<SettingsExtension> {
+    buildToolsVersion = "34.0.0"
+    compileSdk = 34
+    minSdk = 26
+}
