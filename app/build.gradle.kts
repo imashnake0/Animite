@@ -4,8 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -46,11 +45,6 @@ kotlin {
     jvmToolchain(17)
 }
 
-
-kapt {
-    correctErrorTypes = true
-}
-
 ksp {
     arg("compose-destinations.mode", "destinations")
 }
@@ -84,7 +78,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     // Accompanist
     implementation(libs.accompanist.systemUiController)

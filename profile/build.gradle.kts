@@ -3,7 +3,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
+    alias(libs.plugins.ksp)
 }
 
 android {

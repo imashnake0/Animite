@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
     alias(libs.plugins.apolloKotlin)
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -36,11 +36,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
-    kapt(libs.hilt.android.compiler)
-}
-
-kapt {
-    correctErrorTypes = true
+    ksp(libs.hilt.android.compiler)
 }
 
 apollo {
