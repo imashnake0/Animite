@@ -33,7 +33,7 @@ espresso = "3.5.1"
 
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
-apollo = "4.0.0-alpha.3"
+apollo = "3.8.2"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
