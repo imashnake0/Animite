@@ -12,7 +12,7 @@ import java.io.IOException
 fun <T: Operation.Data, R> Flow<ApolloResponse<T>>.asResult(transform: (T) -> R): Flow<Result<R>> = this
     .mapLatest { response ->
         if (response.data != null) {
-            Result.success(transform(response.dataAssertNoErrors))
+            Result.success(transform(response.dataOrThrow()))
         } else if (response.hasErrors()) {
             // TODO What kind of exception do we provide here?
             throw IOException(response.errors!!.joinToString())
