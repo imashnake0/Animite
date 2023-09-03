@@ -3,14 +3,11 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
+    alias(libs.plugins.ksp)
 }
 
 android {
-    compileSdk = 33
-
     defaultConfig {
-        minSdk = 26
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -19,15 +16,6 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -39,6 +27,10 @@ android {
     }
 
     namespace = "com.imashnake.animite.rslash"
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 ksp {

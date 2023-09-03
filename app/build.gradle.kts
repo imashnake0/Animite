@@ -4,24 +4,16 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
-    compileSdk = 33
-
     defaultConfig {
         applicationId = "com.imashnake.animite"
-        minSdk = 26
-        targetSdk = 33
         versionCode = 7
         versionName = "0.0.1-alpha07"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -30,16 +22,6 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("debug")
         }
-    }
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -59,8 +41,8 @@ android {
     namespace = "com.imashnake.animite"
 }
 
-kapt {
-    correctErrorTypes = true
+kotlin {
+    jvmToolchain(17)
 }
 
 ksp {
@@ -96,7 +78,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     // Accompanist
     implementation(libs.accompanist.systemUiController)
