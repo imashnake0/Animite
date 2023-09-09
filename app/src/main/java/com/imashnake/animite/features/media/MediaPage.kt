@@ -35,7 +35,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -60,6 +59,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
@@ -80,119 +80,123 @@ fun MediaPage(
 
     val media = viewModel.uiState
 
-    // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
-    TranslucentStatusBarLayout(scrollState = scrollState, distanceUntilAnimated = bannerHeight) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .navigationBarsPadding()
+    MaterialTheme(colorScheme = rememberColorSchemeFor(color = media.color)) {
+        // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
+        TranslucentStatusBarLayout(
+            scrollState = scrollState,
+            distanceUntilAnimated = bannerHeight,
+            modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
-            MediaBanner(
-                imageUrl = media.bannerImage,
-                tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
-                modifier = Modifier
-                    .height(bannerHeight)
-                    .fillMaxWidth()
-                    .bannerParallax(scrollState)
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(
-                        top = bannerHeight,
-                        bottom = dimensionResource(Res.dimen.large_padding)
-                    )
-                    .background(MaterialTheme.colorScheme.background),
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
             ) {
-                MediaDetails(
-                    title = media.title.orEmpty(),
-                    description = Html
-                        .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
-                        .toString(),
-                    // TODO Can we do something about this Modifier chain?
+                MediaBanner(
+                    imageUrl = media.bannerImage,
+                    tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
                     modifier = Modifier
+                        .height(bannerHeight)
+                        .fillMaxWidth()
+                        .bannerParallax(scrollState)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(top = bannerHeight)
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(bottom = dimensionResource(Res.dimen.large_padding))
+                        .navigationBarsPadding(),
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                ) {
+                    MediaDetails(
+                        title = media.title.orEmpty(),
+                        description = Html
+                            .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
+                            .toString(),
+                        // TODO Can we do something about this Modifier chain?
+                        modifier = Modifier
+                            .padding(
+                                start = dimensionResource(Res.dimen.large_padding)
+                                        + dimensionResource(Res.dimen.media_card_width)
+                                        + dimensionResource(Res.dimen.large_padding),
+                                top = dimensionResource(Res.dimen.medium_padding),
+                                end = dimensionResource(Res.dimen.large_padding)
+                            )
+                            .landscapeCutoutPadding()
+                            .height(
+                                WindowInsets.statusBars
+                                    .asPaddingValues()
+                                    .calculateTopPadding()
+                                        + dimensionResource(Res.dimen.media_card_top_padding)
+                                        + dimensionResource(Res.dimen.media_card_height)
+                                        - dimensionResource(Res.dimen.banner_height)
+                                        - dimensionResource(Res.dimen.medium_padding)
+                            )
+                            .fillMaxSize()
+                    )
+
+                    if (!media.ranks.isNullOrEmpty()) {
+                        MediaRankings(
+                            rankings = media.ranks,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                                .landscapeCutoutPadding()
+                        )
+                    }
+
+                    if (!media.genres.isNullOrEmpty()) {
+                        MediaGenres(
+                            genres = media.genres,
+                            contentPadding = PaddingValues(
+                                start = dimensionResource(Res.dimen.large_padding) + if (
+                                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                                ) {
+                                    WindowInsets.displayCutout.asPaddingValues()
+                                        .calculateLeftPadding(LayoutDirection.Ltr)
+                                } else 0.dp,
+                                end = dimensionResource(Res.dimen.large_padding)
+                            ),
+                            color = Color(media.color ?: (0xFF152232).toInt()),
+                        )
+                    }
+
+                    if (!media.characters.isNullOrEmpty()) {
+                        MediaCharacters(
+                            characters = media.characters,
+                            contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
+                        )
+                    }
+
+                    if (media.trailer != null) {
+                        MediaTrailer(
+                            trailer = media.trailer,
+                            modifier = Modifier
+                                .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                                .landscapeCutoutPadding()
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .statusBarsPadding()
                         .padding(
-                            start = dimensionResource(Res.dimen.large_padding)
-                                    + dimensionResource(Res.dimen.media_card_width)
-                                    + dimensionResource(Res.dimen.large_padding),
-                            top = dimensionResource(Res.dimen.medium_padding),
+                            top = dimensionResource(Res.dimen.media_card_top_padding),
+                            start = dimensionResource(Res.dimen.large_padding),
                             end = dimensionResource(Res.dimen.large_padding)
                         )
                         .landscapeCutoutPadding()
-                        .height(
-                            WindowInsets.statusBars
-                                .asPaddingValues()
-                                .calculateTopPadding()
-                                    + dimensionResource(Res.dimen.media_card_top_padding)
-                                    + dimensionResource(Res.dimen.media_card_height)
-                                    - dimensionResource(Res.dimen.banner_height)
-                                    - dimensionResource(Res.dimen.medium_padding)
-                        )
-                        .fillMaxSize()
-                )
-
-                if (!media.stats.isNullOrEmpty()) {
-                    MediaStats(
-                        stats = media.stats,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = dimensionResource(Res.dimen.large_padding))
-                            .landscapeCutoutPadding()
+                ) {
+                    MediaSmall(
+                        image = media.coverImage,
+                        label = null,
+                        onClick = {},
+                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
                     )
                 }
-
-                if (media.genres != null) {
-                    MediaGenres(
-                        genres = media.genres,
-                        contentPadding = PaddingValues(
-                            start = dimensionResource(Res.dimen.large_padding) + if (
-                                LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                            ) {
-                                WindowInsets.displayCutout.asPaddingValues()
-                                    .calculateLeftPadding(LayoutDirection.Ltr)
-                            } else 0.dp,
-                            end = dimensionResource(Res.dimen.large_padding)
-                        ),
-                        color = Color(media.color ?: (0xFF152232).toInt()),
-                    )
-                }
-
-                if (media.characters != null) {
-                    MediaCharacters(
-                        characters = media.characters,
-                        contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
-                    )
-                }
-
-                if (media.trailer != null) {
-                    MediaTrailer(
-                        trailer = media.trailer,
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(Res.dimen.large_padding))
-                            .landscapeCutoutPadding()
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(
-                        top = dimensionResource(Res.dimen.media_card_top_padding),
-                        start = dimensionResource(Res.dimen.large_padding),
-                        end = dimensionResource(Res.dimen.large_padding)
-                    )
-                    .landscapeCutoutPadding()
-            ) {
-                MediaSmall(
-                    image = media.coverImage,
-                    label = null,
-                    onClick = {},
-                    modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
-                )
             }
         }
     }
@@ -254,8 +258,8 @@ fun MediaDetails(
 }
 
 @Composable
-fun MediaStats(
-    stats: List<Stat>,
+fun MediaRankings(
+    rankings: List<Media.Ranking>,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -263,28 +267,25 @@ fun MediaStats(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = modifier
     ) {
-        stats.forEach { stat ->
-            if (stat.label != StatLabel.UNKNOWN) {
-                Column(
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stat.label.value,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.labelSmall
-                    )
+        rankings.forEach { ranking ->
+            Column(
+                verticalArrangement = Arrangement.SpaceEvenly,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = ranking.type.name,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.labelSmall
+                )
 
-                    Text(
-                        text = when (stat.label) {
-                            StatLabel.SCORE -> "${stat.score}%"
-                            StatLabel.RATING, StatLabel.POPULARITY -> "#${stat.score}"
-                            else -> ""
-                        },
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                }
+                Text(
+                    text = when (ranking.type) {
+                        Media.Ranking.Type.SCORE -> "${ranking.rank}%"
+                        Media.Ranking.Type.RATED, Media.Ranking.Type.POPULAR -> "#${ranking.rank}"
+                    },
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.displaySmall
+                )
             }
         }
     }
@@ -331,7 +332,7 @@ fun MediaGenres(
 
 @Composable
 fun MediaCharacters(
-    characters: List<Character>,
+    characters: List<Media.Character>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -362,7 +363,7 @@ fun MediaCharacters(
 
 @Composable
 fun MediaTrailer(
-    trailer: Trailer,
+    trailer: Media.Trailer,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -380,7 +381,7 @@ fun MediaTrailer(
                 .wrapContentSize()
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
                 .clickable {
-                    val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(trailer.link))
+                    val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(trailer.url))
                     context.startActivity(appIntent)
                 }
         ) {

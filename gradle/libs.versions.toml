@@ -14,50 +14,50 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 
 # Core Library Desugaring
 # https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
-desugaring = "2.0.2"
+desugaring = "2.0.3"
 
 # Accompanist
 # https://github.com/google/accompanist/releases.
-accompanist = "0.28.0"
+accompanist = "0.32.0"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "7.4.1"
+agp = "8.1.1"
 
 # AndroidX
 # https://androidx.tech.
-activity = "1.6.1"
-core = "1.9.0"
-lifecycle = "2.5.1"
+activity = "1.7.2"
+core = "1.12.0-rc01"
+lifecycle = "2.6.1"
 extJunit = "1.1.5"
 espresso = "3.5.1"
 
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
-apollo = "3.7.4"
+apollo = "3.8.2"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
-coil = "2.2.2"
+coil = "2.4.0"
 
 # TODO: Replace this with [Appyx](https://github.com/bumble-tech/appyx).
 # Compose Destinations
 # https://github.com/raamcosta/compose-destinations/releases.
-composeDestinations = "1.8.33-beta"
+composeDestinations = "1.9.51"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.4.0-beta01"
-composeCompiler = "1.4.2"
-composeFoundation = "1.4.0-beta01"
-composeMaterial = "1.4.0-beta01"
-composeMaterial3 = "1.1.0-alpha06"
-composeRuntime = "1.4.0-beta01"
-composeUi = "1.4.0-beta01"
+composeAnimation = "1.5.0"
+composeCompiler = "1.5.3"
+composeFoundation = "1.5.0"
+composeMaterial = "1.5.0"
+composeMaterial3 = "1.2.0-alpha06"
+composeRuntime = "1.5.0"
+composeUi = "1.5.0"
 
 # Dagger
 # https://github.com/google/dagger/releases.
-dagger = "2.45"
+dagger = "2.48"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
@@ -65,12 +65,12 @@ hilt = "1.0.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "1.8.10"
-coroutines = "1.6.4"
+kotlin = "1.9.10"
+coroutines = "1.7.3"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "1.8.10-1.0.9"
+ksp = "1.9.10-1.0.13"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
@@ -78,7 +78,7 @@ junit = "4.13.2"
 
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
-dependencyAnalysis = "1.19.0"
+dependencyAnalysis = "1.21.0"
 
 # Safer Navigation Compose
 # https://github.com/uragiristereo/safer-navigation-compose/releases

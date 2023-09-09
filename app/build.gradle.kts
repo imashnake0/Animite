@@ -1,47 +1,28 @@
-@file:Suppress("SpellCheckingInspection", "UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
 
-// TODO: Remove this after https://youtrack.jetbrains.com/issue/KTIJ-19369 is resolved.
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp) version libs.versions.ksp.get()
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    compileSdk = 33
-
     defaultConfig {
         applicationId = "com.imashnake.animite"
-        minSdk = 26
-        targetSdk = 33
-        versionCode = 6
-        versionName = "0.0.1-alpha06"
+        versionCode = 7
+        versionName = "0.0.1-alpha07"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
         }
-    }
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     buildFeatures {
@@ -52,24 +33,17 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    namespace = "com.imashnake.animite"
 
-    applicationVariants.all {
-        kotlin.sourceSets {
-            getByName(name) {
-                kotlin.srcDir("build/generated/ksp/$name/kotlin")
-            }
-        }
-    }
+    namespace = "com.imashnake.animite"
 }
 
-kapt {
-    correctErrorTypes = true
+kotlin {
+    jvmToolchain(17)
 }
 
 ksp {
@@ -81,6 +55,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":profile"))
     implementation(project(":rslash"))
+    implementation(project(":material-color-utilities"))
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
@@ -104,7 +79,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     // Accompanist
     implementation(libs.accompanist.systemUiController)
