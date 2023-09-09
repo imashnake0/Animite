@@ -36,3 +36,10 @@ fun ColorScheme.from(scheme: Scheme) =
         outlineVariant = Color(scheme.outlineVariant),
         scrim = Color(scheme.scrim),
     )
+
+/**
+ * @see [Scheme.pastelize].
+ */
+fun ColorScheme.pastelize(backgroundToPrimary: Float) = with(this) {
+    copy(background = background.blendWith(primary, backgroundToPrimary))
+}
