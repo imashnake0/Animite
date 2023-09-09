@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.platform.LocalContext
+import com.imashnake.animite.dev.ext.blendWith
 
 @Composable
 fun AnimiteTheme(content: @Composable () -> Unit) {
@@ -19,7 +20,9 @@ fun AnimiteTheme(content: @Composable () -> Unit) {
     val darkTheme = isSystemInDarkTheme()
     val animiteColorScheme = when {
         dynamicColor && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        dynamicColor && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
+        dynamicColor && !darkTheme -> with(dynamicLightColorScheme(LocalContext.current)) {
+            copy(background = background.blendWith(primary, 0.08f))
+        }
         darkTheme -> KimiNoDarkColorScheme
         else -> KimiNoLightColorScheme
     }
