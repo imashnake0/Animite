@@ -3,7 +3,7 @@ package com.imashnake.animite.dev.ext
 import androidx.core.graphics.ColorUtils
 import scheme.Scheme
 
-fun Scheme.pastelize() =
+fun Scheme.pastelize(background: Float) =
     Scheme(
         primary = this.primary,
         onPrimary = this.onPrimary,
@@ -21,7 +21,7 @@ fun Scheme.pastelize() =
         onError = this.onError,
         errorContainer = this.errorContainer,
         onErrorContainer = this.onErrorContainer,
-        background = ColorUtils.blendARGB(this.background, this.primaryContainer, 0.08f),
+        background = ColorUtils.blendARGB(this.background, this.primaryContainer, background),
         onBackground = this.onBackground,
         surface = this.surface,
         onSurface = this.onSurface,
