@@ -2,7 +2,6 @@ package com.imashnake.animite.features.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
-import com.imashnake.animite.dev.ext.blendWith
 
 val KimiNoDarkColorScheme = ColorScheme(
     primary = Color(-6697985),
@@ -50,7 +49,7 @@ val KimiNoLightColorScheme = ColorScheme(
     onTertiary = Color(-1),
     tertiaryContainer = Color(-1974273),
     onTertiaryContainer = Color(-15395261),
-    background = Color(-197377).blendWith(Color(-16751970), 0.08f),
+    background = Color(-197377),
     onBackground = Color(-15393756),
     surface = Color(-197377),
     onSurface = Color(-15393756),

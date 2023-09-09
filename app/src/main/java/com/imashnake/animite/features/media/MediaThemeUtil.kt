@@ -29,7 +29,9 @@ fun rememberColorSchemeFor(
                 if (isDark)
                     ThemeUtils.themeFromSourceColor(color).schemes.dark
                 else
-                    ThemeUtils.themeFromSourceColor(color).schemes.light.pastelize(backgroundToPrimary = 0.1f)
+                    ThemeUtils.themeFromSourceColor(color).schemes.light.pastelize(
+                        backgroundToPrimary = 0.09f
+                    )
             )
         } else {
             fallbackColorScheme
