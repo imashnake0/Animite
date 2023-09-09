@@ -21,10 +21,10 @@ fun AnimiteTheme(content: @Composable () -> Unit) {
     val animiteColorScheme = when {
         dynamicColor && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
         dynamicColor && !darkTheme -> dynamicLightColorScheme(LocalContext.current).pastelize(
-            backgroundToPrimary = 0.09f
+            backgroundToPrimary = 0.05f
         )
         darkTheme -> KimiNoDarkColorScheme
-        else -> KimiNoLightColorScheme.pastelize(backgroundToPrimary = 0.09f)
+        else -> KimiNoLightColorScheme.pastelize(backgroundToPrimary = 0.05f)
     }
 
     MaterialTheme(
