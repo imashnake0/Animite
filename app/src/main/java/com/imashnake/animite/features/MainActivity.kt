@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -59,8 +60,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             AnimiteTheme {
                 val systemUiController = rememberSystemUiController()
+                val darkIcons = !isSystemInDarkTheme()
                 SideEffect {
-                    systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
+                    systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = darkIcons)
                 }
 
                 MainScreen(Modifier.fillMaxSize())
