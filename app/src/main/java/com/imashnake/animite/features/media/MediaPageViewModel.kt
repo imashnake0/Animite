@@ -10,7 +10,6 @@ import com.github.uragiristereo.safer.compose.navigation.core.getData
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.data.AnimiteRoute
-import com.imashnake.animite.features.destinations.MediaPageDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch

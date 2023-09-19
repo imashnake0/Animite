@@ -8,12 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.imashnake.animite.core.ui.ProgressIndicator
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 
 // TODO: Add transitions as we did for `Profile`.
-@RootNavGraph(start = true)
-@Destination(route = "rslash-screen")
 @Composable
 fun RSlashScreen() {
     Box(

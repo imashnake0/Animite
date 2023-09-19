@@ -33,11 +33,6 @@ kotlin {
     jvmToolchain(17)
 }
 
-ksp {
-    arg("compose-destinations.mode", "navgraphs")
-    arg("compose-destinations.moduleName", project.name)
-}
-
 dependencies {
     implementation(project(":core"))
     // AndroidX
@@ -58,10 +53,6 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     // Safer Navigation Compose
     implementation(libs.safer.navigation.compose.animation)

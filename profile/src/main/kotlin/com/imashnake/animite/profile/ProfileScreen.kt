@@ -8,11 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.imashnake.animite.core.ui.ProgressIndicator
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 
-@Destination(route = "profile-screen")
-@RootNavGraph(start = true)
 @Composable
 fun ProfileScreen() {
     Box(

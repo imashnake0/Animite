@@ -54,10 +54,9 @@ import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.data.Resource
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
-import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.R as Res
 
-@Destination
+
 @Composable
 fun Home(
     viewModel: HomeViewModel = hiltViewModel(),

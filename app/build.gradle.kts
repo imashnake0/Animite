@@ -46,10 +46,6 @@ kotlin {
     jvmToolchain(17)
 }
 
-ksp {
-    arg("compose-destinations.mode", "destinations")
-}
-
 dependencies {
     implementation(project(":api:anilist"))
     implementation(project(":core"))
@@ -86,10 +82,6 @@ dependencies {
     implementation(libs.accompanist.placeholder)
 
     coreLibraryDesugaring(libs.android.desugaring)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     // Safer Navigation Compose
     implementation(libs.safer.navigation.compose.animation)
