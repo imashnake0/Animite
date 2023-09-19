@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -89,6 +90,12 @@ dependencies {
     // Compose Destinations
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)
+
+    // Safer Navigation Compose
+    implementation(libs.safer.navigation.compose.animation)
+
+    // Kotlinx.serialization JSON
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.test.junit)
 

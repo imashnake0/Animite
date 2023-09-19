@@ -64,6 +64,9 @@ dependencies {
     implementation(libs.compose.destinations)
     ksp(libs.compose.destinations.ksp)
 
+    // Safer Navigation Compose
+    implementation(libs.safer.navigation.compose.animation)
+
     testImplementation(libs.test.junit)
 
     androidTestImplementation(libs.androidx.test.junit)

@@ -7,7 +7,7 @@ apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
-
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 [versions]
 
@@ -79,6 +79,13 @@ junit = "4.13.2"
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
 dependencyAnalysis = "1.21.0"
 
+# Safer Navigation Compose
+# https://github.com/uragiristereo/safer-navigation-compose
+saferNavigationCompose = "9c35e77c6c"
+
+# Kotlinx.serialization
+# https://github.com/Kotlin/kotlinx.serialization
+kotlinxSerialization = "1.6.0"
 
 [libraries]
 
@@ -112,6 +119,8 @@ hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-comp
 accompanist-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
+safer-navigation-compose-animation = { group = "com.github.uragiristereo.safer-navigation-compose", name = "navigation-animation", version.ref = "saferNavigationCompose" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 [bundles]
 
