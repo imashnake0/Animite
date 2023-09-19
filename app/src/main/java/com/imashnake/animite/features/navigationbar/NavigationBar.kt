@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
@@ -23,24 +22,20 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.imashnake.animite.features.destinations.HomeDestination
-import com.imashnake.animite.profile.ProfileNavGraph
-import com.imashnake.animite.rslash.RslashNavGraph
-import com.ramcosta.composedestinations.spec.DestinationSpec
-import com.ramcosta.composedestinations.utils.currentDestinationAsState
-import com.ramcosta.composedestinations.utils.startDestination
+import com.github.uragiristereo.safer.compose.navigation.core.route
+import com.imashnake.animite.data.AnimiteRoute
 import com.imashnake.animite.R as Res
 
 // TODO: Ripple where?
 @Composable
 fun NavigationBar(
-    navController: NavController
+    currentRoute: String?,
+    onNavigate: (AnimiteRoute) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
-        Modifier.height(
+        modifier.height(
             dimensionResource(Res.dimen.navigation_bar_height) + WindowInsets
                 .navigationBars
                 .asPaddingValues()
@@ -51,20 +46,12 @@ fun NavigationBar(
             == Configuration.ORIENTATION_LANDSCAPE
         ) { WindowInsets.displayCutout } else { WindowInsets(0.dp) }
     ) {
-        val currentDestination by navController.currentDestinationAsState()
-
-        NavigationBarPaths.values().forEach { destination ->
+        NavigationBarPaths.entries.forEach { destination ->
             NavigationBarItem(
                 modifier = Modifier.navigationBarsPadding(),
-                selected = currentDestination?.startDestination == destination.route,
+                selected = currentRoute == destination.route.route,
                 onClick = {
-                    navController.navigate(destination.route.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    onNavigate(destination.route)
                 },
                 icon = destination.icon
             )
@@ -73,12 +60,12 @@ fun NavigationBar(
 }
 
 enum class NavigationBarPaths(
-    val route: DestinationSpec<*>,
+    val route: AnimiteRoute,
     val icon: @Composable () -> Unit
 ) {
     RSlash(
-        RslashNavGraph.startDestination,
-        {
+        route = AnimiteRoute.RSlash,
+        icon = {
             Icon(
                 imageVector = ImageVector.vectorResource(
                     id = Res.drawable.rslash
@@ -90,8 +77,8 @@ enum class NavigationBarPaths(
         }
     ),
     Home(
-        HomeDestination,
-        {
+        route = AnimiteRoute.Home,
+        icon = {
             Icon(
                 imageVector = ImageVector.vectorResource(
                     id = Res.drawable.home
@@ -103,8 +90,8 @@ enum class NavigationBarPaths(
         }
     ),
     Profile(
-        ProfileNavGraph.startDestination,
-        {
+        route = AnimiteRoute.Profile,
+        icon = {
             Icon(
                 imageVector = Icons.Rounded.AccountCircle,
                 contentDescription = stringResource(

@@ -6,8 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.uragiristereo.safer.compose.navigation.core.getData
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.data.AnimiteRoute
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -20,7 +22,7 @@ class MediaPageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mediaRepository: AnilistMediaRepository
 ) : ViewModel() {
-    private val navArgs = MediaPageDestination.argsFrom(savedStateHandle)
+    private val navArgs = checkNotNull(savedStateHandle.getData<AnimiteRoute.MediaPage>())
 
     var uiState by mutableStateOf(MediaUiState())
         private set

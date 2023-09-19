@@ -6,9 +6,6 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -28,21 +25,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.github.uragiristereo.safer.compose.navigation.core.navigate
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.imashnake.animite.R
-import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.media.MediaPageArgs
+import com.imashnake.animite.data.AnimiteRoute
+import com.imashnake.animite.data.bottomNavRoutes
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
-import com.ramcosta.composedestinations.navigation.navigate
-import com.ramcosta.composedestinations.rememberNavHostEngine
-import com.ramcosta.composedestinations.utils.navGraph
-import com.ramcosta.composedestinations.utils.route
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -74,15 +67,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    val navHostEngine = rememberNavHostEngine(
-        rootDefaultAnimations = RootNavGraphDefaultAnimations(
-            enterTransition = { fadeIn(animationSpec = tween(1000)) },
-            exitTransition = { fadeOut(animationSpec = tween(300)) },
-        )
-    )
+
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val isNavBarVisible = remember(currentBackStackEntry) {
-        currentBackStackEntry?.navGraph()?.startRoute == currentBackStackEntry?.route()
+    val currentRoute = remember (currentBackStackEntry) {
+        currentBackStackEntry?.destination?.route
+    }
+    val isNavBarVisible = remember(currentRoute) {
+        currentRoute in bottomNavRoutes
     }
 
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
@@ -91,14 +82,12 @@ fun MainScreen(modifier: Modifier = Modifier) {
         CompositionLocalProvider(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
-            DestinationsNavHost(
-                navGraph = RootNavGraph,
+            AnimiteNavHost(
+                navController = navController,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(),
-                navController = navController,
-                engine = navHostEngine
             )
         }
 
@@ -106,12 +95,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
             hasExtraPadding = isNavBarVisible,
             onItemClick = { id, mediaType ->
                 navController.navigate(
-                    MediaPageDestination(
-                        MediaPageArgs(
-                            id,
-                            mediaType.rawValue
-                        )
-                    )
+                    route = AnimiteRoute.MediaPage(
+                        id = id,
+                        mediaType = mediaType.rawValue,
+                    ),
                 )
             },
             modifier = Modifier
@@ -129,7 +116,19 @@ fun MainScreen(modifier: Modifier = Modifier) {
             enter = slideInVertically { it },
             exit = slideOutVertically { it }
         ) {
-            NavigationBar(navController = navController)
+            NavigationBar(
+                currentRoute = currentRoute,
+                onNavigate = {
+                    navController.navigate(route = it) {
+                        popUpTo(id = navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+
+                        restoreState = true
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 }

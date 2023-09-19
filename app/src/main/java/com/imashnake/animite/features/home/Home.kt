@@ -52,19 +52,16 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.data.Resource
-import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
 
 @Destination
 @Composable
 fun Home(
     viewModel: HomeViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
+    onNavigateToMediaPage: (id: Int, mediaType: String) -> Unit,
 ) {
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
     viewModel.setMediaType(homeMediaType.value)
@@ -165,16 +162,10 @@ fun Home(
                                 list = trendingList.data.orEmpty(),
                                 title = stringResource(Res.string.trending_now),
                                 onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                    onNavigateToMediaPage(
+                                        it.id,
+                                        homeMediaType.value.rawValue,
+                                    )
                                 }
                             )
 
@@ -182,16 +173,10 @@ fun Home(
                                 list = popularList.data.orEmpty(),
                                 title = stringResource(Res.string.popular_this_season),
                                 onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                    onNavigateToMediaPage(
+                                        it.id,
+                                        homeMediaType.value.rawValue,
+                                    )
                                 }
                             )
 
@@ -199,16 +184,10 @@ fun Home(
                                 list = upcomingList.data.orEmpty(),
                                 title = stringResource(Res.string.upcoming_next_season),
                                 onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                    onNavigateToMediaPage(
+                                        it.id,
+                                        homeMediaType.value.rawValue,
+                                    )
                                 }
                             )
 
@@ -216,16 +195,10 @@ fun Home(
                                 list = allTimePopularList.data.orEmpty(),
                                 title = stringResource(Res.string.all_time_popular),
                                 onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
+                                    onNavigateToMediaPage(
+                                        it.id,
+                                        homeMediaType.value.rawValue,
+                                    )
                                 }
                             )
                         }
