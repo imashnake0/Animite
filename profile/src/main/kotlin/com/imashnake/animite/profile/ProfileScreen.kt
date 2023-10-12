@@ -11,8 +11,8 @@ import com.imashnake.animite.core.ui.ProgressIndicator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 
-@Destination(route = "profile-screen")
 @RootNavGraph(start = true)
+@Destination(route = "profile-screen")
 @Composable
 fun ProfileScreen() {
     Box(

@@ -11,7 +11,6 @@ import com.imashnake.animite.core.ui.ProgressIndicator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 
-// TODO: Add transitions as we did for `Profile`.
 @RootNavGraph(start = true)
 @Destination(route = "rslash-screen")
 @Composable
