@@ -20,9 +20,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +59,7 @@ import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R as Res
+import com.imashnake.animite.core.R as coreR
 
 @Destination
 @Composable
@@ -92,7 +93,7 @@ fun Home(
                 ) {
                     Box {
                         Image(
-                            painter = painterResource(Res.drawable.background),
+                            painter = painterResource(coreR.drawable.background),
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxWidth()
