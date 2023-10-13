@@ -300,7 +300,12 @@ private fun MediaTypeSelector(
             modifier = Modifier
                 .padding(dimensionResource(Res.dimen.media_type_selector_padding))
                 .size(dimensionResource(Res.dimen.media_type_choice_size))
-                .offset(animateDpAsState(targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp).value),
+                .offset(
+                    animateDpAsState(
+                        targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
+                        label = "media_type_selector_switch"
+                    ).value
+                ),
             shape = CircleShape,
             color = MaterialTheme.colorScheme.background
         ) { }
