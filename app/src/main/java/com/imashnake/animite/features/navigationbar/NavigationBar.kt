@@ -53,7 +53,7 @@ fun NavigationBar(
     ) {
         val currentDestination by navController.currentDestinationAsState()
 
-        NavigationBarPaths.values().forEach { destination ->
+        NavigationBarPaths.entries.forEach { destination ->
             NavigationBarItem(
                 modifier = Modifier.navigationBarsPadding(),
                 selected = currentDestination?.startDestination == destination.route,

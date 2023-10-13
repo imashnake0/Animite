@@ -58,17 +58,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.imashnake.animite.R
+import com.imashnake.animite.R as Res
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
-import com.imashnake.animite.R as Res
 
 @Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
@@ -76,7 +76,7 @@ fun MediaPage(
     viewModel: MediaPageViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
-    val bannerHeight = dimensionResource(Res.dimen.banner_height)
+    val bannerHeight = dimensionResource(coreR.dimen.banner_height)
 
     val media = viewModel.uiState
 
@@ -106,9 +106,9 @@ fun MediaPage(
                         .fillMaxHeight()
                         .padding(top = bannerHeight)
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(bottom = dimensionResource(Res.dimen.large_padding))
+                        .padding(bottom = dimensionResource(coreR.dimen.large_padding))
                         .navigationBarsPadding(),
-                    verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(coreR.dimen.large_padding))
                 ) {
                     MediaDetails(
                         title = media.title.orEmpty(),
@@ -118,11 +118,11 @@ fun MediaPage(
                         // TODO Can we do something about this Modifier chain?
                         modifier = Modifier
                             .padding(
-                                start = dimensionResource(Res.dimen.large_padding)
+                                start = dimensionResource(coreR.dimen.large_padding)
                                         + dimensionResource(Res.dimen.media_card_width)
-                                        + dimensionResource(Res.dimen.large_padding),
-                                top = dimensionResource(Res.dimen.medium_padding),
-                                end = dimensionResource(Res.dimen.large_padding)
+                                        + dimensionResource(coreR.dimen.large_padding),
+                                top = dimensionResource(coreR.dimen.medium_padding),
+                                end = dimensionResource(coreR.dimen.large_padding)
                             )
                             .landscapeCutoutPadding()
                             .height(
@@ -131,8 +131,8 @@ fun MediaPage(
                                     .calculateTopPadding()
                                         + dimensionResource(Res.dimen.media_card_top_padding)
                                         + dimensionResource(Res.dimen.media_card_height)
-                                        - dimensionResource(Res.dimen.banner_height)
-                                        - dimensionResource(Res.dimen.medium_padding)
+                                        - dimensionResource(coreR.dimen.banner_height)
+                                        - dimensionResource(coreR.dimen.medium_padding)
                             )
                             .fillMaxSize()
                     )
@@ -142,7 +142,7 @@ fun MediaPage(
                             rankings = media.ranks,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                                .padding(horizontal = dimensionResource(coreR.dimen.large_padding))
                                 .landscapeCutoutPadding()
                         )
                     }
@@ -151,13 +151,13 @@ fun MediaPage(
                         MediaGenres(
                             genres = media.genres,
                             contentPadding = PaddingValues(
-                                start = dimensionResource(Res.dimen.large_padding) + if (
+                                start = dimensionResource(coreR.dimen.large_padding) + if (
                                     LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
                                 ) {
                                     WindowInsets.displayCutout.asPaddingValues()
                                         .calculateLeftPadding(LayoutDirection.Ltr)
                                 } else 0.dp,
-                                end = dimensionResource(Res.dimen.large_padding)
+                                end = dimensionResource(coreR.dimen.large_padding)
                             ),
                             color = Color(media.color ?: (0xFF152232).toInt()),
                         )
@@ -166,7 +166,7 @@ fun MediaPage(
                     if (!media.characters.isNullOrEmpty()) {
                         MediaCharacters(
                             characters = media.characters,
-                            contentPadding = PaddingValues(horizontal = dimensionResource(Res.dimen.large_padding))
+                            contentPadding = PaddingValues(horizontal = dimensionResource(coreR.dimen.large_padding))
                         )
                     }
 
@@ -174,7 +174,7 @@ fun MediaPage(
                         MediaTrailer(
                             trailer = media.trailer,
                             modifier = Modifier
-                                .padding(horizontal = dimensionResource(Res.dimen.large_padding))
+                                .padding(horizontal = dimensionResource(coreR.dimen.large_padding))
                                 .landscapeCutoutPadding()
                         )
                     }
@@ -185,8 +185,8 @@ fun MediaPage(
                         .statusBarsPadding()
                         .padding(
                             top = dimensionResource(Res.dimen.media_card_top_padding),
-                            start = dimensionResource(Res.dimen.large_padding),
-                            end = dimensionResource(Res.dimen.large_padding)
+                            start = dimensionResource(coreR.dimen.large_padding),
+                            end = dimensionResource(coreR.dimen.large_padding)
                         )
                         .landscapeCutoutPadding()
                 ) {
@@ -225,7 +225,7 @@ fun MediaBanner(
         )
     } else {
         Image(
-            painter = painterResource(R.drawable.background),
+            painter = painterResource(coreR.drawable.background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier,
@@ -300,7 +300,7 @@ fun MediaGenres(
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(
-            dimensionResource(R.dimen.medium_padding)
+            dimensionResource(coreR.dimen.medium_padding)
         ),
         contentPadding = contentPadding,
         modifier = modifier
@@ -313,7 +313,7 @@ fun MediaGenres(
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.padding(
-                            vertical = dimensionResource(R.dimen.small_padding)
+                            vertical = dimensionResource(coreR.dimen.small_padding)
                         )
                     )
                 },
@@ -338,7 +338,7 @@ fun MediaCharacters(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(R.string.characters),
+            text = stringResource(Res.string.characters),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
@@ -346,7 +346,7 @@ fun MediaCharacters(
                 .landscapeCutoutPadding()
         )
 
-        Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
+        Spacer(Modifier.size(dimensionResource(coreR.dimen.medium_padding)))
 
         MediaSmallRow(
             mediaList = characters
@@ -355,7 +355,7 @@ fun MediaCharacters(
                 image = character.image,
                 label = character.name,
                 onClick = { Log.d("CharacterId", "${character.id}") },
-                modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
+                modifier = Modifier.width(dimensionResource(Res.dimen.character_card_width))
             )
         }
     }
@@ -368,18 +368,18 @@ fun MediaTrailer(
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(R.string.trailer),
+            text = stringResource(Res.string.trailer),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium
         )
 
-        Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
+        Spacer(Modifier.size(dimensionResource(coreR.dimen.medium_padding)))
 
         val context = LocalContext.current
         Box(
             modifier = Modifier
                 .wrapContentSize()
-                .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
+                .clip(RoundedCornerShape(dimensionResource(Res.dimen.trailer_corner_radius)))
                 .clickable {
                     val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(trailer.url))
                     context.startActivity(appIntent)
@@ -390,19 +390,19 @@ fun MediaTrailer(
                     .data(trailer.thumbnail)
                     .crossfade(Constants.CROSSFADE_DURATION)
                     .build(),
-                contentDescription = stringResource(R.string.trailer),
+                contentDescription = stringResource(Res.string.trailer),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.778f) // 16 : 9
                     .clip(
-                        RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))
+                        RoundedCornerShape(dimensionResource(Res.dimen.trailer_corner_radius))
                     ),
                 alignment = Alignment.Center
             )
 
             Image(
-                painter = painterResource(R.drawable.youtube),
+                painter = painterResource(Res.drawable.youtube),
                 contentDescription = null,
                 modifier = Modifier.align(Alignment.Center)
             )

@@ -36,6 +36,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.R as Res
 
@@ -50,14 +51,14 @@ fun <T> MediaSmallRow(
     content: @Composable (T) -> Unit
 ) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(coreR.dimen.small_padding)),
         contentPadding = PaddingValues(
-            start = dimensionResource(Res.dimen.large_padding) + if (
+            start = dimensionResource(coreR.dimen.large_padding) + if (
                 LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
             ) {
                 WindowInsets.displayCutout.asPaddingValues().calculateLeftPadding(LayoutDirection.Ltr)
             } else 0.dp,
-            end = dimensionResource(Res.dimen.large_padding)
+            end = dimensionResource(coreR.dimen.large_padding)
         )
     ) {
         items(mediaList) { media ->

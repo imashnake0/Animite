@@ -84,7 +84,7 @@ fun Home(
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
-                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height)
+                distanceUntilAnimated = dimensionResource(coreR.dimen.banner_height)
             ) {
                 Box(
                     modifier = Modifier
@@ -97,7 +97,7 @@ fun Home(
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(dimensionResource(Res.dimen.banner_height))
+                                .height(dimensionResource(coreR.dimen.banner_height))
                                 .bannerParallax(scrollState),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.TopCenter
@@ -116,7 +116,7 @@ fun Home(
                                     )
                                 )
                                 .fillMaxWidth()
-                                .height(dimensionResource(Res.dimen.banner_height))
+                                .height(dimensionResource(coreR.dimen.banner_height))
                         ) { }
 
                         Row(
@@ -130,8 +130,8 @@ fun Home(
                                 style = MaterialTheme.typography.displayMedium,
                                 modifier = Modifier
                                     .padding(
-                                        start = dimensionResource(Res.dimen.large_padding),
-                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                        start = dimensionResource(coreR.dimen.large_padding),
+                                        bottom = dimensionResource(coreR.dimen.medium_padding)
                                     )
                                     .landscapeCutoutPadding()
                                     .weight(1f, fill = false),
@@ -141,8 +141,8 @@ fun Home(
                             MediaTypeSelector(
                                 modifier = Modifier
                                     .padding(
-                                        end = dimensionResource(Res.dimen.large_padding),
-                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                        end = dimensionResource(coreR.dimen.large_padding),
+                                        bottom = dimensionResource(coreR.dimen.medium_padding)
                                     )
                                     .landscapeCutoutPadding(),
                                 selectedOption = homeMediaType,
@@ -152,15 +152,15 @@ fun Home(
                     }
 
                     Column {
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
+                        Spacer(Modifier.size(dimensionResource(coreR.dimen.banner_height)))
 
                         Column(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.background)
-                                .padding(vertical = dimensionResource(Res.dimen.large_padding))
+                                .padding(vertical = dimensionResource(coreR.dimen.large_padding))
                                 // TODO: Move this one out of Home when we can pass modifiers in.
                                 .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
-                            verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                            verticalArrangement = Arrangement.spacedBy(dimensionResource(coreR.dimen.large_padding))
                         ) {
                             HomeRow(
                                 list = trendingList.data.orEmpty(),
@@ -261,11 +261,11 @@ fun HomeRow(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
-                    .padding(start = dimensionResource(Res.dimen.large_padding))
+                    .padding(start = dimensionResource(coreR.dimen.large_padding))
                     .landscapeCutoutPadding()
             )
 
-            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+            Spacer(Modifier.size(dimensionResource(coreR.dimen.medium_padding)))
 
             MediaSmallRow(
                 mediaList = list,
