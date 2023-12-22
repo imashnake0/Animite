@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.text.Html
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -322,9 +323,7 @@ fun MediaGenres(
                 colors = SuggestionChipDefaults.suggestionChipColors(
                     containerColor = color.copy(alpha = 0.25f)
                 ),
-                border = SuggestionChipDefaults.suggestionChipBorder(
-                    borderColor = Color.Transparent
-                )
+                border = BorderStroke(width = 0.dp, color = Color.Transparent)
             )
         }
     }

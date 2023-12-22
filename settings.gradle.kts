@@ -34,5 +34,5 @@ include(
 configure<SettingsExtension> {
     buildToolsVersion = "34.0.0"
     compileSdk = 34
-    minSdk = 26
+    minSdk = 29
 }
