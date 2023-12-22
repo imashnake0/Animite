@@ -80,10 +80,6 @@ dependencies {
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
 
-    // Accompanist
-    implementation(libs.accompanist.systemUiController)
-    implementation(libs.accompanist.placeholder)
-
     coreLibraryDesugaring(libs.android.desugaring)
 
     // Compose Destinations
