@@ -4,6 +4,9 @@ import android.graphics.Color
 import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.type.MediaRankType
+import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
+import org.intellij.markdown.html.HtmlGenerator
+import org.intellij.markdown.parser.MarkdownParser
 
 data class Media(
     /** @see MediaQuery.Media.bannerImage */
@@ -69,7 +72,14 @@ data class Media(
         coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
         color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
-        description = query.description.orEmpty(),
+        description = query.description?.let {
+            val flavour = CommonMarkFlavourDescriptor()
+            HtmlGenerator(
+                markdownText = it,
+                root = MarkdownParser(flavour).buildMarkdownTreeFromString(it),
+                flavour = flavour
+            ).generateHtml()
+        }.orEmpty(),
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.rankings.filter {

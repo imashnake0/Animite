@@ -3,7 +3,6 @@ package com.imashnake.animite.features.media
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
-import android.text.Html
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -113,9 +112,7 @@ fun MediaPage(
                 ) {
                     MediaDetails(
                         title = media.title.orEmpty(),
-                        description = Html
-                            .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
-                            .toString(),
+                        description = media.description.orEmpty(),
                         // TODO Can we do something about this Modifier chain?
                         modifier = Modifier
                             .padding(

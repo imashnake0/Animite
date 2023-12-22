@@ -58,6 +58,8 @@ dagger = "2.50"
 # https://developer.android.com/jetpack/androidx/releases/hilt.
 hilt = "1.1.0"
 
+intellijMarkdown = "0.6.1"
+
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
 kotlin = "1.9.21"
@@ -105,6 +107,7 @@ kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
+intellij-markdown = { group = "org.jetbrains", name = "markdown", version.ref = "intellijMarkdown" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [bundles]
