@@ -15,12 +15,6 @@ dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.re
 # https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
 desugaring = "2.0.4"
 
-# TODO: `SystemUiController` is deprecated.
-#  https://github.com/android/nowinandroid/pull/817
-# Accompanist
-# https://github.com/google/accompanist/releases.
-accompanist = "0.32.0"
-
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
 agp = "8.2.0"
@@ -111,8 +105,6 @@ kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coro
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
-accompanist-systemUiController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
-accompanist-placeholder = { group = "com.google.accompanist", name = "accompanist-placeholder", version.ref = "accompanist" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [bundles]
