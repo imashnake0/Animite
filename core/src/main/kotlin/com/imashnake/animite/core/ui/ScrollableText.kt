@@ -17,64 +17,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.Dp
 import com.imashnake.animite.core.R
 
 @Composable
 fun ScrollableText(
     text: String,
-    modifier: Modifier = Modifier,
-    gradientSize: Dp = dimensionResource(R.dimen.edge_gradient_size),
-    gradientColor: Color = MaterialTheme.colorScheme.background
-) {
-    Box(modifier) {
-        Text(
-            text = text,
-            color = MaterialTheme.colorScheme.onBackground.copy(
-                alpha = ContentAlpha.medium
-            ),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = gradientSize)
-        )
-
-        Box(
-            modifier = Modifier
-                .height(gradientSize)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            gradientColor,
-                            Transparent
-                        )
-                    )
-                )
-        ) { }
-
-        Box(
-            modifier = Modifier
-                .height(gradientSize)
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Transparent,
-                            gradientColor
-                        )
-                    )
-                )
-        ) { }
-    }
-}
-
-@Composable
-fun ScrollableText(
-    text: AnnotatedString,
     modifier: Modifier = Modifier,
     gradientSize: Dp = dimensionResource(R.dimen.edge_gradient_size),
     gradientColor: Color = MaterialTheme.colorScheme.background
