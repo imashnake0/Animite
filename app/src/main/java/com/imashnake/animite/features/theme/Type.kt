@@ -2,7 +2,9 @@ package com.imashnake.animite.features.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
@@ -28,7 +30,14 @@ val manropeFontFamily = FontFamily(
     Font(manropeFont, fontProvider, FontWeight.Medium),
     Font(manropeFont, fontProvider, FontWeight.Normal),
     Font(manropeFont, fontProvider, FontWeight.Light),
-    Font(manropeFont, fontProvider, FontWeight.ExtraLight)
+    Font(manropeFont, fontProvider, FontWeight.ExtraLight),
+    Font(R.font.manrope_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.manrope_bold_italic, FontWeight.Bold, FontStyle.Italic),
+    Font(R.font.manrope_extra_bold_italic, FontWeight.ExtraBold, FontStyle.Italic),
+    Font(R.font.manrope_light_italic, FontWeight.Light, FontStyle.Italic),
+    Font(R.font.manrope_medium_italic, FontWeight.Medium, FontStyle.Italic),
+    Font(R.font.manrope_extra_light_italic, FontWeight.ExtraLight, FontStyle.Italic),
+    Font(R.font.manrope_semi_bold_italic, FontWeight.SemiBold, FontStyle.Italic),
 )
 
 const val baselineShift = 0.2f
