@@ -1,6 +1,8 @@
 package com.imashnake.animite.api.anilist.sanitize.media
 
 import android.graphics.Color
+import android.text.Html
+import android.text.Spanned
 import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.type.MediaRankType
@@ -19,7 +21,7 @@ data class Media(
     val title: String?,
     /** TODO: https://github.com/imashnake0/Animite/issues/58.
      * @see MediaQuery.Media.description */
-    val description: String,
+    val description: Spanned,
     /** @see MediaQuery.Media.rankings */
     val rankings: List<Ranking>,
     /** @see MediaQuery.Media.genres */
@@ -72,14 +74,17 @@ data class Media(
         coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
         color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
-        description = query.description?.let {
+        description = query.description.let {
             val flavour = CommonMarkFlavourDescriptor()
-            HtmlGenerator(
-                markdownText = it,
-                root = MarkdownParser(flavour).buildMarkdownTreeFromString(it),
-                flavour = flavour
-            ).generateHtml()
-        }.orEmpty(),
+            Html.fromHtml(
+                HtmlGenerator(
+                    markdownText = it.orEmpty(),
+                    root = MarkdownParser(flavour).buildMarkdownTreeFromString(it.orEmpty()),
+                    flavour = flavour
+                ).generateHtml(),
+                Html.FROM_HTML_MODE_LEGACY
+            )
+        },
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.rankings.filter {

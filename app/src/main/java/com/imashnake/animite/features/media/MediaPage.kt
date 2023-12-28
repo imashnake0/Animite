@@ -52,6 +52,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -64,6 +66,7 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
+import com.imashnake.animite.dev.ext.toAnnotatedString
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
@@ -112,8 +115,12 @@ fun MediaPage(
                 ) {
                     MediaDetails(
                         title = media.title.orEmpty(),
-                        description = media.description.orEmpty(),
-                        // TODO Can we do something about this Modifier chain?
+                        description = if (media.description == null) {
+                            buildAnnotatedString {}
+                        } else {
+                            media.description.toAnnotatedString(MaterialTheme.colorScheme.onBackground)
+                        },
+                        // TODO: Can we do something about this Modifier chain?
                         modifier = Modifier
                             .padding(
                                 start = dimensionResource(Res.dimen.large_padding)
@@ -239,7 +246,7 @@ fun MediaBanner(
 @Composable
 fun MediaDetails(
     title: String,
-    description: String,
+    description: AnnotatedString,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
