@@ -39,7 +39,7 @@ class MediaPageViewModel @Inject constructor(
                     coverImage = media?.coverImage,
                     color = media?.color,
                     title = media?.title,
-                    description = media?.description,
+                    description = media?.description?.second,
                     ranks = media?.rankings,
                     genres = media?.genres,
                     characters = media?.characters,

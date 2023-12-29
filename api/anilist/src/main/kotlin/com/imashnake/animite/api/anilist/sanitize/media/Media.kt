@@ -4,8 +4,8 @@ import android.graphics.Color
 import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.type.MediaRankType
+import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
-import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
 
 data class Media(
@@ -17,9 +17,8 @@ data class Media(
     val color: Int,
     /** @see MediaQuery.Media.title */
     val title: String?,
-    /** TODO: https://github.com/imashnake0/Animite/issues/58.
-     * @see MediaQuery.Media.description */
-    val description: String,
+    /** The [ASTNode] is the parsed [MediaQuery.Media.description]. */
+    val description: Pair<ASTNode, String>?,
     /** @see MediaQuery.Media.rankings */
     val rankings: List<Ranking>,
     /** @see MediaQuery.Media.genres */
@@ -73,13 +72,9 @@ data class Media(
         color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description?.let {
-            val flavour = CommonMarkFlavourDescriptor()
-            HtmlGenerator(
-                markdownText = it,
-                root = MarkdownParser(flavour).buildMarkdownTreeFromString(it),
-                flavour = flavour
-            ).generateHtml()
-        }.orEmpty(),
+            // TODO: Replace with `AFMFlavourDescriptor`.
+            MarkdownParser(CommonMarkFlavourDescriptor()).buildMarkdownTreeFromString(it) to it
+        },
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.rankings.filter {
