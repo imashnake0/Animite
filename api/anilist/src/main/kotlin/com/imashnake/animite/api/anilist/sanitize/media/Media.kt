@@ -3,9 +3,11 @@ package com.imashnake.animite.api.anilist.sanitize.media
 import android.graphics.Color
 import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
+import com.imashnake.animite.api.anilist.markdown.toAnnotatedString
 import com.imashnake.animite.api.anilist.type.MediaRankType
+import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.flavours.commonmark.CommonMarkFlavourDescriptor
-import org.intellij.markdown.html.HtmlGenerator
+import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.parser.MarkdownParser
 
 data class Media(
@@ -19,7 +21,7 @@ data class Media(
     val title: String?,
     /** TODO: https://github.com/imashnake0/Animite/issues/58.
      * @see MediaQuery.Media.description */
-    val description: String,
+    val description: Pair<ASTNode, String>?,
     /** @see MediaQuery.Media.rankings */
     val rankings: List<Ranking>,
     /** @see MediaQuery.Media.genres */
@@ -72,14 +74,14 @@ data class Media(
         coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
         color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
-        description = query.description?.let {
+        description = "what the hell is even *this*?".let {
             val flavour = CommonMarkFlavourDescriptor()
-            HtmlGenerator(
-                markdownText = it,
-                root = MarkdownParser(flavour).buildMarkdownTreeFromString(it),
-                flavour = flavour
-            ).generateHtml()
-        }.orEmpty(),
+
+//            val text = "<i>Some</i> funi _Markdown_"
+//            MarkdownParser(flavour).buildMarkdownTreeFromString(text).toAnnotatedString(text)
+
+            MarkdownParser(flavour).buildMarkdownTreeFromString(it) to it
+        },
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.rankings.filter {

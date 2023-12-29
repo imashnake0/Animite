@@ -52,6 +52,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -112,7 +114,7 @@ fun MediaPage(
                 ) {
                     MediaDetails(
                         title = media.title.orEmpty(),
-                        description = media.description.orEmpty(),
+                        description = media.description,
                         // TODO Can we do something about this Modifier chain?
                         modifier = Modifier
                             .padding(
@@ -239,7 +241,7 @@ fun MediaBanner(
 @Composable
 fun MediaDetails(
     title: String,
-    description: String,
+    description: AnnotatedString?,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -251,7 +253,7 @@ fun MediaDetails(
             overflow = TextOverflow.Ellipsis
         )
 
-        ScrollableText(text = description)
+        ScrollableText(text = description ?: buildAnnotatedString {  })
     }
 }
 

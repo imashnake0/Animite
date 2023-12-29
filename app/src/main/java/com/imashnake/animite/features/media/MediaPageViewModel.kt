@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.markdown.toAnnotatedString
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +40,7 @@ class MediaPageViewModel @Inject constructor(
                     coverImage = media?.coverImage,
                     color = media?.color,
                     title = media?.title,
-                    description = media?.description,
+                    description = media?.description?.first?.toAnnotatedString(media.description?.second.orEmpty()),
                     ranks = media?.rankings,
                     genres = media?.genres,
                     characters = media?.characters,
