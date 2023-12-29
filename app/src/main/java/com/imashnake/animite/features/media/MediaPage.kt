@@ -64,6 +64,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ScrollableText
+import com.imashnake.animite.core.ui.ScrollableTextView
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
@@ -113,9 +114,7 @@ fun MediaPage(
                 ) {
                     MediaDetails(
                         title = media.title.orEmpty(),
-                        description = Html
-                            .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
-                            .toString(),
+                        description = media.description.orEmpty(),
                         // TODO Can we do something about this Modifier chain?
                         modifier = Modifier
                             .padding(
@@ -254,7 +253,7 @@ fun MediaDetails(
             overflow = TextOverflow.Ellipsis
         )
 
-        ScrollableText(text = description)
+        ScrollableTextView(text = description)
     }
 }
 
