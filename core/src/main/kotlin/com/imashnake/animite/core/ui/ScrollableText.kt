@@ -1,6 +1,5 @@
 package com.imashnake.animite.core.ui
 
-import android.graphics.Typeface
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
 import androidx.compose.foundation.background
@@ -27,7 +26,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
 import com.imashnake.animite.core.R
-import java.io.File
 
 @Composable
 fun ScrollableText(

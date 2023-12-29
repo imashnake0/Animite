@@ -3,7 +3,6 @@ package com.imashnake.animite.features.media
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
-import android.text.Html
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -63,7 +62,6 @@ import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
-import com.imashnake.animite.core.ui.ScrollableText
 import com.imashnake.animite.core.ui.ScrollableTextView
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.dev.internal.Constants
