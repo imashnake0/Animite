@@ -16,7 +16,7 @@ query MediaQuery(
             english
             native
         }
-        description(asHtml: true)
+        description
 
         averageScore
         rankings {
