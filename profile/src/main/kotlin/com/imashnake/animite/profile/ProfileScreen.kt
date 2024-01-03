@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.ramcosta.composedestinations.annotation.Destination
@@ -33,7 +34,7 @@ fun ProfileScreen() {
             )
         ) {
             Text(
-                text = "Coming Soon",
+                text = stringResource(coreR.string.coming_soon),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelLarge
             )
