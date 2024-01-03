@@ -58,8 +58,8 @@ import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.R
+import com.imashnake.animite.core.ui.LocalPaddings
 
 @Destination
 @Composable
@@ -130,8 +130,8 @@ fun Home(
                                 style = MaterialTheme.typography.displayMedium,
                                 modifier = Modifier
                                     .padding(
-                                        start = dimensionResource(coreR.dimen.large_padding),
-                                        bottom = dimensionResource(coreR.dimen.medium_padding)
+                                        start = LocalPaddings.current.large,
+                                        bottom = LocalPaddings.current.medium
                                     )
                                     .landscapeCutoutPadding()
                                     .weight(1f, fill = false),
@@ -141,8 +141,8 @@ fun Home(
                             MediaTypeSelector(
                                 modifier = Modifier
                                     .padding(
-                                        end = dimensionResource(coreR.dimen.large_padding),
-                                        bottom = dimensionResource(coreR.dimen.medium_padding)
+                                        end = LocalPaddings.current.large,
+                                        bottom = LocalPaddings.current.medium
                                     )
                                     .landscapeCutoutPadding(),
                                 selectedOption = homeMediaType,
@@ -157,10 +157,10 @@ fun Home(
                         Column(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.background)
-                                .padding(vertical = dimensionResource(coreR.dimen.large_padding))
+                                .padding(vertical = LocalPaddings.current.large)
                                 // TODO: Move this one out of Home when we can pass modifiers in.
                                 .padding(bottom = dimensionResource(R.dimen.navigation_bar_height)),
-                            verticalArrangement = Arrangement.spacedBy(dimensionResource(coreR.dimen.large_padding))
+                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                         ) {
                             HomeRow(
                                 list = trendingList.data.orEmpty(),
@@ -261,11 +261,11 @@ fun HomeRow(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
-                    .padding(start = dimensionResource(coreR.dimen.large_padding))
+                    .padding(start = LocalPaddings.current.large)
                     .landscapeCutoutPadding()
             )
 
-            Spacer(Modifier.size(dimensionResource(coreR.dimen.medium_padding)))
+            Spacer(Modifier.size(LocalPaddings.current.medium))
 
             MediaSmallRow(
                 mediaList = list,

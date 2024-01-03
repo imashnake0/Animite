@@ -66,11 +66,11 @@ import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.dev.internal.Constants
@@ -114,9 +114,9 @@ fun MediaPage(
                         .fillMaxHeight()
                         .padding(top = bannerHeight)
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(bottom = dimensionResource(coreR.dimen.large_padding))
+                        .padding(bottom = LocalPaddings.current.large)
                         .navigationBarsPadding(),
-                    verticalArrangement = Arrangement.spacedBy(dimensionResource(coreR.dimen.large_padding))
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                 ) {
                     MediaDetails(
                         title = media.title.orEmpty(),
@@ -124,11 +124,11 @@ fun MediaPage(
                         // TODO Can we do something about this Modifier chain?
                         modifier = Modifier
                             .padding(
-                                start = dimensionResource(coreR.dimen.large_padding)
+                                start = LocalPaddings.current.large
                                         + dimensionResource(R.dimen.media_card_width)
-                                        + dimensionResource(coreR.dimen.large_padding),
-                                top = dimensionResource(coreR.dimen.medium_padding),
-                                end = dimensionResource(coreR.dimen.large_padding)
+                                        + LocalPaddings.current.large,
+                                top = LocalPaddings.current.medium,
+                                end = LocalPaddings.current.large
                             )
                             .landscapeCutoutPadding()
                             .height(
@@ -138,7 +138,7 @@ fun MediaPage(
                                         + dimensionResource(R.dimen.media_card_top_padding)
                                         + dimensionResource(R.dimen.media_card_height)
                                         - dimensionResource(R.dimen.banner_height)
-                                        - dimensionResource(coreR.dimen.medium_padding)
+                                        - LocalPaddings.current.medium
                             )
                             .fillMaxSize()
                     )
@@ -148,7 +148,7 @@ fun MediaPage(
                             rankings = media.ranks,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = dimensionResource(coreR.dimen.large_padding))
+                                .padding(horizontal = LocalPaddings.current.large)
                                 .landscapeCutoutPadding()
                         )
                     }
@@ -157,13 +157,13 @@ fun MediaPage(
                         MediaGenres(
                             genres = media.genres,
                             contentPadding = PaddingValues(
-                                start = dimensionResource(coreR.dimen.large_padding) + if (
+                                start = LocalPaddings.current.large + if (
                                     LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
                                 ) {
                                     WindowInsets.displayCutout.asPaddingValues()
                                         .calculateLeftPadding(LayoutDirection.Ltr)
                                 } else 0.dp,
-                                end = dimensionResource(coreR.dimen.large_padding)
+                                end = LocalPaddings.current.large
                             ),
                             color = Color(media.color ?: (0xFF152232).toInt()),
                         )
@@ -172,7 +172,7 @@ fun MediaPage(
                     if (!media.characters.isNullOrEmpty()) {
                         MediaCharacters(
                             characters = media.characters,
-                            contentPadding = PaddingValues(horizontal = dimensionResource(coreR.dimen.large_padding))
+                            contentPadding = PaddingValues(horizontal = LocalPaddings.current.large)
                         )
                     }
 
@@ -180,7 +180,7 @@ fun MediaPage(
                         MediaTrailer(
                             trailer = media.trailer,
                             modifier = Modifier
-                                .padding(horizontal = dimensionResource(coreR.dimen.large_padding))
+                                .padding(horizontal = LocalPaddings.current.large)
                                 .landscapeCutoutPadding()
                         )
                     }
@@ -191,8 +191,8 @@ fun MediaPage(
                         .statusBarsPadding()
                         .padding(
                             top = dimensionResource(R.dimen.media_card_top_padding),
-                            start = dimensionResource(coreR.dimen.large_padding),
-                            end = dimensionResource(coreR.dimen.large_padding)
+                            start = LocalPaddings.current.large,
+                            end = LocalPaddings.current.large
                         )
                         .landscapeCutoutPadding()
                 ) {
@@ -330,7 +330,7 @@ fun MediaGenres(
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(
-            dimensionResource(coreR.dimen.medium_padding)
+            LocalPaddings.current.medium
         ),
         contentPadding = contentPadding,
         modifier = modifier
@@ -343,7 +343,7 @@ fun MediaGenres(
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.padding(
-                            vertical = dimensionResource(coreR.dimen.small_padding)
+                            vertical = LocalPaddings.current.small
                         )
                     )
                 },
@@ -374,7 +374,7 @@ fun MediaCharacters(
                 .landscapeCutoutPadding()
         )
 
-        Spacer(Modifier.size(dimensionResource(coreR.dimen.medium_padding)))
+        Spacer(Modifier.size(LocalPaddings.current.medium))
 
         MediaSmallRow(
             mediaList = characters
@@ -401,7 +401,7 @@ fun MediaTrailer(
             style = MaterialTheme.typography.titleMedium
         )
 
-        Spacer(Modifier.size(dimensionResource(coreR.dimen.medium_padding)))
+        Spacer(Modifier.size(LocalPaddings.current.medium))
 
         val context = LocalContext.current
         Box(

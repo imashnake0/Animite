@@ -10,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.ramcosta.composedestinations.annotation.Destination
@@ -30,7 +30,7 @@ fun RSlashScreen() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                dimensionResource(coreR.dimen.tiny_padding)
+                LocalPaddings.current.tiny
             )
         ) {
             Text(
