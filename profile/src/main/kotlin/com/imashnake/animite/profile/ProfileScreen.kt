@@ -29,7 +29,7 @@ fun ProfileScreen() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
-                dimensionResource(coreR.dimen.large_padding)
+                dimensionResource(coreR.dimen.tiny_padding)
             )
         ) {
             Text(
