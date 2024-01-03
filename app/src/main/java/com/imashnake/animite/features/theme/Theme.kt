@@ -12,10 +12,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.platform.LocalContext
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.Paddings
+import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.dev.ext.pastelize
 
 @Composable
-fun AnimiteTheme(content: @Composable () -> Unit) {
+fun AnimiteTheme(
+    paddings: Paddings = rememberDefaultPaddings(),
+    content: @Composable () -> Unit
+) {
     val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val darkTheme = isSystemInDarkTheme()
     val animiteColorScheme = when {
@@ -33,6 +39,7 @@ fun AnimiteTheme(content: @Composable () -> Unit) {
     ) {
         CompositionLocalProvider(
             LocalRippleTheme provides AnimiteRippleTheme,
+            LocalPaddings provides paddings,
             content = content
         )
     }
