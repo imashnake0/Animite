@@ -3,8 +3,9 @@ package com.imashnake.animite.features.media
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
-import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.util.Log
+import android.widget.TextView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,17 +37,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -56,6 +60,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -63,7 +70,7 @@ import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
-import com.imashnake.animite.core.ui.ScrollableText
+import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
@@ -113,9 +120,7 @@ fun MediaPage(
                 ) {
                     MediaDetails(
                         title = media.title.orEmpty(),
-                        description = Html
-                            .fromHtml(media.description.orEmpty(), Html.FROM_HTML_MODE_COMPACT)
-                            .toString(),
+                        description = media.description.orEmpty(),
                         // TODO Can we do something about this Modifier chain?
                         modifier = Modifier
                             .padding(
@@ -245,6 +250,14 @@ fun MediaDetails(
     description: String,
     modifier: Modifier = Modifier
 ) {
+    val textColor = MaterialTheme.colorScheme.onBackground.copy(
+        alpha = ContentAlpha.medium
+    ).toArgb()
+
+    val html = remember(description) {
+        HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    }
+
     Column(modifier) {
         Text(
             text = title,
@@ -254,7 +267,23 @@ fun MediaDetails(
             overflow = TextOverflow.Ellipsis
         )
 
-        ScrollableText(text = description)
+        NestedScrollableContent { contentModifier ->
+            // TODO: Get rid of this once Compose supports HTML/Markdown
+            //  https://issuetracker.google.com/issues/139326648
+            AndroidView(
+                factory = {
+                    TextView(it).apply {
+                        movementMethod = LinkMovementMethod.getInstance()
+                        setTextColor(textColor)
+                        textSize = 14f
+                        // This is needed since `FontFamily` can't be used with `AndroidView`.
+                        typeface = ResourcesCompat.getFont(it, com.imashnake.animite.core.R.font.manrope_medium)
+                    }
+                },
+                update = { it.text = html },
+                modifier = contentModifier
+            )
+        }
     }
 }
 
