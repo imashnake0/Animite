@@ -36,7 +36,8 @@ import coil.request.ImageRequest
 import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.dev.internal.Constants.CROSSFADE_DURATION
-import com.imashnake.animite.R as Res
+import com.imashnake.animite.R
+import com.imashnake.animite.core.ui.LocalPaddings
 
 /**
  * A [LazyRow] of [MediaSmall]s.
@@ -49,14 +50,14 @@ fun <T> MediaSmallRow(
     content: @Composable (T) -> Unit
 ) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.small_padding)),
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
         contentPadding = PaddingValues(
-            start = dimensionResource(Res.dimen.large_padding) + if (
+            start = LocalPaddings.current.large + if (
                 LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
             ) {
                 WindowInsets.displayCutout.asPaddingValues().calculateLeftPadding(LayoutDirection.Ltr)
             } else 0.dp,
-            end = dimensionResource(Res.dimen.large_padding)
+            end = LocalPaddings.current.large
         )
     ) {
         items(mediaList) { media ->
@@ -85,7 +86,7 @@ fun MediaSmall(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         ),
-        shape = RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius))
+        shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius))
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -97,7 +98,7 @@ fun MediaSmall(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(0.7f)
-                .clip(RoundedCornerShape(dimensionResource(Res.dimen.media_card_corner_radius)))
+                .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
         )
 
         if (label != null)
@@ -108,7 +109,7 @@ fun MediaSmall(
                     style = MaterialTheme.typography.labelLarge,
                     maxLines = 2,
                     modifier = Modifier.padding(
-                        vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
+                        vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
                     )
                 )
 
@@ -125,8 +126,8 @@ fun MediaSmall(
                         .align(Alignment.Center)
                         .fillMaxWidth()
                         .padding(
-                            horizontal = dimensionResource(Res.dimen.media_card_text_padding_horizontal),
-                            vertical = dimensionResource(Res.dimen.media_card_text_padding_vertical)
+                            horizontal = dimensionResource(R.dimen.media_card_text_padding_horizontal),
+                            vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
                         )
                 )
             }
@@ -160,7 +161,7 @@ fun PreviewMediaSmallRow() {
                 media.title?.english ?:
                 media.title?.native ?: "",
                 onClick = { },
-                modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+                modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
             )
         }
     )
@@ -175,6 +176,6 @@ fun PreviewMediaSmall() {
         label =
         "Sono Bisque Doll wa Koi wo Suru",
         onClick = {  },
-        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+        modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
     )
 }

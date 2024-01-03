@@ -50,6 +50,7 @@ import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 
@@ -135,17 +136,17 @@ fun SearchList(
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(
-            start = dimensionResource(R.dimen.large_padding),
-            end = dimensionResource(R.dimen.large_padding),
-            top = dimensionResource(R.dimen.large_padding)
+            start = LocalPaddings.current.large,
+            end = LocalPaddings.current.large,
+            top = LocalPaddings.current.large
                     + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
             bottom = dimensionResource(R.dimen.search_bar_height)
-                    + dimensionResource(R.dimen.large_padding)
-                    + dimensionResource(R.dimen.large_padding)
+                    + LocalPaddings.current.large
+                    + LocalPaddings.current.large
                     + dimensionResource(R.dimen.navigation_bar_height)
                     + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         ),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding))
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
         items(searchList.size, key = { searchList[it].id }) { index ->
             SearchItem(
@@ -175,7 +176,7 @@ private fun SearchItem(
             modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
         )
 
-        Column(Modifier.padding(horizontal = dimensionResource(R.dimen.small_padding))) {
+        Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {
             Text(
                 text = item.title.orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
@@ -192,7 +193,7 @@ private fun SearchItem(
                 )
             }
 
-            Spacer(Modifier.size(dimensionResource(R.dimen.medium_padding)))
+            Spacer(Modifier.size(LocalPaddings.current.medium))
 
             Text(
                 text = item.studios.joinToString(),

@@ -24,10 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.imashnake.animite.R
+import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.navigationbar.NavigationBar
@@ -107,9 +106,9 @@ fun MainScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
-                    start = dimensionResource(R.dimen.large_padding),
-                    end = dimensionResource(R.dimen.large_padding),
-                    bottom = dimensionResource(R.dimen.large_padding)
+                    start = LocalPaddings.current.large,
+                    end = LocalPaddings.current.large,
+                    bottom = LocalPaddings.current.large
                 )
         )
 

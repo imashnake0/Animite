@@ -58,7 +58,8 @@ import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.imashnake.animite.R as Res
+import com.imashnake.animite.R
+import com.imashnake.animite.core.ui.LocalPaddings
 
 @Destination
 @Composable
@@ -83,7 +84,7 @@ fun Home(
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
-                distanceUntilAnimated = dimensionResource(Res.dimen.banner_height)
+                distanceUntilAnimated = dimensionResource(R.dimen.banner_height)
             ) {
                 Box(
                     modifier = Modifier
@@ -92,11 +93,11 @@ fun Home(
                 ) {
                     Box {
                         Image(
-                            painter = painterResource(Res.drawable.background),
+                            painter = painterResource(R.drawable.background),
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(dimensionResource(Res.dimen.banner_height))
+                                .height(dimensionResource(R.dimen.banner_height))
                                 .bannerParallax(scrollState),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.TopCenter
@@ -115,7 +116,7 @@ fun Home(
                                     )
                                 )
                                 .fillMaxWidth()
-                                .height(dimensionResource(Res.dimen.banner_height))
+                                .height(dimensionResource(R.dimen.banner_height))
                         ) { }
 
                         Row(
@@ -124,13 +125,13 @@ fun Home(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(Res.string.okaeri),
+                                text = stringResource(R.string.okaeri),
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 style = MaterialTheme.typography.displayMedium,
                                 modifier = Modifier
                                     .padding(
-                                        start = dimensionResource(Res.dimen.large_padding),
-                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                        start = LocalPaddings.current.large,
+                                        bottom = LocalPaddings.current.medium
                                     )
                                     .landscapeCutoutPadding()
                                     .weight(1f, fill = false),
@@ -140,8 +141,8 @@ fun Home(
                             MediaTypeSelector(
                                 modifier = Modifier
                                     .padding(
-                                        end = dimensionResource(Res.dimen.large_padding),
-                                        bottom = dimensionResource(Res.dimen.medium_padding)
+                                        end = LocalPaddings.current.large,
+                                        bottom = LocalPaddings.current.medium
                                     )
                                     .landscapeCutoutPadding(),
                                 selectedOption = homeMediaType,
@@ -151,19 +152,19 @@ fun Home(
                     }
 
                     Column {
-                        Spacer(Modifier.size(dimensionResource(Res.dimen.banner_height)))
+                        Spacer(Modifier.size(dimensionResource(R.dimen.banner_height)))
 
                         Column(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.background)
-                                .padding(vertical = dimensionResource(Res.dimen.large_padding))
+                                .padding(vertical = LocalPaddings.current.large)
                                 // TODO: Move this one out of Home when we can pass modifiers in.
-                                .padding(bottom = dimensionResource(Res.dimen.navigation_bar_height)),
-                            verticalArrangement = Arrangement.spacedBy(dimensionResource(Res.dimen.large_padding))
+                                .padding(bottom = dimensionResource(R.dimen.navigation_bar_height)),
+                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                         ) {
                             HomeRow(
                                 list = trendingList.data.orEmpty(),
-                                title = stringResource(Res.string.trending_now),
+                                title = stringResource(R.string.trending_now),
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
@@ -180,7 +181,7 @@ fun Home(
 
                             HomeRow(
                                 list = popularList.data.orEmpty(),
-                                title = stringResource(Res.string.popular_this_season),
+                                title = stringResource(R.string.popular_this_season),
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
@@ -197,7 +198,7 @@ fun Home(
 
                             HomeRow(
                                 list = upcomingList.data.orEmpty(),
-                                title = stringResource(Res.string.upcoming_next_season),
+                                title = stringResource(R.string.upcoming_next_season),
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
@@ -214,7 +215,7 @@ fun Home(
 
                             HomeRow(
                                 list = allTimePopularList.data.orEmpty(),
-                                title = stringResource(Res.string.all_time_popular),
+                                title = stringResource(R.string.all_time_popular),
                                 onItemClicked = {
                                     navigator.navigate(
                                         MediaPageDestination(
@@ -260,11 +261,11 @@ fun HomeRow(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
-                    .padding(start = dimensionResource(Res.dimen.large_padding))
+                    .padding(start = LocalPaddings.current.large)
                     .landscapeCutoutPadding()
             )
 
-            Spacer(Modifier.size(dimensionResource(Res.dimen.medium_padding)))
+            Spacer(Modifier.size(LocalPaddings.current.medium))
 
             MediaSmallRow(
                 mediaList = list,
@@ -273,7 +274,7 @@ fun HomeRow(
                         image = media.coverImage,
                         label = media.title,
                         onClick = { onItemClicked(media) },
-                        modifier = Modifier.width(dimensionResource(Res.dimen.media_card_width))
+                        modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
                     )
                 }
             )
@@ -297,8 +298,8 @@ private fun MediaTypeSelector(
         // Indicator
         Surface(
             modifier = Modifier
-                .padding(dimensionResource(Res.dimen.media_type_selector_padding))
-                .size(dimensionResource(Res.dimen.media_type_choice_size))
+                .padding(dimensionResource(R.dimen.media_type_selector_padding))
+                .size(dimensionResource(R.dimen.media_type_choice_size))
                 .offset(
                     animateDpAsState(
                         targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
@@ -311,9 +312,9 @@ private fun MediaTypeSelector(
 
         Row(
             modifier = Modifier
-                .height(dimensionResource(Res.dimen.media_type_selector_height))
-                .width(dimensionResource(Res.dimen.media_type_selector_width))
-                .padding(dimensionResource(Res.dimen.media_type_selector_padding)),
+                .height(dimensionResource(R.dimen.media_type_selector_height))
+                .width(dimensionResource(R.dimen.media_type_selector_width))
+                .padding(dimensionResource(R.dimen.media_type_selector_padding)),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -325,13 +326,13 @@ private fun MediaTypeSelector(
                             selectedOption.value = mediaType
                         }
                     },
-                    modifier = Modifier.requiredWidth(dimensionResource(Res.dimen.media_type_choice_size))
+                    modifier = Modifier.requiredWidth(dimensionResource(R.dimen.media_type_choice_size))
                 ) {
                     Icon(
                         imageVector = if (mediaType == MediaType.ANIME) {
                             Icons.Rounded.PlayArrow
                         } else {
-                            ImageVector.vectorResource(id = Res.drawable.manga)
+                            ImageVector.vectorResource(id = R.drawable.manga)
                         },
                         contentDescription = mediaType.name,
                         tint = if (selectedOption.value == mediaType) {
