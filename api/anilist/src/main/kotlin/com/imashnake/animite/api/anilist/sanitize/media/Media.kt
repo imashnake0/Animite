@@ -24,7 +24,7 @@ data class Media(
     /** @see MediaQuery.Media.characters */
     val characters: List<Character>,
     /** @see MediaQuery.Media.trailer */
-    val trailer: Trailer
+    val trailer: Trailer?
 ) {
     data class Ranking(
         /** @see MediaQuery.Ranking.rank */
@@ -96,12 +96,14 @@ data class Media(
                 )
             }
         },
-        trailer = Trailer(
-            url = if(query.trailer?.site == null || query.trailer.id == null) {
-                null
-            } else "${Trailer.Site.valueOf(query.trailer.site.uppercase()).baseUrl}${query.trailer.id}",
-            thumbnail = query.trailer?.thumbnail
-        )
+        trailer = if(query.trailer?.site == null || query.trailer.id == null) {
+            null
+        } else {
+            Trailer(
+                url = "${Trailer.Site.valueOf(query.trailer.site.uppercase()).baseUrl}${query.trailer.id}",
+                thumbnail = query.trailer.thumbnail
+            )
+        }
     )
 
     data class Medium(
