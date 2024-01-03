@@ -10,8 +10,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "com.imashnake.animite"
-        versionCode = 7
-        versionName = "0.0.1-alpha07"
+        versionCode = 8
+        versionName = "0.0.1-alpha08"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
