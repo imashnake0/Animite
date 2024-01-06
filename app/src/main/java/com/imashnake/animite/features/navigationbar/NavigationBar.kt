@@ -1,7 +1,6 @@
 package com.imashnake.animite.features.navigationbar
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
@@ -60,8 +59,6 @@ fun NavigationBar(
                 modifier = Modifier.navigationBarsPadding(),
                 selected = currentDestination?.startDestination == destination.route,
                 onClick = {
-                    Log.d("FuniNavGraphs", "${currentDestination?.startDestination}, ${destination.route}")
-
                     if (isCurrentDestOnBackStack) {
                         navController.popBackStack(destination.route.route, false)
                         return@NavigationBarItem
