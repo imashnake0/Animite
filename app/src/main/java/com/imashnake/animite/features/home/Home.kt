@@ -51,7 +51,7 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
-import com.imashnake.animite.data.Resource
+import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
