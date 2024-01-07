@@ -28,6 +28,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":core"))
+
     // Apollo Kotlin
     implementation(libs.apollo.runtime)
     implementation(libs.apollo.cache.memory)

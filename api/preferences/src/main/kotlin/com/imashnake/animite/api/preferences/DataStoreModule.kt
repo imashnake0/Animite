@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.imashnake.animite.core.GlobalVariables
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,5 +22,11 @@ object DataStoreModule {
         return PreferenceDataStoreFactory.create(
             produceFile = { appContext.preferencesDataStoreFile("default") }
         )
+    }
+
+    @Singleton
+    @Provides
+    fun provideGlobalVariables(): GlobalVariables {
+        return GlobalVariables()
     }
 }
