@@ -44,6 +44,7 @@ ksp {
 
 dependencies {
     implementation(project(":core"))
+
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)

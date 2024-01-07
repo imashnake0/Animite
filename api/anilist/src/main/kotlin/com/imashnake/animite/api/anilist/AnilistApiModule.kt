@@ -18,7 +18,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AnilistApiModule {
 
-    // TODO name this so we can have other apollo clients for different APIs
+    // TODO: Name this so we can have other apollo clients for different APIs.
     @Provides
     @Singleton
     fun provideApolloClient(
