@@ -37,6 +37,9 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
+
+    // DataStore
+    implementation(libs.datastore)
 }
 
 apollo {
