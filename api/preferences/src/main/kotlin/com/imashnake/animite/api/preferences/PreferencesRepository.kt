@@ -1,4 +1,4 @@
-package com.imashnake.animite.api
+package com.imashnake.animite.api.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
