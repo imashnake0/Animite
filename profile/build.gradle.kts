@@ -44,6 +44,7 @@ ksp {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":api:preferences"))
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
@@ -63,6 +64,11 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigationCompose)
+    ksp(libs.hilt.android.compiler)
 
     // Compose Destinations
     implementation(libs.compose.destinations)
