@@ -43,7 +43,10 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -408,16 +411,33 @@ fun MediaTrailer(
             modifier = Modifier
                 .wrapContentSize()
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
+                .background(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f))
                 .clickable {
                     val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(trailer.url))
                     context.startActivity(appIntent)
                 }
         ) {
+            var bestThumbnail by remember { mutableStateOf(trailer.thumbnail.maxResDefault) }
+
+            val model = ImageRequest.Builder(context)
+                .data(bestThumbnail)
+                .listener(
+                    onError = { _, _ ->
+                        bestThumbnail = trailer.thumbnail.sdDefault
+                    }
+                )
+                .data(bestThumbnail)
+                .listener(
+                    onError = { _, _ ->
+                        bestThumbnail = trailer.thumbnail.defaultThumbnail
+                    }
+                )
+                .data(bestThumbnail)
+                .crossfade(Constants.CROSSFADE_DURATION)
+                .build()
+
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(trailer.thumbnail)
-                    .crossfade(Constants.CROSSFADE_DURATION)
-                    .build(),
+                model = model,
                 contentDescription = stringResource(R.string.trailer),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
