@@ -1,0 +1,24 @@
+query UserQuery {
+# TODO: Get this to work.
+#    viewer: Viewer {
+#        id
+#        name
+#        about
+#        avatar {
+#            large
+#        }
+#        bannerImage
+#    }
+    # TODO: Make `name` a parameter.
+    user: User(
+        name: "imashnake0"
+    ) {
+        id
+        name
+        about
+        avatar {
+            large
+        }
+        bannerImage
+    }
+}

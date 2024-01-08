@@ -44,6 +44,7 @@ ksp {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":api:anilist"))
     implementation(project(":api:preferences"))
 
     // AndroidX

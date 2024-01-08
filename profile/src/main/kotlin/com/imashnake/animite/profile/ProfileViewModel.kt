@@ -2,9 +2,11 @@ package com.imashnake.animite.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.GlobalVariables
 import com.imashnake.animite.core.data.Resource
+import com.imashnake.animite.core.data.Resource.Companion.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,6 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
+    userRepository: AnilistUserRepository,
     private val preferencesRepository: PreferencesRepository,
     private val globalVariables: GlobalVariables,
 ) : ViewModel() {
@@ -26,6 +29,11 @@ class ProfileViewModel @Inject constructor(
     val accessToken = preferencesRepository
         .accessToken
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading<String?>())
+
+    val viewer = userRepository
+        .fetchViewer()
+        .asResource()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     init {
         preferencesRepository.accessToken.onEach {
