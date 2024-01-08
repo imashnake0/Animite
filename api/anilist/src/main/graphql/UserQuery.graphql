@@ -1,18 +1,29 @@
-query UserQuery {
-# TODO: Get this to work.
-#    viewer: Viewer {
-#        id
-#        name
-#        about
-#        avatar {
-#            large
-#        }
-#        bannerImage
-#    }
-    # TODO: Make `name` a parameter.
+query UserQuery(
+    $id: Int,
+    $name: String,
+    $isModerator: Boolean,
+    $search: String,
+    $sort: [UserSort],
+) {
     user: User(
-        name: "imashnake0"
+        id: $id,
+        name: $name
+        isModerator: $isModerator
+        search: $search
+        sort: $sort
     ) {
+        id
+        name
+        about
+        avatar {
+            large
+        }
+        bannerImage
+    }
+}
+
+query Viewer {
+    viewer: Viewer {
         id
         name
         about

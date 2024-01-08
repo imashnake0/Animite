@@ -28,7 +28,7 @@ object AnilistApiModule {
     @Singleton
     fun provideApolloClient(
         @ApplicationContext context: Context,
-        globalVariables: GlobalVariables
+        authorizationInterceptor: AuthorizationInterceptor
     ): ApolloClient {
         // Cache is hit in order, so check in-memory -> check sqlite
         // We have an in-memory cache first for speed, then a SQLite cache for persistence.
@@ -37,21 +37,34 @@ object AnilistApiModule {
         return ApolloClient.Builder()
             .dispatcher(Dispatchers.IO)
             .serverUrl("https://graphql.anilist.co/")
-            .addHttpInterceptor(AuthorizationInterceptor(globalVariables.accessToken))
+            .addHttpInterceptor(authorizationInterceptor)
             .addHttpInterceptor(LoggingInterceptor(LoggingInterceptor.Level.BODY))
             .normalizedCache(cacheFactory)
             .build()
     }
 
-    class AuthorizationInterceptor(private val token: String?) : HttpInterceptor {
-        override suspend fun intercept(request: HttpRequest, chain: HttpInterceptorChain): HttpResponse {
+    class AuthorizationInterceptor(
+        private val globalVariables: GlobalVariables,
+    ) : HttpInterceptor {
+        override suspend fun intercept(
+            request: HttpRequest,
+            chain: HttpInterceptorChain
+        ): HttpResponse {
             return chain.proceed(
                 request.newBuilder().apply {
-                    token?.let {
+                    globalVariables.accessToken?.let {
                         addHeader("Authorization", "Bearer $it")
                     }
                 }.build()
             )
         }
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthorizationInterceptor(
+        globalVariables: GlobalVariables
+    ): AuthorizationInterceptor {
+        return AuthorizationInterceptor(globalVariables)
     }
 }

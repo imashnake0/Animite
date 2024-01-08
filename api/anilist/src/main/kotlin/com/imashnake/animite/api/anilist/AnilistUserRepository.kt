@@ -9,10 +9,10 @@ import javax.inject.Inject
 class AnilistUserRepository @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
-    fun fetchViewer(): Flow<Result<UserQuery.User?>> {
+    fun fetchViewer(): Flow<Result<ViewerQuery.Viewer?>> {
         return apolloClient
-            .query(UserQuery())
+            .query(ViewerQuery())
             .fetchPolicy(FetchPolicy.CacheAndNetwork).toFlow()
-            .asResult { it.user }
+            .asResult { it.viewer }
     }
 }
