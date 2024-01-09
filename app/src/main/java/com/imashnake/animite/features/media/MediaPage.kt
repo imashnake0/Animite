@@ -423,19 +423,14 @@ fun MediaTrailer(
                 ImageRequest.Builder(context)
                     .data(bestThumbnail)
                     .apply {
-                        if (bestThumbnail?.contains("maxresdefault") == true) {
-                            listener(
-                                onError = { _, _ ->
-                                    bestThumbnail = trailer.thumbnail.sdDefault
-                                }
-                            )
-                        } else {
-                            listener(
-                                onError = { _, _ ->
-                                    bestThumbnail = trailer.thumbnail.defaultThumbnail
-                                }
-                            )
-                        }
+                        listener(
+                            onError = { _, _ ->
+                                bestThumbnail = if (bestThumbnail?.contains("maxresdefault") == true) {
+                                    trailer.thumbnail.sdDefault
+                                } else trailer.thumbnail.defaultThumbnail
+                                Log.d("bestThumbnail", bestThumbnail.toString())
+                            }
+                        )
                     }
                     .crossfade(Constants.CROSSFADE_DURATION)
                     .build()
