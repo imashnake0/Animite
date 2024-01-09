@@ -46,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -417,7 +418,7 @@ fun MediaTrailer(
                     context.startActivity(appIntent)
                 }
         ) {
-            var bestThumbnail by remember { mutableStateOf(trailer.thumbnail.maxResDefault) }
+            var bestThumbnail by rememberSaveable { mutableStateOf(trailer.thumbnail.maxResDefault) }
 
             val model = remember(bestThumbnail) {
                 ImageRequest.Builder(context)
@@ -428,7 +429,6 @@ fun MediaTrailer(
                                 bestThumbnail = if (bestThumbnail?.contains("maxresdefault") == true) {
                                     trailer.thumbnail.sdDefault
                                 } else trailer.thumbnail.defaultThumbnail
-                                Log.d("bestThumbnail", bestThumbnail.toString())
                             }
                         )
                     }
