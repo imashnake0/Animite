@@ -419,22 +419,27 @@ fun MediaTrailer(
         ) {
             var bestThumbnail by remember { mutableStateOf(trailer.thumbnail.maxResDefault) }
 
-            val model = ImageRequest.Builder(context)
-                .data(bestThumbnail)
-                .listener(
-                    onError = { _, _ ->
-                        bestThumbnail = trailer.thumbnail.sdDefault
+            val model = remember(bestThumbnail) {
+                ImageRequest.Builder(context)
+                    .data(bestThumbnail)
+                    .apply {
+                        if (bestThumbnail?.contains("maxresdefault") == true) {
+                            listener(
+                                onError = { _, _ ->
+                                    bestThumbnail = trailer.thumbnail.sdDefault
+                                }
+                            )
+                        } else {
+                            listener(
+                                onError = { _, _ ->
+                                    bestThumbnail = trailer.thumbnail.defaultThumbnail
+                                }
+                            )
+                        }
                     }
-                )
-                .data(bestThumbnail)
-                .listener(
-                    onError = { _, _ ->
-                        bestThumbnail = trailer.thumbnail.defaultThumbnail
-                    }
-                )
-                .data(bestThumbnail)
-                .crossfade(Constants.CROSSFADE_DURATION)
-                .build()
+                    .crossfade(Constants.CROSSFADE_DURATION)
+                    .build()
+            }
 
             AsyncImage(
                 model = model,
