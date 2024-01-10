@@ -5,6 +5,10 @@ import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.type.MediaRankType
 
+private const val HQ_DEFAULT = "hqdefault"
+private const val MAX_RES_DEFAULT = "maxresdefault"
+private const val SD_DEFAULT = "sddefault"
+
 data class Media(
     /** @see MediaQuery.Media.bannerImage */
     val bannerImage: String?,
@@ -54,7 +58,7 @@ data class Media(
          * @see MediaQuery.Trailer.site */
         val url: String?,
         /** @see MediaQuery.Trailer.thumbnail */
-        val thumbnail: String?,
+        val thumbnail: Thumbnail,
     ) {
         /** @see MediaQuery.Trailer.thumbnail */
         enum class Site(val baseUrl: String) {
@@ -62,6 +66,12 @@ data class Media(
             DAILYMOTION("https://www.dailymotion.com/video/"),
             UNKNOWN("")
         }
+
+        data class Thumbnail(
+            val maxResDefault: String?,
+            val sdDefault: String?,
+            val defaultThumbnail: String?
+        )
     }
 
     internal constructor(query: MediaQuery.Media) : this(
@@ -101,7 +111,17 @@ data class Media(
         } else {
             Trailer(
                 url = "${Trailer.Site.valueOf(query.trailer.site.uppercase()).baseUrl}${query.trailer.id}",
-                thumbnail = query.trailer.thumbnail
+                thumbnail = with(query.trailer) {
+                    Trailer.Thumbnail(
+                        maxResDefault = thumbnail?.takeIf {
+                            it.contains(HQ_DEFAULT)
+                        }?.replace(HQ_DEFAULT, MAX_RES_DEFAULT),
+                        sdDefault = thumbnail?.takeIf {
+                            it.contains(HQ_DEFAULT)
+                        }?.replace(HQ_DEFAULT, SD_DEFAULT),
+                        defaultThumbnail = thumbnail
+                    )
+                }
             )
         }
     )

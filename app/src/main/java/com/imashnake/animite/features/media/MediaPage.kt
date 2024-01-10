@@ -43,7 +43,11 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -408,16 +412,32 @@ fun MediaTrailer(
             modifier = Modifier
                 .wrapContentSize()
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
+                .background(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f))
                 .clickable {
                     val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(trailer.url))
                     context.startActivity(appIntent)
                 }
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(trailer.thumbnail)
+            var bestThumbnail by rememberSaveable { mutableStateOf(trailer.thumbnail.maxResDefault) }
+
+            val model = remember(bestThumbnail) {
+                ImageRequest.Builder(context)
+                    .data(bestThumbnail)
+                    .apply {
+                        listener(
+                            onError = { _, _ ->
+                                bestThumbnail = if (bestThumbnail?.contains("maxresdefault") == true) {
+                                    trailer.thumbnail.sdDefault
+                                } else trailer.thumbnail.defaultThumbnail
+                            }
+                        )
+                    }
                     .crossfade(Constants.CROSSFADE_DURATION)
-                    .build(),
+                    .build()
+            }
+
+            AsyncImage(
+                model = model,
                 contentDescription = stringResource(R.string.trailer),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
