@@ -28,7 +28,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":core"))
     implementation(project(":api:preferences"))
 
     // Apollo Kotlin
@@ -38,7 +37,6 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
 }
 

@@ -25,11 +25,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":core"))
-
     // Hilt
     implementation(libs.hilt.android)
-    implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
 
     // DataStore
