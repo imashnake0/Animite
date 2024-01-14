@@ -37,7 +37,7 @@ fun ProfileScreen(
     accessToken: String? = null
 ) {
     accessToken?.let { viewModel.setAccessToken(it) }
-    val actualAccessToken by viewModel.accessToken.collectAsState()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
 
     Box(
@@ -48,7 +48,7 @@ fun ProfileScreen(
     ) {
         val uriHandler = LocalUriHandler.current
 
-        if (actualAccessToken == null) {
+        if (!isLoggedIn) {
             Button(onClick = { uriHandler.openUri(ANILIST_AUTH_URL) }) {
                 Text(text = "Log in")
             }
