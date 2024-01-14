@@ -29,6 +29,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":api:preferences"))
 
     // Apollo Kotlin
     implementation(libs.apollo.runtime)

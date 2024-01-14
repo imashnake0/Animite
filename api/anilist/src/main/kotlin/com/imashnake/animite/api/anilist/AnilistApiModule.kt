@@ -10,13 +10,14 @@ import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.http.HttpInterceptor
 import com.apollographql.apollo3.network.http.HttpInterceptorChain
 import com.apollographql.apollo3.network.http.LoggingInterceptor
-import com.imashnake.animite.core.GlobalVariables
+import com.imashnake.animite.api.preferences.PreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import javax.inject.Singleton
 
 @Module
@@ -46,7 +47,7 @@ object AnilistApiModule {
     @Singleton
     @Provides
     fun provideHttpInterceptor(
-        globalVariables: GlobalVariables
+        preferencesRepository: PreferencesRepository
     ): HttpInterceptor = object : HttpInterceptor {
         override suspend fun intercept(
             request: HttpRequest,
@@ -54,7 +55,7 @@ object AnilistApiModule {
         ): HttpResponse {
             return chain.proceed(
                 request.newBuilder().apply {
-                    globalVariables.accessToken?.let {
+                    preferencesRepository.accessToken.first()?.let {
                         addHeader("Authorization", "Bearer $it")
                     }
                 }.build()
