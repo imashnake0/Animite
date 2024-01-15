@@ -17,7 +17,7 @@
     </picture>
 </a>
 
-[Animite](https://github.com/users/imashnake0/projects/1) is an unofficial client for [AniList](https://anilist.co/) (and potentially [MAL](https://myanimelist.net/)).
+[Animite](https://github.com/users/imashnake0/projects/1) is an unofficial Android (and potentially iOS) client for [AniList](https://anilist.co/) (and potentially [MAL](https://myanimelist.net/)).
 
 ## Stack
 The app tries to make use of the latest libraries and APIs:
@@ -29,6 +29,12 @@ The app tries to make use of the latest libraries and APIs:
 
 ### Architecture
 At the moment, the app uses [Google's choice for app architecture](https://developer.android.com/topic/architecture), MVVM, since I don't know any better.
+
+## Shoutouts
+Some apps that I referred to while developing:
+- [AniHyou](https://github.com/axiel7/AniHyou-android)
+- [Katana](https://github.com/alvr/katana)
+- [AniTrend](https://github.com/AniTrend/anitrend-v2)
 
 ## [License](https://github.com/imashnake0/Animite/blob/15eaac4a80c1e6eef3a4d6c861cab05670fb174b/LICENSE.txt)
 ```
