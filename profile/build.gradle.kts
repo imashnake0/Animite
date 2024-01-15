@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
@@ -40,6 +38,9 @@ ksp {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":api:anilist"))
+    implementation(project(":api:preferences"))
+
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
@@ -58,6 +59,11 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigationCompose)
+    ksp(libs.hilt.android.compiler)
 
     // Compose Destinations
     implementation(libs.compose.destinations)

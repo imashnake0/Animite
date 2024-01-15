@@ -2,7 +2,7 @@ query MediaQuery(
     $id: Int,
     $type: MediaType
 ) {
-    media: Media (id: $id, type: $type) {
+    media: Media(id: $id, type: $type) {
         bannerImage
         coverImage {
             extraLarge

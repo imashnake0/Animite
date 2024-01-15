@@ -32,6 +32,10 @@ espresso = "3.6.0-alpha02"
 # https://github.com/apollographql/apollo-kotlin/releases.
 apollo = "3.8.2"
 
+# DataStore
+# https://developer.android.com/jetpack/androidx/releases/datastore
+datastore = "1.0.0"
+
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
 coil = "2.5.0"
@@ -102,6 +106,7 @@ apollo-cache-sqlite = { group = "com.apollographql.apollo3", name = "apollo-norm
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }

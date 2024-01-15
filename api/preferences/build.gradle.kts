@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.ksp)
 }
 
@@ -18,7 +17,7 @@ android {
         }
     }
 
-    namespace = "com.imashnake.animite.api.anilist"
+    namespace = "com.imashnake.animite.api.preferences"
 }
 
 kotlin {
@@ -26,20 +25,10 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":api:preferences"))
-
-    // Apollo Kotlin
-    implementation(libs.apollo.runtime)
-    implementation(libs.apollo.cache.memory)
-    implementation(libs.apollo.cache.sqlite)
-
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-}
 
-apollo {
-    service("anilist") {
-        packageName.set("com.imashnake.animite.api.anilist")
-    }
+    // DataStore
+    implementation(libs.datastore)
 }

@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.data.Resource
-import com.imashnake.animite.data.Resource.Companion.asResource
+import com.imashnake.animite.core.data.Resource
+import com.imashnake.animite.core.data.Resource.Companion.asResource
 import com.imashnake.animite.dev.ext.nextSeason
 import com.imashnake.animite.dev.ext.season
 import com.imashnake.animite.dev.internal.Constants
