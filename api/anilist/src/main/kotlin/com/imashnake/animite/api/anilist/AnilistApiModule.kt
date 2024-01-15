@@ -47,7 +47,7 @@ object AnilistApiModule {
     @Provides
     @Singleton
     @Named("authorized")
-    fun provideApolloClient(
+    fun provideAuthorizedApolloClient(
         @ApplicationContext context: Context,
         httpInterceptor: HttpInterceptor
     ): ApolloClient {
