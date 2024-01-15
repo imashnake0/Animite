@@ -13,7 +13,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class AnilistMediaRepository @Inject constructor(
-    @Named("unauthorized") private val apolloClient: ApolloClient
+    private val apolloClient: ApolloClient
 ) {
 
     fun fetchMediaList(

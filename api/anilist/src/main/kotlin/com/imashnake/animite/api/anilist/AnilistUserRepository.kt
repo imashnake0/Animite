@@ -8,7 +8,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class AnilistUserRepository @Inject constructor(
-    @Named("authorized") private val apolloClient: ApolloClient
+    @Authorized private val apolloClient: ApolloClient
 ) {
     fun fetchViewer(): Flow<Result<ViewerQuery.Viewer>> {
         return apolloClient

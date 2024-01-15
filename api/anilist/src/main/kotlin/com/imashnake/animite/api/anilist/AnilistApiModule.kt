@@ -19,16 +19,14 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AnilistApiModule {
-
-    // TODO: Name this so we can have other apollo clients for different APIs.
     @Provides
     @Singleton
-    @Named("unauthorized")
     fun provideApolloClient(
         @ApplicationContext context: Context
     ): ApolloClient {
@@ -46,7 +44,7 @@ object AnilistApiModule {
 
     @Provides
     @Singleton
-    @Named("authorized")
+    @Authorized
     fun provideAuthorizedApolloClient(
         @ApplicationContext context: Context,
         httpInterceptor: HttpInterceptor
@@ -81,3 +79,7 @@ object AnilistApiModule {
         }
     }
 }
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class Authorized
