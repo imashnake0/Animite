@@ -10,8 +10,6 @@ android {
         applicationId = "com.imashnake.animite"
         versionCode = 8
         versionName = "0.0.1-alpha08"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
