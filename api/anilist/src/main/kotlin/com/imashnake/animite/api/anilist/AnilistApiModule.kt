@@ -18,6 +18,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -27,12 +28,29 @@ object AnilistApiModule {
     // TODO: Name this so we can have other apollo clients for different APIs.
     @Provides
     @Singleton
+    @Named("unauthorized")
+    fun provideApolloClient(
+        @ApplicationContext context: Context
+    ): ApolloClient {
+        // Cache is hit in order, so check in-memory -> check sqlite
+        // We have an in-memory cache first for speed, then a SQLite cache for persistence.
+        val cacheFactory = MemoryCacheFactory(maxSizeBytes = 10 * 1024 * 1024)
+            .chain(SqlNormalizedCacheFactory(context, "apollo.db"))
+        return ApolloClient.Builder()
+            .dispatcher(Dispatchers.IO)
+            .serverUrl("https://graphql.anilist.co/")
+            .addHttpInterceptor(LoggingInterceptor(LoggingInterceptor.Level.BODY))
+            .normalizedCache(cacheFactory)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("authorized")
     fun provideApolloClient(
         @ApplicationContext context: Context,
         httpInterceptor: HttpInterceptor
     ): ApolloClient {
-        // Cache is hit in order, so check in-memory -> check sqlite
-        // We have an in-memory cache first for speed, then a SQLite cache for persistence.
         val cacheFactory = MemoryCacheFactory(maxSizeBytes = 10 * 1024 * 1024)
             .chain(SqlNormalizedCacheFactory(context, "apollo.db"))
         return ApolloClient.Builder()

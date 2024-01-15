@@ -8,9 +8,10 @@ import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Named
 
 class AnilistSearchRepository @Inject constructor(
-    private val apolloClient: ApolloClient
+    @Named("unauthorized") private val apolloClient: ApolloClient
 ) {
     fun fetchSearch(
         type: MediaType,
