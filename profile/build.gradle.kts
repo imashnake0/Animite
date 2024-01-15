@@ -6,19 +6,15 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-android.buildFeatures.buildConfig = true
-
 android {
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("int", "CLIENT_ID", "10678")
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            buildConfigField("int", "CLIENT_ID", "10678")
         }
     }
 
