@@ -37,9 +37,9 @@ ksp {
 }
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":api:anilist"))
-    implementation(project(":api:preferences"))
+    implementation(projects.core)
+    implementation(projects.api.anilist)
+    implementation(projects.api.preferences)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)

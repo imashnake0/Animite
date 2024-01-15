@@ -37,3 +37,5 @@ configure<SettingsExtension> {
     compileSdk = 34
     minSdk = 29
 }
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
