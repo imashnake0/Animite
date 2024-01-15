@@ -13,7 +13,7 @@ import javax.inject.Inject
  * @property fetchViewer Fetches the current user with an authorized [apolloClient].
  */
 class AnilistUserRepository @Inject constructor(
-    @Authorized private val apolloClient: ApolloClient
+    @AuthorizedClient private val apolloClient: ApolloClient
 ) {
     fun fetchViewer(): Flow<Result<ViewerQuery.Viewer>> {
         return apolloClient

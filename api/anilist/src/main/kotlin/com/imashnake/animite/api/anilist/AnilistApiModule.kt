@@ -43,7 +43,7 @@ object AnilistApiModule {
 
     @Provides
     @Singleton
-    @Authorized
+    @AuthorizedClient
     fun provideAuthorizedApolloClient(
         @ApplicationContext context: Context,
         httpInterceptor: HttpInterceptor
@@ -81,4 +81,4 @@ object AnilistApiModule {
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class Authorized
+annotation class AuthorizedClient

@@ -9,6 +9,12 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+/**
+ * Repository for fetching media search results (e.g., search bar).
+ *
+ * @param apolloClient Default apollo client.
+ * @property fetchSearch Fetch a list of `search`es.
+ */
 class AnilistSearchRepository @Inject constructor(
     private val apolloClient: ApolloClient
 ) {

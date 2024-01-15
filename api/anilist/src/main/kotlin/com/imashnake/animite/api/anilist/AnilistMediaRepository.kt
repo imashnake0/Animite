@@ -11,6 +11,13 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+/**
+ * Repository for fetching [MediaQuery.Media] or a list of [MediaListQuery.Medium].
+ *
+ * @param apolloClient Default apollo client.
+ * @property fetchMediaList Fetches a list of [MediaListQuery.Medium].
+ * @property fetchMedia Fetches detailed media: [MediaQuery.Media].
+ */
 class AnilistMediaRepository @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
