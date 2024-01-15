@@ -18,7 +18,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import javax.inject.Named
 import javax.inject.Qualifier
 import javax.inject.Singleton
 

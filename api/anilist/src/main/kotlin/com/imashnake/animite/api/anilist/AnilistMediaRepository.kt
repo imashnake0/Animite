@@ -10,7 +10,6 @@ import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-import javax.inject.Named
 
 class AnilistMediaRepository @Inject constructor(
     private val apolloClient: ApolloClient

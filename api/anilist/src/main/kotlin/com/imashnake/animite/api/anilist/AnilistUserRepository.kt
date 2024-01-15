@@ -5,8 +5,13 @@ import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-import javax.inject.Named
 
+/**
+ * Repository for anything user related. Including the [ViewerQuery.Viewer].
+ *
+ * @param apolloClient Client with the [`Authorization` header](https://anilist.gitbook.io/anilist-apiv2-docs/overview/oauth/implicit-grant#making-authenticated-requests).'
+ * @property fetchViewer Fetches the current user with an authorized [apolloClient].
+ */
 class AnilistUserRepository @Inject constructor(
     @Authorized private val apolloClient: ApolloClient
 ) {
