@@ -9,7 +9,7 @@ import javax.inject.Inject
 /**
  * Repository for anything user related. Including the [ViewerQuery.Viewer].
  *
- * @param apolloClient Client with the [`Authorization` header](https://anilist.gitbook.io/anilist-apiv2-docs/overview/oauth/implicit-grant#making-authenticated-requests).'
+ * @param apolloClient Client with the [`Authorization` header](https://anilist.gitbook.io/anilist-apiv2-docs/overview/oauth/implicit-grant#making-authenticated-requests).
  * @property fetchViewer Fetches the current user with an authorized [apolloClient].
  */
 class AnilistUserRepository @Inject constructor(
