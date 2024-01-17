@@ -17,13 +17,13 @@ desugaring = "2.0.4"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "8.2.0"
+agp = "8.2.1"
 
 # AndroidX
 # https://androidx.tech.
 activity = "1.8.2"
-core = "1.13.0-alpha02"
-lifecycle = "2.7.0-rc02"
+core = "1.13.0-alpha03"
+lifecycle = "2.7.0"
 extJunit = "1.2.0-alpha02"
 espresso = "3.6.0-alpha02"
 
@@ -42,17 +42,17 @@ coil = "2.5.0"
 
 # Compose Destinations
 # https://github.com/raamcosta/compose-destinations/releases.
-composeDestinations = "1.9.55"
+composeDestinations = "1.9.59"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.6.0-beta03"
+composeAnimation = "1.6.0-rc01"
 composeCompiler = "1.5.7"
-composeFoundation = "1.6.0-beta03"
-composeMaterial = "1.6.0-beta03"
-composeMaterial3 = "1.2.0-beta01"
-composeRuntime = "1.6.0-beta03"
-composeUi = "1.6.0-beta03"
+composeFoundation = "1.6.0-rc01"
+composeMaterial = "1.6.0-rc01"
+composeMaterial3 = "1.2.0-beta02"
+composeRuntime = "1.6.0-rc01"
+composeUi = "1.6.0-rc01"
 
 # Dagger
 # https://github.com/google/dagger/releases.
@@ -69,7 +69,7 @@ coroutines = "1.8.0-RC2"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "1.9.21-1.0.16"
+ksp = "1.9.22-1.0.16"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
