@@ -14,11 +14,26 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        register("release") {
+            val storeFilePath: String? by project
+            val storePass: String? by project
+            val key: String? by project
+            val keyPass: String? by project
+            this.storeFile = storeFilePath?.let { file(it) }
+            this.storePassword = storePass
+            this.keyAlias = key
+            this.keyPassword = keyPass
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName(
+                if (System.getenv("Animite") == "true") "release" else "debug"
+            )
         }
     }
 
