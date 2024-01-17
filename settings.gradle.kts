@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
+
 import com.android.build.api.dsl.SettingsExtension
+import org.gradle.api.internal.FeaturePreviews
 
 pluginManagement {
     repositories {
@@ -37,3 +39,5 @@ configure<SettingsExtension> {
     compileSdk = 34
     minSdk = 29
 }
+
+enableFeaturePreview(FeaturePreviews.Feature.TYPESAFE_PROJECT_ACCESSORS.name)

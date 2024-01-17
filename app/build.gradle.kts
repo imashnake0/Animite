@@ -10,8 +10,6 @@ android {
         applicationId = "com.imashnake.animite"
         versionCode = 8
         versionName = "0.0.1-alpha08"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -63,11 +61,11 @@ ksp {
 }
 
 dependencies {
-    implementation(project(":api:anilist"))
-    implementation(project(":core"))
-    implementation(project(":profile"))
-    implementation(project(":rslash"))
-    implementation(project(":material-color-utilities"))
+    implementation(projects.api.anilist)
+    implementation(projects.core)
+    implementation(projects.profile)
+    implementation(projects.rslash)
+    implementation(projects.materialColorUtilities)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
