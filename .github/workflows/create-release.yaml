@@ -18,8 +18,19 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
+      - name: Prepare signing keystore
+        uses: mobiledevops/secret-to-file-action@v1
+        with:
+          base64-encoded-secret: ${{ secrets.KEYSTORE_CONTENT }}
+          filename: "keystore.jks"
+
       - name: Build App
         run: ./gradlew assembleRelease
+        env:
+          ORG_GRADLE_PROJECT_storeFilePath: "../keystore.jks"
+          ORG_GRADLE_PROJECT_storePass: ${{ secrets.KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_key: ${{ secrets.KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_keyPass: ${{ secrets.KEY_PASSWORD }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
