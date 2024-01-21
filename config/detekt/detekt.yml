@@ -1,3 +1,11 @@
+comments:
+  EndOfSentenceFormat:
+    active: true
+
+complexity:
+  CognitiveComplexMethod:
+    active: true
+
 style:
   UnusedImports:
     active: true

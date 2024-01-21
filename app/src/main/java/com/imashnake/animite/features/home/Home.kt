@@ -283,6 +283,7 @@ fun HomeRow(
 }
 
 @Composable
+@Suppress("detekt:CognitiveComplexMethod")
 private fun MediaTypeSelector(
     modifier: Modifier = Modifier,
     selectedOption: MutableState<MediaType>,
