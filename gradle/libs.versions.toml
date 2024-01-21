@@ -6,6 +6,7 @@ kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dependencyAnalysis = { id = "com.autonomousapps.dependency-analysis", version.ref = "dependencyAnalysis" }
 
 
@@ -74,6 +75,10 @@ ksp = "1.9.22-1.0.16"
 # Test
 # https://github.com/junit-team/junit4/releases.
 junit = "4.13.2"
+
+# detekt
+# https://github.com/detekt/detekt/releases.
+detekt = "1.23.4"
 
 # Dependency Analysis Gradle Plugin
 # https://github.com/autonomousapps/dependency-analysis-android-gradle-plugin/blob/main/CHANGELOG.md.
