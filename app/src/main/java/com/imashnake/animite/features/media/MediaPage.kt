@@ -173,7 +173,7 @@ fun MediaPage(
                                 } else 0.dp,
                                 end = LocalPaddings.current.large
                             ),
-                            color = Color(media.color ?: (0xFF152232).toInt()),
+                            color = Color(media.color ?: 0xFF152232.toInt()),
                         )
                     }
 

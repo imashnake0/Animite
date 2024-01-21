@@ -27,14 +27,6 @@ class SearchViewModel @Inject constructor(
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val query = savedStateHandle.getStateFlow<String?>(QUERY, null)
 
-    fun setMediaType(mediaType: MediaType) {
-        savedStateHandle[Constants.MEDIA_TYPE] = mediaType
-    }
-
-    fun setQuery(query: String?) {
-        savedStateHandle[QUERY] = query
-    }
-
     val searchList = mediaType
         .filterNotNull()
         .combine(query, ::Pair)
@@ -50,6 +42,14 @@ class SearchViewModel @Inject constructor(
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+
+    fun setMediaType(mediaType: MediaType) {
+        savedStateHandle[Constants.MEDIA_TYPE] = mediaType
+    }
+
+    fun setQuery(query: String?) {
+        savedStateHandle[QUERY] = query
+    }
 
     companion object {
         const val QUERY = "query"

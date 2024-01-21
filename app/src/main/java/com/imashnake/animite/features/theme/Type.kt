@@ -97,7 +97,7 @@ val AnimiteTypography = Typography(
     // - [MediaPage]: Genre.
     labelMedium = TextStyle(
         fontWeight = FontWeight.Medium,
-        letterSpacing = (1.3).sp,
+        letterSpacing = 1.3.sp,
         baselineShift = BaselineShift(BASELINE_SHIFT)
     )
 )

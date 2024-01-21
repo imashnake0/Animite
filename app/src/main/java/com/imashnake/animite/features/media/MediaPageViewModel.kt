@@ -33,7 +33,8 @@ class MediaPageViewModel @Inject constructor(
                 // TODO: Switch to StateFlows.
                 val media = mediaRepository
                     .fetchMedia(navArgs.id, mediaType)
-                    .firstOrNull()?.getOrNull()
+                    .firstOrNull()
+                    ?.getOrNull()
 
                 uiState = uiState.copy(
                     bannerImage = media?.bannerImage,

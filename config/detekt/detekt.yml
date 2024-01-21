@@ -185,6 +185,117 @@ potential-bugs:
     active: true
 
 style:
+  AlsoCouldBeApply:
+    active: true
+  CanBeNonNullable:
+    active: true
+  CascadingCallWrapping:
+    active: true
+  ClassOrdering:
+    active: true
+  CollapsibleIfStatements:
+    active: true
+  EqualsNullCall:
+    active: true
+  EqualsOnSignatureLine:
+    active: true
+  ExplicitCollectionElementAccessMethod:
+    active: true
+  ExplicitItLambdaParameter:
+    active: true
+  ExpressionBodySyntax:
+    active: true
+  ForbiddenMethodCall:
+    active: true
+  FunctionOnlyReturningConstant:
+    active: true
+  MandatoryBracesIfStatements:
+    active: true
+  MandatoryBracesLoops:
+    active: true
+  MaxChainedCallsOnSameLine:
+    active: true
+  MaxLineLength:
+    active: true
+    excludeCommentStatements: true
+    excludeRawStrings: true
+  MayBeConst:
+    active: true
+  ModifierOrder:
+    active: true
+  MultilineRawStringIndentation:
+    active: true
+  NestedClassesVisibility:
+    active: true
+  NewLineAtEndOfFile:
+    active: true
+  NoTabs:
+    active: true
+  NullableBooleanCheck:
+    active: true
+  ObjectLiteralToLambda:
+    active: true
+  OptionalAbstractKeyword:
+    active: true
+  PreferToOverPairSyntax:
+    active: true
+  RedundantExplicitType:
+    active: true
+  RedundantHigherOrderMapUsage:
+    active: true
+  RedundantVisibilityModifierRule:
+    active: true
+  ReturnCount:
+    active: true
+  SafeCast:
+    active: true
+  SpacingBetweenPackageAndImports:
+    active: true
+  TrailingWhitespace:
+    active: true
+  TrimMultilineRawString:
+    active: true
+  UnderscoresInNumericLiterals:
+    active: true
+  UnnecessaryApply:
+    active: true
+  UnnecessaryBackticks:
+    active: true
+  UnnecessaryFilter:
+    active: true
+  UnnecessaryInheritance:
+    active: true
+  UnnecessaryInnerClass:
+    active: true
+  UnnecessaryLet:
+    active: true
+  UnnecessaryParentheses:
+    active: true
+    allowForUnclearPrecedence: true
+  UntilInsteadOfRangeTo:
+    active: true
+  UnusedPrivateClass:
+    active: true
+  UseAnyOrNoneInsteadOfFind:
+    active: true
+  UseArrayLiteralsInAnnotations:
+    active: true
+  UseDataClass:
+    active: true
+  UseEmptyCounterpart:
+    active: true
+  UseIfEmptyOrIfBlank:
+    active: true
+  UseIsNullOrEmpty:
+    active: true
+  UseOrEmpty:
+    active: true
+  UseSumOfInsteadOfFlatMapSize:
+    active: true
+  UselessCallOnNotNull:
+    active: true
+  VarCouldBeVal:
+    active: true
   UnusedImports:
     active: true
   WildcardImport:
