@@ -84,6 +84,36 @@ exceptions:
   TooGenericExceptionCaught:
     active: true
 
+naming:
+  BooleanPropertyNaming:
+    active: true
+  ClassNaming:
+    active: true
+  ConstructorParameterNaming:
+    active: true
+  EnumNaming:
+    active: true
+  FunctionMaxLength:
+    active: true
+  FunctionParameterNaming:
+    active: true
+  InvalidPackageDeclaration:
+    active: true
+  LambdaParameterNaming:
+    active: true
+  MatchingDeclarationName:
+    active: true
+  NoNameShadowing:
+    active: true
+  NonBooleanPropertyPrefixedWithIs:
+    active: true
+  TopLevelPropertyNaming:
+    active: true
+  VariableMaxLength:
+    active: true
+  VariableNaming:
+    active: true
+
 style:
   UnusedImports:
     active: true
