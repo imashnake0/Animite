@@ -5,7 +5,12 @@ import palettes.CorePalette
 import quantize.QuantizerCelebi
 import scheme.Scheme
 import score.Score
-import theme.*
+import theme.ColorGroup
+import theme.CustomColor
+import theme.CustomColorGroup
+import theme.Palettes
+import theme.Schemes
+import theme.Theme
 
 object ThemeUtils {
 

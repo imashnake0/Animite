@@ -3,3 +3,5 @@ style:
     active: true
   WildcardImport:
     active: true
+    excludeImports:
+      - "kotlin.math.*"
