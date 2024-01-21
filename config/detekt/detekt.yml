@@ -72,6 +72,18 @@ empty-blocks:
   EmptyWhileBlock:
     active: true
 
+exceptions:
+  NotImplementedDeclaration:
+    active: true
+  SwallowedException:
+    active: true
+  ThrowingExceptionsWithoutMessageOrCause:
+    active: true
+  TooGenericExceptionThrown:
+    active: true
+  TooGenericExceptionCaught:
+    active: true
+
 style:
   UnusedImports:
     active: true

@@ -16,6 +16,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
+@Suppress("detekt:SwallowedException")
 class MediaPageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mediaRepository: AnilistMediaRepository
