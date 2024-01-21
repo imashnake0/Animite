@@ -5,6 +5,30 @@ comments:
 complexity:
   CognitiveComplexMethod:
     active: true
+  ComplexCondition:
+    active: true
+  ComplexInterface:
+    active: true
+  LargeClass:
+    active: true
+  LongMethod:
+    active: true
+  LongParameterList:
+    active: true
+  MethodOverloading:
+    active: true
+  NamedArguments:
+    active: true
+  NestedBlockDepth:
+    active: true
+  NestedScopeFunctions:
+    active: true
+  ReplaceSafeCallChainWithRun:
+    active: true
+  StringLiteralDuplication:
+    active: true
+  TooManyFunctions:
+    active: true
 
 style:
   UnusedImports:

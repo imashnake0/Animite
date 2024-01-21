@@ -18,6 +18,7 @@ import javax.inject.Inject
  * @property fetchMediaList Fetches a list of [MediaListQuery.Medium].
  * @property fetchMedia Fetches detailed media: [MediaQuery.Media].
  */
+@Suppress("detekt:LongParameterList")
 class AnilistMediaRepository @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
