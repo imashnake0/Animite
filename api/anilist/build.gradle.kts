@@ -37,6 +37,6 @@ dependencies {
 
 apollo {
     service("anilist") {
-        packageName.set("com.imashnake.animite.api.anilist")
+        packageName = "com.imashnake.animite.api.anilist"
     }
 }
