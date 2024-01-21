@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.detekt)
 }
 
 android {
