@@ -1,7 +1,5 @@
-<p float="left">
-  <img src="resources/Home_Pixel_5.png" width="49%" />
-  <img src="resources/Media_Page_Pixel_5.png" width="49%" />
-</p>
+![Group 9](https://github.com/imashnake0/Animite/assets/56754616/517a7e6d-89c3-47d3-a3ed-7b09f5a42193)
+
 
 # Animite [![build-debug](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml/badge.svg)](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml)
 <a href="https://www.reddit.com/r/Animite/">
