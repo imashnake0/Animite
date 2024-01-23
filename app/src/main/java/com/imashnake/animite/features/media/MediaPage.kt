@@ -85,8 +85,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
 @Suppress(
-    "detekt:CognitiveComplexMethod",
-    "detekt:LongMethod"
+    "CognitiveComplexMethod",
+    "LongMethod"
 )
 fun MediaPage(
     viewModel: MediaPageViewModel = hiltViewModel()
