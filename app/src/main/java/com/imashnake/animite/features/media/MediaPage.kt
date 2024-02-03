@@ -78,6 +78,7 @@ import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
+import com.imashnake.animite.core.R as coreR
 
 @Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
@@ -281,7 +282,7 @@ fun MediaDetails(
                         textSize = 14f
                         // This is needed since `FontFamily` can't be used with `AndroidView`.
                         typeface = ResourcesCompat.getFont(
-                            context, com.imashnake.animite.core.R.font.manrope_medium
+                            context, coreR.font.manrope_medium
                         )
                     }
                 },
@@ -441,7 +442,7 @@ fun MediaTrailer(
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(16f/9)
+                    .aspectRatio(16f / 9)
                     .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))),
                 alignment = Alignment.Center
             )
