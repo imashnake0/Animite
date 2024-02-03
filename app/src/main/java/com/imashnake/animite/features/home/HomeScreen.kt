@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -77,10 +78,15 @@ fun HomeScreen(
     val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
-    val rows = listOf(trendingList, popularList, upcomingList, allTimePopularList)
+    val rows = listOf(
+        trendingList,
+        popularList,
+        upcomingList,
+        allTimePopularList
+    ).zip(stringArrayResource(R.array.home_rows))
 
     when {
-        rows.all { it is Resource.Success } -> {
+        rows.all { it.first is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
@@ -166,8 +172,8 @@ fun HomeScreen(
                         ) {
                             rows.fastForEach { row ->
                                 HomeRow(
-                                    list = row.data?.body.orEmpty(),
-                                    title = row.data?.header.orEmpty(),
+                                    list = row.first.data.orEmpty(),
+                                    title = row.second,
                                     onItemClicked = {
                                         navigator.navigate(
                                             MediaPageDestination(
