@@ -32,10 +32,6 @@ class HomeViewModel @Inject constructor(
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val now = savedStateHandle.getStateFlow(NOW, LocalDate.now())
 
-    fun setMediaType(mediaType: MediaType) {
-        savedStateHandle[Constants.MEDIA_TYPE] = mediaType
-    }
-
     val trendingMedia = mediaType
         .filterNotNull()
         .flatMapLatest { mediaType ->
@@ -86,9 +82,15 @@ class HomeViewModel @Inject constructor(
         .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
-    val isLoading = combineTransform(listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)) { resources ->
+    val isLoading = combineTransform(
+        listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)
+    ) { resources ->
         emit(!resources.none { it is Resource.Loading<*> })
     }.stateIn(viewModelScope, SharingStarted.Lazily, true)
+
+    fun setMediaType(mediaType: MediaType) {
+        savedStateHandle[Constants.MEDIA_TYPE] = mediaType
+    }
 
     companion object {
         const val NOW = "now"

@@ -16,6 +16,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
+@Suppress("SwallowedException")
 class MediaPageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mediaRepository: AnilistMediaRepository
@@ -32,7 +33,8 @@ class MediaPageViewModel @Inject constructor(
                 // TODO: Switch to StateFlows.
                 val media = mediaRepository
                     .fetchMedia(navArgs.id, mediaType)
-                    .firstOrNull()?.getOrNull()
+                    .firstOrNull()
+                    ?.getOrNull()
 
                 uiState = uiState.copy(
                     bannerImage = media?.bannerImage,

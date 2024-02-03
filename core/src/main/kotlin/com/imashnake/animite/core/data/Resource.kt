@@ -15,17 +15,11 @@ sealed class Resource<T>(
     class Loading<T> : Resource<T>(null)
 
     companion object {
-        fun <T> success(data: T): Resource<T> {
-            return Success(data)
-        }
+        fun <T> success(data: T): Resource<T> = Success(data)
 
-        fun <T> error(msg: String, data: T? = null): Resource<T> {
-            return Error(msg, data)
-        }
+        fun <T> error(msg: String, data: T? = null): Resource<T> = Error(msg, data)
 
-        fun <T> loading(): Resource<T> {
-            return Loading()
-        }
+        fun <T> loading(): Resource<T> = Loading()
 
         @OptIn(ExperimentalCoroutinesApi::class)
         fun <T, R> Flow<Result<T>>.asResource(transform: (T) -> R): Flow<Resource<R>> = this

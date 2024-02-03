@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.apolloKotlin)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -36,6 +37,6 @@ dependencies {
 
 apollo {
     service("anilist") {
-        packageName.set("com.imashnake.animite.api.anilist")
+        packageName = "com.imashnake.animite.api.anilist"
     }
 }

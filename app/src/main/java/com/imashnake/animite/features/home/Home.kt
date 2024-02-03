@@ -63,6 +63,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 
 @Destination
 @Composable
+@Suppress("LongMethod")
 fun Home(
     viewModel: HomeViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
@@ -283,6 +284,7 @@ fun HomeRow(
 }
 
 @Composable
+@Suppress("CognitiveComplexMethod")
 private fun MediaTypeSelector(
     modifier: Modifier = Modifier,
     selectedOption: MutableState<MediaType>,

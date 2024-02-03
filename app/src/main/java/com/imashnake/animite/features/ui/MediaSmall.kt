@@ -42,7 +42,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 /**
  * A [LazyRow] of [MediaSmall]s.
  *
- * @param mediaList A list of [MediaListQuery.Medium]s.
+ * @param mediaList A list of [T]s.
  */
 @Composable
 fun <T> MediaSmallRow(
@@ -148,7 +148,8 @@ fun PreviewMediaSmallRow() {
                     native = null
                 ),
                 coverImage = MediaListQuery.CoverImage(
-                    extraLarge = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
+                    extraLarge =
+                    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
                     large = null
                 )
             )
@@ -159,7 +160,7 @@ fun PreviewMediaSmallRow() {
                 // TODO: Do something about this chain.
                 label = media.title?.romaji ?:
                 media.title?.english ?:
-                media.title?.native ?: "",
+                media.title?.native.orEmpty(),
                 onClick = { },
                 modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
             )
