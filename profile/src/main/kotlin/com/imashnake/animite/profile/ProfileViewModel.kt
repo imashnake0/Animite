@@ -19,10 +19,6 @@ class ProfileViewModel @Inject constructor(
     userRepository: AnilistUserRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
-    fun setAccessToken(accessToken: String?) = viewModelScope.launch(Dispatchers.IO) {
-        preferencesRepository.setAccessToken(accessToken)
-    }
-
     val isLoggedIn = preferencesRepository
         .accessToken
         .map { !it.isNullOrEmpty() }
@@ -31,4 +27,8 @@ class ProfileViewModel @Inject constructor(
         .fetchViewer()
         .asResource()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+
+    fun setAccessToken(accessToken: String?) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setAccessToken(accessToken)
+    }
 }

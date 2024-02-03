@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 
 @Composable
+@Suppress("LongParameterList")
 fun TranslucentStatusBarLayout(
     scrollState: ScrollState,
     distanceUntilAnimated: Dp,

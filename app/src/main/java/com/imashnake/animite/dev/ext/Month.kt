@@ -20,7 +20,7 @@ import java.time.Month
  *
  * ]
  */
-val seasons = with(Month.values()) {
+val seasons = with(Month.entries) {
     drop(2) + take(2)
 }.chunked(3)
 

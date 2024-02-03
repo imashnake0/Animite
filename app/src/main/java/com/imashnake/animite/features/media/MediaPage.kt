@@ -84,6 +84,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 
 @Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
+@Suppress(
+    "CognitiveComplexMethod",
+    "LongMethod"
+)
 fun MediaPage(
     viewModel: MediaPageViewModel = hiltViewModel()
 ) {
@@ -169,7 +173,7 @@ fun MediaPage(
                                 } else 0.dp,
                                 end = LocalPaddings.current.large
                             ),
-                            color = Color(media.color ?: (0xFF152232).toInt()),
+                            color = Color(media.color ?: 0xFF152232.toInt()),
                         )
                     }
 

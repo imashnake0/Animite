@@ -18,8 +18,7 @@ data class Media(
     val color: Int,
     /** @see MediaQuery.Media.title */
     val title: String?,
-    /** TODO: https://github.com/imashnake0/Animite/issues/58.
-     * @see MediaQuery.Media.description */
+    /** @see MediaQuery.Media.description */
     val description: String,
     /** @see MediaQuery.Media.rankings */
     val rankings: List<Ranking>,

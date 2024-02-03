@@ -40,7 +40,7 @@ val manropeFontFamily = FontFamily(
     Font(R.font.manrope_semi_bold_italic, FontWeight.SemiBold, FontStyle.Italic),
 )
 
-const val baselineShift = 0.2f
+const val BASELINE_SHIFT = 0.2f
 val AnimiteTypography = Typography(
     // - [Home]: Media list headings.
     // - [MediaPage]: Media section headings.
@@ -49,7 +49,7 @@ val AnimiteTypography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 15.sp,
         letterSpacing = 0.2.sp,
-        baselineShift = BaselineShift(baselineShift)
+        baselineShift = BaselineShift(BASELINE_SHIFT)
     ),
     // - [Home]: Media list item labels.
     // - [MediaPage]: Character names.
@@ -58,7 +58,7 @@ val AnimiteTypography = Typography(
         fontFamily = manropeFontFamily,
         fontWeight = FontWeight.SemiBold,
         lineHeight = 18.sp,
-        baselineShift = BaselineShift(baselineShift)
+        baselineShift = BaselineShift(BASELINE_SHIFT)
     ),
     // - [MediaPage]: Media title.
     titleLarge = TextStyle(
@@ -66,7 +66,7 @@ val AnimiteTypography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         letterSpacing = 0.2.sp,
-        baselineShift = BaselineShift(baselineShift)
+        baselineShift = BaselineShift(BASELINE_SHIFT)
     ),
     // - [MediaPage]: Media description.
     // - [SearchItem]: Search list item titles.
@@ -77,7 +77,7 @@ val AnimiteTypography = Typography(
         fontFamily = manropeFontFamily,
         fontWeight = FontWeight.Medium,
         lineHeight = 22.sp,
-        baselineShift = BaselineShift(baselineShift)
+        baselineShift = BaselineShift(BASELINE_SHIFT)
     ),
     // - [MediaPage]: Stat label.
     // - [SearchItem]: Search list item season and year.
@@ -85,19 +85,19 @@ val AnimiteTypography = Typography(
         fontSize = 12.sp,
         fontFamily = manropeFontFamily,
         fontWeight = FontWeight.Medium,
-        baselineShift = BaselineShift(baselineShift)
+        baselineShift = BaselineShift(BASELINE_SHIFT)
     ),
     // - [MediaPage]: Stat score.
     displaySmall = TextStyle(
         fontSize = 24.sp,
         fontFamily = manropeFontFamily,
         fontWeight = FontWeight.Bold,
-        baselineShift = BaselineShift(baselineShift)
+        baselineShift = BaselineShift(BASELINE_SHIFT)
     ),
     // - [MediaPage]: Genre.
     labelMedium = TextStyle(
         fontWeight = FontWeight.Medium,
-        letterSpacing = (1.3).sp,
-        baselineShift = BaselineShift(baselineShift)
+        letterSpacing = 1.3.sp,
+        baselineShift = BaselineShift(BASELINE_SHIFT)
     )
 )

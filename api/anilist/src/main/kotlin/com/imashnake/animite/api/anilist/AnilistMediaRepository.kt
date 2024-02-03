@@ -18,6 +18,7 @@ import javax.inject.Inject
  * @property fetchMediaList Fetches a list of [MediaListQuery.Medium].
  * @property fetchMedia Fetches detailed media: [MediaQuery.Media].
  */
+@Suppress("LongParameterList")
 class AnilistMediaRepository @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
@@ -41,7 +42,8 @@ class AnilistMediaRepository @Inject constructor(
                     seasonYear = Optional.presentIfNotNull(seasonYear)
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheAndNetwork).toFlow()
+            .fetchPolicy(FetchPolicy.CacheAndNetwork)
+            .toFlow()
             .asResult {
                 it.page!!.media.orEmpty().filterNotNull().map { query -> Media.Medium(query) }
             }
@@ -55,7 +57,8 @@ class AnilistMediaRepository @Inject constructor(
                     type = Optional.presentIfNotNull(mediaType)
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheAndNetwork).toFlow()
+            .fetchPolicy(FetchPolicy.CacheAndNetwork)
+            .toFlow()
             .asResult { Media(it.media!!) }
     }
 }
