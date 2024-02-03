@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -26,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -37,7 +35,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -258,9 +255,7 @@ fun MediaDetails(
     description: String,
     modifier: Modifier = Modifier
 ) {
-    val textColor = MaterialTheme.colorScheme.onBackground.copy(
-        alpha = ContentAlpha.medium
-    ).toArgb()
+    val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f).toArgb()
 
     val html = remember(description) {
         HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -279,13 +274,15 @@ fun MediaDetails(
             // TODO: Get rid of this once Compose supports HTML/Markdown
             //  https://issuetracker.google.com/issues/139326648
             AndroidView(
-                factory = {
-                    TextView(it).apply {
+                factory = { context ->
+                    TextView(context).apply {
                         movementMethod = LinkMovementMethod.getInstance()
                         setTextColor(textColor)
                         textSize = 14f
                         // This is needed since `FontFamily` can't be used with `AndroidView`.
-                        typeface = ResourcesCompat.getFont(it, com.imashnake.animite.core.R.font.manrope_medium)
+                        typeface = ResourcesCompat.getFont(
+                            context, com.imashnake.animite.core.R.font.manrope_medium
+                        )
                     }
                 },
                 update = { it.text = html },
@@ -337,9 +334,7 @@ fun MediaGenres(
     color: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(
-            LocalPaddings.current.medium
-        ),
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
         contentPadding = contentPadding,
         modifier = modifier
     ) {
@@ -372,7 +367,10 @@ fun MediaCharacters(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+    ) {
         Text(
             text = stringResource(R.string.characters),
             color = MaterialTheme.colorScheme.onBackground,
@@ -382,11 +380,7 @@ fun MediaCharacters(
                 .landscapeCutoutPadding()
         )
 
-        Spacer(Modifier.size(LocalPaddings.current.medium))
-
-        MediaSmallRow(
-            mediaList = characters
-        ) { character ->
+        MediaSmallRow(characters) { character ->
             MediaSmall(
                 image = character.image,
                 label = character.name,
@@ -402,14 +396,15 @@ fun MediaTrailer(
     trailer: Media.Trailer,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+    ) {
         Text(
             text = stringResource(R.string.trailer),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium
         )
-
-        Spacer(Modifier.size(LocalPaddings.current.medium))
 
         val context = LocalContext.current
         Box(
