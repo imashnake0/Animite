@@ -44,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -76,12 +77,15 @@ fun Home(
     val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
-    // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
+    val homeRowListToHeader = listOf(
+        trendingList to stringResource(R.string.trending_now),
+        popularList to stringResource(R.string.popular_this_season),
+        upcomingList to stringResource(R.string.upcoming_next_season),
+        allTimePopularList to stringResource(R.string.all_time_popular),
+    )
+
     when {
-        trendingList is Resource.Success &&
-        popularList is Resource.Success &&
-        upcomingList is Resource.Success &&
-        allTimePopularList is Resource.Success -> {
+        homeRowListToHeader.all { it.first is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
@@ -121,7 +125,9 @@ fun Home(
                         ) { }
 
                         Row(
-                            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -163,73 +169,24 @@ fun Home(
                                 .padding(bottom = dimensionResource(R.dimen.navigation_bar_height)),
                             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                         ) {
-                            HomeRow(
-                                list = trendingList.data.orEmpty(),
-                                title = stringResource(R.string.trending_now),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
+                            homeRowListToHeader.fastForEach { listToHeader ->
+                                HomeRow(
+                                    list = listToHeader.first.data.orEmpty(),
+                                    title = listToHeader.second,
+                                    onItemClicked = {
+                                        navigator.navigate(
+                                            MediaPageDestination(
+                                                MediaPageArgs(
+                                                    it.id,
+                                                    homeMediaType.value.rawValue
+                                                )
                                             )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
+                                        ) {
+                                            launchSingleTop = true
+                                        }
                                     }
-                                }
-                            )
-
-                            HomeRow(
-                                list = popularList.data.orEmpty(),
-                                title = stringResource(R.string.popular_this_season),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
-
-                            HomeRow(
-                                list = upcomingList.data.orEmpty(),
-                                title = stringResource(R.string.upcoming_next_season),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
-
-                            HomeRow(
-                                list = allTimePopularList.data.orEmpty(),
-                                title = stringResource(R.string.all_time_popular),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
