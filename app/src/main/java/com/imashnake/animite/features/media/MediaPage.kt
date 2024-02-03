@@ -196,8 +196,7 @@ fun MediaPage(
                         .statusBarsPadding()
                         .padding(
                             top = dimensionResource(R.dimen.media_card_top_padding),
-                            start = LocalPaddings.current.large,
-                            end = LocalPaddings.current.large
+                            start = LocalPaddings.current.large
                         )
                         .landscapeCutoutPadding()
                 ) {
@@ -441,10 +440,8 @@ fun MediaTrailer(
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1.778f) // 16 : 9
-                    .clip(
-                        RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))
-                    ),
+                    .aspectRatio(16f/9)
+                    .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))),
                 alignment = Alignment.Center
             )
 
