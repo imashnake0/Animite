@@ -126,7 +126,8 @@ fun MediaPage(
                     MediaDetails(
                         title = media.title.orEmpty(),
                         description = media.description.orEmpty(),
-                        // TODO Can we do something about this Modifier chain?
+                        // TODO: Can we do something about this Modifier chain?
+                        //  Fix this in a follow up PR with `BannerLayout`.
                         modifier = Modifier
                             .padding(
                                 start = LocalPaddings.current.large

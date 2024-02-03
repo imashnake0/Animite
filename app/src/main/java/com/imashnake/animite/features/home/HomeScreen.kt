@@ -65,7 +65,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 @Destination
 @Composable
 @Suppress("LongMethod")
-fun Home(
+fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
