@@ -214,7 +214,10 @@ fun HomeRow(
     modifier: Modifier = Modifier
 ) {
     if (list.isNotEmpty()) {
-        Column(modifier) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+        ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
@@ -222,8 +225,6 @@ fun HomeRow(
                     .padding(start = LocalPaddings.current.large)
                     .landscapeCutoutPadding()
             )
-
-            Spacer(Modifier.size(LocalPaddings.current.medium))
 
             MediaSmallRow(
                 mediaList = list,
