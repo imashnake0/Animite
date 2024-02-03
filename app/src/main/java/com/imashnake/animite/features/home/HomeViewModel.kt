@@ -11,6 +11,7 @@ import com.imashnake.animite.core.data.Resource.Companion.asResource
 import com.imashnake.animite.dev.ext.nextSeason
 import com.imashnake.animite.dev.ext.season
 import com.imashnake.animite.dev.internal.Constants
+import com.imashnake.animite.dev.internal.Section
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,7 +41,7 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.TRENDING_DESC),
             )
         }
-        .asResource()
+        .asResource { Section(header = TRENDING_NOW, body = it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val popularMediaThisSeason = mediaType
@@ -54,7 +55,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.year
             )
         }
-        .asResource()
+        .asResource { Section(header = POPULAR_THIS_SEASON, body = it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val upcomingMediaNextSeason = mediaType
@@ -68,7 +69,7 @@ class HomeViewModel @Inject constructor(
                 seasonYear = now.month.season.nextSeason(now).second
             )
         }
-        .asResource()
+        .asResource { Section(header = UPCOMING_NEXT_SEASON, body = it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val allTimePopular = mediaType
@@ -79,7 +80,7 @@ class HomeViewModel @Inject constructor(
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )
         }
-        .asResource()
+        .asResource { Section(header = ALL_TIME_POPULAR, body = it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val isLoading = combineTransform(
@@ -94,5 +95,9 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         const val NOW = "now"
+        const val TRENDING_NOW = "Trending Now"
+        const val POPULAR_THIS_SEASON = "Popular This Season"
+        const val UPCOMING_NEXT_SEASON = "Upcoming Next Season"
+        const val ALL_TIME_POPULAR = "All Time Popular"
     }
 }

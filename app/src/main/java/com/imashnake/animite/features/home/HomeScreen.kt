@@ -77,15 +77,10 @@ fun HomeScreen(
     val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
-    val homeRowListToHeader = listOf(
-        trendingList to stringResource(R.string.trending_now),
-        popularList to stringResource(R.string.popular_this_season),
-        upcomingList to stringResource(R.string.upcoming_next_season),
-        allTimePopularList to stringResource(R.string.all_time_popular),
-    )
+    val rows = listOf(trendingList, popularList, upcomingList, allTimePopularList)
 
     when {
-        homeRowListToHeader.all { it.first is Resource.Success } -> {
+        rows.all { it is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
@@ -169,10 +164,10 @@ fun HomeScreen(
                                 .padding(bottom = dimensionResource(R.dimen.navigation_bar_height)),
                             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                         ) {
-                            homeRowListToHeader.fastForEach { listToHeader ->
+                            rows.fastForEach { row ->
                                 HomeRow(
-                                    list = listToHeader.first.data.orEmpty(),
-                                    title = listToHeader.second,
+                                    list = row.data?.body.orEmpty(),
+                                    title = row.data?.header.orEmpty(),
                                     onItemClicked = {
                                         navigator.navigate(
                                             MediaPageDestination(
