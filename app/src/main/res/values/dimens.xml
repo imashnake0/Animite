@@ -8,7 +8,7 @@
 
     <dimen name="media_card_width">140dp</dimen>
     <dimen name="media_card_height">200dp</dimen>
-    <dimen name="media_card_top_padding">96dp</dimen>
+    <dimen name="media_details_height">172dp</dimen>
     <dimen name="character_card_width">96dp</dimen>
     <dimen name="trailer_corner_radius">30dp</dimen>
 

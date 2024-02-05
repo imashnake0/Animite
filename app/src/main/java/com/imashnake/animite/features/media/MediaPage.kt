@@ -19,11 +19,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -113,12 +111,10 @@ fun MediaPage(
                         )
                     },
                     contentModifier = Modifier.padding(top = LocalPaddings.current.medium),
-                    content = { bannerHeight ->
+                    content = {
                         MediaDetails(
                             title = media.title.orEmpty(),
                             description = media.description.orEmpty(),
-                            // TODO: Can we do something about this Modifier chain?
-                            //  Fix this in a follow up PR with `BannerLayout`.
                             modifier = Modifier
                                 .padding(
                                     start = LocalPaddings.current.large
@@ -127,16 +123,7 @@ fun MediaPage(
                                     end = LocalPaddings.current.large
                                 )
                                 .landscapeCutoutPadding()
-                                .height(
-                                    WindowInsets.statusBars
-                                        .asPaddingValues()
-                                        .calculateTopPadding()
-                                            + dimensionResource(R.dimen.media_card_top_padding)
-                                            + dimensionResource(R.dimen.media_card_height)
-                                            - bannerHeight
-                                            - LocalPaddings.current.medium
-                                )
-                                .fillMaxSize()
+                                .height(dimensionResource(R.dimen.media_details_height))
                         )
 
                         if (!media.ranks.isNullOrEmpty()) {
@@ -183,22 +170,24 @@ fun MediaPage(
                     }
                 )
 
-                Box(
+                MediaSmall(
+                    image = media.coverImage,
+                    label = null,
+                    onClick = {},
                     modifier = Modifier
                         .statusBarsPadding()
+                        // TODO: Try using `AlignmentLine`s.
                         .padding(
-                            top = dimensionResource(R.dimen.media_card_top_padding),
+                            top = dimensionResource(R.dimen.media_details_height)
+                                    + LocalPaddings.current.medium
+                                    + dimensionResource(coreR.dimen.banner_height)
+                                    - WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+                                    - dimensionResource(R.dimen.media_card_height),
                             start = LocalPaddings.current.large
                         )
                         .landscapeCutoutPadding()
-                ) {
-                    MediaSmall(
-                        image = media.coverImage,
-                        label = null,
-                        onClick = {},
-                        modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-                    )
-                }
+                        .width(dimensionResource(R.dimen.media_card_width))
+                )
             }
         }
     }
