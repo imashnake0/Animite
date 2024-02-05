@@ -44,13 +44,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.ProgressIndicator
-import com.imashnake.animite.core.ui.TranslucentStatusBarLayout
+import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
@@ -64,7 +65,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 @Destination
 @Composable
 @Suppress("LongMethod")
-fun Home(
+fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
@@ -76,12 +77,15 @@ fun Home(
     val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
-    // TODO: [Code Smells: If Statements](https://dzone.com/articles/code-smells-if-statements).
+    val rows = listOf(
+        trendingList to stringResource(R.string.trending_now),
+        popularList to stringResource(R.string.popular_this_season),
+        upcomingList to stringResource(R.string.upcoming_next_season),
+        allTimePopularList to stringResource(R.string.all_time_popular)
+    )
+
     when {
-        trendingList is Resource.Success &&
-        popularList is Resource.Success &&
-        upcomingList is Resource.Success &&
-        allTimePopularList is Resource.Success -> {
+        rows.all { it.first is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(
                 scrollState = scrollState,
@@ -121,7 +125,9 @@ fun Home(
                         ) { }
 
                         Row(
-                            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -163,73 +169,24 @@ fun Home(
                                 .padding(bottom = dimensionResource(R.dimen.navigation_bar_height)),
                             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                         ) {
-                            HomeRow(
-                                list = trendingList.data.orEmpty(),
-                                title = stringResource(R.string.trending_now),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
+                            rows.fastForEach { row ->
+                                HomeRow(
+                                    list = row.first.data.orEmpty(),
+                                    title = row.second,
+                                    onItemClicked = {
+                                        navigator.navigate(
+                                            MediaPageDestination(
+                                                MediaPageArgs(
+                                                    it.id,
+                                                    homeMediaType.value.rawValue
+                                                )
                                             )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
+                                        ) {
+                                            launchSingleTop = true
+                                        }
                                     }
-                                }
-                            )
-
-                            HomeRow(
-                                list = popularList.data.orEmpty(),
-                                title = stringResource(R.string.popular_this_season),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
-
-                            HomeRow(
-                                list = upcomingList.data.orEmpty(),
-                                title = stringResource(R.string.upcoming_next_season),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
-
-                            HomeRow(
-                                list = allTimePopularList.data.orEmpty(),
-                                title = stringResource(R.string.all_time_popular),
-                                onItemClicked = {
-                                    navigator.navigate(
-                                        MediaPageDestination(
-                                            MediaPageArgs(
-                                                it.id,
-                                                homeMediaType.value.rawValue
-                                            )
-                                        )
-                                    ) {
-                                        launchSingleTop = true
-                                    }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
@@ -257,7 +214,10 @@ fun HomeRow(
     modifier: Modifier = Modifier
 ) {
     if (list.isNotEmpty()) {
-        Column(modifier) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+        ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
@@ -265,8 +225,6 @@ fun HomeRow(
                     .padding(start = LocalPaddings.current.large)
                     .landscapeCutoutPadding()
             )
-
-            Spacer(Modifier.size(LocalPaddings.current.medium))
 
             MediaSmallRow(
                 mediaList = list,

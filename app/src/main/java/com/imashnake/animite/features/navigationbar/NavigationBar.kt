@@ -25,7 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.imashnake.animite.features.destinations.HomeDestination
+import com.imashnake.animite.features.destinations.HomeScreenDestination
 import com.imashnake.animite.profile.ProfileNavGraph
 import com.imashnake.animite.rslash.RslashNavGraph
 import com.ramcosta.composedestinations.spec.DestinationSpec
@@ -96,7 +96,7 @@ enum class NavigationBarPaths(
         }
     ),
     Home(
-        HomeDestination,
+        HomeScreenDestination,
         {
             Icon(
                 imageVector = ImageVector.vectorResource(
