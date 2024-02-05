@@ -23,7 +23,7 @@ fun NestedScrollableContent(
     modifier: Modifier = Modifier,
     gradientSize: Dp = dimensionResource(R.dimen.edge_gradient_size),
     gradientColor: Color = MaterialTheme.colorScheme.background,
-    content: @Composable (modifier: Modifier) -> Unit,
+    content: @Composable (Modifier) -> Unit,
 ) {
     Box(modifier) {
         content(Modifier.verticalScroll(rememberScrollState()).padding(vertical = gradientSize))

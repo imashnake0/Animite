@@ -6,7 +6,6 @@
 
     <dimen name="navigation_bar_height">65dp</dimen>
 
-    <dimen name="banner_height">168dp</dimen>
     <dimen name="media_card_width">140dp</dimen>
     <dimen name="media_card_height">200dp</dimen>
     <dimen name="media_card_top_padding">96dp</dimen>

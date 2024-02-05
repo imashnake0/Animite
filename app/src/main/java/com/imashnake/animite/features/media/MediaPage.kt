@@ -73,6 +73,7 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
+import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.dev.internal.Constants
 import com.imashnake.animite.features.ui.MediaSmall
@@ -90,14 +91,12 @@ fun MediaPage(
     viewModel: MediaPageViewModel = hiltViewModel()
 ) {
     val scrollState = rememberScrollState()
-    val bannerHeight = dimensionResource(R.dimen.banner_height)
 
     val media = viewModel.uiState
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(color = media.color)) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
-            distanceUntilAnimated = bannerHeight,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
             Box(
@@ -105,92 +104,83 @@ fun MediaPage(
                     .fillMaxSize()
                     .verticalScroll(scrollState)
             ) {
-                MediaBanner(
-                    imageUrl = media.bannerImage,
-                    tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
-                    modifier = Modifier
-                        .height(bannerHeight)
-                        .fillMaxWidth()
-                        .bannerParallax(scrollState)
+                BannerLayout(
+                    banner = { bannerModifier ->
+                        MediaBanner(
+                            imageUrl = media.bannerImage,
+                            tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
+                            modifier = bannerModifier.bannerParallax(scrollState)
+                        )
+                    },
+                    content = { bannerHeight ->
+                        MediaDetails(
+                            title = media.title.orEmpty(),
+                            description = media.description.orEmpty(),
+                            // TODO: Can we do something about this Modifier chain?
+                            //  Fix this in a follow up PR with `BannerLayout`.
+                            modifier = Modifier
+                                .padding(
+                                    start = LocalPaddings.current.large
+                                            + dimensionResource(R.dimen.media_card_width)
+                                            + LocalPaddings.current.large,
+                                    end = LocalPaddings.current.large
+                                )
+                                .landscapeCutoutPadding()
+                                .height(
+                                    WindowInsets.statusBars
+                                        .asPaddingValues()
+                                        .calculateTopPadding()
+                                            + dimensionResource(R.dimen.media_card_top_padding)
+                                            + dimensionResource(R.dimen.media_card_height)
+                                            - bannerHeight
+                                            - LocalPaddings.current.medium
+                                )
+                                .fillMaxSize()
+                        )
+
+                        if (!media.ranks.isNullOrEmpty()) {
+                            MediaRankings(
+                                rankings = media.ranks,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = LocalPaddings.current.large)
+                                    .landscapeCutoutPadding()
+                            )
+                        }
+
+                        if (!media.genres.isNullOrEmpty()) {
+                            MediaGenres(
+                                genres = media.genres,
+                                contentPadding = PaddingValues(
+                                    start = LocalPaddings.current.large + if (
+                                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                                    ) {
+                                        WindowInsets.displayCutout.asPaddingValues()
+                                            .calculateLeftPadding(LayoutDirection.Ltr)
+                                    } else 0.dp,
+                                    end = LocalPaddings.current.large
+                                ),
+                                color = Color(media.color ?: 0xFF152232.toInt()),
+                            )
+                        }
+
+                        if (!media.characters.isNullOrEmpty()) {
+                            MediaCharacters(
+                                characters = media.characters,
+                                contentPadding = PaddingValues(horizontal = LocalPaddings.current.large)
+                            )
+                        }
+
+                        if (media.trailer != null) {
+                            MediaTrailer(
+                                trailer = media.trailer,
+                                modifier = Modifier
+                                    .padding(horizontal = LocalPaddings.current.large)
+                                    .landscapeCutoutPadding()
+                            )
+                        }
+                    }
                 )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(top = bannerHeight)
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(bottom = LocalPaddings.current.large)
-                        .navigationBarsPadding(),
-                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
-                ) {
-                    MediaDetails(
-                        title = media.title.orEmpty(),
-                        description = media.description.orEmpty(),
-                        // TODO: Can we do something about this Modifier chain?
-                        //  Fix this in a follow up PR with `BannerLayout`.
-                        modifier = Modifier
-                            .padding(
-                                start = LocalPaddings.current.large
-                                        + dimensionResource(R.dimen.media_card_width)
-                                        + LocalPaddings.current.large,
-                                top = LocalPaddings.current.medium,
-                                end = LocalPaddings.current.large
-                            )
-                            .landscapeCutoutPadding()
-                            .height(
-                                WindowInsets.statusBars
-                                    .asPaddingValues()
-                                    .calculateTopPadding()
-                                        + dimensionResource(R.dimen.media_card_top_padding)
-                                        + dimensionResource(R.dimen.media_card_height)
-                                        - dimensionResource(R.dimen.banner_height)
-                                        - LocalPaddings.current.medium
-                            )
-                            .fillMaxSize()
-                    )
-
-                    if (!media.ranks.isNullOrEmpty()) {
-                        MediaRankings(
-                            rankings = media.ranks,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = LocalPaddings.current.large)
-                                .landscapeCutoutPadding()
-                        )
-                    }
-
-                    if (!media.genres.isNullOrEmpty()) {
-                        MediaGenres(
-                            genres = media.genres,
-                            contentPadding = PaddingValues(
-                                start = LocalPaddings.current.large + if (
-                                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                                ) {
-                                    WindowInsets.displayCutout.asPaddingValues()
-                                        .calculateLeftPadding(LayoutDirection.Ltr)
-                                } else 0.dp,
-                                end = LocalPaddings.current.large
-                            ),
-                            color = Color(media.color ?: 0xFF152232.toInt()),
-                        )
-                    }
-
-                    if (!media.characters.isNullOrEmpty()) {
-                        MediaCharacters(
-                            characters = media.characters,
-                            contentPadding = PaddingValues(horizontal = LocalPaddings.current.large)
-                        )
-                    }
-
-                    if (media.trailer != null) {
-                        MediaTrailer(
-                            trailer = media.trailer,
-                            modifier = Modifier
-                                .padding(horizontal = LocalPaddings.current.large)
-                                .landscapeCutoutPadding()
-                        )
-                    }
-                }
 
                 Box(
                     modifier = Modifier
