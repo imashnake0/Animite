@@ -6,6 +6,8 @@ import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -170,6 +172,17 @@ fun MediaPage(
                     }
                 )
 
+                // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
+                val offset by animateDpAsState(
+                    targetValue = if (scrollState.value == 0) {
+                        0.dp
+                    } else {
+                        dimensionResource(R.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
+                    },
+                    animationSpec = tween(durationMillis = 750),
+                    label = "media_card_height"
+                )
+
                 MediaSmall(
                     image = media.coverImage,
                     label = null,
@@ -181,11 +194,15 @@ fun MediaPage(
                             top = dimensionResource(R.dimen.media_details_height)
                                     + LocalPaddings.current.medium
                                     + dimensionResource(coreR.dimen.banner_height)
-                                    - WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-                                    - dimensionResource(R.dimen.media_card_height),
+                                    - WindowInsets.statusBars
+                                        .asPaddingValues()
+                                        .calculateTopPadding()
+                                    - dimensionResource(R.dimen.media_card_height)
+                                    + offset,
                             start = LocalPaddings.current.large
                         )
                         .landscapeCutoutPadding()
+                        .height(dimensionResource(R.dimen.media_card_height) - offset)
                         .width(dimensionResource(R.dimen.media_card_width))
                 )
             }
