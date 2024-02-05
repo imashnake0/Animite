@@ -112,6 +112,7 @@ fun MediaPage(
                             modifier = bannerModifier.bannerParallax(scrollState)
                         )
                     },
+                    contentModifier = Modifier.padding(top = LocalPaddings.current.medium),
                     content = { bannerHeight ->
                         MediaDetails(
                             title = media.title.orEmpty(),
