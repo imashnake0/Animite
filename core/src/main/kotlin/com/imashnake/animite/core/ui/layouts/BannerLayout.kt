@@ -32,7 +32,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 @Composable
 fun BannerLayout(
     banner: @Composable (Modifier) -> Unit,
-    content: @Composable (bannerHeight: Dp) -> Unit,
+    content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     bannerHeight: Dp = dimensionResource(R.dimen.banner_height),
     bannerModifier: Modifier = Modifier
@@ -52,6 +52,6 @@ fun BannerLayout(
                 .navigationBarsPadding()
                 .then(contentModifier),
             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
-        ) { content(bannerHeight) }
+        ) { content() }
     }
 }

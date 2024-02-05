@@ -152,7 +152,7 @@ fun HomeScreen(
                                 }
                             }
                         },
-                        content = { _ ->
+                        content = {
                             rows.fastForEach { row ->
                                 HomeRow(
                                     list = row.first.data.orEmpty(),
