@@ -152,10 +152,6 @@ fun HomeScreen(
                                 }
                             }
                         },
-                        contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large,
-                            bottom = dimensionResource(R.dimen.navigation_bar_height)
-                        ),
                         content = { _ ->
                             rows.fastForEach { row ->
                                 HomeRow(
@@ -175,7 +171,11 @@ fun HomeScreen(
                                     }
                                 )
                             }
-                        }
+                        },
+                        contentModifier = Modifier.padding(
+                            top = LocalPaddings.current.large,
+                            bottom = dimensionResource(R.dimen.navigation_bar_height)
+                        )
                     )
                 }
             }

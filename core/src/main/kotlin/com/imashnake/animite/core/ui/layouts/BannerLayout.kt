@@ -17,20 +17,31 @@ import androidx.compose.ui.unit.Dp
 import com.imashnake.animite.core.R
 import com.imashnake.animite.core.ui.LocalPaddings
 
+/**
+ * Most screens and pages follow a banner-style layout in Animite.
+ *
+ * @param banner A banner [Composable] that is usually an image with
+ * [com.imashnake.animite.core.extensions.bannerParallax] and other components.
+ * @param content The content that appears in a [Column] below the banner.
+ * @param modifier Modifier for [BannerLayout].
+ * @param bannerHeight The height of the banner in [Dp]s.
+ * @param bannerModifier Modifier for [banner]. Use this if a [Composable] in [banner] should have
+ * the dimensions of the banner.
+ * @param contentModifier Modifier for [content].
+ */
 @Composable
 fun BannerLayout(
     banner: @Composable (Modifier) -> Unit,
     content: @Composable (bannerHeight: Dp) -> Unit,
     modifier: Modifier = Modifier,
+    bannerHeight: Dp = dimensionResource(R.dimen.banner_height),
+    bannerModifier: Modifier = Modifier
+        .height(bannerHeight)
+        .fillMaxWidth(),
     contentModifier: Modifier = Modifier,
-    bannerHeight: Dp = dimensionResource(R.dimen.banner_height)
 ) {
     Box(modifier) {
-        banner(
-            Modifier
-                .height(bannerHeight)
-                .fillMaxWidth()
-        )
+        banner(bannerModifier)
 
         Column(
             modifier = Modifier

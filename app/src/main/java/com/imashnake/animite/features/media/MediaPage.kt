@@ -112,7 +112,6 @@ fun MediaPage(
                             modifier = bannerModifier.bannerParallax(scrollState)
                         )
                     },
-                    contentModifier = Modifier.padding(top = LocalPaddings.current.medium),
                     content = {
                         MediaDetails(
                             title = media.title.orEmpty(),
@@ -169,7 +168,8 @@ fun MediaPage(
                                     .landscapeCutoutPadding()
                             )
                         }
-                    }
+                    },
+                    contentModifier = Modifier.padding(top = LocalPaddings.current.medium)
                 )
 
                 // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
