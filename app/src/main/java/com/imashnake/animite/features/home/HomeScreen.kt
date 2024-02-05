@@ -41,7 +41,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -79,11 +78,11 @@ fun HomeScreen(
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
     val rows = listOf(
-        trendingList,
-        popularList,
-        upcomingList,
-        allTimePopularList
-    ).zip(stringArrayResource(R.array.home_rows))
+        trendingList to stringResource(R.string.trending_now),
+        popularList to stringResource(R.string.popular_this_season),
+        upcomingList to stringResource(R.string.upcoming_next_season),
+        allTimePopularList to stringResource(R.string.all_time_popular)
+    )
 
     when {
         rows.all { it.first is Resource.Success } -> {

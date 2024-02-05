@@ -95,7 +95,6 @@ fun MediaPage(
     val media = viewModel.uiState
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(color = media.color)) {
-        // TODO: [Add shimmer](https://google.github.io/accompanist/placeholder/).
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             distanceUntilAnimated = bannerHeight,
