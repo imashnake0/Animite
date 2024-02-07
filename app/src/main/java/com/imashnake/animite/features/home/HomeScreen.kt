@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,6 +60,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.layouts.BannerLayout
 
 @Destination
 @Composable
@@ -87,88 +87,72 @@ fun HomeScreen(
     when {
         rows.all { it.first is Resource.Success } -> {
             val scrollState = rememberScrollState()
-            TranslucentStatusBarLayout(
-                scrollState = scrollState,
-                distanceUntilAnimated = dimensionResource(R.dimen.banner_height)
-            ) {
+            TranslucentStatusBarLayout(scrollState) {
                 Box(
                     modifier = Modifier
                         .verticalScroll(scrollState)
                         .navigationBarsPadding()
                 ) {
-                    Box {
-                        Image(
-                            painter = painterResource(R.drawable.background),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(dimensionResource(R.dimen.banner_height))
-                                .bannerParallax(scrollState),
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.TopCenter
-                        )
+                    BannerLayout(
+                        banner = { bannerModifier ->
+                            Box {
+                                Image(
+                                    painter = painterResource(R.drawable.background),
+                                    contentDescription = null,
+                                    modifier = bannerModifier.bannerParallax(scrollState),
+                                    contentScale = ContentScale.Crop,
+                                    alignment = Alignment.TopCenter
+                                )
 
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    Brush.verticalGradient(
-                                        listOf(
-                                            Color.Transparent,
-                                            MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                alpha = 0.5f
+                                Box(
+                                    modifier = bannerModifier
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(
+                                                    Color.Transparent,
+                                                    MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                        alpha = 0.5f
+                                                    )
+                                                )
                                             )
                                         )
+                                ) { }
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.okaeri),
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                        style = MaterialTheme.typography.displayMedium,
+                                        modifier = Modifier
+                                            .padding(
+                                                start = LocalPaddings.current.large,
+                                                bottom = LocalPaddings.current.medium
+                                            )
+                                            .landscapeCutoutPadding()
+                                            .weight(1f, fill = false),
+                                        maxLines = 1
                                     )
-                                )
-                                .fillMaxWidth()
-                                .height(dimensionResource(R.dimen.banner_height))
-                        ) { }
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = stringResource(R.string.okaeri),
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                style = MaterialTheme.typography.displayMedium,
-                                modifier = Modifier
-                                    .padding(
-                                        start = LocalPaddings.current.large,
-                                        bottom = LocalPaddings.current.medium
+                                    MediaTypeSelector(
+                                        modifier = Modifier
+                                            .padding(
+                                                end = LocalPaddings.current.large,
+                                                bottom = LocalPaddings.current.medium
+                                            )
+                                            .landscapeCutoutPadding(),
+                                        selectedOption = homeMediaType,
+                                        viewModel = viewModel
                                     )
-                                    .landscapeCutoutPadding()
-                                    .weight(1f, fill = false),
-                                maxLines = 1
-                            )
-
-                            MediaTypeSelector(
-                                modifier = Modifier
-                                    .padding(
-                                        end = LocalPaddings.current.large,
-                                        bottom = LocalPaddings.current.medium
-                                    )
-                                    .landscapeCutoutPadding(),
-                                selectedOption = homeMediaType,
-                                viewModel = viewModel
-                            )
-                        }
-                    }
-
-                    Column {
-                        Spacer(Modifier.size(dimensionResource(R.dimen.banner_height)))
-
-                        Column(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(vertical = LocalPaddings.current.large)
-                                // TODO: Move this one out of Home when we can pass modifiers in.
-                                .padding(bottom = dimensionResource(R.dimen.navigation_bar_height)),
-                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
-                        ) {
+                                }
+                            }
+                        },
+                        content = {
                             rows.fastForEach { row ->
                                 HomeRow(
                                     list = row.first.data.orEmpty(),
@@ -187,8 +171,12 @@ fun HomeScreen(
                                     }
                                 )
                             }
-                        }
-                    }
+                        },
+                        contentModifier = Modifier.padding(
+                            top = LocalPaddings.current.large,
+                            bottom = dimensionResource(R.dimen.navigation_bar_height)
+                        )
+                    )
                 }
             }
         }

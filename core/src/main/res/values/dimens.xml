@@ -14,4 +14,6 @@
 
     <dimen name="icon_padding">16dp</dimen>
     <dimen name="icon_size">56dp</dimen>
+
+    <dimen name="banner_height">168dp</dimen>
 </resources>
