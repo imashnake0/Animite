@@ -61,6 +61,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.R
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.core.R as coreR
 
 @Destination
 @Composable
@@ -174,7 +175,7 @@ fun HomeScreen(
                         },
                         contentModifier = Modifier.padding(
                             top = LocalPaddings.current.large,
-                            bottom = dimensionResource(R.dimen.navigation_bar_height)
+                            bottom = dimensionResource(coreR.dimen.navigation_bar_height)
                         )
                     )
                 }

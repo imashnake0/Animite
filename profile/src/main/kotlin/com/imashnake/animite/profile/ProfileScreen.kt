@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,6 +32,7 @@ import com.nasdroid.core.markdown.style.m3TextStyles
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.imashnake.animite.core.R as coreR
 
 @Destination(
     route = "user",
@@ -107,7 +109,9 @@ fun ProfileScreen(
                     },
                     contentModifier = Modifier.padding(
                         top = LocalPaddings.current.large,
-                        start = LocalPaddings.current.large
+                        start = LocalPaddings.current.large,
+                        end = LocalPaddings.current.large,
+                        bottom = dimensionResource(coreR.dimen.navigation_bar_height)
                     )
                 )
             }

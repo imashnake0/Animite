@@ -33,6 +33,7 @@ import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 import com.ramcosta.composedestinations.utils.startDestination
 import com.imashnake.animite.R as Res
+import com.imashnake.animite.core.R as coreR
 
 // TODO: Ripple where?
 @Composable
@@ -42,7 +43,7 @@ fun NavigationBar(
     // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
         Modifier.height(
-            dimensionResource(Res.dimen.navigation_bar_height) + WindowInsets
+            dimensionResource(coreR.dimen.navigation_bar_height) + WindowInsets
                 .navigationBars
                 .asPaddingValues()
                 .calculateBottomPadding()
