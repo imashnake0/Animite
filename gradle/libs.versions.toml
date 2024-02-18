@@ -79,6 +79,8 @@ junit = "4.13.2"
 # https://github.com/detekt/detekt/releases.
 detekt = "1.23.4"
 
+intellijMarkdown = "0.6.1"
+
 
 [libraries]
 
@@ -104,6 +106,9 @@ apollo-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime" 
 apollo-cache-memory = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache", version.ref = "apollo" }
 apollo-cache-sqlite = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache-sqlite", version.ref = "apollo" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
+coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
+intellij-markdown = { module = "org.jetbrains:markdown", version.ref = "intellijMarkdown" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
