@@ -37,7 +37,6 @@ dependencies {
     implementation(projects.core)
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
-    implementation(projects.composeMarkdown)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
