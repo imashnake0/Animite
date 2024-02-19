@@ -28,6 +28,8 @@ kotlin {
 }
 
 dependencies {
+    implementation(projects.composeMarkdown)
+
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)

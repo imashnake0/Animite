@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -99,7 +100,7 @@ fun ProfileScreen(
                                             textStyle = m3TextStyles().textStyle.copy(color = textColor)
                                         ),
                                         textStyleModifiers = m3TextStyleModifiers(),
-                                        blockQuoteStyle = m3BlockQuoteStyle(),
+                                        blockQuoteStyle = animiteBlockQuoteStyle(),
                                         codeBlockStyle = m3CodeBlockStyle(),
                                         modifier = contentModifier.clickable {  }
                                     )

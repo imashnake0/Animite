@@ -193,7 +193,8 @@ fun MarkdownTextPreview() {
 
         > block quote
         
-        >> nested block quote
+        > nested
+        >> block quote
 
         table | with | content
         --- | --- | ---
