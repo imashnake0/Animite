@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
@@ -63,10 +64,10 @@ fun m3TextStyleModifiers(
 fun m3BlockQuoteStyle(
     background: Color = MaterialTheme.colorScheme.surfaceVariant,
     shape: Shape = MaterialTheme.shapes.medium,
-    barWidth: Float = 2.5f,
+    barWidth: Dp = 2.5f.dp,
     barColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     barShape: Shape = CircleShape,
-    paddingAfterBar: Float = 5f,
+    paddingAfterBar: Dp = 5f.dp,
     innerPadding: PaddingValues = PaddingValues(8.dp)
 ): BlockQuoteStyle {
     return BlockQuoteStyle(

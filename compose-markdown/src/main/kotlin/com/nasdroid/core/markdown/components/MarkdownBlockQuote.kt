@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.nasdroid.core.markdown.MarkdownNode
 import com.nasdroid.core.markdown.generator.MarkdownBlockQuote
 import com.nasdroid.core.markdown.style.BlockQuoteStyle
@@ -51,8 +50,8 @@ fun MarkdownBlockQuote(
                         shape = CircleShape,
                         color = style.barColor,
                         modifier = Modifier
-                            .padding(end = style.paddingAfterBar.dp)
-                            .width(style.barWidth.dp)
+                            .padding(end = style.paddingAfterBar)
+                            .width(style.barWidth)
                             .fillMaxHeight()
                     ) {}
 

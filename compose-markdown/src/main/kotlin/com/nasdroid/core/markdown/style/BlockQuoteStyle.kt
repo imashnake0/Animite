@@ -3,6 +3,7 @@ package com.nasdroid.core.markdown.style
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 
 /**
  * Describes how a Markdown block quote should appear.
@@ -19,9 +20,9 @@ import androidx.compose.ui.graphics.Shape
 data class BlockQuoteStyle(
     val background: Color,
     val shape: Shape,
-    val barWidth: Float,
+    val barWidth: Dp,
     val barColor: Color,
     val barShape: Shape,
-    val paddingAfterBar: Float,
+    val paddingAfterBar: Dp,
     val innerPadding: PaddingValues
 )
