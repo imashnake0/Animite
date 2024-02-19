@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,7 +19,6 @@ import com.nasdroid.core.markdown.style.BlockQuoteStyle
 import com.nasdroid.core.markdown.style.CodeBlockStyle
 import com.nasdroid.core.markdown.style.TextStyleModifiers
 import com.nasdroid.core.markdown.style.TextStyles
-import com.nasdroid.core.markdown.toDp
 
 /**
  * Displays a [MarkdownBlockQuote]. A block quote is a visually distinct section in a document,
@@ -51,7 +49,9 @@ fun MarkdownBlockQuote(
             )
             Column(
                 modifier = Modifier.padding(style.innerPadding),
-                verticalArrangement = Arrangement.spacedBy(textStyles.textStyle.fontSize.toDp())
+                verticalArrangement = Arrangement.spacedBy(
+                    style.innerPadding.calculateBottomPadding()
+                )
             ) {
                 blockQuote.children.forEach {
                     MarkdownNode(
