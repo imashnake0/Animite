@@ -4,9 +4,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.nasdroid.core.markdown.MarkdownNode
 import com.nasdroid.core.markdown.generator.MarkdownBlockQuote
 import com.nasdroid.core.markdown.style.BlockQuoteStyle
@@ -38,13 +48,24 @@ fun MarkdownBlockQuote(
             verticalArrangement = Arrangement.spacedBy(textStyles.textStyle.fontSize.toDp())
         ) {
             blockQuote.children.forEach {
-                MarkdownNode(
-                    node = it,
-                    textStyles = textStyles,
-                    textStyleModifiers = textStyleModifiers,
-                    blockQuoteStyle = style,
-                    codeBlockStyle = codeBlockStyle
-                )
+                Row(Modifier.height(IntrinsicSize.Min)) {
+                    Surface(
+                        shape = CircleShape,
+                        color = style.barColor,
+                        modifier = Modifier
+                            .padding(end = 5.dp)
+                            .width(style.barWidth.dp)
+                            .fillMaxHeight()
+                    ) {}
+
+                    MarkdownNode(
+                        node = it,
+                        textStyles = textStyles,
+                        textStyleModifiers = textStyleModifiers,
+                        blockQuoteStyle = style,
+                        codeBlockStyle = codeBlockStyle
+                    )
+                }
             }
         }
     }

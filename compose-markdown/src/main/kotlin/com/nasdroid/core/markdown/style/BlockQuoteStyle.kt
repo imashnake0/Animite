@@ -15,5 +15,7 @@ import androidx.compose.ui.graphics.Shape
 data class BlockQuoteStyle(
     val background: Color,
     val shape: Shape,
+    val barWidth: Float,
+    val barColor: Color,
     val innerPadding: PaddingValues
 )

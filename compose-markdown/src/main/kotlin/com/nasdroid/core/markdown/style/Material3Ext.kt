@@ -62,11 +62,15 @@ fun m3TextStyleModifiers(
 fun m3BlockQuoteStyle(
     background: Color = MaterialTheme.colorScheme.surfaceVariant,
     shape: Shape = MaterialTheme.shapes.medium,
+    barWidth: Float = 2.5f,
+    barColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     innerPadding: PaddingValues = PaddingValues(8.dp)
 ): BlockQuoteStyle {
     return BlockQuoteStyle(
         background = background,
         shape = shape,
+        barWidth = barWidth,
+        barColor = barColor,
         innerPadding = innerPadding
     )
 }
