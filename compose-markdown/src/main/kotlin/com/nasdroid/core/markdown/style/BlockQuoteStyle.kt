@@ -9,6 +9,10 @@ import androidx.compose.ui.graphics.Shape
  *
  * @property background The color of the code block background.
  * @property shape The shape of the code block.
+ * @property barWidth Width of the bar that appears before the quote.
+ * @property barColor Color of the bar that appears before the quote.
+ * @property barShape Shape of the bar that appears before the quote.
+ * @property paddingAfterBar Padding between the bar and the quote.
  * @property innerPadding The padding between the edge of the block quote bounds and the content
  * inside it.
  */
@@ -17,5 +21,7 @@ data class BlockQuoteStyle(
     val shape: Shape,
     val barWidth: Float,
     val barColor: Color,
+    val barShape: Shape,
+    val paddingAfterBar: Float,
     val innerPadding: PaddingValues
 )

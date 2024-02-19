@@ -53,7 +53,7 @@ fun MarkdownBlockQuote(
                         shape = CircleShape,
                         color = style.barColor,
                         modifier = Modifier
-                            .padding(end = 5.dp)
+                            .padding(end = style.paddingAfterBar.dp)
                             .width(style.barWidth.dp)
                             .fillMaxHeight()
                     ) {}
