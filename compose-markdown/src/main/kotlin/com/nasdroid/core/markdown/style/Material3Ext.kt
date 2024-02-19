@@ -2,7 +2,6 @@
 package com.nasdroid.core.markdown.style
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -63,11 +62,10 @@ fun m3TextStyleModifiers(
 @Composable
 fun m3BlockQuoteStyle(
     background: Color = MaterialTheme.colorScheme.surfaceVariant,
-    shape: Shape = MaterialTheme.shapes.medium,
-    barWidth: Dp = 2.5f.dp,
+    shape: Shape = MaterialTheme.shapes.extraSmall,
+    barWidth: Dp = 4.dp,
     barColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    barShape: Shape = CircleShape,
-    paddingAfterBar: Dp = 5f.dp,
+    barShape: Shape = shape,
     innerPadding: PaddingValues = PaddingValues(8.dp)
 ): BlockQuoteStyle {
     return BlockQuoteStyle(
@@ -76,7 +74,6 @@ fun m3BlockQuoteStyle(
         barWidth = barWidth,
         barColor = barColor,
         barShape = barShape,
-        paddingAfterBar = paddingAfterBar,
         innerPadding = innerPadding
     )
 }

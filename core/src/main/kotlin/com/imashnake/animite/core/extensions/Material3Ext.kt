@@ -20,7 +20,6 @@ fun animiteBlockQuoteStyle(
     barWidth: Dp = 2.5f.dp,
     barColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     barShape: Shape = CircleShape,
-    paddingAfterBar: Dp = 5f.dp,
     innerPadding: PaddingValues = PaddingValues(8.dp)
 ) = BlockQuoteStyle(
     background = background,
@@ -33,6 +32,5 @@ fun animiteBlockQuoteStyle(
     barShape = barShape,
     barWidth = barWidth,
     barColor = barColor,
-    paddingAfterBar = paddingAfterBar,
     innerPadding = innerPadding
 )

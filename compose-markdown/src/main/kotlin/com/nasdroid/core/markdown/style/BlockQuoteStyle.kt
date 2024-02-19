@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.Dp
  * @property barWidth Width of the bar that appears before the quote.
  * @property barColor Color of the bar that appears before the quote.
  * @property barShape Shape of the bar that appears before the quote.
- * @property paddingAfterBar Padding between the bar and the quote.
  * @property innerPadding The padding between the edge of the block quote bounds and the content
  * inside it.
  */
@@ -23,6 +22,5 @@ data class BlockQuoteStyle(
     val barWidth: Dp,
     val barColor: Color,
     val barShape: Shape,
-    val paddingAfterBar: Dp,
     val innerPadding: PaddingValues
 )
