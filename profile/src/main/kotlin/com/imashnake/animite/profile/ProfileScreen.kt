@@ -23,6 +23,7 @@ import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
@@ -75,6 +76,7 @@ fun ProfileScreen(
                                 contentDescription = "avatar",
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
+                                    .landscapeCutoutPadding()
                                     .padding(start = LocalPaddings.current.medium)
                                     .size(100.dp)
                             )
@@ -110,12 +112,14 @@ fun ProfileScreen(
                             }
                         }
                     },
-                    contentModifier = Modifier.padding(
-                        top = LocalPaddings.current.large,
-                        start = LocalPaddings.current.large,
-                        end = LocalPaddings.current.large,
-                        bottom = dimensionResource(coreR.dimen.navigation_bar_height)
-                    )
+                    contentModifier = Modifier
+                        .landscapeCutoutPadding()
+                        .padding(
+                            top = LocalPaddings.current.large,
+                            start = LocalPaddings.current.large,
+                            end = LocalPaddings.current.large,
+                            bottom = dimensionResource(coreR.dimen.navigation_bar_height)
+                        )
                 )
             }
         }
