@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
+import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
@@ -100,6 +101,7 @@ fun ProfileScreen(
                                                 )
                                             ),
                                             blockQuoteStyle = animiteBlockQuoteStyle(),
+                                            codeBlockStyle = animiteCodeBlockStyle(),
                                             modifier = contentModifier
                                         )
                                     }

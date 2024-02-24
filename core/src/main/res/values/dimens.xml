@@ -7,6 +7,8 @@
     <dimen name="medium_padding">16dp</dimen>
     <dimen name="large_padding">24dp</dimen>
 
+    <dimen name="markdown_block_corner_radius">3dp</dimen>
+
     <dimen name="navigation_bar_height">65dp</dimen>
 
     <dimen name="progress_indicator_width">100dp</dimen>
