@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +24,7 @@ import com.boswelja.markdown.material3.m3CodeBlockStyle
 import com.boswelja.markdown.material3.m3TextStyleModifiers
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
+import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -32,7 +32,6 @@ import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
-import com.imashnake.animite.core.R as coreR
 
 @Destination(
     route = "user",
@@ -91,12 +90,7 @@ fun ProfileScreen(
                                 style = MaterialTheme.typography.titleLarge,
                                 overflow = TextOverflow.Ellipsis
                             )
-                            Box(
-                                Modifier.heightIn(
-                                    dimensionResource(coreR.dimen.zero),
-                                    dimensionResource(R.dimen.user_about_height)
-                                )
-                            ) {
+                            Box(Modifier.maxHeight(dimensionResource(R.dimen.user_about_height))) {
                                 NestedScrollableContent { contentModifier ->
                                     about?.let {
                                         MarkdownDocument(

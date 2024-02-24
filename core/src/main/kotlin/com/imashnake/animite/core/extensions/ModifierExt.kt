@@ -3,10 +3,13 @@ package com.imashnake.animite.core.extensions
 import android.content.res.Configuration
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 fun Modifier.landscapeCutoutPadding() = composed {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -19,3 +22,5 @@ fun Modifier.landscapeCutoutPadding() = composed {
 fun Modifier.bannerParallax(scrollState: ScrollState) = graphicsLayer {
     translationY = 0.7f * scrollState.value
 }
+
+fun Modifier.maxHeight(max: Dp) = this.heightIn(0.dp, max)
