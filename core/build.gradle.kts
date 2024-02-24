@@ -28,8 +28,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.composeMarkdown)
-
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
@@ -40,6 +38,10 @@ dependencies {
     implementation(libs.compose.material)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+
+    // Compose Markdown
+    implementation(libs.boswelja.compose.core)
+    implementation(libs.boswelja.compose.markdown)
 
     // Kotlin
     implementation(libs.kotlin.coroutines.android)

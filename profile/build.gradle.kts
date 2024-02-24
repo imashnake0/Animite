@@ -37,7 +37,6 @@ dependencies {
     implementation(projects.core)
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
-    implementation(projects.composeMarkdown)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
@@ -53,6 +52,10 @@ dependencies {
     implementation(libs.compose.ui)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+
+    // Compose Markdown
+    implementation(libs.boswelja.compose.core)
+    implementation(libs.boswelja.compose.markdown)
 
     // Coil
     implementation(libs.coil.compose)
