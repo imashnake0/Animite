@@ -31,6 +31,7 @@ import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.imashnake.animite.core.R as coreR
 
 @Destination(
     route = "user",
@@ -112,7 +113,8 @@ fun ProfileScreen(
                     contentModifier = Modifier.padding(
                         top = LocalPaddings.current.large,
                         start = LocalPaddings.current.large,
-                        end = LocalPaddings.current.large
+                        end = LocalPaddings.current.large,
+                        bottom = dimensionResource(coreR.dimen.navigation_bar_height)
                     )
                 )
             }
