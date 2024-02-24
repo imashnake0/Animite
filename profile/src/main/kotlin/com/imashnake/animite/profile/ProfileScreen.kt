@@ -26,7 +26,6 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.nasdroid.core.markdown.MarkdownDocument
-import com.nasdroid.core.markdown.style.m3BlockQuoteStyle
 import com.nasdroid.core.markdown.style.m3CodeBlockStyle
 import com.nasdroid.core.markdown.style.m3TextStyleModifiers
 import com.nasdroid.core.markdown.style.m3TextStyles
