@@ -20,8 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
-import com.boswelja.markdown.material3.m3CodeBlockStyle
-import com.boswelja.markdown.material3.m3TextStyleModifiers
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.maxHeight
@@ -95,12 +93,13 @@ fun ProfileScreen(
                                     about?.let {
                                         MarkdownDocument(
                                             markdown = it,
+                                            // TODO: Fix typography and make this an `animiteTextStyle()`.
                                             textStyles = m3TextStyles().copy(
-                                                textStyle = m3TextStyles().textStyle.copy(color = textColor)
+                                                textStyle = m3TextStyles().textStyle.copy(
+                                                    color = textColor
+                                                )
                                             ),
-                                            textStyleModifiers = m3TextStyleModifiers(),
                                             blockQuoteStyle = animiteBlockQuoteStyle(),
-                                            codeBlockStyle = m3CodeBlockStyle(),
                                             modifier = contentModifier
                                         )
                                     }

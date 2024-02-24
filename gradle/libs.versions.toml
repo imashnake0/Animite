@@ -79,7 +79,7 @@ junit = "4.13.2"
 # https://github.com/detekt/detekt/releases.
 detekt = "1.23.4"
 
-composeMarkdown = "1.0.1"
+composeMarkdown = "1.0.3"
 
 
 [libraries]
