@@ -1,10 +1,10 @@
 package com.imashnake.animite.profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -91,18 +91,25 @@ fun ProfileScreen(
                                 style = MaterialTheme.typography.titleLarge,
                                 overflow = TextOverflow.Ellipsis
                             )
-                            NestedScrollableContent { contentModifier ->
-                                about?.let {
-                                    MarkdownDocument(
-                                        markdown = it,
-                                        textStyles = m3TextStyles().copy(
-                                            textStyle = m3TextStyles().textStyle.copy(color = textColor)
-                                        ),
-                                        textStyleModifiers = m3TextStyleModifiers(),
-                                        blockQuoteStyle = animiteBlockQuoteStyle(),
-                                        codeBlockStyle = m3CodeBlockStyle(),
-                                        modifier = contentModifier.clickable {  }
-                                    )
+                            Box(
+                                Modifier.heightIn(
+                                    dimensionResource(coreR.dimen.zero),
+                                    dimensionResource(R.dimen.user_about_height)
+                                )
+                            ) {
+                                NestedScrollableContent { contentModifier ->
+                                    about?.let {
+                                        MarkdownDocument(
+                                            markdown = it,
+                                            textStyles = m3TextStyles().copy(
+                                                textStyle = m3TextStyles().textStyle.copy(color = textColor)
+                                            ),
+                                            textStyleModifiers = m3TextStyleModifiers(),
+                                            blockQuoteStyle = animiteBlockQuoteStyle(),
+                                            codeBlockStyle = m3CodeBlockStyle(),
+                                            modifier = contentModifier
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -110,8 +117,7 @@ fun ProfileScreen(
                     contentModifier = Modifier.padding(
                         top = LocalPaddings.current.large,
                         start = LocalPaddings.current.large,
-                        end = LocalPaddings.current.large,
-                        bottom = dimensionResource(coreR.dimen.navigation_bar_height)
+                        end = LocalPaddings.current.large
                     )
                 )
             }
