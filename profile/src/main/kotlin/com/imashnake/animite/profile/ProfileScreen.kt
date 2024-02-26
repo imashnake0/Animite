@@ -58,10 +58,8 @@ fun ProfileScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        if (!isLoggedIn) {
-            Login()
-        } else {
-            viewer.data?.run {
+        when {
+            isLoggedIn -> viewer.data?.run {
                 BannerLayout(
                     banner = {
                         Box {
@@ -122,6 +120,7 @@ fun ProfileScreen(
                         )
                 )
             }
+            else -> Login()
         }
     }
 }
