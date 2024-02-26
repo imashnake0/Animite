@@ -3,16 +3,27 @@ package com.imashnake.animite.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -88,9 +99,14 @@ fun ProfileScreen(
                                 text = name,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.titleLarge,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
                             )
-                            Box(Modifier.maxHeight(dimensionResource(R.dimen.user_about_height))) {
+                            Box(
+                                Modifier
+                                    .maxHeight(dimensionResource(R.dimen.user_about_height))
+                                    .padding(horizontal = LocalPaddings.current.large)
+                            ) {
                                 NestedScrollableContent { contentModifier ->
                                     about?.let {
                                         MarkdownDocument(
@@ -108,19 +124,69 @@ fun ProfileScreen(
                                     }
                                 }
                             }
+
+                            Spacer(Modifier.size(LocalPaddings.current.medium))
+                            
+                            UserTabs()
                         }
                     },
                     contentModifier = Modifier
                         .landscapeCutoutPadding()
                         .padding(
                             top = LocalPaddings.current.large,
-                            start = LocalPaddings.current.large,
-                            end = LocalPaddings.current.large,
                             bottom = dimensionResource(coreR.dimen.navigation_bar_height)
                         )
                 )
             }
             else -> Login()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserTabs(modifier: Modifier = Modifier) {
+    var state by remember { mutableIntStateOf(0) }
+    val titles = listOf("About", "Anime", "Manga", "Fave", "Stats")
+
+    Column(modifier) {
+        PrimaryTabRow(
+            selectedTabIndex = state,
+            containerColor = MaterialTheme.colorScheme.background,
+            divider = {}
+        ) {
+            titles.forEachIndexed { index, title ->
+                Tab(
+                    selected = state == index,
+                    onClick = { state = index },
+                    text = {
+                        Text(
+                            text = title,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    modifier = Modifier
+                        .padding(
+                            horizontal = LocalPaddings.current.ultraTiny,
+                            vertical = LocalPaddings.current.small
+                        )
+                        .clip(CircleShape)
+                )
+            }
+        }
+        Box(Modifier.fillMaxSize().background(
+            Brush.verticalGradient(
+                listOf(
+                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.03f),
+                    Color.Transparent
+                )
+            )
+        )) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = "${titles[state]} tab selected",
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }
