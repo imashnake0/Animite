@@ -162,7 +162,11 @@ fun UserTabs(modifier: Modifier = Modifier) {
                     text = {
                         Text(
                             text = title,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground.copy(
+                                alpha = if (state == index) 1f else 0.74f
+                            )
                         )
                     },
                     modifier = Modifier
