@@ -54,8 +54,7 @@ dependencies {
     implementation(libs.compose.ui.toolingPreview)
 
     // Compose Markdown
-    implementation(libs.boswelja.compose.core)
-    implementation(libs.boswelja.compose.markdown)
+    implementation(libs.boswelja.composeMarkdown.material3)
 
     // Coil
     implementation(libs.coil.compose)

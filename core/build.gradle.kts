@@ -43,8 +43,7 @@ dependencies {
     implementation(libs.coil.compose)
 
     // Compose Markdown
-    implementation(libs.boswelja.compose.core)
-    implementation(libs.boswelja.compose.markdown)
+    implementation(libs.boswelja.composeMarkdown.material3)
 
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
