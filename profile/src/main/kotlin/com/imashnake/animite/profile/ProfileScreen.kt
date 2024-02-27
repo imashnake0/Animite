@@ -47,6 +47,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.imashnake.animite.core.R as coreR
 
+@Suppress("LongMethod")
 @Destination(
     route = "user",
     deepLinks = [
@@ -126,9 +127,7 @@ fun ProfileScreen(
                                     }
                                 }
                             }
-
                             Spacer(Modifier.size(LocalPaddings.current.medium))
-                            
                             UserTabs()
                         }
                     },
