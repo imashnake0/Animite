@@ -51,7 +51,7 @@ import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.dev.internal.Constants
+import com.imashnake.animite.core.Constants
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.core.R as coreR
 

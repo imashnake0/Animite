@@ -25,14 +25,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
+import com.imashnake.animite.core.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
@@ -76,13 +79,19 @@ fun ProfileScreen(
                     banner = {
                         Box {
                             AsyncImage(
-                                model = bannerImage,
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(bannerImage)
+                                    .crossfade(CROSSFADE_DURATION)
+                                    .build(),
                                 contentDescription = "banner",
                                 modifier = it,
                                 contentScale = ContentScale.Crop
                             )
                             AsyncImage(
-                                model = avatar?.large,
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(avatar?.large)
+                                    .crossfade(CROSSFADE_DURATION)
+                                    .build(),
                                 contentDescription = "avatar",
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
