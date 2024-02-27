@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -187,9 +188,10 @@ fun UserTabs(modifier: Modifier = Modifier) {
             )
         )) {
             Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = "${titles[state]} tab selected",
-                style = MaterialTheme.typography.bodyLarge
+                text = stringResource(coreR.string.coming_soon),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }
