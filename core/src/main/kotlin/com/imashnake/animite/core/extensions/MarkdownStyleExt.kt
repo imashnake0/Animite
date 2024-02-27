@@ -14,9 +14,6 @@ import com.boswelja.markdown.style.BlockQuoteStyle
 import com.boswelja.markdown.style.CodeBlockStyle
 import com.imashnake.animite.core.R
 
-/**
- * Constructs a better [BlockQuoteStyle].
- */
 @Composable
 fun animiteBlockQuoteStyle(
     background: Color = MaterialTheme.colorScheme.surfaceVariant,
