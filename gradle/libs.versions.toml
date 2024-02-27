@@ -79,6 +79,8 @@ junit = "4.13.2"
 # https://github.com/detekt/detekt/releases.
 detekt = "1.23.4"
 
+# Compose Markdown
+# https://github.com/boswelja/compose-markdown.
 composeMarkdown = "1.0.3"
 
 
@@ -106,7 +108,6 @@ apollo-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime" 
 apollo-cache-memory = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache", version.ref = "apollo" }
 apollo-cache-sqlite = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache-sqlite", version.ref = "apollo" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-boswelja-composeMarkdown-core = { group = "io.github.boswelja.markdown", name = "core", version.ref = "composeMarkdown" }
 boswelja-composeMarkdown-material3 = { group = "io.github.boswelja.markdown", name = "material3", version.ref = "composeMarkdown" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
