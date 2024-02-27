@@ -68,9 +68,7 @@ fun ProfileScreen(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
         when {
             isLoggedIn -> viewer.data?.run {
@@ -95,8 +93,6 @@ fun ProfileScreen(
                         }
                     },
                     content = {
-                        val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)
-
                         Column {
                             Text(
                                 text = name,
@@ -105,28 +101,12 @@ fun ProfileScreen(
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
                             )
-                            Box(
-                                Modifier
+                            AboutUser(
+                                about,
+                                modifier = Modifier
                                     .maxHeight(dimensionResource(R.dimen.user_about_height))
                                     .padding(horizontal = LocalPaddings.current.large)
-                            ) {
-                                NestedScrollableContent { contentModifier ->
-                                    about?.let {
-                                        MarkdownDocument(
-                                            markdown = it,
-                                            // TODO: Fix typography and make this an `animiteTextStyle()`.
-                                            textStyles = m3TextStyles().copy(
-                                                textStyle = m3TextStyles().textStyle.copy(
-                                                    color = textColor
-                                                )
-                                            ),
-                                            blockQuoteStyle = animiteBlockQuoteStyle(),
-                                            codeBlockStyle = animiteCodeBlockStyle(),
-                                            modifier = contentModifier
-                                        )
-                                    }
-                                }
-                            }
+                            )
                             Spacer(Modifier.size(LocalPaddings.current.medium))
                             UserTabs()
                         }
@@ -144,11 +124,34 @@ fun ProfileScreen(
     }
 }
 
+@Composable
+fun AboutUser(about: String?, modifier: Modifier = Modifier) {
+    about?.let {
+        Box(modifier) {
+            NestedScrollableContent { contentModifier ->
+                MarkdownDocument(
+                    markdown = it,
+                    // TODO: Fix typography and make this an `animiteTextStyle()`.
+                    textStyles = m3TextStyles().copy(
+                        textStyle = m3TextStyles().textStyle.copy(
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)
+                        )
+                    ),
+                    blockQuoteStyle = animiteBlockQuoteStyle(),
+                    codeBlockStyle = animiteCodeBlockStyle(),
+                    modifier = contentModifier
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserTabs(modifier: Modifier = Modifier) {
     var state by remember { mutableIntStateOf(0) }
     val titles = listOf("About", "Anime", "Manga", "Fave", "Stats")
+    val onBackground = MaterialTheme.colorScheme.onBackground
 
     Column(modifier) {
         PrimaryTabRow(
@@ -165,9 +168,10 @@ fun UserTabs(modifier: Modifier = Modifier) {
                             text = title,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground.copy(
-                                alpha = if (state == index) 1f else 0.74f
-                            )
+                            color = onBackground.copy(
+                                alpha = if (state == index) 1f else 0.5f
+                            ),
+                            maxLines = 1
                         )
                     },
                     modifier = Modifier
@@ -185,7 +189,7 @@ fun UserTabs(modifier: Modifier = Modifier) {
                 .background(
                     Brush.verticalGradient(
                         listOf(
-                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.03f),
+                            onBackground.copy(alpha = 0.03f),
                             Color.Transparent
                         )
                     )
