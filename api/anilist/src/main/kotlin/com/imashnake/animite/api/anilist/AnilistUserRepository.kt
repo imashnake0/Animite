@@ -18,7 +18,7 @@ class AnilistUserRepository @Inject constructor(
     fun fetchViewer(): Flow<Result<ViewerQuery.Viewer>> {
         return apolloClient
             .query(ViewerQuery())
-            .fetchPolicy(FetchPolicy.CacheFirst)
+            .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
             .asResult { it.viewer!! }
     }
