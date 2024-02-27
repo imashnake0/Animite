@@ -37,6 +37,7 @@ import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.Constants.CROSSFADE_DURATION
 import com.imashnake.animite.R
+import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.ui.LocalPaddings
 
 /**
@@ -89,10 +90,7 @@ fun MediaSmall(
         shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius))
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(image)
-                .crossfade(CROSSFADE_DURATION)
-                .build(),
+            model = crossfadeModel(image),
             contentDescription = label,
             contentScale = ContentScale.Crop,
             modifier = Modifier

@@ -39,6 +39,9 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
+    // Coil
+    implementation(libs.coil.compose)
+
     // Compose Markdown
     implementation(libs.boswelja.compose.core)
     implementation(libs.boswelja.compose.markdown)
