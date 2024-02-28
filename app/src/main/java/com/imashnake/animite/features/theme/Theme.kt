@@ -2,21 +2,22 @@ package com.imashnake.animite.features.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.LocalRippleConfiguration
+import androidx.compose.material.RippleConfiguration
 import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.platform.LocalContext
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.Paddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.dev.ext.pastelize
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
@@ -32,29 +33,24 @@ fun AnimiteTheme(
         darkTheme -> KimiNoDarkColorScheme
         else -> KimiNoLightColorScheme.pastelize(backgroundToPrimary = 0.05f)
     }
+    val animiteRippleTheme = RippleConfiguration(
+        color = MaterialTheme.colorScheme.primary,
+        rippleAlpha = RippleAlpha(
+            draggedAlpha = 0.16f,
+            focusedAlpha = 0.12f,
+            hoveredAlpha = 0.08f,
+            pressedAlpha = 0.12f
+        )
+    )
 
     MaterialTheme(
         colorScheme = animiteColorScheme,
         typography = AnimiteTypography
     ) {
         CompositionLocalProvider(
-            LocalRippleTheme provides AnimiteRippleTheme,
+            LocalRippleConfiguration provides animiteRippleTheme,
             LocalPaddings provides paddings,
             content = content
         )
     }
-}
-
-@Immutable
-private object AnimiteRippleTheme : RippleTheme {
-    @Composable
-    override fun defaultColor() = MaterialTheme.colorScheme.primary
-
-    @Composable
-    override fun rippleAlpha() = RippleAlpha(
-        draggedAlpha = 0.16f,
-        focusedAlpha = 0.12f,
-        hoveredAlpha = 0.08f,
-        pressedAlpha = 0.12f
-    )
 }
