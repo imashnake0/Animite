@@ -17,15 +17,15 @@ desugaring = "2.0.4"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "8.2.1"
+agp = "8.2.2"
 
 # AndroidX
 # https://androidx.tech.
 activity = "1.8.2"
-core = "1.13.0-alpha03"
+core = "1.13.0-alpha05"
 lifecycle = "2.7.0"
-extJunit = "1.2.0-alpha02"
-espresso = "3.6.0-alpha02"
+extJunit = "1.2.0-alpha03"
+espresso = "3.6.0-alpha03"
 
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
@@ -46,9 +46,6 @@ composeDestinations = "1.9.59"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.6.0-rc01"
-composeCompiler = "1.5.8"
-composeFoundation = "1.6.0-rc01"
 composeMaterial = "1.6.0-rc01"
 composeMaterial3 = "1.2.0-beta02"
 composeRuntime = "1.6.0-rc01"
