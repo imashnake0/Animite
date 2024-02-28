@@ -51,8 +51,9 @@ import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.dev.internal.Constants
+import com.imashnake.animite.core.Constants
 import com.imashnake.animite.features.ui.MediaSmall
+import com.imashnake.animite.core.R as coreR
 
 /**
  * Search bar along with a Front Drop list.
@@ -78,7 +79,7 @@ fun SearchFrontDrop(
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = if (hasExtraPadding) {
-            dimensionResource(R.dimen.navigation_bar_height)
+            dimensionResource(coreR.dimen.navigation_bar_height)
         } else 0.dp,
         label = "translate_search_bar"
     )
@@ -143,7 +144,7 @@ fun SearchList(
             bottom = dimensionResource(R.dimen.search_bar_height)
                     + LocalPaddings.current.large
                     + LocalPaddings.current.large
-                    + dimensionResource(R.dimen.navigation_bar_height)
+                    + dimensionResource(coreR.dimen.navigation_bar_height)
                     + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)

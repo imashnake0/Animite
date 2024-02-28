@@ -75,7 +75,8 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.dev.internal.Constants
+import com.imashnake.animite.core.Constants
+import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
@@ -218,10 +219,7 @@ fun MediaBanner(
 ) {
     if (!imageUrl.isNullOrEmpty()) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .crossfade(Constants.CROSSFADE_DURATION)
-                .build(),
+            model = crossfadeModel(imageUrl),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier,

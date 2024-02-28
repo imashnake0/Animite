@@ -12,10 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.R as coreR
-import com.imashnake.animite.core.ui.ProgressIndicator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.imashnake.animite.core.R as coreR
 
 @RootNavGraph(start = true)
 @Destination(route = "rslash-screen")
@@ -38,7 +37,6 @@ fun RSlashScreen() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelLarge
             )
-            ProgressIndicator()
         }
     }
 }

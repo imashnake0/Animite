@@ -32,7 +32,8 @@ import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 import com.ramcosta.composedestinations.utils.startDestination
-import com.imashnake.animite.R as Res
+import com.imashnake.animite.R
+import com.imashnake.animite.core.R as coreR
 
 // TODO: Ripple where?
 @Composable
@@ -42,7 +43,7 @@ fun NavigationBar(
     // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
         Modifier.height(
-            dimensionResource(Res.dimen.navigation_bar_height) + WindowInsets
+            dimensionResource(coreR.dimen.navigation_bar_height) + WindowInsets
                 .navigationBars
                 .asPaddingValues()
                 .calculateBottomPadding()
@@ -87,10 +88,10 @@ enum class NavigationBarPaths(
         {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = Res.drawable.rslash
+                    id = R.drawable.rslash
                 ),
                 contentDescription = stringResource(
-                    id = Res.string.rslash
+                    id = R.string.rslash
                 )
             )
         }
@@ -100,10 +101,10 @@ enum class NavigationBarPaths(
         {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = Res.drawable.home
+                    id = R.drawable.home
                 ),
                 contentDescription = stringResource(
-                    id = Res.string.home
+                    id = R.string.home
                 )
             )
         }
@@ -114,7 +115,7 @@ enum class NavigationBarPaths(
             Icon(
                 imageVector = Icons.Rounded.AccountCircle,
                 contentDescription = stringResource(
-                    id = Res.string.profile
+                    id = R.string.profile
                 ),
                 // TODO: Adding this modifier lets us control the icon's size;
                 //  see how this works and unhardcode the dimensions.

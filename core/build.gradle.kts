@@ -39,6 +39,12 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
+    // Compose Markdown
+    implementation(libs.boswelja.composeMarkdown.material3)
+
+    // Coil
+    implementation(libs.coil.compose)
+
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)

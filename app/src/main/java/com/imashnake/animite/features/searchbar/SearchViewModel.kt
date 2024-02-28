@@ -7,7 +7,7 @@ import com.imashnake.animite.api.anilist.AnilistSearchRepository
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
-import com.imashnake.animite.dev.internal.Constants
+import com.imashnake.animite.core.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
