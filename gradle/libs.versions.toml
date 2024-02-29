@@ -48,6 +48,9 @@ composeDestinations = "1.9.59"
 # https://developer.android.com/jetpack/androidx/releases/compose.
 composeRuntime = "1.6.0-rc01"
 composeUi = "1.6.0-rc01"
+composeAnimation = "1.7.0-alpha03"
+composeCompiler = "1.5.10"
+composeFoundation = "1.7.0-alpha03"
 composeMaterial = "1.7.0-alpha03"
 composeMaterial3 = "1.3.0-alpha01"
 
