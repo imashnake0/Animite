@@ -17,15 +17,15 @@ desugaring = "2.0.4"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "8.2.1"
+agp = "8.2.2"
 
 # AndroidX
 # https://androidx.tech.
 activity = "1.8.2"
-core = "1.13.0-alpha03"
+core = "1.13.0-alpha05"
 lifecycle = "2.7.0"
-extJunit = "1.2.0-alpha02"
-espresso = "3.6.0-alpha02"
+extJunit = "1.2.0-alpha03"
+espresso = "3.6.0-alpha03"
 
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
@@ -46,13 +46,13 @@ composeDestinations = "1.9.59"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.6.0-rc01"
-composeCompiler = "1.5.8"
-composeFoundation = "1.6.0-rc01"
-composeMaterial = "1.6.0-rc01"
-composeMaterial3 = "1.2.0-beta02"
-composeRuntime = "1.6.0-rc01"
-composeUi = "1.6.0-rc01"
+composeAnimation = "1.7.0-alpha03"
+composeCompiler = "1.5.10"
+composeFoundation = "1.7.0-alpha03"
+composeMaterial = "1.7.0-alpha03"
+composeMaterial3 = "1.3.0-alpha01"
+composeRuntime = "1.7.0-alpha03"
+composeUi = "1.7.0-alpha03"
 
 # Dagger
 # https://github.com/google/dagger/releases.
@@ -60,7 +60,7 @@ dagger = "2.50"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
-hilt = "1.1.0"
+hilt = "1.2.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
@@ -69,7 +69,7 @@ coroutines = "1.8.0-RC2"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "1.9.22-1.0.16"
+ksp = "1.9.22-1.0.17"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
@@ -77,11 +77,11 @@ junit = "4.13.2"
 
 # detekt
 # https://github.com/detekt/detekt/releases.
-detekt = "1.23.4"
+detekt = "1.23.5"
 
 # Compose Markdown
 # https://github.com/boswelja/compose-markdown.
-composeMarkdown = "1.0.3"
+composeMarkdown = "1.0.4"
 
 
 [libraries]
