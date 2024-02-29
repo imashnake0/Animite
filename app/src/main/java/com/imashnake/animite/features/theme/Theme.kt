@@ -2,11 +2,11 @@ package com.imashnake.animite.features.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalRippleConfiguration
-import androidx.compose.material.RippleConfiguration
 import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -17,7 +17,7 @@ import com.imashnake.animite.core.ui.Paddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.dev.ext.pastelize
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
