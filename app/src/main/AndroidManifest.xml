@@ -28,7 +28,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="jinnah"
+                    android:scheme="app"
                     android:host="animite" />
             </intent-filter>
         </activity>

@@ -47,7 +47,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.imashnake.animite.core.R as coreR
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "UNUSED_PARAMETER")
 @Destination(
     route = "user",
     deepLinks = [
@@ -60,7 +60,10 @@ import com.imashnake.animite.core.R as coreR
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    accessToken: String? = null
+    accessToken: String? = null,
+    tokenType: String? = null,
+    // TODO: Log user out if token expires.
+    expiresIn: Int? = null
 ) {
     accessToken?.let { viewModel.setAccessToken(it) }
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
@@ -68,7 +71,9 @@ fun ProfileScreen(
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         when {
             isLoggedIn -> viewer.data?.run {
