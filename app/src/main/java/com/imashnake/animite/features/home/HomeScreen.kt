@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.home
 
+import android.media.Image
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
