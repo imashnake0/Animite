@@ -31,7 +31,7 @@ class AnilistSearchRepository @Inject constructor(
                     search = Optional.presentIfNotNull(search)
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheAndNetwork)
+            .fetchPolicy(FetchPolicy.CacheFirst)
             .toFlow()
             .asResult { it.page!!.media.orEmpty().filterNotNull().map { query -> Search(query) } }
     }
