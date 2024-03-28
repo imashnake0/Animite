@@ -221,16 +221,15 @@ fun HomeRow(
 
             MediaSmallRow(
                 mediaList = list,
-                modifier = Modifier.padding(bottom = LocalPaddings.current.large),
-                content = { media ->
-                    MediaSmall(
-                        image = media.coverImage,
-                        label = media.title,
-                        onClick = { onItemClicked(media) },
-                        modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-                    )
-                }
-            )
+                modifier = Modifier.padding(bottom = LocalPaddings.current.large)
+            ) { media ->
+                MediaSmall(
+                    image = media.coverImage,
+                    label = media.title,
+                    onClick = { onItemClicked(media) },
+                    modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
+                )
+            }
         }
     }
 }
