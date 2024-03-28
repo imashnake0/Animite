@@ -50,6 +50,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 @Composable
 fun <T> MediaSmallRow(
     mediaList: List<T>,
+    modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit
 ) {
     AnimatedContent(
@@ -69,7 +70,8 @@ fun <T> MediaSmallRow(
                         .calculateLeftPadding(LayoutDirection.Ltr)
                 } else 0.dp,
                 end = LocalPaddings.current.large
-            )
+            ),
+            modifier = modifier
         ) {
             items(it) { media ->
                 content(media)

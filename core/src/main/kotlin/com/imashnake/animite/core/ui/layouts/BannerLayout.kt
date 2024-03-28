@@ -39,6 +39,7 @@ fun BannerLayout(
         .height(bannerHeight)
         .fillMaxWidth(),
     contentModifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(LocalPaddings.current.large)
 ) {
     Box(modifier) {
         banner(bannerModifier)
@@ -51,7 +52,7 @@ fun BannerLayout(
                 .padding(bottom = LocalPaddings.current.large)
                 .navigationBarsPadding()
                 .then(contentModifier),
-            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
+            verticalArrangement = verticalArrangement
         ) { content() }
     }
 }
