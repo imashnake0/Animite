@@ -2,8 +2,6 @@ package com.imashnake.animite.api.anilist
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
-import com.apollographql.apollo3.cache.normalized.FetchPolicy
-import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
@@ -42,7 +40,6 @@ class AnilistMediaRepository @Inject constructor(
                     seasonYear = Optional.presentIfNotNull(seasonYear)
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheFirst)
             .toFlow()
             .asResult {
                 it.page!!.media.orEmpty().filterNotNull().map { query -> Media.Medium(query) }
@@ -57,7 +54,6 @@ class AnilistMediaRepository @Inject constructor(
                     type = Optional.presentIfNotNull(mediaType)
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheFirst)
             .toFlow()
             .asResult { Media(it.media!!) }
     }
