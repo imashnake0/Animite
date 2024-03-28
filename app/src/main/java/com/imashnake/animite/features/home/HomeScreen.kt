@@ -1,6 +1,9 @@
 package com.imashnake.animite.features.home
 
+import android.media.Image
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +45,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -244,17 +248,16 @@ private fun MediaTypeSelector(
                 shape = CircleShape
             )
     ) {
-        // Indicator
+        val offset by animateDpAsState(
+            targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
+            label = "media_switch"
+        )
+
         Surface(
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.media_type_selector_padding))
                 .size(dimensionResource(R.dimen.media_type_choice_size))
-                .offset(
-                    animateDpAsState(
-                        targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
-                        label = "media_switch"
-                    ).value
-                ),
+                .offset { IntOffset(x = offset.roundToPx(), y = 0) },
             shape = CircleShape,
             color = MaterialTheme.colorScheme.background
         ) { }
@@ -278,17 +281,19 @@ private fun MediaTypeSelector(
                     modifier = Modifier.requiredWidth(dimensionResource(R.dimen.media_type_choice_size))
                 ) {
                     Icon(
-                        imageVector = if (mediaType == MediaType.ANIME) {
-                            Icons.Rounded.PlayArrow
-                        } else {
-                            ImageVector.vectorResource(id = R.drawable.manga)
+                        imageVector = when (mediaType) {
+                            MediaType.ANIME -> Icons.Rounded.PlayArrow
+                            else -> ImageVector.vectorResource(id = R.drawable.manga)
                         },
                         contentDescription = mediaType.name,
-                        tint = if (selectedOption.value == mediaType) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.background
-                        }
+                        tint = animateColorAsState(
+                            targetValue = when(selectedOption.value) {
+                                mediaType -> MaterialTheme.colorScheme.primary
+                                else -> MaterialTheme.colorScheme.background
+                            },
+                            animationSpec = tween(400),
+                            label = "icon_color"
+                        ).value
                     )
                 }
             }
