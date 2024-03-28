@@ -1,6 +1,11 @@
 package com.imashnake.animite.features.ui
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,19 +52,28 @@ fun <T> MediaSmallRow(
     mediaList: List<T>,
     content: @Composable (T) -> Unit
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-        contentPadding = PaddingValues(
-            start = LocalPaddings.current.large + if (
-                LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-            ) {
-                WindowInsets.displayCutout.asPaddingValues().calculateLeftPadding(LayoutDirection.Ltr)
-            } else 0.dp,
-            end = LocalPaddings.current.large
-        )
+    AnimatedContent(
+        targetState = mediaList,
+        transitionSpec = {
+            fadeIn(tween(500, delayMillis = 250)).togetherWith(fadeOut(tween(500)))
+        },
+        label = "animate_media_list"
     ) {
-        items(mediaList) { media ->
-            content(media)
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            contentPadding = PaddingValues(
+                start = LocalPaddings.current.large + if (
+                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                ) {
+                    WindowInsets.displayCutout.asPaddingValues()
+                        .calculateLeftPadding(LayoutDirection.Ltr)
+                } else 0.dp,
+                end = LocalPaddings.current.large
+            )
+        ) {
+            items(it) { media ->
+                content(media)
+            }
         }
     }
 }
