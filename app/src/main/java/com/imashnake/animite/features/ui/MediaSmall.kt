@@ -58,7 +58,7 @@ fun <T> MediaSmallRow(
         transitionSpec = {
             fadeIn(tween(500, delayMillis = 250)).togetherWith(fadeOut(tween(500)))
         },
-        label = "animate_media_list"
+        label = "animate_media_list_content"
     ) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),

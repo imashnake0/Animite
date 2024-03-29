@@ -213,7 +213,8 @@ fun HomeRow(
     AnimatedVisibility(
         visible = list.isNotEmpty(),
         enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
+        exit = fadeOut() + shrinkVertically(),
+        label = "animate_media_list_enter_exit"
     ) {
         Column(
             modifier = modifier.padding(top = LocalPaddings.current.large),
