@@ -182,7 +182,6 @@ fun HomeScreen(
                             }
                         },
                         contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large,
                             bottom = dimensionResource(coreR.dimen.navigation_bar_height)
                         ),
                         verticalArrangement = Arrangement.Top
@@ -217,7 +216,7 @@ fun HomeRow(
         exit = fadeOut() + shrinkVertically()
     ) {
         Column(
-            modifier = modifier,
+            modifier = modifier.padding(top = LocalPaddings.current.large),
             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
         ) {
             Text(
@@ -228,10 +227,7 @@ fun HomeRow(
                     .landscapeCutoutPadding()
             )
 
-            MediaSmallRow(
-                mediaList = list,
-                modifier = Modifier.padding(bottom = LocalPaddings.current.large)
-            ) { media ->
+            MediaSmallRow(list) { media ->
                 MediaSmall(
                     image = media.coverImage,
                     label = media.title,
