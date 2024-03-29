@@ -1,6 +1,15 @@
 package com.imashnake.animite.features.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +51,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -174,9 +184,9 @@ fun HomeScreen(
                             }
                         },
                         contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large,
                             bottom = dimensionResource(coreR.dimen.navigation_bar_height)
-                        )
+                        ),
+                        verticalArrangement = Arrangement.Top
                     )
                 }
             }
@@ -202,9 +212,14 @@ fun HomeRow(
     onItemClicked: (Media.Medium) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (list.isNotEmpty()) {
+    AnimatedVisibility(
+        visible = list.isNotEmpty(),
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut(spring(stiffness = Spring.StiffnessHigh)) + shrinkVertically(),
+        label = "animate_media_list_enter_exit"
+    ) {
         Column(
-            modifier = modifier,
+            modifier = modifier.padding(top = LocalPaddings.current.large),
             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
         ) {
             Text(
@@ -215,17 +230,14 @@ fun HomeRow(
                     .landscapeCutoutPadding()
             )
 
-            MediaSmallRow(
-                mediaList = list,
-                content = { media ->
-                    MediaSmall(
-                        image = media.coverImage,
-                        label = media.title,
-                        onClick = { onItemClicked(media) },
-                        modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-                    )
-                }
-            )
+            MediaSmallRow(list) { media ->
+                MediaSmall(
+                    image = media.coverImage,
+                    label = media.title,
+                    onClick = { onItemClicked(media) },
+                    modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
+                )
+            }
         }
     }
 }
@@ -244,17 +256,16 @@ private fun MediaTypeSelector(
                 shape = CircleShape
             )
     ) {
-        // Indicator
+        val offset by animateDpAsState(
+            targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
+            label = "media_switch"
+        )
+
         Surface(
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.media_type_selector_padding))
                 .size(dimensionResource(R.dimen.media_type_choice_size))
-                .offset(
-                    animateDpAsState(
-                        targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
-                        label = "media_switch"
-                    ).value
-                ),
+                .offset { IntOffset(x = offset.roundToPx(), y = 0) },
             shape = CircleShape,
             color = MaterialTheme.colorScheme.background
         ) { }
@@ -278,17 +289,19 @@ private fun MediaTypeSelector(
                     modifier = Modifier.requiredWidth(dimensionResource(R.dimen.media_type_choice_size))
                 ) {
                     Icon(
-                        imageVector = if (mediaType == MediaType.ANIME) {
-                            Icons.Rounded.PlayArrow
-                        } else {
-                            ImageVector.vectorResource(id = R.drawable.manga)
+                        imageVector = when (mediaType) {
+                            MediaType.ANIME -> Icons.Rounded.PlayArrow
+                            else -> ImageVector.vectorResource(id = R.drawable.manga)
                         },
                         contentDescription = mediaType.name,
-                        tint = if (selectedOption.value == mediaType) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.background
-                        }
+                        tint = animateColorAsState(
+                            targetValue = when(selectedOption.value) {
+                                mediaType -> MaterialTheme.colorScheme.primary
+                                else -> MaterialTheme.colorScheme.background
+                            },
+                            animationSpec = tween(400),
+                            label = "icon_color"
+                        ).value
                     )
                 }
             }
