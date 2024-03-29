@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,7 +33,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 @Composable
 fun BannerLayout(
     banner: @Composable (Modifier) -> Unit,
-    content: @Composable () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     bannerHeight: Dp = dimensionResource(R.dimen.banner_height),
     bannerModifier: Modifier = Modifier

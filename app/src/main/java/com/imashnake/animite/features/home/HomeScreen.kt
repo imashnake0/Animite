@@ -2,7 +2,9 @@ package com.imashnake.animite.features.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -213,7 +215,7 @@ fun HomeRow(
     AnimatedVisibility(
         visible = list.isNotEmpty(),
         enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically(),
+        exit = fadeOut(spring(stiffness = Spring.StiffnessHigh)) + shrinkVertically(),
         label = "animate_media_list_enter_exit"
     ) {
         Column(

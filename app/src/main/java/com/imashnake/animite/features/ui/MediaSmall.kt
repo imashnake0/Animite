@@ -56,7 +56,7 @@ fun <T> MediaSmallRow(
     AnimatedContent(
         targetState = mediaList,
         transitionSpec = {
-            fadeIn(tween(500, delayMillis = 250)).togetherWith(fadeOut(tween(500)))
+            fadeIn(tween(500)).togetherWith(fadeOut(tween(500)))
         },
         label = "animate_media_list_content"
     ) {
