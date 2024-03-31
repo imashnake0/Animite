@@ -28,12 +28,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -55,22 +55,22 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.ProgressIndicator
+import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.imashnake.animite.R
-import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.R as coreR
 
 @Destination
@@ -214,8 +214,9 @@ fun HomeRow(
 ) {
     AnimatedVisibility(
         visible = list.isNotEmpty(),
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut(spring(stiffness = Spring.StiffnessHigh)) + shrinkVertically(),
+        enter = fadeIn(tween(delayMillis = 150)) + expandVertically(clip = false),
+        exit = fadeOut(spring(stiffness = Spring.StiffnessHigh))
+                + shrinkVertically(tween(durationMillis = 500)),
         label = "animate_media_list_enter_exit"
     ) {
         Column(
