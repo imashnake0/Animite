@@ -1,6 +1,7 @@
 package com.imashnake.animite.api.anilist
 
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.cache.normalized.apolloStore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -19,4 +20,6 @@ class AnilistUserRepository @Inject constructor(
             .toFlow()
             .asResult { it.viewer!! }
     }
+
+    fun clearCache() = apolloClient.apolloStore.clearAll()
 }

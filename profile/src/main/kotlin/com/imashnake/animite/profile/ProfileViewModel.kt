@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    userRepository: AnilistUserRepository,
+    private val userRepository: AnilistUserRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
     val isLoggedIn = preferencesRepository
@@ -31,4 +31,6 @@ class ProfileViewModel @Inject constructor(
     fun setAccessToken(accessToken: String?) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setAccessToken(accessToken)
     }
+
+    fun refreshViewer() = userRepository.clearCache()
 }
