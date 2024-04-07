@@ -3,7 +3,6 @@ package com.imashnake.animite.features.searchbar
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +24,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -101,7 +101,8 @@ fun SearchFrontDrop(
         SearchList(
             searchList = it,
             modifier = Modifier
-                .imeNestedScroll()
+                // TODO: Add this back; https://issuetracker.google.com/issues/323708850.
+                //.imeNestedScroll()
                 .landscapeCutoutPadding(),
             onItemClick = { id ->
                 isExpanded = false
@@ -127,7 +128,6 @@ fun SearchFrontDrop(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchList(
     searchList: List<Search>,
@@ -153,7 +153,7 @@ fun SearchList(
             SearchItem(
                 item = searchList[index],
                 onClick = onItemClick,
-                modifier = Modifier.animateItemPlacement()
+                modifier = Modifier.animateItem()
             )
         }
     }
