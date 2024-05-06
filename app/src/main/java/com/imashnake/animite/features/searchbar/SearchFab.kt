@@ -125,7 +125,7 @@ internal fun ExpandedSearchBarContent(
         },
         singleLine = true,
         colors = searchTextFieldColors(),
-        keyboardOptions = KeyboardOptions(autoCorrect = false, imeAction = ImeAction.Search),
+        keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Search),
         leadingIcon = {
             IconButton(
                 onClick = collapse,
