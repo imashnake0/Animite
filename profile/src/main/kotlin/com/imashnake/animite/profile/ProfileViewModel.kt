@@ -38,8 +38,8 @@ class ProfileViewModel @Inject constructor(
         preferencesRepository.setAccessToken(accessToken)
     }
 
-    fun refreshViewer() {
-        savedStateHandle[REFRESH] = true
+    fun refreshViewer(refresh: Boolean) {
+        savedStateHandle[REFRESH] = refresh
     }
 
     companion object {

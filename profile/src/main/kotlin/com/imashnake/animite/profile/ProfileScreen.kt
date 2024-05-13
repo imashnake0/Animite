@@ -67,6 +67,7 @@ fun ProfileScreen(
     expiresIn: Int? = null
 ) {
     accessToken?.let { viewModel.setAccessToken(it) }
+    viewModel.refreshViewer(false)
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
 
@@ -101,7 +102,7 @@ fun ProfileScreen(
                     content = {
                         Column {
                             Button(
-                                onClick = viewModel::refreshViewer,
+                                onClick = { viewModel.refreshViewer(true) },
                                 modifier = Modifier.padding(
                                     start = LocalPaddings.current.large,
                                     bottom = LocalPaddings.current.medium
