@@ -1,6 +1,5 @@
 package com.imashnake.animite.profile
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistUserRepository
@@ -10,7 +9,9 @@ import com.imashnake.animite.core.data.Resource.Companion.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -21,10 +22,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: AnilistUserRepository,
-    private val preferencesRepository: PreferencesRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
-    private val refresh = savedStateHandle.getStateFlow(REFRESH, false)
+    private val _refresh = MutableSharedFlow<Boolean>()
+    private val refresh = _refresh.asSharedFlow()
 
     val isLoggedIn = preferencesRepository
         .accessToken
@@ -38,11 +39,7 @@ class ProfileViewModel @Inject constructor(
         preferencesRepository.setAccessToken(accessToken)
     }
 
-    fun refreshViewer(refresh: Boolean) {
-        savedStateHandle[REFRESH] = refresh
-    }
-
-    companion object {
-        const val REFRESH = "refresh"
+    fun refreshViewer(refresh: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        _refresh.emit(refresh)
     }
 }

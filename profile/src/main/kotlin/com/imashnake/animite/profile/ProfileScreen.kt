@@ -27,7 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -77,7 +76,9 @@ fun ProfileScreen(
     expiresIn: Int? = null
 ) {
     accessToken?.let { viewModel.setAccessToken(it) }
+    // TODO: It doesn't work without this :/
     viewModel.refreshViewer(false)
+    
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
 
