@@ -1,7 +1,9 @@
 package com.imashnake.animite.api.anilist
 
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.apolloStore
+import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -14,12 +16,12 @@ import javax.inject.Inject
 class AnilistUserRepository @Inject constructor(
     @AuthorizedClient private val apolloClient: ApolloClient
 ) {
-    fun fetchViewer(): Flow<Result<ViewerQuery.Viewer>> {
+    fun fetchViewer(refresh: Boolean): Flow<Result<ViewerQuery.Viewer>> {
         return apolloClient
             .query(ViewerQuery())
+            // TODO: CacheFirst is default, I think we can remove it.
+            .fetchPolicy(if (refresh) FetchPolicy.NetworkFirst else FetchPolicy.CacheFirst)
             .toFlow()
             .asResult { it.viewer!! }
     }
-
-    fun clearCache() = apolloClient.apolloStore.clearAll()
 }

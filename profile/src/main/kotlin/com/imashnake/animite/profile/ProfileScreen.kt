@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
@@ -99,6 +100,13 @@ fun ProfileScreen(
                     },
                     content = {
                         Column {
+                            Button(
+                                onClick = viewModel::refreshViewer,
+                                modifier = Modifier.padding(
+                                    start = LocalPaddings.current.large,
+                                    bottom = LocalPaddings.current.medium
+                                )
+                            ) { Text(text = "Refresh") }
                             Text(
                                 text = name,
                                 color = MaterialTheme.colorScheme.onBackground,
