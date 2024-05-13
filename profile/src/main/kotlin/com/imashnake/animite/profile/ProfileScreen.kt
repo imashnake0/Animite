@@ -5,10 +5,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
@@ -34,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
+import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
@@ -48,6 +56,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.imashnake.animite.core.R as coreR
 
+@OptIn(ExperimentalMaterialApi::class)
 @Suppress("LongMethod", "UNUSED_PARAMETER")
 @Destination(
     route = "user",
@@ -71,14 +80,21 @@ fun ProfileScreen(
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
 
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewer is Resource.Loading,
+        onRefresh = { viewModel.refreshViewer(true) }
+    )
+
     Box(
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.TopCenter,
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .pullRefresh(pullRefreshState)
+            .verticalScroll(rememberScrollState())
     ) {
         when {
-            isLoggedIn -> viewer.data?.run {
+            isLoggedIn && viewer is Resource.Success -> viewer.data?.run {
                 BannerLayout(
                     banner = {
                         Box {
@@ -101,14 +117,6 @@ fun ProfileScreen(
                     },
                     content = {
                         Column {
-                            // TODO: Replace this with pull to refresh.
-                            Button(
-                                onClick = { viewModel.refreshViewer(true) },
-                                modifier = Modifier.padding(
-                                    start = LocalPaddings.current.large,
-                                    bottom = LocalPaddings.current.medium
-                                )
-                            ) { Text(text = "Refresh") }
                             Text(
                                 text = name,
                                 color = MaterialTheme.colorScheme.onBackground,
@@ -136,6 +144,15 @@ fun ProfileScreen(
             }
             else -> Login()
         }
+
+        // TODO: Replace with custom indicator.
+        PullRefreshIndicator(
+            refreshing = viewer is Resource.Loading,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter),
+            backgroundColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
@@ -200,7 +217,8 @@ fun UserTabs(modifier: Modifier = Modifier) {
         }
         Box(
             Modifier
-                .fillMaxSize()
+                .height(300.dp)
+                .fillMaxWidth()
                 .background(
                     Brush.verticalGradient(
                         listOf(
