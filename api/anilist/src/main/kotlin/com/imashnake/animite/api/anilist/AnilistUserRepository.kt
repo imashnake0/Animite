@@ -18,7 +18,6 @@ class AnilistUserRepository @Inject constructor(
     fun fetchViewer(refresh: Boolean): Flow<Result<ViewerQuery.Viewer>> {
         return apolloClient
             .query(ViewerQuery())
-            // TODO: CacheFirst is default, I think we can remove it.
             .fetchPolicy(if (refresh) FetchPolicy.NetworkFirst else FetchPolicy.CacheFirst)
             .toFlow()
             .asResult { it.viewer!! }

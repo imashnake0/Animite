@@ -101,6 +101,7 @@ fun ProfileScreen(
                     },
                     content = {
                         Column {
+                            // TODO: Replace this with pull to refresh.
                             Button(
                                 onClick = { viewModel.refreshViewer(true) },
                                 modifier = Modifier.padding(
