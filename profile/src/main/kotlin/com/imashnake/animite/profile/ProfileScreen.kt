@@ -142,7 +142,7 @@ fun ProfileScreen(
                         )
                 )
             }
-            else -> Login()
+            else -> Login(Modifier.align(Alignment.Center))
         }
 
         // TODO: Replace with custom indicator.
