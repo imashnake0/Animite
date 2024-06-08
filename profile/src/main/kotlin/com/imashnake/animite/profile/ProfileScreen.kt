@@ -84,7 +84,10 @@ fun ProfileScreen(
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing && viewer !is Resource.Loading,
-        onRefresh = viewModel::refresh
+        onRefresh = {
+            viewModel.refresh()
+            viewModel.setNetworkMode(useNetwork = true)
+        }
     )
 
     Box(
