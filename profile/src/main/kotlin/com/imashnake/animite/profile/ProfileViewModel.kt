@@ -9,10 +9,12 @@ import com.imashnake.animite.core.data.Resource.Companion.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -46,7 +48,10 @@ class ProfileViewModel @Inject constructor(
         .onStart { refresh() }
         .flatMapLatest { _useNetwork }
         .onEach { _refreshing.value = true }
-        .flatMapLatest { userRepository.fetchViewer(it).asResource() }
+        .flatMapLatest {
+            if (_useNetwork.value) delay(500)
+            userRepository.fetchViewer(it.second).asResource()
+        }
         .onEach { _refreshing.value = false }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 

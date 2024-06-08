@@ -49,7 +49,6 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
-import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.ramcosta.composedestinations.annotation.DeepLink
