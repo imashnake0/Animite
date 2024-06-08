@@ -55,10 +55,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun refresh() = viewModelScope.launch {
+        _useNetwork.value = true
         _refreshTrigger.emit(Unit)
-    }
-
-    fun setNetworkMode(useNetwork: Boolean) {
-        _useNetwork.value = useNetwork
     }
 }
