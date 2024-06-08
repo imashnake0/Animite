@@ -83,7 +83,7 @@ fun ProfileScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
+        refreshing = isRefreshing && viewer !is Resource.Loading,
         onRefresh = viewModel::refresh
     )
 
@@ -145,22 +145,12 @@ fun ProfileScreen(
                         )
                 )
             }
-            viewer is Resource.Loading -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                ) {
-                    ProgressIndicator()
-                }
-            }
             else -> Login(Modifier.align(Alignment.Center))
         }
 
         // TODO: Replace with custom indicator.
         PullRefreshIndicator(
-            refreshing = isRefreshing,
+            refreshing = isRefreshing && viewer !is Resource.Loading,
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter),
             backgroundColor = MaterialTheme.colorScheme.background,
