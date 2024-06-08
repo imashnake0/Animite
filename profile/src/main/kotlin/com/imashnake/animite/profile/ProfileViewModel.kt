@@ -31,7 +31,7 @@ class ProfileViewModel @Inject constructor(
         .map { !it.isNullOrEmpty() }
 
     val viewer = refresh
-        .flatMapLatest { userRepository.fetchViewer(it).asResource(it) }
+        .flatMapLatest { userRepository.fetchViewer(it).asResource() }
         .onEach { if (it is Resource.Refreshing) refreshViewer(false) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
