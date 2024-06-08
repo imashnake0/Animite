@@ -1,3 +1,5 @@
+@file:Suppress("MaxLineLength")
+
 package com.imashnake.animite.profile.dev.internal
 
 const val ANILIST_AUTH_DEEPLINK = "app://animite#access_token={accessToken}&token_type={tokenType}&expires_in={expiresIn}"

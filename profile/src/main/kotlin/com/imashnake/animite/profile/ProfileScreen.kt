@@ -76,7 +76,7 @@ fun ProfileScreen(
     expiresIn: Int? = null
 ) {
     accessToken?.let { viewModel.setAccessToken(it) }
-    
+
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
 
