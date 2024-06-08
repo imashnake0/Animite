@@ -76,8 +76,6 @@ fun ProfileScreen(
     expiresIn: Int? = null
 ) {
     accessToken?.let { viewModel.setAccessToken(it) }
-    // TODO: It doesn't work without this :/
-    viewModel.refreshViewer(false)
     
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
@@ -96,7 +94,9 @@ fun ProfileScreen(
             .verticalScroll(rememberScrollState())
     ) {
         when {
-            isLoggedIn && viewer is Resource.Success || viewer is Resource.Refreshing -> viewer.data?.run {
+            isLoggedIn &&
+            viewer is Resource.Success ||
+            viewer is Resource.Refreshing -> viewer.data?.run {
                 BannerLayout(
                     banner = {
                         Box {
