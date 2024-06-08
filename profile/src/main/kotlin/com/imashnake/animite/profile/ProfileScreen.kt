@@ -49,6 +49,7 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
+import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.ramcosta.composedestinations.annotation.DeepLink
@@ -143,6 +144,16 @@ fun ProfileScreen(
                             bottom = dimensionResource(coreR.dimen.navigation_bar_height)
                         )
                 )
+            }
+            viewer is Resource.Loading -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    ProgressIndicator()
+                }
             }
             else -> Login(Modifier.align(Alignment.Center))
         }
