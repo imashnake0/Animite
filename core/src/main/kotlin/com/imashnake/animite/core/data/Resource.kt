@@ -11,13 +11,11 @@ sealed class Resource<T>(
 ) {
 
     data class Success<T>(override val data: T) : Resource<T>(data)
-    class Refreshing<T> : Resource<T>(null)
     data class Error<T>(override val message: String?, override val data: T? = null) : Resource<T>(data, message)
     class Loading<T> : Resource<T>(null)
 
     companion object {
         fun <T> success(data: T): Resource<T> = Success(data)
-        fun <T> refreshing(): Resource<T> = Refreshing()
         fun <T> error(msg: String, data: T? = null): Resource<T> = Error(msg, data)
         fun <T> loading(): Resource<T> = Loading()
 
