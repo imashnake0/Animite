@@ -11,26 +11,33 @@ sealed class Resource<T>(
 ) {
 
     data class Success<T>(override val data: T) : Resource<T>(data)
+    data class Refreshing<T>(override val data: T) : Resource<T>(data)
     data class Error<T>(override val message: String?, override val data: T? = null) : Resource<T>(data, message)
     class Loading<T> : Resource<T>(null)
 
     companion object {
         fun <T> success(data: T): Resource<T> = Success(data)
-
+        fun <T> refreshing(data: T): Resource<T> = Refreshing(data)
         fun <T> error(msg: String, data: T? = null): Resource<T> = Error(msg, data)
-
         fun <T> loading(): Resource<T> = Loading()
 
         @OptIn(ExperimentalCoroutinesApi::class)
-        fun <T, R> Flow<Result<T>>.asResource(transform: (T) -> R): Flow<Resource<R>> = this
-            .mapLatest {
+        fun <T, R> Flow<Result<T>>.asResource(
+            isRefreshing: Boolean = false,
+            transform: (T) -> R
+        ): Flow<Resource<R>> = mapLatest {
+            if (isRefreshing.not()) {
                 success(transform(it.getOrThrow()))
+            } else {
+                refreshing(transform(it.getOrThrow()))
             }
-            .catch {
-                emit(error(it.message.orEmpty()))
-            }
+        }
+        .catch {
+            emit(error(it.message.orEmpty()))
+        }
 
-        fun <T> Flow<Result<T>>.asResource(): Flow<Resource<T>> = this.asResource { it }
+        fun <T> Flow<Result<T>>.asResource(isRefreshing: Boolean = false) =
+            asResource(isRefreshing) { it }
 
         private fun <T> networkError() = error<T>("Network error, please check your connection and try again.")
         private fun <T> defaultError() = error<T>("Unknown error occurred, please try again later.")

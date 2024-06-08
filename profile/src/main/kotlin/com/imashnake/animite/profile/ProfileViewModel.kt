@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +33,8 @@ class ProfileViewModel @Inject constructor(
         .map { !it.isNullOrEmpty() }
 
     val viewer = refresh
-        .flatMapLatest { userRepository.fetchViewer(it).asResource() }
+        .flatMapLatest { userRepository.fetchViewer(it).asResource(it) }
+        .onCompletion { refreshViewer(false) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     fun setAccessToken(accessToken: String?) = viewModelScope.launch(Dispatchers.IO) {
