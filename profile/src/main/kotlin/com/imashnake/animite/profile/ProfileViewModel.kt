@@ -1,6 +1,5 @@
 package com.imashnake.animite.profile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistUserRepository
