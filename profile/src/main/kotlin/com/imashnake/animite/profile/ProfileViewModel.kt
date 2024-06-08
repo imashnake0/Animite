@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -25,8 +24,7 @@ class ProfileViewModel @Inject constructor(
     private val userRepository: AnilistUserRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
-    private val _refresh = MutableStateFlow(false)
-    private val refresh = _refresh.asSharedFlow()
+    private val refresh = MutableStateFlow(false)
 
     val isLoggedIn = preferencesRepository
         .accessToken
@@ -41,7 +39,7 @@ class ProfileViewModel @Inject constructor(
         preferencesRepository.setAccessToken(accessToken)
     }
 
-    fun refreshViewer(refresh: Boolean) = viewModelScope.launch(Dispatchers.IO) {
-        _refresh.emit(refresh)
+    fun refreshViewer(shouldRefresh: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        refresh.emit(shouldRefresh)
     }
 }
