@@ -30,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,11 +65,7 @@ import com.imashnake.animite.core.R as coreR
 @Suppress("LongMethod", "UNUSED_PARAMETER")
 @Destination(
     route = "user",
-    deepLinks = [
-        DeepLink(
-            uriPattern = ANILIST_AUTH_DEEPLINK
-        )
-    ]
+    deepLinks = [DeepLink(uriPattern = ANILIST_AUTH_DEEPLINK)]
 )
 @RootNavGraph(start = true)
 @Composable
