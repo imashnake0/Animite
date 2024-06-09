@@ -94,7 +94,7 @@ fun ProfileScreen(
     )
 
     Box(
-        contentAlignment = Alignment.TopCenter,
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
@@ -148,10 +148,11 @@ fun ProfileScreen(
                         .padding(
                             top = LocalPaddings.current.large,
                             bottom = dimensionResource(coreR.dimen.navigation_bar_height)
-                        )
+                        ),
+                    modifier = Modifier.align(Alignment.TopCenter)
                 )
             }
-            !isLoggedIn -> Login(Modifier.align(Alignment.Center))
+            !isLoggedIn -> Login()
             isLoggedIn && viewer.data == null -> {
                 Box(
                     contentAlignment = Alignment.Center,
