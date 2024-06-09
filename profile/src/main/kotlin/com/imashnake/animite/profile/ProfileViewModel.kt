@@ -45,13 +45,13 @@ class ProfileViewModel @Inject constructor(
 
     val viewer = _refreshTrigger
         .onStart { refresh() }
-        .flatMapLatest { _useNetwork }
         .onEach { _refreshing.value = true }
         .flatMapLatest {
             if (_useNetwork.value) delay(500)
-            userRepository.fetchViewer(it).asResource()
+            userRepository.fetchViewer(_useNetwork.value).asResource()
         }
         .onEach { _refreshing.value = false }
+        .onEach { setNetworkMode(false) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     fun setAccessToken(accessToken: String?) = viewModelScope.launch(Dispatchers.IO) {
