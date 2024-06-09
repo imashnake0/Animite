@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.ext.RefreshableFlow
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
 import com.imashnake.animite.dev.ext.nextSeason
@@ -32,64 +33,99 @@ class HomeViewModel @Inject constructor(
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val now = savedStateHandle.getStateFlow(NOW, LocalDate.now())
 
-    val trendingMedia = mediaType
-        .filterNotNull()
-        .flatMapLatest { mediaType ->
-            mediaListRepository.fetchMediaList(
-                mediaType = mediaType,
-                sort = listOf(MediaSort.TRENDING_DESC),
-            )
-        }
-        .asResource()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    val trendingMedia = RefreshableFlow(
+        viewModelScope = viewModelScope,
+        minimumDelay = 250,
+        fetchData = {
+            mediaType
+                .filterNotNull()
+                .flatMapLatest { mediaType ->
+                    mediaListRepository.fetchMediaList(
+                        mediaType = mediaType,
+                        sort = listOf(MediaSort.TRENDING_DESC),
+                    ).asResource()
+                }
+        },
+        initialValue = Resource.loading()
+    )
 
-    val popularMediaThisSeason = mediaType
-        .filterNotNull()
-        .combine(now, ::Pair)
-        .flatMapLatest { (mediaType, now) ->
-            mediaListRepository.fetchMediaList(
-                mediaType = mediaType,
-                sort = listOf(MediaSort.POPULARITY_DESC),
-                season = now.month.season,
-                seasonYear = now.year
-            )
-        }
-        .asResource()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    val popularMediaThisSeason = RefreshableFlow(
+        viewModelScope = viewModelScope,
+        fetchData = {
+            mediaType
+                .filterNotNull()
+                .combine(now, ::Pair)
+                .flatMapLatest { (mediaType, now) ->
+                    mediaListRepository.fetchMediaList(
+                        mediaType = mediaType,
+                        sort = listOf(MediaSort.POPULARITY_DESC),
+                        season = now.month.season,
+                        seasonYear = now.year
+                    ).asResource()
+                }
+        },
+        initialValue = Resource.loading()
+    )
 
-    val upcomingMediaNextSeason = mediaType
-        .filterNotNull()
-        .combine(now, ::Pair)
-        .flatMapLatest { (mediaType, now) ->
-            mediaListRepository.fetchMediaList(
-                mediaType = mediaType,
-                sort = listOf(MediaSort.POPULARITY_DESC),
-                season = now.month.season.nextSeason(now).first,
-                seasonYear = now.month.season.nextSeason(now).second
-            )
-        }
-        .asResource()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    val upcomingMediaNextSeason = RefreshableFlow(
+        viewModelScope = viewModelScope,
+        fetchData = {
+            mediaType
+                .filterNotNull()
+                .combine(now, ::Pair)
+                .flatMapLatest { (mediaType, now) ->
+                    mediaListRepository.fetchMediaList(
+                        mediaType = mediaType,
+                        sort = listOf(MediaSort.POPULARITY_DESC),
+                        season = now.month.season.nextSeason(now).first,
+                        seasonYear = now.month.season.nextSeason(now).second
+                    ).asResource()
+                }
+        },
+        initialValue = Resource.loading()
+    )
 
-    val allTimePopular = mediaType
-        .filterNotNull()
-        .flatMapLatest { mediaType ->
-            mediaListRepository.fetchMediaList(
-                mediaType = mediaType,
-                sort = listOf(MediaSort.POPULARITY_DESC)
-            )
-        }
-        .asResource()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    val allTimePopular = RefreshableFlow(
+        viewModelScope = viewModelScope,
+        fetchData = {
+            mediaType
+                .filterNotNull()
+                .flatMapLatest { mediaType ->
+                    mediaListRepository.fetchMediaList(
+                        mediaType = mediaType,
+                        sort = listOf(MediaSort.POPULARITY_DESC)
+                    ).asResource()
+                }
+        },
+        initialValue = Resource.loading()
+    )
+
+    val isRefreshing = combineTransform(
+        listOf(trendingMedia.isRefreshing, popularMediaThisSeason.isRefreshing, upcomingMediaNextSeason.isRefreshing, allTimePopular.isRefreshing)
+    ) { isRefreshing ->
+        emit(isRefreshing.any { it })
+    }.stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     val isLoading = combineTransform(
-        listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)
+        listOf(trendingMedia.data, popularMediaThisSeason.data, upcomingMediaNextSeason.data, allTimePopular.data)
     ) { resources ->
-        emit(!resources.none { it is Resource.Loading<*> })
+        emit(resources.any { it is Resource.Loading<*> })
     }.stateIn(viewModelScope, SharingStarted.Lazily, true)
 
     fun setMediaType(mediaType: MediaType) {
         savedStateHandle[Constants.MEDIA_TYPE] = mediaType
+    }
+
+    fun setNetworkMode(useNetwork: Boolean) {
+        listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular).forEach {
+            it.setNetworkMode(useNetwork)
+        }
+    }
+
+    fun refresh() {
+        listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular).forEach {
+            it.refresh()
+        }
     }
 
     companion object {

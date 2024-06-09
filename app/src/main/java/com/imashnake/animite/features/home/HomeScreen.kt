@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,8 +30,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.pullrefresh.PullRefreshDefaults
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +54,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -73,6 +81,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.core.R as coreR
 
+@OptIn(ExperimentalMaterialApi::class)
 @Destination
 @Composable
 @Suppress("LongMethod")
@@ -83,10 +92,13 @@ fun HomeScreen(
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
     viewModel.setMediaType(homeMediaType.value)
 
-    val trendingList by viewModel.trendingMedia.collectAsState()
-    val popularList by viewModel.popularMediaThisSeason.collectAsState()
-    val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
-    val allTimePopularList by viewModel.allTimePopular.collectAsState()
+    val trendingList by viewModel.trendingMedia.data.collectAsState()
+    val popularList by viewModel.popularMediaThisSeason.data.collectAsState()
+    val upcomingList by viewModel.upcomingMediaNextSeason.data.collectAsState()
+    val allTimePopularList by viewModel.allTimePopular.data.collectAsState()
+
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     val rows = listOf(
         trendingList to stringResource(R.string.trending_now),
@@ -95,10 +107,24 @@ fun HomeScreen(
         allTimePopularList to stringResource(R.string.all_time_popular)
     )
 
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing && !isLoading,
+        onRefresh = {
+            viewModel.setNetworkMode(useNetwork = true)
+            viewModel.refresh()
+        },
+        refreshingOffset = PullRefreshDefaults.RefreshingOffset + with(LocalDensity.current) {
+            WindowInsets.displayCutout.getTop(this).toDp()
+        }
+    )
+
     when {
         rows.all { it.first is Resource.Success } -> {
             val scrollState = rememberScrollState()
-            TranslucentStatusBarLayout(scrollState) {
+            TranslucentStatusBarLayout(
+                scrollState,
+                Modifier.pullRefresh(pullRefreshState)
+            ) {
                 Box(
                     modifier = Modifier
                         .verticalScroll(scrollState)
@@ -189,6 +215,15 @@ fun HomeScreen(
                         verticalArrangement = Arrangement.Top
                     )
                 }
+
+                PullRefreshIndicator(
+                    refreshing = isRefreshing && !isLoading,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    scale = true
+                )
             }
         }
 
