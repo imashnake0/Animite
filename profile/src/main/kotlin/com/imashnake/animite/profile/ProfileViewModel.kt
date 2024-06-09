@@ -23,10 +23,9 @@ class ProfileViewModel @Inject constructor(
         .map { !it.isNullOrEmpty() }
 
     val viewer = RefreshableFlow(
-        viewModelScope = viewModelScope,
-        fetchData = { userRepository.fetchViewer(it).asResource() },
-        initialValue = Resource.loading()
-    )
+        viewModelScope,
+        Resource.loading()
+    ) { userRepository.fetchViewer(it).asResource() }
 
     fun setAccessToken(accessToken: String?) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setAccessToken(accessToken)

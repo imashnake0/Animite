@@ -33,71 +33,55 @@ class HomeViewModel @Inject constructor(
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val now = savedStateHandle.getStateFlow(NOW, LocalDate.now())
 
-    val trendingMedia = RefreshableFlow(
-        viewModelScope = viewModelScope,
-        fetchData = {
-            mediaType
-                .filterNotNull()
-                .flatMapLatest { mediaType ->
-                    mediaListRepository.fetchMediaList(
-                        mediaType = mediaType,
-                        sort = listOf(MediaSort.TRENDING_DESC),
-                    ).asResource()
-                }
-        },
-        initialValue = Resource.loading()
-    )
+    val trendingMedia = RefreshableFlow(viewModelScope, Resource.loading()) {
+        mediaType
+            .filterNotNull()
+            .flatMapLatest { mediaType ->
+                mediaListRepository.fetchMediaList(
+                    mediaType = mediaType,
+                    sort = listOf(MediaSort.TRENDING_DESC),
+                ).asResource()
+            }
+    }
 
-    val popularMediaThisSeason = RefreshableFlow(
-        viewModelScope = viewModelScope,
-        fetchData = {
-            mediaType
-                .filterNotNull()
-                .combine(now, ::Pair)
-                .flatMapLatest { (mediaType, now) ->
-                    mediaListRepository.fetchMediaList(
-                        mediaType = mediaType,
-                        sort = listOf(MediaSort.POPULARITY_DESC),
-                        season = now.month.season,
-                        seasonYear = now.year
-                    ).asResource()
-                }
-        },
-        initialValue = Resource.loading()
-    )
+    val popularMediaThisSeason = RefreshableFlow(viewModelScope, Resource.loading()) {
+        mediaType
+            .filterNotNull()
+            .combine(now, ::Pair)
+            .flatMapLatest { (mediaType, now) ->
+                mediaListRepository.fetchMediaList(
+                    mediaType = mediaType,
+                    sort = listOf(MediaSort.POPULARITY_DESC),
+                    season = now.month.season,
+                    seasonYear = now.year
+                ).asResource()
+            }
+    }
 
-    val upcomingMediaNextSeason = RefreshableFlow(
-        viewModelScope = viewModelScope,
-        fetchData = {
-            mediaType
-                .filterNotNull()
-                .combine(now, ::Pair)
-                .flatMapLatest { (mediaType, now) ->
-                    mediaListRepository.fetchMediaList(
-                        mediaType = mediaType,
-                        sort = listOf(MediaSort.POPULARITY_DESC),
-                        season = now.month.season.nextSeason(now).first,
-                        seasonYear = now.month.season.nextSeason(now).second
-                    ).asResource()
-                }
-        },
-        initialValue = Resource.loading()
-    )
+    val upcomingMediaNextSeason = RefreshableFlow(viewModelScope, Resource.loading()) {
+        mediaType
+            .filterNotNull()
+            .combine(now, ::Pair)
+            .flatMapLatest { (mediaType, now) ->
+                mediaListRepository.fetchMediaList(
+                    mediaType = mediaType,
+                    sort = listOf(MediaSort.POPULARITY_DESC),
+                    season = now.month.season.nextSeason(now).first,
+                    seasonYear = now.month.season.nextSeason(now).second
+                ).asResource()
+            }
+    }
 
-    val allTimePopular = RefreshableFlow(
-        viewModelScope = viewModelScope,
-        fetchData = {
-            mediaType
-                .filterNotNull()
-                .flatMapLatest { mediaType ->
-                    mediaListRepository.fetchMediaList(
-                        mediaType = mediaType,
-                        sort = listOf(MediaSort.POPULARITY_DESC)
-                    ).asResource()
-                }
-        },
-        initialValue = Resource.loading()
-    )
+    val allTimePopular = RefreshableFlow(viewModelScope, Resource.loading()) {
+        mediaType
+            .filterNotNull()
+            .flatMapLatest { mediaType ->
+                mediaListRepository.fetchMediaList(
+                    mediaType = mediaType,
+                    sort = listOf(MediaSort.POPULARITY_DESC)
+                ).asResource()
+            }
+    }
 
     val isRefreshing = combineTransform(
         listOf(trendingMedia.isRefreshing, popularMediaThisSeason.isRefreshing, upcomingMediaNextSeason.isRefreshing, allTimePopular.isRefreshing)

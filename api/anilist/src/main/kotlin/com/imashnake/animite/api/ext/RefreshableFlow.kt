@@ -28,16 +28,16 @@ import kotlinx.coroutines.launch
  */
 class RefreshableFlow<T>(
     private val viewModelScope: CoroutineScope,
-    private val minimumDelay: Long = 250,
-    fetchData: (useNetwork: Boolean) -> Flow<T>,
     initialValue: T,
+    private val minimumDelay: Long = 250,
     coldToHot: Flow<T>.(initialValue: T) -> StateFlow<T> = {
         stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(1000),
             it
         )
-    }
+    },
+    fetchData: (useNetwork: Boolean) -> Flow<T>,
 ) {
     private val _refreshTrigger = MutableSharedFlow<Unit>()
 
