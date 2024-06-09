@@ -79,14 +79,14 @@ fun ProfileScreen(
     accessToken?.let { viewModel.setAccessToken(it) }
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
-    val viewer by viewModel.viewer.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val viewer by viewModel.viewer.data.collectAsState()
+    val isRefreshing by viewModel.viewer.isRefreshing.collectAsState()
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing && viewer !is Resource.Loading,
         onRefresh = {
-            viewModel.setNetworkMode(useNetwork = true)
-            viewModel.refresh()
+            viewModel.viewer.setNetworkMode(useNetwork = true)
+            viewModel.viewer.refresh()
         },
         refreshingOffset = PullRefreshDefaults.RefreshingOffset + with(LocalDensity.current) {
             WindowInsets.displayCutout.getTop(this).toDp()
