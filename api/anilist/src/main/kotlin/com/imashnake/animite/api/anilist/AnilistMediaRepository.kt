@@ -6,6 +6,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.ext.asResult
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

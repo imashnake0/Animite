@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.ext.asResult
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

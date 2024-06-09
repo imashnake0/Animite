@@ -1,4 +1,4 @@
-package com.imashnake.animite.api.anilist
+package com.imashnake.animite.api.ext
 
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Operation
