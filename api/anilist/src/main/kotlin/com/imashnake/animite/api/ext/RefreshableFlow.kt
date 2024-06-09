@@ -6,10 +6,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
@@ -18,9 +20,16 @@ import kotlinx.coroutines.launch
  */
 class RefreshableFlow<T>(
     private val viewModelScope: CoroutineScope,
-    private val minimumDelay: Long,
+    private val minimumDelay: Long = 250,
     fetchData: (useNetwork: Boolean) -> Flow<T>,
-    coldToHot: Flow<T>.() -> StateFlow<T>
+    initialValue: T,
+    coldToHot: Flow<T>.(initialValue: T) -> StateFlow<T> = {
+        stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(1000),
+            it
+        )
+    }
 ) {
     private val _refreshTrigger = MutableSharedFlow<Unit>()
 
@@ -40,7 +49,7 @@ class RefreshableFlow<T>(
         }
         .onEach { _refreshing.value = false }
         .onEach { setNetworkMode(false) }
-        .coldToHot()
+        .coldToHot(initialValue)
 
     fun refresh() = viewModelScope.launch {
         _refreshTrigger.emit(Unit)

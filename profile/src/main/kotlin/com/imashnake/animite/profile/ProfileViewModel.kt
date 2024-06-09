@@ -9,9 +9,7 @@ import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,12 +26,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope = viewModelScope,
         minimumDelay = 250,
         fetchData = { userRepository.fetchViewer(it).asResource() },
-        coldToHot = {
-            stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(1000), Resource.loading()
-            )
-        }
+        initialValue = Resource.loading()
     )
 
     fun setAccessToken(accessToken: String?) = viewModelScope.launch(Dispatchers.IO) {
