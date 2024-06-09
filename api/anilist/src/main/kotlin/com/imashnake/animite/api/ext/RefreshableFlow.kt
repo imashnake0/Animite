@@ -33,7 +33,7 @@ class RefreshableFlow<T>(
 ) {
     private val _refreshTrigger = MutableSharedFlow<Unit>()
 
-    private val _useNetwork = MutableStateFlow(false)
+    private var _useNetwork = false
 
     private val _refreshing = MutableStateFlow(false)
 
@@ -44,8 +44,8 @@ class RefreshableFlow<T>(
         .onStart { refresh() }
         .onEach { _refreshing.value = true }
         .flatMapLatest {
-            if (_useNetwork.value) delay(minimumDelay)
-            fetchData(_useNetwork.value)
+            if (_useNetwork) delay(minimumDelay)
+            fetchData(_useNetwork)
         }
         .onEach { _refreshing.value = false }
         .onEach { setNetworkMode(false) }
@@ -56,6 +56,6 @@ class RefreshableFlow<T>(
     }
 
     fun setNetworkMode(useNetwork: Boolean) {
-        _useNetwork.value = useNetwork
+        _useNetwork = useNetwork
     }
 }
