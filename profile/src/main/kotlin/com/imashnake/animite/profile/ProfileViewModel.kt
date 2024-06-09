@@ -24,7 +24,6 @@ class ProfileViewModel @Inject constructor(
 
     val viewer = RefreshableFlow(
         viewModelScope = viewModelScope,
-        minimumDelay = 250,
         fetchData = { userRepository.fetchViewer(it).asResource() },
         initialValue = Resource.loading()
     )

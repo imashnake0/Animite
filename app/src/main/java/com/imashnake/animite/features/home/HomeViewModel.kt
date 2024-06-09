@@ -35,7 +35,6 @@ class HomeViewModel @Inject constructor(
 
     val trendingMedia = RefreshableFlow(
         viewModelScope = viewModelScope,
-        minimumDelay = 250,
         fetchData = {
             mediaType
                 .filterNotNull()
