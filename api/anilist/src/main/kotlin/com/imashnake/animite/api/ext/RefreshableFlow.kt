@@ -15,8 +15,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
- * Refreshing logic stolen from:
- * https://github.com/boswelja/NASdroid/blob/main/features/apps/ui/src/main/kotlin/com/nasdroid/apps/ui/installed/overview/InstalledAppsOverviewViewModel.kt
+ * Refreshing logic stolen from [boswelja/NASdroid](https://github.com/boswelja/NASdroid/blob/main/features/apps/ui/src/main/kotlin/com/nasdroid/apps/ui/installed/overview/InstalledAppsOverviewViewModel.kt);
+ * [Discord threads](https://discord.com/channels/986122183086575626/987571862768873502/1236939134325620788).
+ *
+ * @param minimumDelay [delay]s the `fetchData` call to keep the indicator on the screen for longer.
+ * @param fetchData Fetches data with [_useNetwork], used to switch between `FetchPolicy`s.
+ * @param initialValue Initial value of the flow used in `coldToHot`, usually `Resource.loading()`.
+ * @param coldToHot Lambda to convert the [data] cold flow to a hot flow.
+ * @property isRefreshing Exposes refreshing state to keep the indicator on the screen.
+ * @property refresh Triggers a refresh.
+ * @property setNetworkMode Used to fetch from the network when [refresh] is called.
  */
 class RefreshableFlow<T>(
     private val viewModelScope: CoroutineScope,
@@ -36,11 +44,11 @@ class RefreshableFlow<T>(
     private var _useNetwork = false
 
     private val _refreshing = MutableStateFlow(false)
-
     val isRefreshing: StateFlow<Boolean> = _refreshing
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data = _refreshTrigger
+        // Initial fetch.
         .onStart { refresh() }
         .onEach { _refreshing.value = true }
         .flatMapLatest {
