@@ -1,5 +1,6 @@
 package com.imashnake.animite.profile
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -193,7 +194,7 @@ fun AboutUser(about: String?, modifier: Modifier = Modifier) {
                     ),
                     blockQuoteStyle = animiteBlockQuoteStyle(),
                     codeBlockStyle = animiteCodeBlockStyle(),
-                    modifier = contentModifier
+                    modifier = contentModifier.animateContentSize()
                 )
             }
         }
