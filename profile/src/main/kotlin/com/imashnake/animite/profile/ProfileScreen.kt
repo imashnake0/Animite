@@ -77,13 +77,17 @@ fun ProfileScreen(
     expiresIn: Int? = null
 ) {
     accessToken?.let { viewModel.setAccessToken(it) }
-    viewModel.refreshViewer(false)
+
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = viewer is Resource.Loading,
-        onRefresh = { viewModel.refreshViewer(true) }
+        refreshing = isRefreshing && viewer !is Resource.Loading,
+        onRefresh = {
+            viewModel.setNetworkMode(useNetwork = true)
+            viewModel.refresh()
+        }
     )
 
     Box(
@@ -95,7 +99,8 @@ fun ProfileScreen(
             .verticalScroll(rememberScrollState())
     ) {
         when {
-            isLoggedIn && viewer is Resource.Success -> viewer.data?.run {
+            isLoggedIn &&
+            viewer is Resource.Success -> viewer.data?.run {
                 BannerLayout(
                     banner = {
                         Box {
@@ -148,7 +153,7 @@ fun ProfileScreen(
 
         // TODO: Replace with custom indicator.
         PullRefreshIndicator(
-            refreshing = viewer is Resource.Loading,
+            refreshing = isRefreshing && viewer !is Resource.Loading,
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter),
             backgroundColor = MaterialTheme.colorScheme.background,
