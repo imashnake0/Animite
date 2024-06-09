@@ -47,7 +47,7 @@ class ProfileViewModel @Inject constructor(
         .onStart { refresh() }
         .onEach { _refreshing.value = true }
         .flatMapLatest {
-            if (_useNetwork.value) delay(500)
+            if (_useNetwork.value) delay(250)
             userRepository.fetchViewer(_useNetwork.value).asResource()
         }
         .onEach { _refreshing.value = false }
