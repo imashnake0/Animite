@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
+/**
+ * Refreshing logic stolen from:
+ * https://github.com/boswelja/NASdroid/blob/main/features/apps/ui/src/main/kotlin/com/nasdroid/apps/ui/installed/overview/InstalledAppsOverviewViewModel.kt
+ */
 class RefreshableFlow<T>(
     private val viewModelScope: CoroutineScope,
     private val minimumDelay: Long,
@@ -27,6 +30,7 @@ class RefreshableFlow<T>(
 
     val isRefreshing: StateFlow<Boolean> = _refreshing
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val data = _refreshTrigger
         .onStart { refresh() }
         .onEach { _refreshing.value = true }

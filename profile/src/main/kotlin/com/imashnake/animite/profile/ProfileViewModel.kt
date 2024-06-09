@@ -15,10 +15,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Refreshing logic stolen from:
- * https://github.com/boswelja/NASdroid/blob/main/features/apps/ui/src/main/kotlin/com/nasdroid/apps/ui/installed/overview/InstalledAppsOverviewViewModel.kt
- */
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: AnilistUserRepository,
