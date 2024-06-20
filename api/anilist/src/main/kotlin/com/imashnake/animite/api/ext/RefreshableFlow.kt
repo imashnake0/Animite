@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
  * @param minimumDelay [delay]s the `fetchData` call to keep the indicator on the screen for longer.
  * @param fetchData Fetches data with [_useNetwork], used to switch between `FetchPolicy`s.
  * @param initialValue Initial value of the flow used in `coldToHot`, usually `Resource.loading()`.
- * @param coldToHot Lambda to convert the [data] cold flow to a hot flow.
  * @property isRefreshing Exposes refreshing state to keep the indicator on the screen.
  * @property refresh Triggers a refresh.
  * @property setNetworkMode Used to fetch from the network when [refresh] is called.
@@ -30,13 +29,6 @@ class RefreshableFlow<T>(
     private val viewModelScope: CoroutineScope,
     initialValue: T,
     private val minimumDelay: Long = 250,
-    coldToHot: Flow<T>.(initialValue: T) -> StateFlow<T> = {
-        stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(1000),
-            it
-        )
-    },
     fetchData: (useNetwork: Boolean) -> Flow<T>,
 ) {
     private val _refreshTrigger = MutableSharedFlow<Unit>()
@@ -57,7 +49,11 @@ class RefreshableFlow<T>(
         }
         .onEach { _refreshing.value = false }
         .onEach { setNetworkMode(false) }
-        .coldToHot(initialValue)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(1000),
+            initialValue
+        )
 
     fun refresh() = viewModelScope.launch {
         _refreshTrigger.emit(Unit)
