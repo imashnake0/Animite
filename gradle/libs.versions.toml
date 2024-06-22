@@ -21,11 +21,11 @@ agp = "8.5.0"
 
 # AndroidX
 # https://androidx.tech.
-activity = "1.8.2"
-core = "1.13.0-rc01"
-lifecycle = "2.7.0"
-extJunit = "1.2.0-alpha03"
-espresso = "3.6.0-alpha03"
+activity = "1.9.0"
+core = "1.13.1"
+lifecycle = "2.8.2"
+extJunit = "1.2.0-rc01"
+espresso = "3.6.0-rc01"
 
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
@@ -34,7 +34,7 @@ apollo = "3.8.2"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore
-datastore = "1.0.0"
+datastore = "1.1.1"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
