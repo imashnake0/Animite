@@ -16,6 +16,7 @@ android {
     buildFeatures {
         compose = true
     }
+    composeCompiler.enableStrongSkippingMode = true
 
     namespace = "com.imashnake.animite.core"
 }
