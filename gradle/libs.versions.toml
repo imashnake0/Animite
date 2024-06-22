@@ -1,6 +1,7 @@
 [plugins]
 
 android-application = { id = "com.android.application", version.ref = "agp" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
@@ -40,9 +41,10 @@ datastore = "1.1.1"
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
 coil = "2.6.0"
 
+# TODO: Breaking changes; review release notes and update.
 # Compose Destinations
 # https://github.com/raamcosta/compose-destinations/releases.
-composeDestinations = "1.9.59"
+composeDestinations = "1.10.2"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
@@ -64,12 +66,12 @@ hilt = "1.2.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "1.9.24"
+kotlin = "2.0.0"
 coroutines = "1.8.0"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "1.9.24-1.0.20"
+ksp = "2.0.0-1.0.22"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
