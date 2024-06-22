@@ -38,7 +38,7 @@ datastore = "1.1.1"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
-coil = "2.5.0"
+coil = "2.6.0"
 
 # Compose Destinations
 # https://github.com/raamcosta/compose-destinations/releases.
