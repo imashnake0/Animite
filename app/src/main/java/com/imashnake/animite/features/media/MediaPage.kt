@@ -80,9 +80,10 @@ import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import com.imashnake.animite.core.R as coreR
 
-@Destination(navArgsDelegate = MediaPageArgs::class)
+@Destination<RootGraph>(navArgs = MediaPageArgs::class)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",

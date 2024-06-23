@@ -70,10 +70,11 @@ import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.core.R as coreR
 
-@Destination
+@Destination<RootGraph>(start = true)
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(

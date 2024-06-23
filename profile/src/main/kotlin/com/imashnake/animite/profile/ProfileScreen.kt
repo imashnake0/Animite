@@ -42,13 +42,14 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
-import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.imashnake.animite.core.R as coreR
 
 @Suppress("LongMethod", "UNUSED_PARAMETER")
-@Destination(
+@Destination<RootGraph>(
+    start = true,
     route = "user",
     deepLinks = [
         DeepLink(
@@ -56,7 +57,6 @@ import com.imashnake.animite.core.R as coreR
         )
     ]
 )
-@RootNavGraph(start = true)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
