@@ -65,12 +65,12 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.MediaPageDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.core.R as coreR
 

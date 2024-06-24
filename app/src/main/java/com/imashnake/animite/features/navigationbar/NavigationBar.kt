@@ -25,14 +25,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.imashnake.animite.features.destinations.HomeScreenDestination
-import com.imashnake.animite.profile.ProfileNavGraph
-import com.imashnake.animite.rslash.RslashNavGraph
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 import com.ramcosta.composedestinations.utils.startDestination
 import com.imashnake.animite.R
+import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
+import com.ramcosta.composedestinations.generated.rslash.destinations.RslashScreenDestination
+import com.ramcosta.composedestinations.generated.profile.destinations.UserDestination
 import com.imashnake.animite.core.R as coreR
 
 // TODO: Ripple where?
@@ -80,11 +80,11 @@ fun NavigationBar(
 }
 
 enum class NavigationBarPaths(
-    val route: DestinationSpec<*>,
+    val route: DestinationSpec,
     val icon: @Composable () -> Unit
 ) {
     RSlash(
-        RslashNavGraph.startDestination,
+        RslashScreenDestination,
         {
             Icon(
                 imageVector = ImageVector.vectorResource(
@@ -110,7 +110,7 @@ enum class NavigationBarPaths(
         }
     ),
     Profile(
-        ProfileNavGraph.startDestination,
+        UserDestination,
         {
             Icon(
                 imageVector = Icons.Rounded.AccountCircle,

@@ -7,9 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -27,13 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
 import com.imashnake.animite.features.navigationbar.NavigationBar
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
+import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.destinations.MediaPageDestination
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.utils.navGraph
@@ -63,12 +60,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    val navHostEngine = rememberNavHostEngine(
-        rootDefaultAnimations = RootNavGraphDefaultAnimations(
-            enterTransition = { fadeIn(animationSpec = tween(1000)) },
-            exitTransition = { fadeOut(animationSpec = tween(300)) },
-        )
-    )
+    val navHostEngine = rememberNavHostEngine()
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isNavBarVisible = remember(currentBackStackEntry) {
         currentBackStackEntry?.navGraph()?.startRoute == currentBackStackEntry?.route()
@@ -81,14 +73,16 @@ fun MainScreen(modifier: Modifier = Modifier) {
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
             DestinationsNavHost(
-                navGraph = RootNavGraph,
+                navGraph = NavGraphs.root,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize(),
                 navController = navController,
                 engine = navHostEngine
-            )
+            ) {
+
+            }
         }
 
         SearchFrontDrop(
