@@ -1,12 +1,12 @@
 package com.imashnake.animite.features
 
-import com.imashnake.animite.features.destinations.HomeScreenDestination
-import com.imashnake.animite.features.destinations.MediaPageDestination
-import com.imashnake.animite.profile.ProfileNavGraph
-import com.imashnake.animite.rslash.RslashNavGraph
-import com.ramcosta.composedestinations.spec.DestinationSpec
-import com.ramcosta.composedestinations.spec.NavGraphSpec
-import com.ramcosta.composedestinations.spec.Route
+//import com.imashnake.animite.features.destinations.HomeScreenDestination
+//import com.imashnake.animite.features.destinations.MediaPageDestination
+//import com.imashnake.animite.profile.ProfileNavGraph
+//import com.imashnake.animite.rslash.RslashNavGraph
+//import com.ramcosta.composedestinations.spec.DestinationSpec
+//import com.ramcosta.composedestinations.spec.NavGraphSpec
+//import com.ramcosta.composedestinations.spec.Route
 
 // TODO: New way of setting up compose-destinations for multiple modules:
 //  https://composedestinations.rafaelcosta.xyz/v2/multi-module-setup
