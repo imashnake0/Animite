@@ -3,6 +3,7 @@ package com.imashnake.animite.api.anilist
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.imashnake.animite.api.anilist.sanitize.profile.Viewer
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

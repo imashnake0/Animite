@@ -19,8 +19,10 @@ data class Viewer(
 ) {
     /** @see ViewerQuery.Genre */
     data class Genre(
+        /** @see ViewerQuery.Genre.genre */
         val genre: String,
-        val mediaCount: Int
+        /** @see ViewerQuery.Genre.count */
+        val mediaCount: Int,
     )
 
     internal constructor(query: ViewerQuery.Viewer) : this(
@@ -29,11 +31,16 @@ data class Viewer(
         about = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
-        genres = query.statistics?.anime?.genres.orEmpty().mapNotNull {
-            Genre(
-                genre = it?.genre ?: return@mapNotNull null,
-                mediaCount = it.count
-            )
+        genres = query.statistics?.anime?.genres.orEmpty().filterNotNull().run {
+            mapNotNull {
+                Genre(
+                    genre = it.genre ?: return@mapNotNull null,
+                    mediaCount = it.count
+                )
+            }.filter {
+                // Filters out anime genres that contribute to less than 5%
+                it.mediaCount > this.sumOf { genre -> genre.count }/20
+            }
         }
     )
 }
