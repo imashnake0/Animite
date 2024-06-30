@@ -130,7 +130,7 @@ fun ProfileScreen(
 }
 
 @Composable
-fun AboutUser(about: String?, modifier: Modifier = Modifier) {
+private fun AboutUser(about: String?, modifier: Modifier = Modifier) {
     about?.let {
         Box(modifier) {
             NestedScrollableContent { contentModifier ->
@@ -153,9 +153,9 @@ fun AboutUser(about: String?, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserTabs(modifier: Modifier = Modifier) {
+private fun UserTabs(modifier: Modifier = Modifier) {
     var state by remember { mutableIntStateOf(0) }
-    val titles = listOf("About", "Anime", "Manga", "Fave", "Stats")
+    val titles = ProfileTabs.entries
     val onBackground = MaterialTheme.colorScheme.onBackground
 
     Column(modifier) {
@@ -164,13 +164,13 @@ fun UserTabs(modifier: Modifier = Modifier) {
             containerColor = MaterialTheme.colorScheme.background,
             divider = {}
         ) {
-            titles.forEachIndexed { index, title ->
+            titles.forEachIndexed { index, tab ->
                 Tab(
                     selected = state == index,
                     onClick = { state = index },
                     text = {
                         Text(
-                            text = title,
+                            text = tab.title,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodyMedium,
                             color = onBackground.copy(
@@ -208,4 +208,12 @@ fun UserTabs(modifier: Modifier = Modifier) {
             )
         }
     }
+}
+
+enum class ProfileTabs(val title: String) {
+    ABOUT("About"),
+    ANIME("Anime"),
+    MANGA("Manga"),
+    FAVOURITES("Fave"),
+    STATISTICS("Stats")
 }
