@@ -16,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -154,27 +154,27 @@ private fun AboutUser(about: String?, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UserTabs(modifier: Modifier = Modifier) {
-    var state by remember { mutableIntStateOf(0) }
+    var state by remember { mutableStateOf(ProfileTabs.ABOUT) }
     val titles = ProfileTabs.entries
     val onBackground = MaterialTheme.colorScheme.onBackground
 
     Column(modifier) {
         PrimaryTabRow(
-            selectedTabIndex = state,
+            selectedTabIndex = state.ordinal,
             containerColor = MaterialTheme.colorScheme.background,
             divider = {}
         ) {
             titles.forEachIndexed { index, tab ->
                 Tab(
-                    selected = state == index,
-                    onClick = { state = index },
+                    selected = state.ordinal == index,
+                    onClick = { state = ProfileTabs.entries[index] },
                     text = {
                         Text(
                             text = tab.title,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodyMedium,
                             color = onBackground.copy(
-                                alpha = if (state == index) 1f else 0.5f
+                                alpha = if (state.ordinal == index) 1f else 0.5f
                             ),
                             maxLines = 1
                         )
@@ -188,24 +188,28 @@ private fun UserTabs(modifier: Modifier = Modifier) {
                 )
             }
         }
-        Box(
-            Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            onBackground.copy(alpha = 0.03f),
-                            Color.Transparent
+        // TODO: Use `AnimatedContent`.
+        when(state) {
+            ProfileTabs.ABOUT -> AboutTab()
+            else -> Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                onBackground.copy(alpha = 0.03f),
+                                Color.Transparent
+                            )
                         )
                     )
+            ) {
+                Text(
+                    text = stringResource(coreR.string.coming_soon),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.align(Alignment.Center)
                 )
-        ) {
-            Text(
-                text = stringResource(coreR.string.coming_soon),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            }
         }
     }
 }
@@ -216,4 +220,9 @@ enum class ProfileTabs(val title: String) {
     MANGA("Manga"),
     FAVOURITES("Fave"),
     STATISTICS("Stats")
+}
+
+@Composable
+fun AboutTab(modifier: Modifier = Modifier) {
+
 }
