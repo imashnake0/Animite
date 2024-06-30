@@ -32,15 +32,16 @@ data class Viewer(
         avatar = query.avatar?.large,
         banner = query.bannerImage,
         genres = query.statistics?.anime?.genres.orEmpty().filterNotNull().run {
+            val totalCount = this.sumOf { genre -> genre.count }
             mapNotNull {
                 Genre(
                     genre = it.genre ?: return@mapNotNull null,
                     mediaCount = it.count
                 )
             }.filter {
-                // Filters out anime genres that contribute to less than 5%
-                it.mediaCount > this.sumOf { genre -> genre.count }/20
-            }
+                // Filters out anime genres that contribute to less than 5%.
+                it.mediaCount > totalCount/20
+            }.sortedByDescending { it.mediaCount }
         }
     )
 }

@@ -4,14 +4,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -190,22 +196,22 @@ private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
                 )
             }
         }
-        // TODO: Use `AnimatedContent`.
-        when(state) {
-            ProfileTabs.ABOUT -> AboutTab(ProfileTabs.ABOUT.title, viewer)
-            else -> Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                onBackground.copy(alpha = 0.03f),
-                                Color.Transparent
-                            )
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            onBackground.copy(alpha = 0.03f),
+                            Color.Transparent
                         )
                     )
-            ) {
-                Text(
+                )
+        ) {
+            // TODO: Use `AnimatedContent`.
+            when (state) {
+                ProfileTabs.ABOUT -> AboutTab(viewer)
+                else -> Text(
                     text = stringResource(coreR.string.coming_soon),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge,
@@ -226,24 +232,57 @@ enum class ProfileTabs(val title: String) {
 
 @Composable
 fun AboutTab(
-    title: String,
     viewer: Viewer,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.padding(
             top = LocalPaddings.current.large,
-            start = LocalPaddings.current.large
+            start = LocalPaddings.current.large,
+            end = LocalPaddings.current.large
         ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Column {
-            viewer.genres.forEach {
-                Text("${it.genre} - ${it.mediaCount}")
+        Genres(viewer.genres)
+    }
+}
+
+@Composable
+fun Genres(
+    genres: List<Viewer.Genre>,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = "Genres",
+        style = MaterialTheme.typography.titleMedium
+    )
+    Row(modifier.height(IntrinsicSize.Max)) {
+        Column(horizontalAlignment = Alignment.End) {
+            genres.forEach {
+                Text(
+                    text = it.genre,
+                    style = m3TextStyles().textStyle.copy(
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)
+                    )
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(start = LocalPaddings.current.small),
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
+        ) {
+            val highestCount = genres.maxOf { it.mediaCount }
+            genres.forEach {
+                val weight = it.mediaCount/highestCount.toFloat() - 0.2f
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = weight)
+                        .weight(1f),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = weight),
+                    shape = CircleShape
+                ) {  }
             }
         }
     }
