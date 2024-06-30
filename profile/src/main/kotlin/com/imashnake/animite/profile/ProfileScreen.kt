@@ -1,6 +1,7 @@
 package com.imashnake.animite.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
+import com.imashnake.animite.api.anilist.ViewerQuery
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
@@ -113,7 +115,7 @@ fun ProfileScreen(
                                     .padding(horizontal = LocalPaddings.current.large)
                             )
                             Spacer(Modifier.size(LocalPaddings.current.medium))
-                            UserTabs()
+                            UserTabs(this@run)
                         }
                     },
                     contentModifier = Modifier
@@ -153,7 +155,7 @@ private fun AboutUser(about: String?, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun UserTabs(modifier: Modifier = Modifier) {
+private fun UserTabs(viewer: ViewerQuery.Viewer, modifier: Modifier = Modifier) {
     var state by remember { mutableStateOf(ProfileTabs.ABOUT) }
     val titles = ProfileTabs.entries
     val onBackground = MaterialTheme.colorScheme.onBackground
@@ -190,7 +192,7 @@ private fun UserTabs(modifier: Modifier = Modifier) {
         }
         // TODO: Use `AnimatedContent`.
         when(state) {
-            ProfileTabs.ABOUT -> AboutTab()
+            ProfileTabs.ABOUT -> AboutTab(ProfileTabs.ABOUT.title, viewer)
             else -> Box(
                 Modifier
                     .fillMaxSize()
@@ -223,6 +225,26 @@ enum class ProfileTabs(val title: String) {
 }
 
 @Composable
-fun AboutTab(modifier: Modifier = Modifier) {
-
+fun AboutTab(
+    title: String,
+    viewer: ViewerQuery.Viewer,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(
+            top = LocalPaddings.current.large,
+            start = LocalPaddings.current.large
+        ),
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Column {
+            viewer.statistics?.anime?.genres?.forEach { genre ->
+                Text("${genre?.genre.orEmpty()} - ${genre?.count}")
+            }
+        }
+    }
 }
