@@ -15,11 +15,11 @@ import javax.inject.Inject
 class AnilistUserRepository @Inject constructor(
     @AuthorizedClient private val apolloClient: ApolloClient
 ) {
-    fun fetchViewer(): Flow<Result<ViewerQuery.Viewer>> {
+    fun fetchViewer(): Flow<Result<Viewer>> {
         return apolloClient
             .query(ViewerQuery())
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
-            .asResult { it.viewer!! }
+            .asResult { Viewer(it.viewer!!) }
     }
 }
