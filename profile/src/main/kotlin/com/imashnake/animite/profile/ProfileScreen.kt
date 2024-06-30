@@ -34,7 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
-import com.imashnake.animite.api.anilist.ViewerQuery
+import com.imashnake.animite.api.anilist.sanitize.profile.Viewer
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
@@ -83,13 +83,13 @@ fun ProfileScreen(
                     banner = {
                         Box {
                             AsyncImage(
-                                model = crossfadeModel(bannerImage),
+                                model = crossfadeModel(banner),
                                 contentDescription = "banner",
                                 modifier = it,
                                 contentScale = ContentScale.Crop
                             )
                             AsyncImage(
-                                model = crossfadeModel(avatar?.large),
+                                model = crossfadeModel(avatar),
                                 contentDescription = "avatar",
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
@@ -155,7 +155,7 @@ private fun AboutUser(about: String?, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun UserTabs(viewer: ViewerQuery.Viewer, modifier: Modifier = Modifier) {
+private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
     var state by remember { mutableStateOf(ProfileTabs.ABOUT) }
     val titles = ProfileTabs.entries
     val onBackground = MaterialTheme.colorScheme.onBackground
@@ -227,7 +227,7 @@ enum class ProfileTabs(val title: String) {
 @Composable
 fun AboutTab(
     title: String,
-    viewer: ViewerQuery.Viewer,
+    viewer: Viewer,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -242,8 +242,8 @@ fun AboutTab(
             style = MaterialTheme.typography.titleMedium
         )
         Column {
-            viewer.statistics?.anime?.genres?.forEach { genre ->
-                Text("${genre?.genre.orEmpty()} - ${genre?.count}")
+            viewer.genres.forEach {
+                Text("${it.genre} - ${it.mediaCount}")
             }
         }
     }
