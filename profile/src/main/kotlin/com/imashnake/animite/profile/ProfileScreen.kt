@@ -1,5 +1,7 @@
 package com.imashnake.animite.profile
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,14 +24,20 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -257,6 +265,24 @@ fun Genres(
     genres: List<Viewer.Genre>,
     modifier: Modifier = Modifier
 ) {
+    val barWidthAnimation = remember { Animatable(0f) }
+    val barAlphaAnimation = remember { Animatable(0f) }
+    val barColor = MaterialTheme.colorScheme.primary
+    LaunchedEffect("barAnimation") {
+        launch {
+            barWidthAnimation.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 1000, delayMillis = 250)
+            )
+        }
+        launch {
+            barAlphaAnimation.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 1000, delayMillis = 250)
+            )
+        }
+    }
+
     Text(
         text = "Genres",
         style = MaterialTheme.typography.titleMedium
@@ -288,8 +314,17 @@ fun Genres(
                     modifier = Modifier
                         .fillMaxWidth(fraction = weight)
                         .weight(1f)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = weight + 0.2f)),
+                        .graphicsLayer { alpha = weight * barAlphaAnimation.value }
+                        .drawBehind {
+                            drawRoundRect(
+                                color = barColor,
+                                size = Size(
+                                    width = size.width * barWidthAnimation.value,
+                                    height = size.height
+                                ),
+                                cornerRadius = CornerRadius(size.height)
+                            )
+                        },
                 ) {  }
             }
         }
