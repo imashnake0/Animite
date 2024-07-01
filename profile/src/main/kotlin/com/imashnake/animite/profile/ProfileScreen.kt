@@ -275,7 +275,10 @@ fun Genres(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(start = LocalPaddings.current.small),
+                .padding(
+                    start = LocalPaddings.current.small,
+                    end = LocalPaddings.current.large
+                ),
             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
         ) {
             val highestCount = genres.maxOf { it.mediaCount }
