@@ -276,12 +276,12 @@ fun Genres(
             val highestCount = genres.maxOf { it.mediaCount }
             genres.forEach {
                 val weight = it.mediaCount/highestCount.toFloat() - 0.2f
-                Surface(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth(fraction = weight)
-                        .weight(1f),
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = weight),
-                    shape = CircleShape
+                        .weight(1f)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = weight + 0.2f)),
                 ) {  }
             }
         }
