@@ -185,6 +185,7 @@ fun HomeScreen(
                         },
                         contentModifier = Modifier.padding(
                             bottom = dimensionResource(coreR.dimen.navigation_bar_height)
+                                    + LocalPaddings.current.large
                         ),
                         verticalArrangement = Arrangement.Top
                     )

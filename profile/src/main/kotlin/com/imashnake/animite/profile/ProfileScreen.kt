@@ -16,9 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
@@ -136,7 +139,6 @@ fun ProfileScreen(
                         }
                     },
                     contentModifier = Modifier
-                        .landscapeCutoutPadding()
                         .padding(
                             top = LocalPaddings.current.large,
                             bottom = dimensionResource(coreR.dimen.navigation_bar_height)
@@ -251,12 +253,11 @@ fun AboutTab(
     viewer: Viewer,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
     Column(
-        modifier = modifier.padding(
-            top = LocalPaddings.current.large,
-            start = LocalPaddings.current.large,
-            end = LocalPaddings.current.large
-        ),
+        modifier = modifier
+            .verticalScroll(scrollState)
+            .padding(LocalPaddings.current.large),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
         Genres(viewer.genres)
@@ -307,7 +308,8 @@ fun Genres(
                 .padding(
                     start = LocalPaddings.current.small,
                     end = LocalPaddings.current.large
-                ),
+                )
+                .widthIn(max = 250.dp),
             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
         ) {
             val highestCount = genres.maxOf { it.mediaCount }
