@@ -2,7 +2,16 @@ package com.imashnake.animite.api.anilist.sanitize.profile
 
 import com.imashnake.animite.api.anilist.ViewerQuery
 
-/** Sanitized [Viewer] */
+/**
+ * Sanitized [ViewerQuery.Viewer].
+ *
+ * @param id
+ * @param name
+ * @param about
+ * @param avatar
+ * @param banner
+ * @param genres
+ */
 data class Viewer(
     /** @see ViewerQuery.Viewer.id */
     val id: Int,
@@ -17,7 +26,11 @@ data class Viewer(
     /** @see ViewerQuery.Viewer.statistics */
     val genres: List<Genre>
 ) {
-    /** @see ViewerQuery.Genre */
+    /** Sanitized [ViewerQuery.Genre]
+     *
+     * @param genre
+     * @param mediaCount
+     */
     data class Genre(
         /** @see ViewerQuery.Genre.genre */
         val genre: String,
