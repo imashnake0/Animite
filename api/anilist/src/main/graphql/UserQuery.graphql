@@ -12,6 +12,7 @@ query UserQuery(
         search: $search
         sort: $sort
     ) {
+        # TODO: Use fragments.
         id
         name
         about
@@ -31,5 +32,13 @@ query Viewer {
             large
         }
         bannerImage
+        statistics {
+            anime {
+                genres {
+                    genre
+                    count
+                }
+            }
+        }
     }
 }

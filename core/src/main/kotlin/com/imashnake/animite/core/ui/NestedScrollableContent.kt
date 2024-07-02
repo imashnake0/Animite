@@ -41,7 +41,7 @@ fun NestedScrollableContent(
                         )
                     )
                 )
-        ) { }
+        )
 
         Box(
             modifier = Modifier
@@ -56,6 +56,6 @@ fun NestedScrollableContent(
                         )
                     )
                 )
-        ) { }
+        )
     }
 }

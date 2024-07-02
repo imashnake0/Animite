@@ -104,6 +104,7 @@ fun MediaPage(
                 Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState)
+                    .padding(bottom = LocalPaddings.current.large)
             ) {
                 BannerLayout(
                     banner = { bannerModifier ->
