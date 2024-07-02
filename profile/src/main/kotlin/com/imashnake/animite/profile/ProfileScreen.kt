@@ -262,7 +262,7 @@ fun AboutTab(
             .padding(LocalPaddings.current.large),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        Genres(viewer.genres)
+        if (viewer.genres.isNotEmpty()) Genres(viewer.genres)
     }
 }
 

@@ -10,6 +10,9 @@ import com.imashnake.animite.api.anilist.ViewerQuery
  * @param about
  * @param avatar
  * @param banner
+ * @param count
+ * @param minutesWatched
+ * @param meanScore
  * @param genres
  */
 data class Viewer(
@@ -23,10 +26,19 @@ data class Viewer(
     val avatar: String?,
     /** @see ViewerQuery.Viewer.bannerImage */
     val banner: String?,
-    /** @see ViewerQuery.Viewer.statistics */
+    // region About
+    /** @see ViewerQuery.Anime.count */
+    val count: Int?,
+    /** @see ViewerQuery.Anime.minutesWatched */
+    val minutesWatched: Int?,
+    /** @see ViewerQuery.Anime.meanScore */
+    val meanScore: Float?,
+    /** @see ViewerQuery.Anime.genres */
     val genres: List<Genre>
+    // endregion
 ) {
-    /** Sanitized [ViewerQuery.Genre]
+    /**
+     * Sanitized [ViewerQuery.Genre]
      *
      * @param genre
      * @param mediaCount
@@ -44,6 +56,9 @@ data class Viewer(
         about = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
+        count = query.statistics?.anime?.count,
+        minutesWatched = query.statistics?.anime?.minutesWatched,
+        meanScore = query.statistics?.anime?.meanScore?.toFloat(),
         genres = query.statistics?.anime?.genres.orEmpty().filterNotNull().run {
             val totalCount = this.sumOf { genre -> genre.count }
             mapNotNull {
