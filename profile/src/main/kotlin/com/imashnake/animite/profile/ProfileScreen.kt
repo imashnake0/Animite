@@ -127,13 +127,14 @@ fun ProfileScreen(
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier.padding(
                                     horizontal = LocalPaddings.current.large
-                                )
+                                ).landscapeCutoutPadding()
                             )
                             AboutUser(
                                 about,
                                 modifier = Modifier
                                     .maxHeight(dimensionResource(R.dimen.user_about_height))
                                     .padding(horizontal = LocalPaddings.current.large)
+                                    .landscapeCutoutPadding()
                             )
                             Spacer(Modifier.size(LocalPaddings.current.medium))
                             UserTabs(this@run)
@@ -184,6 +185,7 @@ private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
     Column(modifier) {
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
+            modifier = Modifier.landscapeCutoutPadding(),
             containerColor = MaterialTheme.colorScheme.background,
             divider = {}
         ) {
@@ -226,7 +228,7 @@ private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
                     )
                 )
         ) { page ->
-            Box(Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxSize().landscapeCutoutPadding()) {
                 when (ProfileTabs.entries[page]) {
                     ProfileTabs.ABOUT -> AboutTab(viewer)
                     else -> Text(
