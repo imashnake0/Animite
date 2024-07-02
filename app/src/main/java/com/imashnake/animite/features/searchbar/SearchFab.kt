@@ -59,7 +59,6 @@ fun SearchFab(
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier,
-        shadowElevation = 20.dp,
         shape = CircleShape
     ) {
         AnimatedContent(targetState = isExpanded, label = "expand_search_fab") { targetExpanded ->
