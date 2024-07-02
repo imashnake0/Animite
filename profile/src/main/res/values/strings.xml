@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="genres">Genres</string>
-
     <string name="about">About</string>
     <string name="anime">Anime</string>
     <string name="manga">Manga</string>
     <string name="favourites">Fave</string>
     <string name="statistics">Stats</string>
+    
+    <string name="total_anime">TOTAL\nANIME</string>
+    <string name="days_watched">DAYS\nWATCHED</string>
+    <string name="mean_score">MEAN\nSCORE</string>
+
+    <string name="genres">Genres</string>
 </resources>

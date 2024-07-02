@@ -1,6 +1,8 @@
 package com.imashnake.animite.api.anilist.sanitize.profile
 
 import com.imashnake.animite.api.anilist.ViewerQuery
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.DurationUnit
 
 /**
  * Sanitized [ViewerQuery.Viewer].
@@ -10,6 +12,9 @@ import com.imashnake.animite.api.anilist.ViewerQuery
  * @param about
  * @param avatar
  * @param banner
+ * @param count
+ * @param daysWatched
+ * @param meanScore
  * @param genres
  */
 data class Viewer(
@@ -23,10 +28,19 @@ data class Viewer(
     val avatar: String?,
     /** @see ViewerQuery.Viewer.bannerImage */
     val banner: String?,
-    /** @see ViewerQuery.Viewer.statistics */
+    // region About
+    /** @see ViewerQuery.Anime.count */
+    val count: Int?,
+    /** @see ViewerQuery.Anime.minutesWatched */
+    val daysWatched: Double?,
+    /** @see ViewerQuery.Anime.meanScore */
+    val meanScore: Float?,
+    /** @see ViewerQuery.Anime.genres */
     val genres: List<Genre>
+    // endregion
 ) {
-    /** Sanitized [ViewerQuery.Genre]
+    /**
+     * Sanitized [ViewerQuery.Genre]
      *
      * @param genre
      * @param mediaCount
@@ -44,6 +58,10 @@ data class Viewer(
         about = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
+        count = query.statistics?.anime?.count,
+        daysWatched = query.statistics?.anime?.minutesWatched
+            ?.minutes?.toDouble(DurationUnit.DAYS),
+        meanScore = query.statistics?.anime?.meanScore?.toFloat(),
         genres = query.statistics?.anime?.genres.orEmpty().filterNotNull().run {
             val totalCount = this.sumOf { genre -> genre.count }
             mapNotNull {

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -69,14 +68,15 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
+import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
+import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.features.ui.MediaSmall
 import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
@@ -130,13 +130,29 @@ fun MediaPage(
                         )
 
                         if (!media.ranks.isNullOrEmpty()) {
-                            MediaRankings(
-                                rankings = media.ranks,
+                            StatsRow(
+                                stats = media.ranks,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = LocalPaddings.current.large)
                                     .landscapeCutoutPadding()
-                            )
+                            ) {
+                                Text(
+                                    text = it.type.name,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+
+                                Text(
+                                    text = when (it.type) {
+                                        Media.Ranking.Type.SCORE -> "${it.rank}%"
+                                        Media.Ranking.Type.RATED,
+                                        Media.Ranking.Type.POPULAR -> "#${it.rank}"
+                                    },
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.displaySmall
+                                )
+                            }
                         }
 
                         if (!media.genres.isNullOrEmpty()) {
@@ -284,40 +300,6 @@ fun MediaDetails(
                 update = { it.text = html },
                 modifier = contentModifier
             )
-        }
-    }
-}
-
-@Composable
-fun MediaRankings(
-    rankings: List<Media.Ranking>,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = modifier
-    ) {
-        rankings.forEach { ranking ->
-            Column(
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = ranking.type.name,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall
-                )
-
-                Text(
-                    text = when (ranking.type) {
-                        Media.Ranking.Type.SCORE -> "${ranking.rank}%"
-                        Media.Ranking.Type.RATED, Media.Ranking.Type.POPULAR -> "#${ranking.rank}"
-                    },
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.displaySmall
-                )
-            }
         }
     }
 }
