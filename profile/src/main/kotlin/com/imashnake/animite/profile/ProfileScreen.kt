@@ -289,7 +289,7 @@ fun Genres(
     }
 
     Text(
-        text = "Genres",
+        text = stringResource(R.string.genres),
         style = MaterialTheme.typography.titleMedium
     )
     Row(modifier.height(IntrinsicSize.Max)) {
