@@ -57,6 +57,7 @@ import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.ui.BlankBox
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -315,7 +316,7 @@ fun Genres(
             val highestCount = genres.maxOf { it.mediaCount }
             genres.forEach {
                 val weight = it.mediaCount/highestCount.toFloat()
-                Box(
+                BlankBox(
                     modifier = Modifier
                         .fillMaxWidth(fraction = weight)
                         .weight(1f)
@@ -330,7 +331,7 @@ fun Genres(
                                 cornerRadius = CornerRadius(size.height)
                             )
                         },
-                ) {  }
+                )
             }
         }
     }

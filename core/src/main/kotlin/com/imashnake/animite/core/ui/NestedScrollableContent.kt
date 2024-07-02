@@ -28,7 +28,7 @@ fun NestedScrollableContent(
     Box(modifier) {
         content(Modifier.verticalScroll(rememberScrollState()).padding(vertical = gradientSize))
 
-        Box(
+        BlankBox(
             modifier = Modifier
                 .height(gradientSize)
                 .fillMaxWidth()
@@ -41,9 +41,9 @@ fun NestedScrollableContent(
                         )
                     )
                 )
-        ) { }
+        )
 
-        Box(
+        BlankBox(
             modifier = Modifier
                 .height(gradientSize)
                 .fillMaxWidth()
@@ -56,6 +56,6 @@ fun NestedScrollableContent(
                         )
                     )
                 )
-        ) { }
+        )
     }
 }
