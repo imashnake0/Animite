@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,6 +60,7 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
+import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.ramcosta.composedestinations.annotation.DeepLink
@@ -251,23 +253,53 @@ enum class ProfileTabs(@StringRes val titleRes: Int) {
 }
 
 @Composable
-fun AboutTab(
+private fun AboutTab(
     viewer: Viewer,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+
+    val statsLabelToValue = listOf(
+        stringResource(R.string.total_anime) to viewer.count?.toString(),
+        stringResource(R.string.days_watched) to viewer.daysWatched?.let { "%.1f".format(it) },
+        stringResource(R.string.mean_score) to viewer.meanScore?.let { "%.1f".format(it) }
+    ).filter { it.second != null }
+
     Column(
         modifier = modifier
             .verticalScroll(scrollState)
             .padding(LocalPaddings.current.large),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
+        StatsRow(
+            stats = statsLabelToValue,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = LocalPaddings.current.large)
+                .landscapeCutoutPadding()
+        ) {
+            Text(
+                text = it.first,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center
+            )
+
+            it.second?.let { value ->
+                Text(
+                    text = value,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.displaySmall
+                )
+            }
+        }
+
         if (viewer.genres.isNotEmpty()) Genres(viewer.genres)
     }
 }
 
 @Composable
-fun Genres(
+private fun Genres(
     genres: List<Viewer.Genre>,
     modifier: Modifier = Modifier
 ) {
