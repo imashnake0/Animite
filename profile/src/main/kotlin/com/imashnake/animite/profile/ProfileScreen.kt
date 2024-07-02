@@ -1,5 +1,6 @@
 package com.imashnake.animite.profile
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -120,7 +121,9 @@ fun ProfileScreen(
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.titleLarge,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
+                                modifier = Modifier.padding(
+                                    horizontal = LocalPaddings.current.large
+                                )
                             )
                             AboutUser(
                                 about,
@@ -189,7 +192,7 @@ private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
                     },
                     text = {
                         Text(
-                            text = tab.title,
+                            text = stringResource(tab.titleRes),
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodyMedium,
                             color = onBackground.copy(
@@ -235,12 +238,12 @@ private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
     }
 }
 
-enum class ProfileTabs(val title: String) {
-    ABOUT("About"),
-    ANIME("Anime"),
-    MANGA("Manga"),
-    FAVOURITES("Fave"),
-    STATISTICS("Stats")
+enum class ProfileTabs(@StringRes val titleRes: Int) {
+    ABOUT(R.string.about),
+    ANIME(R.string.anime),
+    MANGA(R.string.manga),
+    FAVOURITES(R.string.favourites),
+    STATISTICS(R.string.statistics)
 }
 
 @Composable
