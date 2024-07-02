@@ -61,7 +61,6 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
-import com.imashnake.animite.core.ui.BlankBox
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -116,7 +115,7 @@ fun HomeScreen(
                                     alignment = Alignment.TopCenter
                                 )
 
-                                BlankBox(
+                                Box(
                                     modifier = bannerModifier
                                         .background(
                                             Brush.verticalGradient(
@@ -264,7 +263,7 @@ private fun MediaTypeSelector(
             label = "media_switch"
         )
 
-        BlankBox(
+        Box(
             modifier = Modifier
                 .padding(dimensionResource(R.dimen.media_type_selector_padding))
                 .size(dimensionResource(R.dimen.media_type_choice_size))
