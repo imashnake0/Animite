@@ -15,21 +15,12 @@ query MediaListQuery(
         media(
             type: $type,
             sort: $sort,
-            # Popular This Season.
+            # region Popular This Season
             season: $season,
             seasonYear: $seasonYear
+            # endregion
         ) {
-            id
-            type
-            title {
-                romaji
-                english
-                native
-            }
-            coverImage {
-                extraLarge
-                large
-            }
+            ...MediaSmall
         }
     }
 }

@@ -1,0 +1,20 @@
+fragment User on User {
+    id
+    name
+    about
+    avatar {
+        large
+    }
+    bannerImage
+    statistics {
+        anime {
+            count
+            minutesWatched
+            meanScore
+            genres {
+                genre
+                count
+            }
+        }
+    }
+}
