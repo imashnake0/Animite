@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,13 +31,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.imashnake.animite.R
-import com.imashnake.animite.api.anilist.MediaListQuery
-import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.ui.LocalPaddings
 
@@ -143,51 +139,4 @@ fun MediaSmall(
                 )
             }
     }
-}
-
-@Preview
-@Composable
-fun PreviewMediaSmallRow() {
-    MediaSmallRow(
-        mediaList = List(10) {
-            MediaListQuery.Medium(
-                id = it,
-                type = MediaType.ANIME,
-                title = MediaListQuery.Title(
-                    romaji = "Sono Bisque Doll wa Koi wo Suru",
-                    english = null,
-                    native = null
-                ),
-                coverImage = MediaListQuery.CoverImage(
-                    extraLarge =
-                    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
-                    large = null
-                )
-            )
-        },
-        content = { media ->
-            MediaSmall(
-                image = media.coverImage?.extraLarge,
-                // TODO: Do something about this chain.
-                label = media.title?.romaji ?:
-                media.title?.english ?:
-                media.title?.native.orEmpty(),
-                onClick = { },
-                modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-            )
-        }
-    )
-}
-
-@Preview
-@Composable
-fun PreviewMediaSmall() {
-    MediaSmall(
-        image =
-        "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
-        label =
-        "Sono Bisque Doll wa Koi wo Suru",
-        onClick = {  },
-        modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-    )
 }
