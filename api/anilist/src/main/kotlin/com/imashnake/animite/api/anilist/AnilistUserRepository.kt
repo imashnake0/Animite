@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.Viewer
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -27,10 +28,17 @@ class AnilistUserRepository @Inject constructor(
     }
 
     /** @param id The id of the user. */
-    fun fetchUserMediaList(id: Int?): Flow<Result<UserMediaListQuery.Data>> =
+    fun fetchUserMediaList(id: Int?): Flow<Result<List<Pair<String, List<Media.Small>>>>> =
         apolloClient
             .query(UserMediaListQuery(Optional.presentIfNotNull(id)))
             .fetchPolicy(FetchPolicy.CacheFirst)
             .toFlow()
-            .asResult()
+            .asResult { data ->
+                data.mediaListCollection?.lists.orEmpty().mapNotNull { collection ->
+                    Pair(
+                        collection?.name ?: return@mapNotNull null,
+                        collection.entries.orEmpty().map { entry -> Media.Small(entry?.media?.mediaSmall ?: return@mapNotNull null) }
+                    )
+                }
+            }
 }

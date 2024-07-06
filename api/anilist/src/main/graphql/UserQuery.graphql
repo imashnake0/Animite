@@ -26,6 +26,7 @@ query UserMediaListQuery($userId: Int) {
     # TODO: Support MANGA type.
     mediaListCollection: MediaListCollection(userId: $userId, type: ANIME) {
         lists {
+            name
             entries {
                 media {
                     ...MediaSmall

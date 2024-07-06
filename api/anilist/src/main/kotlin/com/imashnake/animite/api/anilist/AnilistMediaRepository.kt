@@ -30,7 +30,7 @@ class AnilistMediaRepository @Inject constructor(
         perPage: Int = 10,
         season: MediaSeason? = null,
         seasonYear: Int? = null
-    ): Flow<Result<List<Media.Medium>>> {
+    ): Flow<Result<List<Media.Small>>> {
         return apolloClient
             .query(
                 MediaListQuery(
@@ -46,7 +46,7 @@ class AnilistMediaRepository @Inject constructor(
             .toFlow()
             .asResult {
                 it.page!!.media.orEmpty().filterNotNull().map { query ->
-                    Media.Medium(query.mediaSmall)
+                    Media.Small(query.mediaSmall)
                 }
             }
     }
