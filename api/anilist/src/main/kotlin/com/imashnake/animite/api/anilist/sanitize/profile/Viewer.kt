@@ -17,7 +17,7 @@ import kotlin.time.DurationUnit
  * @param meanScore
  * @param genres
  */
-data class Viewer(
+data class User(
     /** @see User.id */
     val id: Int,
     /** @see User.name */

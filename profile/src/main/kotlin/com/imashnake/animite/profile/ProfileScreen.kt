@@ -53,7 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
-import com.imashnake.animite.api.anilist.sanitize.profile.Viewer
+import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
@@ -183,7 +183,7 @@ private fun AboutUser(about: String?, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
+private fun UserTabs(user: User, modifier: Modifier = Modifier) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTabs.entries.size })
     val titles = ProfileTabs.entries
@@ -240,7 +240,7 @@ private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
                     .fillMaxSize()
                     .landscapeCutoutPadding()) {
                 when (ProfileTabs.entries[page]) {
-                    ProfileTabs.ABOUT -> AboutTab(viewer)
+                    ProfileTabs.ABOUT -> AboutTab(user)
                     else -> Text(
                         text = stringResource(coreR.string.coming_soon),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -263,15 +263,15 @@ enum class ProfileTabs(@StringRes val titleRes: Int) {
 
 @Composable
 private fun AboutTab(
-    viewer: Viewer,
+    user: User,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
 
     val statsLabelToValue = listOf(
-        stringResource(R.string.total_anime) to viewer.count?.toString(),
-        stringResource(R.string.days_watched) to viewer.daysWatched?.let { "%.1f".format(it) },
-        stringResource(R.string.mean_score) to viewer.meanScore?.let { "%.1f".format(it) }
+        stringResource(R.string.total_anime) to user.count?.toString(),
+        stringResource(R.string.days_watched) to user.daysWatched?.let { "%.1f".format(it) },
+        stringResource(R.string.mean_score) to user.meanScore?.let { "%.1f".format(it) }
     ).filter { it.second != null }
 
     Column(
@@ -303,13 +303,13 @@ private fun AboutTab(
             }
         }
 
-        if (viewer.genres.isNotEmpty()) Genres(viewer.genres)
+        if (user.genres.isNotEmpty()) Genres(user.genres)
     }
 }
 
 @Composable
 private fun Genres(
-    genres: List<Viewer.Genre>,
+    genres: List<User.Genre>,
     modifier: Modifier = Modifier
 ) {
     val barWidthAnimation = remember { Animatable(0f) }
