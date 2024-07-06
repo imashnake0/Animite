@@ -45,7 +45,9 @@ class AnilistMediaRepository @Inject constructor(
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
             .asResult {
-                it.page!!.media.orEmpty().filterNotNull().map { query -> Media.Medium(query) }
+                it.page!!.media.orEmpty().filterNotNull().map { query ->
+                    Media.Medium(query.mediaSmall)
+                }
             }
     }
 

@@ -3,6 +3,7 @@ package com.imashnake.animite.api.anilist.sanitize.media
 import android.graphics.Color
 import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
+import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
 
 private const val HQ_DEFAULT = "hqdefault"
@@ -126,22 +127,22 @@ data class Media(
     )
 
     data class Medium(
-        /** @see MediaListQuery.Medium.id */
+        /** @see MediaSmall.id */
         val id: Int,
-        /** @see MediaListQuery.Medium.type */
+        /** @see MediaSmall.type */
         val type: Type?,
-        /** @see MediaListQuery.Medium.title */
+        /** @see MediaSmall.title */
         val title: String?,
-        /** @see MediaListQuery.Medium.coverImage */
+        /** @see MediaSmall.coverImage */
         val coverImage: String?
     ) {
-        /** @see MediaListQuery.Medium.type */
+        /** @see MediaSmall.type */
         enum class Type(val type: String) {
             ANIME("Anime"),
             MANGA("Manga")
         }
 
-        internal constructor(query: MediaListQuery.Medium) : this(
+        internal constructor(query: MediaSmall) : this(
             id = query.id,
             type = query.type?.name?.let { Type.valueOf(it) },
             coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large,

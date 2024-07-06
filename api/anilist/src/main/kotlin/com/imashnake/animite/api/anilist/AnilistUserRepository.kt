@@ -23,7 +23,7 @@ class AnilistUserRepository @Inject constructor(
             .query(ViewerQuery())
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
-            .asResult { Viewer(it.viewer!!) }
+            .asResult { Viewer(it.viewer?.user!!) }
     }
 
     /** @param id The id of the user. */

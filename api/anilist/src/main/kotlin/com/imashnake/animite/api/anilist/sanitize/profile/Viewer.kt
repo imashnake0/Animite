@@ -1,11 +1,11 @@
 package com.imashnake.animite.api.anilist.sanitize.profile
 
-import com.imashnake.animite.api.anilist.ViewerQuery
+import com.imashnake.animite.api.anilist.fragment.User
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
 /**
- * Sanitized [ViewerQuery.Viewer].
+ * Sanitized [User].
  *
  * @param id
  * @param name
@@ -18,41 +18,41 @@ import kotlin.time.DurationUnit
  * @param genres
  */
 data class Viewer(
-    /** @see ViewerQuery.Viewer.id */
+    /** @see User.id */
     val id: Int,
-    /** @see ViewerQuery.Viewer.name */
+    /** @see User.name */
     val name: String,
-    /** @see ViewerQuery.Viewer.about */
+    /** @see User.about */
     val about: String?,
-    /** @see ViewerQuery.Viewer.avatar */
+    /** @see User.avatar */
     val avatar: String?,
-    /** @see ViewerQuery.Viewer.bannerImage */
+    /** @see User.bannerImage */
     val banner: String?,
     // region About
-    /** @see ViewerQuery.Anime.count */
+    /** @see User.Anime.count */
     val count: Int?,
-    /** @see ViewerQuery.Anime.minutesWatched */
+    /** @see User.Anime.minutesWatched */
     val daysWatched: Double?,
-    /** @see ViewerQuery.Anime.meanScore */
+    /** @see User.Anime.meanScore */
     val meanScore: Float?,
-    /** @see ViewerQuery.Anime.genres */
+    /** @see User.Anime.genres */
     val genres: List<Genre>
     // endregion
 ) {
     /**
-     * Sanitized [ViewerQuery.Genre]
+     * Sanitized [User.Genre]
      *
      * @param genre
      * @param mediaCount
      */
     data class Genre(
-        /** @see ViewerQuery.Genre.genre */
+        /** @see User.Genre.genre */
         val genre: String,
-        /** @see ViewerQuery.Genre.count */
+        /** @see User.Genre.count */
         val mediaCount: Int,
     )
 
-    internal constructor(query: ViewerQuery.Viewer) : this(
+    internal constructor(query: User) : this(
         id = query.id,
         name = query.name,
         about = query.about,
