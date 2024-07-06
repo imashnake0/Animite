@@ -184,10 +184,10 @@ fun HomeScreen(
                             }
                         },
                         contentModifier = Modifier.padding(
-                            bottom = dimensionResource(coreR.dimen.navigation_bar_height)
-                                    + LocalPaddings.current.large
+                            top = LocalPaddings.current.large,
+                            bottom = dimensionResource(coreR.dimen.navigation_bar_height) + LocalPaddings.current.large
                         ),
-                        verticalArrangement = Arrangement.Top
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                     )
                 }
             }
@@ -220,26 +220,13 @@ fun HomeRow(
                 + shrinkVertically(tween(durationMillis = 500)),
         label = "animate_media_list_enter_exit"
     ) {
-        Column(
-            modifier = modifier.padding(top = LocalPaddings.current.large),
-            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .padding(start = LocalPaddings.current.large)
-                    .landscapeCutoutPadding()
+        MediaSmallRow(title, list, modifier) { media ->
+            MediaSmall(
+                image = media.coverImage,
+                label = media.title,
+                onClick = { onItemClicked(media) },
+                modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
             )
-
-            MediaSmallRow(list) { media ->
-                MediaSmall(
-                    image = media.coverImage,
-                    label = media.title,
-                    onClick = { onItemClicked(media) },
-                    modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-                )
-            }
         }
     }
 }

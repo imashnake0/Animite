@@ -174,7 +174,6 @@ fun MediaPage(
                         if (!media.characters.isNullOrEmpty()) {
                             MediaCharacters(
                                 characters = media.characters,
-                                contentPadding = PaddingValues(horizontal = LocalPaddings.current.large)
                             )
                         }
 
@@ -343,29 +342,18 @@ fun MediaGenres(
 fun MediaCharacters(
     characters: List<Media.Character>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues()
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
-    ) {
-        Text(
-            text = stringResource(R.string.characters),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(contentPadding)
-                .landscapeCutoutPadding()
+    MediaSmallRow(
+        title = stringResource(R.string.characters),
+        mediaList = characters,
+        modifier = modifier
+    ) { character ->
+        MediaSmall(
+            image = character.image,
+            label = character.name,
+            onClick = { Log.d("CharacterId", "${character.id}") },
+            modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
         )
-
-        MediaSmallRow(characters) { character ->
-            MediaSmall(
-                image = character.image,
-                label = character.name,
-                onClick = { Log.d("CharacterId", "${character.id}") },
-                modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
-            )
-        }
     }
 }
 

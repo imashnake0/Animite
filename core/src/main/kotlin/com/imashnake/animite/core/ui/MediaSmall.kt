@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 
 /**
  * A [LazyRow] of [MediaSmall]s.
@@ -44,32 +46,49 @@ import com.imashnake.animite.core.extensions.crossfadeModel
  */
 @Composable
 fun <T> MediaSmallRow(
+    title: String?,
     mediaList: List<T>,
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit
 ) {
-    AnimatedContent(
-        targetState = mediaList,
-        transitionSpec = {
-            fadeIn(tween(500)).togetherWith(fadeOut(tween(500)))
-        },
-        label = "animate_media_list_content"
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-            contentPadding = PaddingValues(
-                start = LocalPaddings.current.large + if (
-                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                ) {
-                    WindowInsets.displayCutout.asPaddingValues()
-                        .calculateLeftPadding(LayoutDirection.Ltr)
-                } else 0.dp,
-                end = LocalPaddings.current.large
-            ),
-            modifier = modifier
+        // TODO: Does this behave as expected if `title` is null?
+        if (title != null) {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .padding(start = LocalPaddings.current.large)
+                    .landscapeCutoutPadding()
+            )
+        }
+
+        AnimatedContent(
+            targetState = mediaList,
+            transitionSpec = {
+                fadeIn(tween(500)).togetherWith(fadeOut(tween(500)))
+            },
+            label = "animate_media_list_content"
         ) {
-            items(it) { media ->
-                content(media)
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                contentPadding = PaddingValues(
+                    start = LocalPaddings.current.large + if (
+                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    ) {
+                        WindowInsets.displayCutout.asPaddingValues()
+                            .calculateLeftPadding(LayoutDirection.Ltr)
+                    } else 0.dp,
+                    end = LocalPaddings.current.large
+                )
+            ) {
+                items(it) { media ->
+                    content(media)
+                }
             }
         }
     }
