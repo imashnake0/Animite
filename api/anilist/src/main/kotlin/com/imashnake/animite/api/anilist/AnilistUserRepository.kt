@@ -5,7 +5,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.profile.Viewer
+import com.imashnake.animite.api.anilist.sanitize.profile.User
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -19,12 +19,12 @@ import javax.inject.Inject
 class AnilistUserRepository @Inject constructor(
     @AuthorizedClient private val apolloClient: ApolloClient
 ) {
-    fun fetchViewer(): Flow<Result<Viewer>> {
+    fun fetchViewer(): Flow<Result<User>> {
         return apolloClient
             .query(ViewerQuery())
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
-            .asResult { Viewer(it.viewer?.user!!) }
+            .asResult { User(it.viewer?.user!!) }
     }
 
     /** @param id The id of the user. */
