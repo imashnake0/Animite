@@ -3,9 +3,10 @@ query MediaListQuery(
     $page: Int,
     $perPage: Int,
     $sort: [MediaSort],
-    # Popular This Season.
+    # region Popular This Season
     $season: MediaSeason,
-    $seasonYear: Int
+    $seasonYear: Int,
+    # endregion
 ) {
     page: Page (
         page: $page,

@@ -45,3 +45,25 @@ query Viewer {
         }
     }
 }
+
+query UserMediaListQuery($userId: Int) {
+    mediaListCollection: MediaListCollection(userId: $userId) {
+        lists {
+            entries {
+                media {
+                    id
+                    type
+                    title {
+                        romaji
+                        english
+                        native
+                    }
+                    coverImage {
+                        extraLarge
+                        large
+                    }
+                }
+            }
+        }
+    }
+}
