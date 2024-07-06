@@ -1,6 +1,8 @@
 package com.imashnake.animite.api.anilist.sanitize.profile
 
+import com.imashnake.animite.api.anilist.UserMediaListQuery
 import com.imashnake.animite.api.anilist.fragment.User
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
@@ -51,6 +53,26 @@ data class User(
         /** @see User.Genre.count */
         val mediaCount: Int,
     )
+
+    data class MediaCollection(val namedLists: List<NamedList>) {
+        data class NamedList(
+            val name: String?,
+            val list: List<Media.Small>
+        ) {
+            internal constructor(query: UserMediaListQuery.List) : this(
+                name = query.name,
+                list = query.entries.orEmpty().mapNotNull {
+                    Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null)
+                }
+            )
+        }
+
+        internal constructor(query: UserMediaListQuery.Data) : this(
+            namedLists = query.mediaListCollection?.lists.orEmpty().mapNotNull {
+                NamedList(it ?: return@mapNotNull null)
+            }
+        )
+    }
 
     internal constructor(query: User) : this(
         id = query.id,
