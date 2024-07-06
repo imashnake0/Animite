@@ -121,7 +121,7 @@ fun MediaPage(
                             modifier = Modifier
                                 .padding(
                                     start = LocalPaddings.current.large
-                                            + dimensionResource(R.dimen.media_card_width)
+                                            + dimensionResource(coreR.dimen.media_card_width)
                                             + LocalPaddings.current.large,
                                     end = LocalPaddings.current.large
                                 )
@@ -194,7 +194,7 @@ fun MediaPage(
                     targetValue = if (scrollState.value == 0) {
                         0.dp
                     } else {
-                        dimensionResource(R.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
+                        dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
                     },
                     animationSpec = tween(durationMillis = 750),
                     label = "media_card_height"
@@ -214,13 +214,13 @@ fun MediaPage(
                                     - WindowInsets.statusBars
                                         .asPaddingValues()
                                         .calculateTopPadding()
-                                    - dimensionResource(R.dimen.media_card_height)
+                                    - dimensionResource(coreR.dimen.media_card_height)
                                     + offset,
                             start = LocalPaddings.current.large
                         )
                         .landscapeCutoutPadding()
-                        .height(dimensionResource(R.dimen.media_card_height) - offset)
-                        .width(dimensionResource(R.dimen.media_card_width))
+                        .height(dimensionResource(coreR.dimen.media_card_height) - offset)
+                        .width(dimensionResource(coreR.dimen.media_card_width))
                 )
             }
         }

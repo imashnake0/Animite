@@ -224,7 +224,7 @@ fun HomeRow(
                 image = media.coverImage,
                 label = media.title,
                 onClick = { onItemClicked(media) },
-                modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
+                modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width))
             )
         }
     }

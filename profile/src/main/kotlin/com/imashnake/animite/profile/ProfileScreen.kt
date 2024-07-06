@@ -1,6 +1,5 @@
 package com.imashnake.animite.profile
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -49,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
@@ -60,6 +61,8 @@ import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -102,7 +105,6 @@ fun ProfileScreen(
     ) {
         when {
             isLoggedIn -> viewer.data?.run {
-                Log.d("ViewerMediaLists", "ProfileScreen: ${viewerMediaLists?.data}")
                 BannerLayout(
                     banner = {
                         Box {
@@ -144,7 +146,10 @@ fun ProfileScreen(
                                     .landscapeCutoutPadding()
                             )
                             Spacer(Modifier.size(LocalPaddings.current.medium))
-                            UserTabs(this@run)
+                            UserTabs(
+                                user = this@run,
+                                mediaCollection = viewerMediaLists?.data
+                            )
                         }
                     },
                     contentModifier = Modifier
@@ -183,7 +188,11 @@ private fun AboutUser(about: String?, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun UserTabs(user: User, modifier: Modifier = Modifier) {
+private fun UserTabs(
+    user: User,
+    mediaCollection: User.MediaCollection?,
+    modifier: Modifier = Modifier
+) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTabs.entries.size })
     val titles = ProfileTabs.entries
@@ -240,7 +249,7 @@ private fun UserTabs(user: User, modifier: Modifier = Modifier) {
                     .fillMaxSize()
                     .landscapeCutoutPadding()) {
                 when (ProfileTabs.entries[page]) {
-                    ProfileTabs.ABOUT -> AboutTab(user)
+                    ProfileTabs.ABOUT -> AboutTab(user, mediaCollection)
                     else -> Text(
                         text = stringResource(coreR.string.coming_soon),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -264,6 +273,7 @@ enum class ProfileTabs(@StringRes val titleRes: Int) {
 @Composable
 private fun AboutTab(
     user: User,
+    mediaCollection: User.MediaCollection?,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -274,36 +284,42 @@ private fun AboutTab(
         stringResource(R.string.mean_score) to user.meanScore?.let { "%.1f".format(it) }
     ).filter { it.second != null }
 
-    Column(
-        modifier = modifier
-            .verticalScroll(scrollState)
-            .padding(LocalPaddings.current.large),
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
-    ) {
-        StatsRow(
-            stats = statsLabelToValue,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = LocalPaddings.current.large)
-                .landscapeCutoutPadding()
+    // TODO: Cleanup this layout.
+    Column(modifier.verticalScroll(scrollState)) {
+        Column(
+            modifier = Modifier.padding(LocalPaddings.current.large),
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
         ) {
-            Text(
-                text = it.first,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center
-            )
-
-            it.second?.let { value ->
+            StatsRow(
+                stats = statsLabelToValue,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = LocalPaddings.current.large)
+                    .landscapeCutoutPadding()
+            ) {
                 Text(
-                    text = value,
+                    text = it.first,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.displaySmall
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center
                 )
-            }
-        }
 
-        if (user.genres.isNotEmpty()) Genres(user.genres)
+                it.second?.let { value ->
+                    Text(
+                        text = value,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.displaySmall
+                    )
+                }
+            }
+
+            if (user.genres.isNotEmpty()) Genres(user.genres)
+
+        }
+        // TODO: Why is this not smart-casting?
+        if (!mediaCollection?.namedLists.isNullOrEmpty()) {
+            UserMediaList(mediaCollection!!.namedLists)
+        }
     }
 }
 
@@ -373,6 +389,25 @@ private fun Genres(
                                 cornerRadius = CornerRadius(size.height)
                             )
                         },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun UserMediaList(
+    lists: List<User.MediaCollection.NamedList>,
+    modifier: Modifier = Modifier
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)) {
+        lists.fastForEach {
+            MediaSmallRow(it.name, it.list, modifier) { media ->
+                MediaSmall(
+                    image = media.coverImage,
+                    label = media.title,
+                    onClick = {},
+                    modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width))
                 )
             }
         }
