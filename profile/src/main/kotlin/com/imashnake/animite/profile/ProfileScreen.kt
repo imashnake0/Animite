@@ -1,5 +1,6 @@
 package com.imashnake.animite.profile
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -90,6 +91,8 @@ fun ProfileScreen(
     accessToken?.let { viewModel.setAccessToken(it) }
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
+    viewer.data?.id?.let { viewModel.setViewerId(it) }
+    val viewerMediaLists by viewModel.viewerMediaList.collectAsState(initial = null)
 
     Box(
         contentAlignment = Alignment.Center,
@@ -99,6 +102,7 @@ fun ProfileScreen(
     ) {
         when {
             isLoggedIn -> viewer.data?.run {
+                Log.d("ViewerMediaLists", "ProfileScreen: ${viewerMediaLists?.data}")
                 BannerLayout(
                     banner = {
                         Box {
@@ -126,9 +130,11 @@ fun ProfileScreen(
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.titleLarge,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(
-                                    horizontal = LocalPaddings.current.large
-                                ).landscapeCutoutPadding()
+                                modifier = Modifier
+                                    .padding(
+                                        horizontal = LocalPaddings.current.large
+                                    )
+                                    .landscapeCutoutPadding()
                             )
                             AboutUser(
                                 about,
@@ -229,7 +235,10 @@ private fun UserTabs(viewer: Viewer, modifier: Modifier = Modifier) {
                     )
                 )
         ) { page ->
-            Box(Modifier.fillMaxSize().landscapeCutoutPadding()) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .landscapeCutoutPadding()) {
                 when (ProfileTabs.entries[page]) {
                     ProfileTabs.ABOUT -> AboutTab(viewer)
                     else -> Text(
