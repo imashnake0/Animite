@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.ui
+package com.imashnake.animite.core.ui
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
@@ -34,9 +34,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.imashnake.animite.R
+import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.crossfadeModel
-import com.imashnake.animite.core.ui.LocalPaddings
 
 /**
  * A [LazyRow] of [MediaSmall]s.
