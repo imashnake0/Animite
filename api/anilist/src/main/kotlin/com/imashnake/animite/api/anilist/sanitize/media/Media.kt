@@ -1,7 +1,6 @@
 package com.imashnake.animite.api.anilist.sanitize.media
 
 import android.graphics.Color
-import com.imashnake.animite.api.anilist.MediaListQuery
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
@@ -126,7 +125,7 @@ data class Media(
         }
     )
 
-    data class Medium(
+    data class Small(
         /** @see MediaSmall.id */
         val id: Int,
         /** @see MediaSmall.type */

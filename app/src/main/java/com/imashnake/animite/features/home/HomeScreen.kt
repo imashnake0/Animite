@@ -208,9 +208,9 @@ fun HomeScreen(
 
 @Composable
 fun HomeRow(
-    list: List<Media.Medium>,
+    list: List<Media.Small>,
     title: String,
-    onItemClicked: (Media.Medium) -> Unit,
+    onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
