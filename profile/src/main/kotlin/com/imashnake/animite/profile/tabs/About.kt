@@ -56,7 +56,11 @@ fun AboutTab(
     ).filter { it.second != null }
 
     // TODO: Cleanup this layout.
-    Column(modifier.verticalScroll(scrollState)) {
+    Column(
+        modifier
+            .verticalScroll(scrollState)
+            .padding(bottom = LocalPaddings.current.large)
+    ) {
         Column(
             modifier = Modifier.padding(LocalPaddings.current.large),
             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
