@@ -44,6 +44,7 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.profile.tabs.AboutTab
+import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
@@ -225,9 +226,11 @@ private fun UserTabs(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .landscapeCutoutPadding()) {
+                    .landscapeCutoutPadding()
+            ) {
                 when (ProfileTabs.entries[page]) {
-                    ProfileTabs.ABOUT -> AboutTab(user, mediaCollection)
+                    ProfileTabs.ABOUT -> AboutTab(user)
+                    ProfileTabs.ANIME -> AnimeTab(mediaCollection)
                     else -> Text(
                         text = stringResource(coreR.string.coming_soon),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

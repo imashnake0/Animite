@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,17 +25,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
-import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.profile.R
 import kotlinx.coroutines.launch
@@ -44,7 +39,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun AboutTab(
     user: User,
-    mediaCollection: User.MediaCollection?,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -89,11 +83,6 @@ fun AboutTab(
             }
 
             if (user.genres.isNotEmpty()) Genres(user.genres)
-
-        }
-        // TODO: Why is this not smart-casting?
-        if (!mediaCollection?.namedLists.isNullOrEmpty()) {
-            UserMediaList(mediaCollection!!.namedLists)
         }
     }
 }
@@ -164,25 +153,6 @@ private fun Genres(
                                 cornerRadius = CornerRadius(size.height)
                             )
                         },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun UserMediaList(
-    lists: List<User.MediaCollection.NamedList>,
-    modifier: Modifier = Modifier
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)) {
-        lists.fastForEach {
-            MediaSmallRow(it.name, it.list, modifier) { media ->
-                MediaSmall(
-                    image = media.coverImage,
-                    label = media.title,
-                    onClick = {},
-                    modifier = Modifier.width(dimensionResource(com.imashnake.animite.core.R.dimen.media_card_width))
                 )
             }
         }
