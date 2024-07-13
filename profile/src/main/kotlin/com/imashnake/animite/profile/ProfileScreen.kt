@@ -1,55 +1,35 @@
 package com.imashnake.animite.profile
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
@@ -61,10 +41,7 @@ import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
-import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
-import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.profile.tabs.AboutTab
@@ -139,8 +116,8 @@ fun ProfileScreen(
                                     )
                                     .landscapeCutoutPadding()
                             )
-                            AboutUser(
-                                about,
+                            UserDescription(
+                                description = about,
                                 modifier = Modifier
                                     .maxHeight(dimensionResource(R.dimen.user_about_height))
                                     .padding(horizontal = LocalPaddings.current.large)
@@ -166,8 +143,8 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun AboutUser(about: String?, modifier: Modifier = Modifier) {
-    about?.let {
+private fun UserDescription(description: String?, modifier: Modifier = Modifier) {
+    description?.let {
         Box(modifier) {
             NestedScrollableContent { contentModifier ->
                 MarkdownDocument(

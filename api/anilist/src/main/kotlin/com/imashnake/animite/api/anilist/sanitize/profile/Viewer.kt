@@ -11,7 +11,7 @@ import kotlin.time.DurationUnit
  *
  * @param id
  * @param name
- * @param about
+ * @param description
  * @param avatar
  * @param banner
  * @param count
@@ -25,7 +25,7 @@ data class User(
     /** @see User.name */
     val name: String,
     /** @see User.about */
-    val about: String?,
+    val description: String?,
     /** @see User.avatar */
     val avatar: String?,
     /** @see User.bannerImage */
@@ -77,7 +77,7 @@ data class User(
     internal constructor(query: User) : this(
         id = query.id,
         name = query.name,
-        about = query.about,
+        description = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
         count = query.statistics?.anime?.count,
