@@ -23,6 +23,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.imashnake.animite.features.destinations.HomeScreenDestination
@@ -54,7 +55,7 @@ fun NavigationBar(
         ) { WindowInsets.displayCutout } else { WindowInsets(0.dp) }
     ) {
         val currentDestination by navController.currentDestinationAsState()
-        NavigationBarPaths.entries.forEach { destination ->
+        NavigationBarPaths.entries.fastForEach { destination ->
             val isCurrentDestOnBackStack = navController.isRouteOnBackStack(destination.route)
             NavigationBarItem(
                 modifier = Modifier.navigationBarsPadding(),

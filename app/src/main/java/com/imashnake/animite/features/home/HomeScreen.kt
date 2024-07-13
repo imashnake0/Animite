@@ -266,7 +266,7 @@ private fun MediaTypeSelector(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            MediaType.knownValues().forEach { mediaType ->
+            MediaType.knownValues().toList().fastForEach { mediaType ->
                 IconButton(
                     onClick = {
                         if (selectedOption.value != mediaType) {

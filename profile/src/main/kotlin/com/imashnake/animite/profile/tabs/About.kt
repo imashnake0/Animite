@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
@@ -116,7 +117,7 @@ private fun Genres(
     )
     Row(modifier.height(IntrinsicSize.Max)) {
         Column(horizontalAlignment = Alignment.End) {
-            genres.forEach {
+            genres.fastForEach {
                 Text(
                     text = it.genre,
                     style = m3TextStyles().textStyle.copy(
@@ -136,7 +137,7 @@ private fun Genres(
             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
         ) {
             val highestCount = genres.maxOf { it.mediaCount }
-            genres.forEach {
+            genres.fastForEach {
                 val weight = it.mediaCount/highestCount.toFloat()
                 Box(
                     modifier = Modifier
