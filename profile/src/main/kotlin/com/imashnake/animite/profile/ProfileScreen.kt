@@ -1,6 +1,5 @@
 package com.imashnake.animite.profile
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +44,7 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.profile.tabs.AboutTab
+import com.imashnake.animite.profile.tabs.ProfileTabs
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -238,12 +238,4 @@ private fun UserTabs(
             }
         }
     }
-}
-
-enum class ProfileTabs(@StringRes val titleRes: Int) {
-    ABOUT(R.string.about),
-    ANIME(R.string.anime),
-    MANGA(R.string.manga),
-    FAVOURITES(R.string.favourites),
-    STATISTICS(R.string.statistics)
 }
