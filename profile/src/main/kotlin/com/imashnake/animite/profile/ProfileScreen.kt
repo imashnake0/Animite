@@ -223,11 +223,7 @@ private fun UserTabs(
                     )
                 )
         ) { page ->
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .landscapeCutoutPadding()
-            ) {
+            Box(Modifier.fillMaxSize()) {
                 when (ProfileTabs.entries[page]) {
                     ProfileTabs.ABOUT -> AboutTab(user)
                     ProfileTabs.ANIME -> AnimeTab(mediaCollection)

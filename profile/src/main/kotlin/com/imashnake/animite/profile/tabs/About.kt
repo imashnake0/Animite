@@ -53,6 +53,7 @@ fun AboutTab(
     Column(
         modifier
             .verticalScroll(scrollState)
+            .landscapeCutoutPadding()
             .padding(bottom = LocalPaddings.current.large)
     ) {
         Column(
