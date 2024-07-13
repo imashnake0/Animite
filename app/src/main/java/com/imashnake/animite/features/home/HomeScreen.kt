@@ -14,7 +14,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,13 +61,13 @@ import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.features.destinations.MediaPageDestination
 import com.imashnake.animite.features.media.MediaPageArgs
-import com.imashnake.animite.features.ui.MediaSmall
-import com.imashnake.animite.features.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.imashnake.animite.core.R as coreR
@@ -184,10 +183,10 @@ fun HomeScreen(
                             }
                         },
                         contentModifier = Modifier.padding(
-                            bottom = dimensionResource(coreR.dimen.navigation_bar_height)
-                                    + LocalPaddings.current.large
+                            top = LocalPaddings.current.large,
+                            bottom = dimensionResource(coreR.dimen.navigation_bar_height) + LocalPaddings.current.large
                         ),
-                        verticalArrangement = Arrangement.Top
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                     )
                 }
             }
@@ -208,9 +207,9 @@ fun HomeScreen(
 
 @Composable
 fun HomeRow(
-    list: List<Media.Medium>,
+    list: List<Media.Small>,
     title: String,
-    onItemClicked: (Media.Medium) -> Unit,
+    onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
@@ -220,26 +219,13 @@ fun HomeRow(
                 + shrinkVertically(tween(durationMillis = 500)),
         label = "animate_media_list_enter_exit"
     ) {
-        Column(
-            modifier = modifier.padding(top = LocalPaddings.current.large),
-            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .padding(start = LocalPaddings.current.large)
-                    .landscapeCutoutPadding()
+        MediaSmallRow(title, list, modifier) { media ->
+            MediaSmall(
+                image = media.coverImage,
+                label = media.title,
+                onClick = { onItemClicked(media) },
+                modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width))
             )
-
-            MediaSmallRow(list) { media ->
-                MediaSmall(
-                    image = media.coverImage,
-                    label = media.title,
-                    onClick = { onItemClicked(media) },
-                    modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-                )
-            }
         }
     }
 }

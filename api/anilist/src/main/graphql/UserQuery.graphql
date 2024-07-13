@@ -12,34 +12,24 @@ query UserQuery(
         search: $search
         sort: $sort
     ) {
-        # TODO: Use fragments.
-        id
-        name
-        about
-        avatar {
-            large
-        }
-        bannerImage
+        ...User
     }
 }
 
 query Viewer {
     viewer: Viewer {
-        id
-        name
-        about
-        avatar {
-            large
-        }
-        bannerImage
-        statistics {
-            anime {
-                count
-                minutesWatched
-                meanScore
-                genres {
-                    genre
-                    count
+        ...User
+    }
+}
+
+query UserMediaListQuery($userId: Int) {
+    # TODO: Support MANGA type.
+    mediaListCollection: MediaListCollection(userId: $userId, type: ANIME) {
+        lists {
+            name
+            entries {
+                media {
+                    ...MediaSmall
                 }
             }
         }

@@ -77,8 +77,8 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.features.ui.MediaSmall
-import com.imashnake.animite.features.ui.MediaSmallRow
+import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaSmallRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.imashnake.animite.core.R as coreR
 
@@ -121,7 +121,7 @@ fun MediaPage(
                             modifier = Modifier
                                 .padding(
                                     start = LocalPaddings.current.large
-                                            + dimensionResource(R.dimen.media_card_width)
+                                            + dimensionResource(coreR.dimen.media_card_width)
                                             + LocalPaddings.current.large,
                                     end = LocalPaddings.current.large
                                 )
@@ -174,7 +174,6 @@ fun MediaPage(
                         if (!media.characters.isNullOrEmpty()) {
                             MediaCharacters(
                                 characters = media.characters,
-                                contentPadding = PaddingValues(horizontal = LocalPaddings.current.large)
                             )
                         }
 
@@ -195,7 +194,7 @@ fun MediaPage(
                     targetValue = if (scrollState.value == 0) {
                         0.dp
                     } else {
-                        dimensionResource(R.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
+                        dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
                     },
                     animationSpec = tween(durationMillis = 750),
                     label = "media_card_height"
@@ -215,13 +214,13 @@ fun MediaPage(
                                     - WindowInsets.statusBars
                                         .asPaddingValues()
                                         .calculateTopPadding()
-                                    - dimensionResource(R.dimen.media_card_height)
+                                    - dimensionResource(coreR.dimen.media_card_height)
                                     + offset,
                             start = LocalPaddings.current.large
                         )
                         .landscapeCutoutPadding()
-                        .height(dimensionResource(R.dimen.media_card_height) - offset)
-                        .width(dimensionResource(R.dimen.media_card_width))
+                        .height(dimensionResource(coreR.dimen.media_card_height) - offset)
+                        .width(dimensionResource(coreR.dimen.media_card_width))
                 )
             }
         }
@@ -343,29 +342,18 @@ fun MediaGenres(
 fun MediaCharacters(
     characters: List<Media.Character>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues()
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
-    ) {
-        Text(
-            text = stringResource(R.string.characters),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(contentPadding)
-                .landscapeCutoutPadding()
+    MediaSmallRow(
+        title = stringResource(R.string.characters),
+        mediaList = characters,
+        modifier = modifier
+    ) { character ->
+        MediaSmall(
+            image = character.image,
+            label = character.name,
+            onClick = { Log.d("CharacterId", "${character.id}") },
+            modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
         )
-
-        MediaSmallRow(characters) { character ->
-            MediaSmall(
-                image = character.image,
-                label = character.name,
-                onClick = { Log.d("CharacterId", "${character.id}") },
-                modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
-            )
-        }
     }
 }
 

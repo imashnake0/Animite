@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.util.fastForEach
 
 @Composable
 fun <T> StatsRow(
@@ -18,7 +19,7 @@ fun <T> StatsRow(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = modifier
     ) {
-        stats.forEach { stat ->
+        stats.fastForEach { stat ->
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally

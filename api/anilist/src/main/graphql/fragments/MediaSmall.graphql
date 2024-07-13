@@ -1,0 +1,13 @@
+fragment MediaSmall on Media {
+    id
+    type
+    title {
+        romaji
+        english
+        native
+    }
+    coverImage {
+        extraLarge
+        large
+    }
+}

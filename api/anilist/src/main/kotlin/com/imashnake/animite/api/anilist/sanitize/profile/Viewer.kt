@@ -1,15 +1,17 @@
 package com.imashnake.animite.api.anilist.sanitize.profile
 
-import com.imashnake.animite.api.anilist.ViewerQuery
+import com.imashnake.animite.api.anilist.UserMediaListQuery
+import com.imashnake.animite.api.anilist.fragment.User
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
 /**
- * Sanitized [ViewerQuery.Viewer].
+ * Sanitized [User].
  *
  * @param id
  * @param name
- * @param about
+ * @param description
  * @param avatar
  * @param banner
  * @param count
@@ -17,45 +19,65 @@ import kotlin.time.DurationUnit
  * @param meanScore
  * @param genres
  */
-data class Viewer(
-    /** @see ViewerQuery.Viewer.id */
+data class User(
+    /** @see User.id */
     val id: Int,
-    /** @see ViewerQuery.Viewer.name */
+    /** @see User.name */
     val name: String,
-    /** @see ViewerQuery.Viewer.about */
-    val about: String?,
-    /** @see ViewerQuery.Viewer.avatar */
+    /** @see User.about */
+    val description: String?,
+    /** @see User.avatar */
     val avatar: String?,
-    /** @see ViewerQuery.Viewer.bannerImage */
+    /** @see User.bannerImage */
     val banner: String?,
     // region About
-    /** @see ViewerQuery.Anime.count */
+    /** @see User.Anime.count */
     val count: Int?,
-    /** @see ViewerQuery.Anime.minutesWatched */
+    /** @see User.Anime.minutesWatched */
     val daysWatched: Double?,
-    /** @see ViewerQuery.Anime.meanScore */
+    /** @see User.Anime.meanScore */
     val meanScore: Float?,
-    /** @see ViewerQuery.Anime.genres */
+    /** @see User.Anime.genres */
     val genres: List<Genre>
     // endregion
 ) {
     /**
-     * Sanitized [ViewerQuery.Genre]
+     * Sanitized [User.Genre]
      *
      * @param genre
      * @param mediaCount
      */
     data class Genre(
-        /** @see ViewerQuery.Genre.genre */
+        /** @see User.Genre.genre */
         val genre: String,
-        /** @see ViewerQuery.Genre.count */
+        /** @see User.Genre.count */
         val mediaCount: Int,
     )
 
-    internal constructor(query: ViewerQuery.Viewer) : this(
+    data class MediaCollection(val namedLists: List<NamedList>) {
+        data class NamedList(
+            val name: String?,
+            val list: List<Media.Small>
+        ) {
+            internal constructor(query: UserMediaListQuery.List) : this(
+                name = query.name,
+                list = query.entries.orEmpty().mapNotNull {
+                    Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null)
+                }
+            )
+        }
+
+        internal constructor(query: UserMediaListQuery.Data) : this(
+            namedLists = query.mediaListCollection?.lists.orEmpty().mapNotNull {
+                NamedList(it ?: return@mapNotNull null)
+            }
+        )
+    }
+
+    internal constructor(query: User) : this(
         id = query.id,
         name = query.name,
-        about = query.about,
+        description = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
         count = query.statistics?.anime?.count,

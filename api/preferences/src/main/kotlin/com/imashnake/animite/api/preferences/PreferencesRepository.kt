@@ -11,9 +11,15 @@ class PreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     private val accessTokenKey = stringPreferencesKey("access_token")
+    private val viewerIdKey = stringPreferencesKey("viewer_id")
     val accessToken = dataStore.getValue(accessTokenKey, null)
+    val viewerId = dataStore.getValue(viewerIdKey, null)
 
     suspend fun setAccessToken(accessToken: String?) {
         dataStore.setValue(accessTokenKey, accessToken)
+    }
+
+    suspend fun setViewerId(viewerId: Int?) {
+        dataStore.setValue(viewerIdKey, viewerId.toString())
     }
 }

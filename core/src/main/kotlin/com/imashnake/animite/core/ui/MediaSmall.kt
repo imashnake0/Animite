@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.ui
+package com.imashnake.animite.core.ui
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,15 +32,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.imashnake.animite.R
-import com.imashnake.animite.api.anilist.MediaListQuery
-import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.crossfadeModel
-import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 
 /**
  * A [LazyRow] of [MediaSmall]s.
@@ -49,32 +46,49 @@ import com.imashnake.animite.core.ui.LocalPaddings
  */
 @Composable
 fun <T> MediaSmallRow(
+    title: String?,
     mediaList: List<T>,
     modifier: Modifier = Modifier,
     content: @Composable (T) -> Unit
 ) {
-    AnimatedContent(
-        targetState = mediaList,
-        transitionSpec = {
-            fadeIn(tween(500)).togetherWith(fadeOut(tween(500)))
-        },
-        label = "animate_media_list_content"
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-            contentPadding = PaddingValues(
-                start = LocalPaddings.current.large + if (
-                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                ) {
-                    WindowInsets.displayCutout.asPaddingValues()
-                        .calculateLeftPadding(LayoutDirection.Ltr)
-                } else 0.dp,
-                end = LocalPaddings.current.large
-            ),
-            modifier = modifier
+        // TODO: Does this behave as expected if `title` is null?
+        if (title != null) {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .padding(start = LocalPaddings.current.large)
+                    .landscapeCutoutPadding()
+            )
+        }
+
+        AnimatedContent(
+            targetState = mediaList,
+            transitionSpec = {
+                fadeIn(tween(500)).togetherWith(fadeOut(tween(500)))
+            },
+            label = "animate_media_list_content"
         ) {
-            items(it) { media ->
-                content(media)
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                contentPadding = PaddingValues(
+                    start = LocalPaddings.current.large + if (
+                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    ) {
+                        WindowInsets.displayCutout.asPaddingValues()
+                            .calculateLeftPadding(LayoutDirection.Ltr)
+                    } else 0.dp,
+                    end = LocalPaddings.current.large
+                )
+            ) {
+                items(it) { media ->
+                    content(media)
+                }
             }
         }
     }
@@ -143,51 +157,4 @@ fun MediaSmall(
                 )
             }
     }
-}
-
-@Preview
-@Composable
-fun PreviewMediaSmallRow() {
-    MediaSmallRow(
-        mediaList = List(10) {
-            MediaListQuery.Medium(
-                id = it,
-                type = MediaType.ANIME,
-                title = MediaListQuery.Title(
-                    romaji = "Sono Bisque Doll wa Koi wo Suru",
-                    english = null,
-                    native = null
-                ),
-                coverImage = MediaListQuery.CoverImage(
-                    extraLarge =
-                    "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
-                    large = null
-                )
-            )
-        },
-        content = { media ->
-            MediaSmall(
-                image = media.coverImage?.extraLarge,
-                // TODO: Do something about this chain.
-                label = media.title?.romaji ?:
-                media.title?.english ?:
-                media.title?.native.orEmpty(),
-                onClick = { },
-                modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-            )
-        }
-    )
-}
-
-@Preview
-@Composable
-fun PreviewMediaSmall() {
-    MediaSmall(
-        image =
-        "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
-        label =
-        "Sono Bisque Doll wa Koi wo Suru",
-        onClick = {  },
-        modifier = Modifier.width(dimensionResource(R.dimen.media_card_width))
-    )
 }
