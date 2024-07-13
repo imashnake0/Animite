@@ -117,7 +117,7 @@ fun ProfileScreen(
                                     .landscapeCutoutPadding()
                             )
                             UserDescription(
-                                description = about,
+                                description = description,
                                 modifier = Modifier
                                     .maxHeight(dimensionResource(R.dimen.user_about_height))
                                     .padding(horizontal = LocalPaddings.current.large)
