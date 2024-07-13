@@ -64,7 +64,6 @@ fun AboutTab(
                 stats = statsLabelToValue,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = LocalPaddings.current.large)
                     .landscapeCutoutPadding()
             ) {
                 Text(
