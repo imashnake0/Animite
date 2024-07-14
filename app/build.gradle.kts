@@ -73,6 +73,7 @@ dependencies {
 
     // Compose
     implementation(libs.bundles.compose)
+    implementation(libs.compose.material3.adaptiveNavigation)
     implementation(libs.compose.material)
     implementation(libs.compose.ui.text.googleFonts)
     debugImplementation(libs.compose.ui.tooling)
