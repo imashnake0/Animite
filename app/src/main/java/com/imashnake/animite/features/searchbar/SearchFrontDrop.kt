@@ -1,30 +1,24 @@
 package com.imashnake.animite.features.searchbar
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,31 +37,25 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.R as coreR
 
 /**
  * Search bar along with a Front Drop list.
  *
- * @param hasExtraPadding if the search bar should have extra bottom padding to accommodate the
- * [com.imashnake.animite.features.navigationbar.NavigationBar].
  * @param onItemClick called when media with an ID and [MediaType] is clicked.
  * @param modifier the [Modifier] to be applied to this Front Drop.
  * @param viewModel [SearchViewModel] instance.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchFrontDrop(
-    hasExtraPadding: Boolean,
     onItemClick: (Int, MediaType) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = viewModel()
@@ -77,12 +65,6 @@ fun SearchFrontDrop(
     val searchList by viewModel.searchList.collectAsState()
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
-    val searchBarBottomPadding: Dp by animateDpAsState(
-        targetValue = if (hasExtraPadding) {
-            dimensionResource(coreR.dimen.navigation_bar_height)
-        } else 0.dp,
-        label = "translate_search_bar"
-    )
     val frontDropColor by animateColorAsState(
         targetValue = MaterialTheme.colorScheme.background.copy(
             alpha = if (isExpanded) 0.95f else 0f
@@ -118,13 +100,8 @@ fun SearchFrontDrop(
         onSearched = viewModel::setQuery,
         modifier = modifier
             .landscapeCutoutPadding()
-            .padding(bottom = searchBarBottomPadding)
             .navigationBarsPadding()
-            .consumeWindowInsets(
-                PaddingValues(bottom = searchBarBottomPadding)
-            )
             .imePadding()
-            .height(dimensionResource(R.dimen.search_bar_height))
     )
 }
 
