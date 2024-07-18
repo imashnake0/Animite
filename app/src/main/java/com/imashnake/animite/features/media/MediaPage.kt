@@ -79,10 +79,9 @@ import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
-import com.ramcosta.composedestinations.annotation.Destination
+import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
-@Destination(navArgsDelegate = MediaPageArgs::class)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",
@@ -420,3 +419,9 @@ fun MediaTrailer(
         }
     }
 }
+
+@Serializable
+data class MediaPage(
+    val id: Int,
+    val mediaType: String
+)

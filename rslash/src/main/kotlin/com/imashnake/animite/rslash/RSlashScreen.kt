@@ -12,12 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
-@RootNavGraph(start = true)
-@Destination(route = "rslash-screen")
 @Composable
 fun RSlashScreen() {
     Box(
@@ -40,3 +37,6 @@ fun RSlashScreen() {
         }
     }
 }
+
+@Serializable
+data object RSlash

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
@@ -24,11 +25,6 @@ android {
 
 kotlin {
     jvmToolchain(17)
-}
-
-ksp {
-    arg("compose-destinations.mode", "navgraphs")
-    arg("compose-destinations.moduleName", project.name)
 }
 
 dependencies {
@@ -60,15 +56,12 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlinx.serialization.core)
 
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 
