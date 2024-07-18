@@ -66,11 +66,14 @@ import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.features.media.MediaPage
+import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
+    onNavigateToMediaItem: (MediaPage) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
@@ -162,6 +165,7 @@ fun HomeScreen(
                                     list = row.first.data.orEmpty(),
                                     title = row.second,
                                     onItemClicked = {
+                                        onNavigateToMediaItem(MediaPage(it.id, homeMediaType.value.rawValue))
                                     }
                                 )
                             }
@@ -280,3 +284,6 @@ private fun MediaTypeSelector(
         }
     }
 }
+
+@Serializable
+data object Home

@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.imashnake.animite.core.ui.LocalPaddings
+import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
 @Composable
@@ -36,3 +37,6 @@ fun RSlashScreen() {
         }
     }
 }
+
+@Serializable
+data object RSlash

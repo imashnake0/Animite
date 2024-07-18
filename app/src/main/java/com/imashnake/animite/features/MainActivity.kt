@@ -17,14 +17,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.features.home.Home
+import com.imashnake.animite.features.home.HomeScreen
+import com.imashnake.animite.features.media.MediaPage
 import com.imashnake.animite.features.navigationbar.NavigationBar
+import com.imashnake.animite.features.navigationbar.NavigationBarPaths
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.profile.Profile
+import com.imashnake.animite.profile.ProfileScreen
+import com.imashnake.animite.rslash.RSlash
+import com.imashnake.animite.rslash.RSlashScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -52,7 +64,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-
+    val isNavBarVisible = remember(currentBackStackEntry) {
+        if (currentBackStackEntry != null) {
+            NavigationBarPaths.entries.any { it.matchesDestination(currentBackStackEntry!!) }
+        } else {
+            false
+        }
+    }
 
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
     //  see https://issuetracker.google.com/issues/258270139.
@@ -60,13 +78,30 @@ fun MainScreen(modifier: Modifier = Modifier) {
         CompositionLocalProvider(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
-
+            NavHost(navController = navController, startDestination = Home) {
+                composable<Home> {
+                    HomeScreen(
+                        onNavigateToMediaItem = {
+                            navController.navigate(it)
+                        }
+                    )
+                }
+                composable<MediaPage> {
+                    MediaPage()
+                }
+                composable<Profile> {
+                    ProfileScreen()
+                }
+                composable<RSlash> {
+                    RSlashScreen()
+                }
+            }
         }
 
         SearchFrontDrop(
-            hasExtraPadding = false,
+            hasExtraPadding = isNavBarVisible,
             onItemClick = { id, mediaType ->
-
+                navController.navigate(MediaPage(id = id, mediaType.rawValue))
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -78,7 +113,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         )
 
         AnimatedVisibility(
-            visible = false,
+            visible = isNavBarVisible,
             modifier = Modifier.align(Alignment.BottomCenter),
             enter = slideInVertically { it },
             exit = slideOutVertically { it }

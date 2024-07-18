@@ -46,6 +46,7 @@ import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
 @Suppress("LongMethod", "UNUSED_PARAMETER")
@@ -225,3 +226,6 @@ private fun UserTabs(
         }
     }
 }
+
+@Serializable
+data object Profile
