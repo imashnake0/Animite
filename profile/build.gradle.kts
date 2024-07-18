@@ -26,11 +26,6 @@ kotlin {
     jvmToolchain(17)
 }
 
-ksp {
-    arg("compose-destinations.mode", "navgraphs")
-    arg("compose-destinations.moduleName", project.name)
-}
-
 dependencies {
     implementation(projects.core)
     implementation(projects.api.anilist)
@@ -65,10 +60,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 

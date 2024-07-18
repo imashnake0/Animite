@@ -55,10 +55,6 @@ kotlin {
     jvmToolchain(17)
 }
 
-ksp {
-    arg("compose-destinations.mode", "destinations")
-}
-
 dependencies {
     implementation(projects.api.anilist)
     implementation(projects.core)
@@ -91,10 +87,6 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     coreLibraryDesugaring(libs.android.desugaring)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 
