@@ -48,7 +48,7 @@ composeDestinations = "1.10.2"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.7.0-beta05"
+composeAnimation = "1.7.2"
 composeCompiler = "1.5.14"
 composeFoundation = "1.7.0-beta05"
 composeMaterial = "1.7.0-beta05"
