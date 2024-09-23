@@ -24,6 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.Home
@@ -35,6 +36,7 @@ import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.profile.Profile
 import com.imashnake.animite.profile.ProfileScreen
+import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.rslash.RSlash
 import com.imashnake.animite.rslash.RSlashScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -89,7 +91,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 composable<MediaPage> {
                     MediaPage()
                 }
-                composable<Profile> {
+                composable<Profile>(
+                    deepLinks = listOf(
+                        navDeepLink<Profile>(basePath = ANILIST_AUTH_DEEPLINK)
+                    )
+                ) {
                     ProfileScreen()
                 }
                 composable<RSlash> {
