@@ -42,26 +42,14 @@ import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
-import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
-import com.ramcosta.composedestinations.annotation.DeepLink
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
 @Suppress("LongMethod", "UNUSED_PARAMETER")
-@Destination(
-    route = "user",
-    deepLinks = [
-        DeepLink(
-            uriPattern = ANILIST_AUTH_DEEPLINK
-        )
-    ]
-)
-@RootNavGraph(start = true)
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
@@ -238,3 +226,6 @@ private fun UserTabs(
         }
     }
 }
+
+@Serializable
+data object Profile

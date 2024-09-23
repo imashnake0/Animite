@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
@@ -55,10 +56,6 @@ kotlin {
     jvmToolchain(17)
 }
 
-ksp {
-    arg("compose-destinations.mode", "destinations")
-}
-
 dependencies {
     implementation(projects.api.anilist)
     implementation(projects.core)
@@ -70,6 +67,7 @@ dependencies {
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
+    implementation(libs.androidx.navigationCompose)
 
     // Compose
     implementation(libs.bundles.compose)
@@ -84,6 +82,7 @@ dependencies {
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlinx.serialization.core)
 
     // Hilt
     implementation(libs.hilt.android)
@@ -91,10 +90,6 @@ dependencies {
     ksp(libs.hilt.android.compiler)
 
     coreLibraryDesugaring(libs.android.desugaring)
-
-    // Compose Destinations
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
 
     testImplementation(libs.test.junit)
 
