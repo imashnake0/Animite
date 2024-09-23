@@ -46,22 +46,17 @@ import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
-@Suppress("LongMethod", "UNUSED_PARAMETER")
+@Suppress("LongMethod")
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    accessToken: String? = null,
-    tokenType: String? = null,
-    // TODO: Log user out if token expires.
-    expiresIn: Int? = null
 ) {
-    accessToken?.let { viewModel.setAccessToken(it) }
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
-    viewer.data?.id?.let { viewModel.setViewerId(it) }
     val viewerMediaLists by viewModel.viewerMediaList.collectAsState(initial = null)
 
     Box(
@@ -228,4 +223,11 @@ private fun UserTabs(
 }
 
 @Serializable
-data object Profile
+data class Profile(
+    @SerialName("accessToken")
+    val accessToken: String? = null,
+    @SerialName("tokenType")
+    val tokenType: String? = null,
+    @SerialName("expiresIn")
+    val expiresIn: Int = -1
+)

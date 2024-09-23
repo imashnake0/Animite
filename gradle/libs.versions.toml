@@ -28,7 +28,7 @@ core = "1.13.1"
 lifecycle = "2.8.3"
 extJunit = "1.2.1"
 espresso = "3.6.1"
-navigation = "2.8.0-beta05"
+navigation = "2.8.1"
 
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
@@ -90,6 +90,7 @@ android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", v
 androidx-activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidx-coreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-navigationCommon = { group = "androidx.navigation", name = "navigation-common", version.ref = "navigation" }
 androidx-navigationCompose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }

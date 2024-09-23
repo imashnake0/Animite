@@ -97,12 +97,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     deepLinks = listOf(
                         navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
                     )
-                ) { backStackEntry ->
-                    ProfileScreen(
-                        accessToken = backStackEntry.arguments?.getString(ACCESS_TOKEN),
-                        tokenType = backStackEntry.arguments?.getString(TOKEN_TYPE),
-                        expiresIn = backStackEntry.arguments?.getString(EXPIRES_IN)?.toIntOrNull()
-                    )
+                ) {
+                    ProfileScreen()
                 }
                 composable<RSlash> {
                     RSlashScreen()
