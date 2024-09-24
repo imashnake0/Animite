@@ -25,7 +25,7 @@ agp = "8.5.1"
 # https://androidx.tech.
 activity = "1.9.0"
 core = "1.13.1"
-lifecycle = "2.8.3"
+lifecycle = "2.8.6"
 extJunit = "1.2.1"
 espresso = "3.6.1"
 navigation = "2.8.0-beta05"
