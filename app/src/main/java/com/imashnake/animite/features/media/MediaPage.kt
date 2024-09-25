@@ -6,6 +6,9 @@ import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -73,22 +76,25 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.core.ui.MediaSmall
-import com.imashnake.animite.core.ui.MediaSmallRow
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",
     "LongMethod"
 )
 fun MediaPage(
-    viewModel: MediaPageViewModel = hiltViewModel()
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: MediaPageViewModel = hiltViewModel(),
 ) {
     val scrollState = rememberScrollState()
 
@@ -199,28 +205,36 @@ fun MediaPage(
                     label = "media_card_height"
                 )
 
-                MediaSmall(
-                    image = media.coverImage,
-                    label = null,
-                    onClick = {},
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        // TODO: Try using `AlignmentLine`s.
-                        .padding(
-                            top = dimensionResource(R.dimen.media_details_height)
-                                    + LocalPaddings.current.medium
-                                    + dimensionResource(coreR.dimen.banner_height)
-                                    - WindowInsets.statusBars
-                                        .asPaddingValues()
-                                        .calculateTopPadding()
-                                    - dimensionResource(coreR.dimen.media_card_height)
-                                    + offset,
-                            start = LocalPaddings.current.large
+                with(sharedTransitionScope) {
+                    Box(
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            // TODO: Try using `AlignmentLine`s.
+                            .padding(
+                                top = dimensionResource(R.dimen.media_details_height)
+                                        + LocalPaddings.current.medium
+                                        + dimensionResource(coreR.dimen.banner_height)
+                                        - WindowInsets.statusBars
+                                    .asPaddingValues()
+                                    .calculateTopPadding()
+                                        - dimensionResource(coreR.dimen.media_card_height)
+                                        + offset,
+                                start = LocalPaddings.current.large
+                            )
+                            .landscapeCutoutPadding()
+                            .height(dimensionResource(coreR.dimen.media_card_height) - offset)
+                    ) {
+                        MediaSmall(
+                            image = media.coverImage,
+                            onClick = {},
+                            modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
+                            imageModifier = Modifier.sharedBounds(
+                                rememberSharedContentState("media_small_${media.id}"),
+                                animatedVisibilityScope,
+                            ),
                         )
-                        .landscapeCutoutPadding()
-                        .height(dimensionResource(coreR.dimen.media_card_height) - offset)
-                        .width(dimensionResource(coreR.dimen.media_card_width))
-                )
+                    }
+                }
             }
         }
     }
