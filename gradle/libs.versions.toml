@@ -81,7 +81,7 @@ detekt = "1.23.7"
 
 # Compose Markdown
 # https://github.com/boswelja/compose-markdown.
-composeMarkdown = "1.0.4"
+composeMarkdown = "1.1.0"
 
 
 [libraries]
