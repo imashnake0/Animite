@@ -36,6 +36,7 @@ class MediaPageViewModel @Inject constructor(
                     ?.getOrNull()
 
                 uiState = uiState.copy(
+                    id = media?.id,
                     bannerImage = media?.bannerImage,
                     coverImage = media?.coverImage,
                     color = media?.color,

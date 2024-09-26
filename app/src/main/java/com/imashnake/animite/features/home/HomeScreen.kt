@@ -1,6 +1,10 @@
 package com.imashnake.animite.features.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -70,10 +74,13 @@ import com.imashnake.animite.features.media.MediaPage
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
@@ -166,7 +173,9 @@ fun HomeScreen(
                                     title = row.second,
                                     onItemClicked = {
                                         onNavigateToMediaItem(MediaPage(it.id, homeMediaType.value.rawValue))
-                                    }
+                                    },
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedVisibilityScope = animatedVisibilityScope,
                                 )
                             }
                         },
@@ -193,11 +202,14 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeRow(
     list: List<Media.Small>,
     title: String,
     onItemClicked: (Media.Small) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
@@ -208,12 +220,18 @@ fun HomeRow(
         label = "animate_media_list_enter_exit"
     ) {
         MediaSmallRow(title, list, modifier) { media ->
-            MediaSmall(
-                image = media.coverImage,
-                label = media.title,
-                onClick = { onItemClicked(media) },
-                modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width))
-            )
+            with(sharedTransitionScope) {
+                MediaSmall(
+                    image = media.coverImage,
+                    label = media.title,
+                    onClick = { onItemClicked(media) },
+                    modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
+                    imageModifier = Modifier.sharedBounds(
+                        rememberSharedContentState("media_small_${media.id}"),
+                        animatedVisibilityScope,
+                    )
+                )
+            }
         }
     }
 }
