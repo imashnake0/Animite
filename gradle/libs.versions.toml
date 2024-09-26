@@ -33,7 +33,7 @@ navigation = "2.8.1"
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
-apollo = "3.8.2"
+apollo = "3.8.5"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore
