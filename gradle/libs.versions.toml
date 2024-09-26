@@ -19,7 +19,7 @@ desugaring = "2.0.4"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "8.5.1"
+agp = "8.6.1"
 
 # AndroidX
 # https://androidx.tech.
