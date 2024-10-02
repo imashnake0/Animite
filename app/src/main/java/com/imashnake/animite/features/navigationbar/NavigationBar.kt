@@ -111,7 +111,7 @@ enum class NavigationBarPaths(
 
     Profile(
         navigateTo = {
-            it.navigate(com.imashnake.animite.profile.Profile) {
+            it.navigate(com.imashnake.animite.profile.Profile()) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }
