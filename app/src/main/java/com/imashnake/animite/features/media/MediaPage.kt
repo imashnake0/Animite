@@ -229,7 +229,7 @@ fun MediaPage(
                             onClick = {},
                             modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
                             imageModifier = Modifier.sharedBounds(
-                                rememberSharedContentState("media_small_${media.id}"),
+                                rememberSharedContentState("media_small_${media.id}_${media.source}"),
                                 animatedVisibilityScope,
                             ),
                         )
