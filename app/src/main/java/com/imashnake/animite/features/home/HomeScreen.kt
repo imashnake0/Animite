@@ -1,6 +1,9 @@
 package com.imashnake.animite.features.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -56,6 +59,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
@@ -70,10 +74,13 @@ import com.imashnake.animite.features.media.MediaPage
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
@@ -164,7 +171,7 @@ fun HomeScreen(
                                 row.data?.let {
                                     HomeRow(
                                         list = it.list,
-                                        title = it.type.title.orEmpty(),
+                                        type = it.type,
                                         onItemClicked = { media ->
                                             onNavigateToMediaItem(
                                                 MediaPage(
@@ -173,7 +180,9 @@ fun HomeScreen(
                                                     mediaType = homeMediaType.value.rawValue,
                                                 )
                                             )
-                                        }
+                                        },
+                                        sharedTransitionScope = sharedTransitionScope,
+                                        animatedVisibilityScope = animatedVisibilityScope,
                                     )
                                 }
                             }
@@ -201,11 +210,14 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeRow(
     list: List<Media.Small>,
-    title: String,
+    type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
@@ -215,13 +227,19 @@ fun HomeRow(
                 + shrinkVertically(tween(durationMillis = 500)),
         label = "animate_media_list_enter_exit"
     ) {
-        MediaSmallRow(title, list, modifier) { media ->
-            MediaSmall(
-                image = media.coverImage,
-                label = media.title,
-                onClick = { onItemClicked(media) },
-                modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width))
-            )
+        MediaSmallRow(type.title, list, modifier) { media ->
+            with(sharedTransitionScope) {
+                MediaSmall(
+                    image = media.coverImage,
+                    label = media.title,
+                    onClick = { onItemClicked(media) },
+                    modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
+                    imageModifier = Modifier.sharedBounds(
+                        rememberSharedContentState("media_small_${media.id}_${type.name}"),
+                        animatedVisibilityScope,
+                    )
+                )
+            }
         }
     }
 }

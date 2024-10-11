@@ -106,6 +106,7 @@ fun MediaSmall(
     image: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
     label: String? = null,
 ) {
     Card(
@@ -120,7 +121,7 @@ fun MediaSmall(
             model = crossfadeModel(image),
             contentDescription = label,
             contentScale = ContentScale.Crop,
-            modifier = Modifier
+            modifier = imageModifier
                 .fillMaxWidth()
                 .aspectRatio(0.7f)
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))

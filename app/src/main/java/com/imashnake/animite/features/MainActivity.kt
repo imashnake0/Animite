@@ -7,6 +7,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -69,6 +71,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -88,30 +91,36 @@ fun MainScreen(modifier: Modifier = Modifier) {
         CompositionLocalProvider(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
-            NavHost(navController = navController, startDestination = Home) {
-                composable<Home> {
-                    HomeScreen(
-                        onNavigateToMediaItem = {
-                            navController.navigate(it)
-                        }
-                    )
-                }
-                composable<MediaPage> {
-                    MediaPage()
-                }
-                composable<Profile>(
-                    deepLinks = listOf(
-                        navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
-                    )
-                ) { backStackEntry ->
-                    ProfileScreen(
-                        accessToken = backStackEntry.arguments?.getString(ACCESS_TOKEN),
-                        tokenType = backStackEntry.arguments?.getString(TOKEN_TYPE),
-                        expiresIn = backStackEntry.arguments?.getString(EXPIRES_IN)?.toIntOrNull()
-                    )
-                }
-                composable<RSlash> {
-                    RSlashScreen()
+            SharedTransitionLayout {
+                NavHost(navController = navController, startDestination = Home) {
+                    composable<Home> {
+                        HomeScreen(
+                            onNavigateToMediaItem = { navController.navigate(it) },
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this,
+                        )
+                    }
+                    composable<MediaPage> {
+                        MediaPage(
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this,
+                        )
+                    }
+                    composable<Profile>(
+                        deepLinks = listOf(
+                            navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
+                        )
+                    ) { backStackEntry ->
+                        ProfileScreen(
+                            accessToken = backStackEntry.arguments?.getString(ACCESS_TOKEN),
+                            tokenType = backStackEntry.arguments?.getString(TOKEN_TYPE),
+                            expiresIn = backStackEntry.arguments?.getString(EXPIRES_IN)
+                                ?.toIntOrNull()
+                        )
+                    }
+                    composable<RSlash> {
+                        RSlashScreen()
+                    }
                 }
             }
         }

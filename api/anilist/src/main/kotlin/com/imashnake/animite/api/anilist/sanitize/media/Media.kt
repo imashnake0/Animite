@@ -10,6 +10,8 @@ private const val MAX_RES_DEFAULT = "maxresdefault"
 private const val SD_DEFAULT = "sddefault"
 
 data class Media(
+    /** @see MediaQuery.Media.id */
+    val id: Int,
     /** @see MediaQuery.Media.bannerImage */
     val bannerImage: String?,
     /** @see MediaQuery.Media.coverImage */
@@ -74,6 +76,7 @@ data class Media(
     }
 
     internal constructor(query: MediaQuery.Media) : this(
+        id = query.id,
         bannerImage = query.bannerImage,
         coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
         color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
