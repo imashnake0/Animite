@@ -5,6 +5,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -24,13 +25,14 @@ class AnilistMediaRepository @Inject constructor(
 ) {
 
     fun fetchMediaList(
+        mediaListType: MediaList.Type,
         mediaType: MediaType,
         sort: List<MediaSort>,
         page: Int = 0,
         perPage: Int = 10,
         season: MediaSeason? = null,
         seasonYear: Int? = null
-    ): Flow<Result<List<Media.Small>>> {
+    ): Flow<Result<MediaList>> {
         return apolloClient
             .query(
                 MediaListQuery(
@@ -45,9 +47,12 @@ class AnilistMediaRepository @Inject constructor(
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
             .asResult {
-                it.page!!.media.orEmpty().filterNotNull().map { query ->
-                    Media.Small(query.mediaSmall)
-                }
+                MediaList(
+                    type = mediaListType,
+                    list = it.page!!.media.orEmpty().filterNotNull().map { query ->
+                        Media.Small(query.mediaSmall)
+                    }
+                )
             }
     }
 

@@ -85,14 +85,14 @@ fun HomeScreen(
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
     val rows = listOf(
-        trendingList to stringResource(R.string.trending_now),
-        popularList to stringResource(R.string.popular_this_season),
-        upcomingList to stringResource(R.string.upcoming_next_season),
-        allTimePopularList to stringResource(R.string.all_time_popular)
+        trendingList,
+        popularList,
+        upcomingList,
+        allTimePopularList,
     )
 
     when {
-        rows.all { it.first is Resource.Success } -> {
+        rows.all { it is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(scrollState) {
                 Box(
@@ -162,8 +162,8 @@ fun HomeScreen(
                         content = {
                             rows.fastForEach { row ->
                                 HomeRow(
-                                    list = row.first.data.orEmpty(),
-                                    title = row.second,
+                                    list = row.data?.list.orEmpty(),
+                                    title = row.data?.type?.name.orEmpty(),
                                     onItemClicked = {
                                         onNavigateToMediaItem(MediaPage(it.id, homeMediaType.value.rawValue))
                                     }

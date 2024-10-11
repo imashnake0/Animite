@@ -4,7 +4,7 @@ data class MediaList(
     val type: Type,
     val list: List<Media.Small>
 ) {
-    enum class Type(title: String) {
+    enum class Type(title: String? = null) {
         TRENDING_NOW("Tending Now"),
         POPULAR_THIS_SEASON("Popular This Season"),
         UPCOMING_NEXT_SEASON("Upcoming Next Season"),
