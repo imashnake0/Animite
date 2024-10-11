@@ -59,6 +59,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
@@ -170,7 +171,7 @@ fun HomeScreen(
                                 row.data?.let {
                                     HomeRow(
                                         list = it.list,
-                                        title = it.type.title.orEmpty(),
+                                        type = it.type,
                                         onItemClicked = { media ->
                                             onNavigateToMediaItem(
                                                 MediaPage(
@@ -213,7 +214,7 @@ fun HomeScreen(
 @Composable
 fun HomeRow(
     list: List<Media.Small>,
-    title: String,
+    type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -226,7 +227,7 @@ fun HomeRow(
                 + shrinkVertically(tween(durationMillis = 500)),
         label = "animate_media_list_enter_exit"
     ) {
-        MediaSmallRow(title, list, modifier) { media ->
+        MediaSmallRow(type.title, list, modifier) { media ->
             with(sharedTransitionScope) {
                 MediaSmall(
                     image = media.coverImage,
@@ -234,7 +235,7 @@ fun HomeRow(
                     onClick = { onItemClicked(media) },
                     modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
                     imageModifier = Modifier.sharedBounds(
-                        rememberSharedContentState("media_small_${media.id}"),
+                        rememberSharedContentState("media_small_${media.id}_"),
                         animatedVisibilityScope,
                     )
                 )
