@@ -163,7 +163,7 @@ fun HomeScreen(
                             rows.fastForEach { row ->
                                 HomeRow(
                                     list = row.data?.list.orEmpty(),
-                                    title = row.data?.type?.name.orEmpty(),
+                                    title = row.data?.type?.title.orEmpty(),
                                     onItemClicked = {
                                         onNavigateToMediaItem(MediaPage(it.id, homeMediaType.value.rawValue))
                                     }
