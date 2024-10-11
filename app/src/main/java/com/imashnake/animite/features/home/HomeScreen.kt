@@ -161,13 +161,21 @@ fun HomeScreen(
                         },
                         content = {
                             rows.fastForEach { row ->
-                                HomeRow(
-                                    list = row.data?.list.orEmpty(),
-                                    title = row.data?.type?.title.orEmpty(),
-                                    onItemClicked = {
-                                        onNavigateToMediaItem(MediaPage(it.id, homeMediaType.value.rawValue))
-                                    }
-                                )
+                                row.data?.let {
+                                    HomeRow(
+                                        list = it.list,
+                                        title = it.type.title.orEmpty(),
+                                        onItemClicked = { media ->
+                                            onNavigateToMediaItem(
+                                                MediaPage(
+                                                    id = media.id,
+                                                    source = it.type.name,
+                                                    mediaType = homeMediaType.value.rawValue,
+                                                )
+                                            )
+                                        }
+                                    )
+                                }
                             }
                         },
                         contentModifier = Modifier.padding(
