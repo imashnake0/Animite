@@ -1,0 +1,14 @@
+package com.imashnake.animite.api.anilist.sanitize.media
+
+data class MediaList(
+    val type: Type,
+    val list: List<Media.Small>
+) {
+    enum class Type(title: String) {
+        TRENDING_NOW("Tending Now"),
+        POPULAR_THIS_SEASON("Popular This Season"),
+        UPCOMING_NEXT_SEASON("Upcoming Next Season"),
+        ALL_TIME_POPULAR("All Time Popular"),
+        // TODO: Add other entries to this.
+    }
+}
