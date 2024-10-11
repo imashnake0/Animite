@@ -26,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.Home
 import com.imashnake.animite.features.home.HomeScreen
@@ -118,7 +119,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
         SearchFrontDrop(
             hasExtraPadding = isNavBarVisible,
             onItemClick = { id, mediaType ->
-                navController.navigate(MediaPage(id = id, mediaType.rawValue))
+                navController.navigate(
+                    MediaPage(
+                        id = id,
+                        source = MediaList.Type.SEARCH.name,
+                        mediaType.rawValue
+                    )
+                )
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)

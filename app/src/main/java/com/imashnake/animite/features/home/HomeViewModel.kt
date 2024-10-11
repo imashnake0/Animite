@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
@@ -36,6 +37,7 @@ class HomeViewModel @Inject constructor(
         .filterNotNull()
         .flatMapLatest { mediaType ->
             mediaListRepository.fetchMediaList(
+                mediaListType = Type.TRENDING_NOW,
                 mediaType = mediaType,
                 sort = listOf(MediaSort.TRENDING_DESC),
             )
@@ -48,6 +50,7 @@ class HomeViewModel @Inject constructor(
         .combine(now, ::Pair)
         .flatMapLatest { (mediaType, now) ->
             mediaListRepository.fetchMediaList(
+                mediaListType = Type.POPULAR_THIS_SEASON,
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC),
                 season = now.month.season,
@@ -62,6 +65,7 @@ class HomeViewModel @Inject constructor(
         .combine(now, ::Pair)
         .flatMapLatest { (mediaType, now) ->
             mediaListRepository.fetchMediaList(
+                mediaListType = Type.UPCOMING_NEXT_SEASON,
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC),
                 season = now.month.season.nextSeason(now).first,
@@ -75,6 +79,7 @@ class HomeViewModel @Inject constructor(
         .filterNotNull()
         .flatMapLatest { mediaType ->
             mediaListRepository.fetchMediaList(
+                mediaListType = Type.ALL_TIME_POPULAR,
                 mediaType = mediaType,
                 sort = listOf(MediaSort.POPULARITY_DESC)
             )

@@ -423,5 +423,6 @@ fun MediaTrailer(
 @Serializable
 data class MediaPage(
     val id: Int,
+    val source: String,
     val mediaType: String
 )
