@@ -7,6 +7,8 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
@@ -85,6 +87,9 @@ import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
+// TODO: Need to use WindowInsets to get device corner radius if available.
+private const val DEVICE_CORNER_RADIUS = 30
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress(
@@ -105,107 +110,117 @@ fun MediaPage(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(bottom = LocalPaddings.current.large)
-            ) {
-                BannerLayout(
-                    banner = { bannerModifier ->
-                        MediaBanner(
-                            imageUrl = media.bannerImage,
-                            tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
-                            modifier = bannerModifier.bannerParallax(scrollState)
+            with(sharedTransitionScope) {
+                Box(
+                    Modifier
+                        .sharedBounds(
+                            rememberSharedContentState("media_small_card_${media.id}_${media.source}"),
+                            animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                            clipInOverlayDuringTransition = OverlayClip(
+                                RoundedCornerShape(DEVICE_CORNER_RADIUS.dp)
+                            ),
                         )
-                    },
-                    content = {
-                        MediaDetails(
-                            title = media.title.orEmpty(),
-                            description = media.description.orEmpty(),
-                            modifier = Modifier
-                                .padding(
-                                    start = LocalPaddings.current.large
-                                            + dimensionResource(coreR.dimen.media_card_width)
-                                            + LocalPaddings.current.large,
-                                    end = LocalPaddings.current.large
-                                )
-                                .landscapeCutoutPadding()
-                                .height(dimensionResource(R.dimen.media_details_height))
-                        )
-
-                        if (!media.ranks.isNullOrEmpty()) {
-                            StatsRow(
-                                stats = media.ranks,
+                        .clip(RoundedCornerShape(DEVICE_CORNER_RADIUS.dp))
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(bottom = LocalPaddings.current.large)
+                ) {
+                    BannerLayout(
+                        banner = { bannerModifier ->
+                            MediaBanner(
+                                imageUrl = media.bannerImage,
+                                tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
+                                modifier = bannerModifier.bannerParallax(scrollState)
+                            )
+                        },
+                        content = {
+                            MediaDetails(
+                                title = media.title.orEmpty(),
+                                description = media.description.orEmpty(),
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = LocalPaddings.current.large)
+                                    .skipToLookaheadSize()
+                                    .padding(
+                                        start = LocalPaddings.current.large
+                                                + dimensionResource(coreR.dimen.media_card_width)
+                                                + LocalPaddings.current.large,
+                                        end = LocalPaddings.current.large
+                                    )
                                     .landscapeCutoutPadding()
-                            ) {
-                                Text(
-                                    text = it.type.name,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.labelSmall
-                                )
+                                    .height(dimensionResource(R.dimen.media_details_height))
+                            )
 
-                                Text(
-                                    text = when (it.type) {
-                                        Media.Ranking.Type.SCORE -> "${it.rank}%"
-                                        Media.Ranking.Type.RATED,
-                                        Media.Ranking.Type.POPULAR -> "#${it.rank}"
-                                    },
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.displaySmall
+                            if (!media.ranks.isNullOrEmpty()) {
+                                StatsRow(
+                                    stats = media.ranks,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
+                                ) {
+                                    Text(
+                                        text = it.type.name,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+
+                                    Text(
+                                        text = when (it.type) {
+                                            Media.Ranking.Type.SCORE -> "${it.rank}%"
+                                            Media.Ranking.Type.RATED,
+                                            Media.Ranking.Type.POPULAR -> "#${it.rank}"
+                                        },
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.displaySmall
+                                    )
+                                }
+                            }
+
+                            if (!media.genres.isNullOrEmpty()) {
+                                MediaGenres(
+                                    genres = media.genres,
+                                    contentPadding = PaddingValues(
+                                        start = LocalPaddings.current.large + if (
+                                            LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                                        ) {
+                                            WindowInsets.displayCutout.asPaddingValues()
+                                                .calculateLeftPadding(LayoutDirection.Ltr)
+                                        } else 0.dp,
+                                        end = LocalPaddings.current.large
+                                    ),
+                                    color = Color(media.color ?: 0xFF152232.toInt()),
                                 )
                             }
-                        }
 
-                        if (!media.genres.isNullOrEmpty()) {
-                            MediaGenres(
-                                genres = media.genres,
-                                contentPadding = PaddingValues(
-                                    start = LocalPaddings.current.large + if (
-                                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                                    ) {
-                                        WindowInsets.displayCutout.asPaddingValues()
-                                            .calculateLeftPadding(LayoutDirection.Ltr)
-                                    } else 0.dp,
-                                    end = LocalPaddings.current.large
-                                ),
-                                color = Color(media.color ?: 0xFF152232.toInt()),
-                            )
-                        }
+                            if (!media.characters.isNullOrEmpty()) {
+                                MediaCharacters(
+                                    characters = media.characters,
+                                )
+                            }
 
-                        if (!media.characters.isNullOrEmpty()) {
-                            MediaCharacters(
-                                characters = media.characters,
-                            )
-                        }
+                            if (media.trailer != null) {
+                                MediaTrailer(
+                                    trailer = media.trailer,
+                                    modifier = Modifier
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
+                                )
+                            }
+                        },
+                        contentModifier = Modifier.padding(top = LocalPaddings.current.medium)
+                    )
 
-                        if (media.trailer != null) {
-                            MediaTrailer(
-                                trailer = media.trailer,
-                                modifier = Modifier
-                                    .padding(horizontal = LocalPaddings.current.large)
-                                    .landscapeCutoutPadding()
-                            )
-                        }
-                    },
-                    contentModifier = Modifier.padding(top = LocalPaddings.current.medium)
-                )
+                    // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
+                    val offset by animateDpAsState(
+                        targetValue = if (scrollState.value == 0) {
+                            0.dp
+                        } else {
+                            dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
+                        },
+                        animationSpec = tween(durationMillis = 750),
+                        label = "media_card_height"
+                    )
 
-                // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
-                val offset by animateDpAsState(
-                    targetValue = if (scrollState.value == 0) {
-                        0.dp
-                    } else {
-                        dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
-                    },
-                    animationSpec = tween(durationMillis = 750),
-                    label = "media_card_height"
-                )
-
-                with(sharedTransitionScope) {
                     Box(
                         modifier = Modifier
                             .statusBarsPadding()
@@ -227,11 +242,13 @@ fun MediaPage(
                         MediaSmall(
                             image = media.coverImage,
                             onClick = {},
-                            modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
-                            imageModifier = Modifier.sharedBounds(
-                                rememberSharedContentState("media_small_${media.id}_${media.source}"),
-                                animatedVisibilityScope,
-                            ),
+                            modifier = Modifier
+                                .sharedBounds(
+                                    rememberSharedContentState("media_small_image_${media.id}_${media.source}"),
+                                    animatedVisibilityScope,
+                                )
+                                .width(dimensionResource(coreR.dimen.media_card_width)),
+                            imageModifier = Modifier
                         )
                     }
                 }
