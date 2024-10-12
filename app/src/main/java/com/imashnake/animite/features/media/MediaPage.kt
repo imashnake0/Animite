@@ -147,7 +147,11 @@ fun MediaPage(
                                         end = LocalPaddings.current.large
                                     )
                                     .landscapeCutoutPadding()
-                                    .height(dimensionResource(R.dimen.media_details_height))
+                                    .height(dimensionResource(R.dimen.media_details_height)),
+                                textModifier = Modifier.sharedBounds(
+                                    rememberSharedContentState("media_small_text_${media.id}_${media.source}"),
+                                    animatedVisibilityScope,
+                                ),
                             )
 
                             if (!media.ranks.isNullOrEmpty()) {
@@ -294,7 +298,8 @@ fun MediaBanner(
 fun MediaDetails(
     title: String,
     description: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier
 ) {
     val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f).toArgb()
 
@@ -308,7 +313,8 @@ fun MediaDetails(
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleLarge,
             maxLines = 4,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            modifier = textModifier,
         )
 
         NestedScrollableContent { contentModifier ->

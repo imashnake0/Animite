@@ -107,6 +107,7 @@ fun MediaSmall(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
     label: String? = null,
 ) {
     Card(
@@ -148,7 +149,7 @@ fun MediaSmall(
                     //  https://proandroiddev.com/detect-text-overflow-in-jetpack-compose-56c0b83da5a5.
                     overflow = TextOverflow.Visible,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier
+                    modifier = textModifier
                         .align(Alignment.Center)
                         .fillMaxWidth()
                         .padding(

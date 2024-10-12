@@ -243,6 +243,10 @@ fun HomeRow(
                         rememberSharedContentState("media_small_image_${media.id}_${type.name}"),
                         animatedVisibilityScope,
                     ),
+                    textModifier = Modifier.sharedBounds(
+                        rememberSharedContentState("media_small_text_${media.id}_${type.name}"),
+                        animatedVisibilityScope,
+                    ),
                 )
             }
         }
