@@ -7,8 +7,6 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
@@ -308,14 +306,16 @@ fun MediaDetails(
     }
 
     Column(modifier) {
-        Text(
-            text = title,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 4,
-            overflow = TextOverflow.Ellipsis,
-            modifier = textModifier,
-        )
+        Box(Modifier.fillMaxWidth()) {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = textModifier.align(Alignment.CenterStart),
+            )
+        }
 
         NestedScrollableContent { contentModifier ->
             // TODO: Get rid of this once Compose supports HTML/Markdown
