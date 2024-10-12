@@ -233,11 +233,14 @@ fun HomeRow(
                     image = media.coverImage,
                     label = media.title,
                     onClick = { onItemClicked(media) },
-                    modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
+                    modifier = Modifier.sharedBounds(
+                        rememberSharedContentState("media_small_card_${media.id}_${type.name}"),
+                        animatedVisibilityScope
+                    ).width(dimensionResource(coreR.dimen.media_card_width)),
                     imageModifier = Modifier.sharedBounds(
-                        rememberSharedContentState("media_small_${media.id}_${type.name}"),
+                        rememberSharedContentState("media_small_image_${media.id}_${type.name}"),
                         animatedVisibilityScope,
-                    )
+                    ),
                 )
             }
         }

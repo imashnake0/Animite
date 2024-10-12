@@ -105,107 +105,111 @@ fun MediaPage(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(bottom = LocalPaddings.current.large)
-            ) {
-                BannerLayout(
-                    banner = { bannerModifier ->
-                        MediaBanner(
-                            imageUrl = media.bannerImage,
-                            tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
-                            modifier = bannerModifier.bannerParallax(scrollState)
+            with(sharedTransitionScope) {
+                Box(
+                    Modifier
+                        .sharedBounds(
+                            rememberSharedContentState("media_small_card_${media.id}_${media.source}"),
+                            animatedVisibilityScope,
                         )
-                    },
-                    content = {
-                        MediaDetails(
-                            title = media.title.orEmpty(),
-                            description = media.description.orEmpty(),
-                            modifier = Modifier
-                                .padding(
-                                    start = LocalPaddings.current.large
-                                            + dimensionResource(coreR.dimen.media_card_width)
-                                            + LocalPaddings.current.large,
-                                    end = LocalPaddings.current.large
-                                )
-                                .landscapeCutoutPadding()
-                                .height(dimensionResource(R.dimen.media_details_height))
-                        )
-
-                        if (!media.ranks.isNullOrEmpty()) {
-                            StatsRow(
-                                stats = media.ranks,
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(bottom = LocalPaddings.current.large)
+                ) {
+                    BannerLayout(
+                        banner = { bannerModifier ->
+                            MediaBanner(
+                                imageUrl = media.bannerImage,
+                                tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
+                                modifier = bannerModifier.bannerParallax(scrollState)
+                            )
+                        },
+                        content = {
+                            MediaDetails(
+                                title = media.title.orEmpty(),
+                                description = media.description.orEmpty(),
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = LocalPaddings.current.large)
+                                    .padding(
+                                        start = LocalPaddings.current.large
+                                                + dimensionResource(coreR.dimen.media_card_width)
+                                                + LocalPaddings.current.large,
+                                        end = LocalPaddings.current.large
+                                    )
                                     .landscapeCutoutPadding()
-                            ) {
-                                Text(
-                                    text = it.type.name,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.labelSmall
-                                )
+                                    .height(dimensionResource(R.dimen.media_details_height))
+                            )
 
-                                Text(
-                                    text = when (it.type) {
-                                        Media.Ranking.Type.SCORE -> "${it.rank}%"
-                                        Media.Ranking.Type.RATED,
-                                        Media.Ranking.Type.POPULAR -> "#${it.rank}"
-                                    },
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.displaySmall
+                            if (!media.ranks.isNullOrEmpty()) {
+                                StatsRow(
+                                    stats = media.ranks,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
+                                ) {
+                                    Text(
+                                        text = it.type.name,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+
+                                    Text(
+                                        text = when (it.type) {
+                                            Media.Ranking.Type.SCORE -> "${it.rank}%"
+                                            Media.Ranking.Type.RATED,
+                                            Media.Ranking.Type.POPULAR -> "#${it.rank}"
+                                        },
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.displaySmall
+                                    )
+                                }
+                            }
+
+                            if (!media.genres.isNullOrEmpty()) {
+                                MediaGenres(
+                                    genres = media.genres,
+                                    contentPadding = PaddingValues(
+                                        start = LocalPaddings.current.large + if (
+                                            LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                                        ) {
+                                            WindowInsets.displayCutout.asPaddingValues()
+                                                .calculateLeftPadding(LayoutDirection.Ltr)
+                                        } else 0.dp,
+                                        end = LocalPaddings.current.large
+                                    ),
+                                    color = Color(media.color ?: 0xFF152232.toInt()),
                                 )
                             }
-                        }
 
-                        if (!media.genres.isNullOrEmpty()) {
-                            MediaGenres(
-                                genres = media.genres,
-                                contentPadding = PaddingValues(
-                                    start = LocalPaddings.current.large + if (
-                                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                                    ) {
-                                        WindowInsets.displayCutout.asPaddingValues()
-                                            .calculateLeftPadding(LayoutDirection.Ltr)
-                                    } else 0.dp,
-                                    end = LocalPaddings.current.large
-                                ),
-                                color = Color(media.color ?: 0xFF152232.toInt()),
-                            )
-                        }
+                            if (!media.characters.isNullOrEmpty()) {
+                                MediaCharacters(
+                                    characters = media.characters,
+                                )
+                            }
 
-                        if (!media.characters.isNullOrEmpty()) {
-                            MediaCharacters(
-                                characters = media.characters,
-                            )
-                        }
+                            if (media.trailer != null) {
+                                MediaTrailer(
+                                    trailer = media.trailer,
+                                    modifier = Modifier
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
+                                )
+                            }
+                        },
+                        contentModifier = Modifier.padding(top = LocalPaddings.current.medium)
+                    )
 
-                        if (media.trailer != null) {
-                            MediaTrailer(
-                                trailer = media.trailer,
-                                modifier = Modifier
-                                    .padding(horizontal = LocalPaddings.current.large)
-                                    .landscapeCutoutPadding()
-                            )
-                        }
-                    },
-                    contentModifier = Modifier.padding(top = LocalPaddings.current.medium)
-                )
+                    // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
+                    val offset by animateDpAsState(
+                        targetValue = if (scrollState.value == 0) {
+                            0.dp
+                        } else {
+                            dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
+                        },
+                        animationSpec = tween(durationMillis = 750),
+                        label = "media_card_height"
+                    )
 
-                // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
-                val offset by animateDpAsState(
-                    targetValue = if (scrollState.value == 0) {
-                        0.dp
-                    } else {
-                        dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
-                    },
-                    animationSpec = tween(durationMillis = 750),
-                    label = "media_card_height"
-                )
-
-                with(sharedTransitionScope) {
                     Box(
                         modifier = Modifier
                             .statusBarsPadding()
@@ -229,7 +233,7 @@ fun MediaPage(
                             onClick = {},
                             modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
                             imageModifier = Modifier.sharedBounds(
-                                rememberSharedContentState("media_small_${media.id}_${media.source}"),
+                                rememberSharedContentState("media_small_image_${media.id}_${media.source}"),
                                 animatedVisibilityScope,
                             ),
                         )
