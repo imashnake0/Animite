@@ -7,6 +7,8 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
@@ -85,6 +87,9 @@ import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
+// TODO: Need to use WindowInsets to get device corner radius if available.
+private const val DEVICE_CORNER_RADIUS = 30
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress(
@@ -111,7 +116,12 @@ fun MediaPage(
                         .sharedBounds(
                             rememberSharedContentState("media_small_card_${media.id}_${media.source}"),
                             animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                            clipInOverlayDuringTransition = OverlayClip(
+                                RoundedCornerShape(DEVICE_CORNER_RADIUS.dp)
+                            ),
                         )
+                        .clip(RoundedCornerShape(DEVICE_CORNER_RADIUS.dp))
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                         .padding(bottom = LocalPaddings.current.large)
@@ -129,6 +139,7 @@ fun MediaPage(
                                 title = media.title.orEmpty(),
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
+                                    .skipToLookaheadSize()
                                     .padding(
                                         start = LocalPaddings.current.large
                                                 + dimensionResource(coreR.dimen.media_card_width)
@@ -231,11 +242,13 @@ fun MediaPage(
                         MediaSmall(
                             image = media.coverImage,
                             onClick = {},
-                            modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width)),
-                            imageModifier = Modifier.sharedBounds(
-                                rememberSharedContentState("media_small_image_${media.id}_${media.source}"),
-                                animatedVisibilityScope,
-                            ),
+                            modifier = Modifier
+                                .sharedBounds(
+                                    rememberSharedContentState("media_small_image_${media.id}_${media.source}"),
+                                    animatedVisibilityScope,
+                                )
+                                .width(dimensionResource(coreR.dimen.media_card_width)),
+                            imageModifier = Modifier
                         )
                     }
                 }
