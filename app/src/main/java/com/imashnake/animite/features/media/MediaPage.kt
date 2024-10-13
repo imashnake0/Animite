@@ -82,6 +82,11 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.features.SharedContentKey
+import com.imashnake.animite.features.SharedContentKey.Component.Card
+import com.imashnake.animite.features.SharedContentKey.Component.Image
+import com.imashnake.animite.features.SharedContentKey.Component.Page
+import com.imashnake.animite.features.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
@@ -112,7 +117,13 @@ fun MediaPage(
                 Box(
                     Modifier
                         .sharedBounds(
-                            rememberSharedContentState("media_small_card_${media.id}_${media.source}"),
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = media.id,
+                                    source = media.source,
+                                    sharedComponents = Card to Page,
+                                )
+                            ),
                             animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                             clipInOverlayDuringTransition = OverlayClip(
@@ -147,7 +158,13 @@ fun MediaPage(
                                     .landscapeCutoutPadding()
                                     .height(dimensionResource(R.dimen.media_details_height)),
                                 textModifier = Modifier.sharedBounds(
-                                    rememberSharedContentState("media_small_text_${media.id}_${media.source}"),
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = media.id,
+                                            source = media.source,
+                                            sharedComponents = Text to Text,
+                                        )
+                                    ),
                                     animatedVisibilityScope,
                                 ),
                             )
@@ -246,7 +263,13 @@ fun MediaPage(
                             onClick = {},
                             modifier = Modifier
                                 .sharedBounds(
-                                    rememberSharedContentState("media_small_image_${media.id}_${media.source}"),
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = media.id,
+                                            source = media.source,
+                                            sharedComponents = Image to Image,
+                                        )
+                                    ),
                                     animatedVisibilityScope,
                                 )
                                 .width(dimensionResource(coreR.dimen.media_card_width)),
