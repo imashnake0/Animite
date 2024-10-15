@@ -7,8 +7,6 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
@@ -84,6 +82,11 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.dev.SharedContentKey
+import com.imashnake.animite.dev.SharedContentKey.Component.Card
+import com.imashnake.animite.dev.SharedContentKey.Component.Image
+import com.imashnake.animite.dev.SharedContentKey.Component.Page
+import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
@@ -114,7 +117,13 @@ fun MediaPage(
                 Box(
                     Modifier
                         .sharedBounds(
-                            rememberSharedContentState("media_small_card_${media.id}_${media.source}"),
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = media.id,
+                                    source = media.source,
+                                    sharedComponents = Card to Page,
+                                )
+                            ),
                             animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                             clipInOverlayDuringTransition = OverlayClip(
@@ -147,7 +156,17 @@ fun MediaPage(
                                         end = LocalPaddings.current.large
                                     )
                                     .landscapeCutoutPadding()
-                                    .height(dimensionResource(R.dimen.media_details_height))
+                                    .height(dimensionResource(R.dimen.media_details_height)),
+                                textModifier = Modifier.sharedBounds(
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = media.id,
+                                            source = media.source,
+                                            sharedComponents = Text to Text,
+                                        )
+                                    ),
+                                    animatedVisibilityScope,
+                                ),
                             )
 
                             if (!media.ranks.isNullOrEmpty()) {
@@ -244,7 +263,13 @@ fun MediaPage(
                             onClick = {},
                             modifier = Modifier
                                 .sharedBounds(
-                                    rememberSharedContentState("media_small_image_${media.id}_${media.source}"),
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = media.id,
+                                            source = media.source,
+                                            sharedComponents = Image to Image,
+                                        )
+                                    ),
                                     animatedVisibilityScope,
                                 )
                                 .width(dimensionResource(coreR.dimen.media_card_width)),
@@ -294,7 +319,8 @@ fun MediaBanner(
 fun MediaDetails(
     title: String,
     description: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier
 ) {
     val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f).toArgb()
 
@@ -303,13 +329,16 @@ fun MediaDetails(
     }
 
     Column(modifier) {
-        Text(
-            text = title,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 4,
-            overflow = TextOverflow.Ellipsis
-        )
+        Box(Modifier.fillMaxWidth()) {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = textModifier.align(Alignment.CenterStart),
+            )
+        }
 
         NestedScrollableContent { contentModifier ->
             // TODO: Get rid of this once Compose supports HTML/Markdown

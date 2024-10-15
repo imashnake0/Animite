@@ -70,6 +70,11 @@ import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.dev.SharedContentKey
+import com.imashnake.animite.dev.SharedContentKey.Component.Card
+import com.imashnake.animite.dev.SharedContentKey.Component.Image
+import com.imashnake.animite.dev.SharedContentKey.Component.Page
+import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import com.imashnake.animite.features.media.MediaPage
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
@@ -235,12 +240,34 @@ fun HomeRow(
                     onClick = { onItemClicked(media) },
                     modifier = Modifier
                         .sharedBounds(
-                            rememberSharedContentState("media_small_card_${media.id}_${type.name}"),
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = media.id,
+                                    source = type.name,
+                                    sharedComponents = Card to Page,
+                                )
+                            ),
                             animatedVisibilityScope
                         )
                         .width(dimensionResource(coreR.dimen.media_card_width)),
                     imageModifier = Modifier.sharedBounds(
-                        rememberSharedContentState("media_small_image_${media.id}_${type.name}"),
+                        rememberSharedContentState(
+                            SharedContentKey(
+                                id = media.id,
+                                source = type.name,
+                                sharedComponents = Image to Image,
+                            )
+                        ),
+                        animatedVisibilityScope,
+                    ),
+                    textModifier = Modifier.sharedBounds(
+                        rememberSharedContentState(
+                            SharedContentKey(
+                                id = media.id,
+                                source = type.name,
+                                sharedComponents = Text to Text,
+                            )
+                        ),
                         animatedVisibilityScope,
                     ),
                 )
