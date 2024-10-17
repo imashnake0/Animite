@@ -28,7 +28,7 @@ core = "1.13.1"
 lifecycle = "2.8.6"
 extJunit = "1.2.1"
 espresso = "3.6.1"
-navigation = "2.8.2"
+navigation = "2.8.3"
 
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
