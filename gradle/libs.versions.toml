@@ -23,7 +23,7 @@ agp = "8.7.1"
 
 # AndroidX
 # https://androidx.tech.
-activity = "1.9.2"
+activity = "1.9.3"
 core = "1.13.1"
 lifecycle = "2.8.6"
 extJunit = "1.2.1"
