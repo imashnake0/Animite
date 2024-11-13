@@ -1,14 +1,19 @@
 package com.imashnake.animite.features.navigationbar
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.imashnake.animite.R
 
 enum class NavigationBarPaths(
     val navigateTo: (NavController) -> Unit,
@@ -20,6 +25,7 @@ enum class NavigationBarPaths(
         navigateTo = {
             it.navigate(com.imashnake.animite.rslash.RSlash) {
                 popUpTo(id = it.graph.findStartDestination().id) {
+                    inclusive = true
                     saveState = true
                 }
                 launchSingleTop = true
@@ -57,6 +63,7 @@ enum class NavigationBarPaths(
             it.navigate(com.imashnake.animite.profile.Profile()) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
+                    inclusive = true
                 }
                 launchSingleTop = true
             }

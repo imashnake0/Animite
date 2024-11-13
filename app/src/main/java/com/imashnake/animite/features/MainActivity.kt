@@ -6,27 +6,40 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.features.home.Home
+import com.imashnake.animite.features.home.HomeScreen
+import com.imashnake.animite.features.media.MediaPage
+import com.imashnake.animite.features.navigationbar.NavigationBarPaths
+import com.imashnake.animite.features.searchbar.SearchFrontDrop
+import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.profile.Profile
+import com.imashnake.animite.profile.ProfileScreen
+import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
+import com.imashnake.animite.rslash.RSlash
+import com.imashnake.animite.rslash.RSlashScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,7 +66,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -69,7 +82,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
     //  see https://issuetracker.google.com/issues/258270139.
-    val currentDestination by navController.currentDestinationAsState()
     NavigationSuiteScaffold(
         layoutType = if (isNavBarVisible) {
             NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(currentWindowAdaptiveInfo())
@@ -78,22 +90,9 @@ fun MainScreen(modifier: Modifier = Modifier) {
         },
         navigationSuiteItems = {
             NavigationBarPaths.entries.forEach { destination ->
-                val isCurrentDestOnBackStack = navController.isRouteOnBackStack(destination.route)
                 item(
-                    selected = currentDestination?.startDestination == destination.route,
-                    onClick = {
-                        if (isCurrentDestOnBackStack) {
-                            navController.popBackStack(destination.route.route, false)
-                        } else {
-                            navController.navigate(destination.route.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    },
+                    selected = currentBackStackEntry?.let { destination.matchesDestination(it) } == true,
+                    onClick = { destination.navigateTo(navController) },
                     icon = destination.icon
                 )
             }
@@ -130,7 +129,6 @@ fun MainScreen(modifier: Modifier = Modifier) {
             }
 
             SearchFrontDrop(
-                hasExtraPadding = isNavBarVisible,
                 onItemClick = { id, mediaType ->
                     navController.navigate(
                         MediaPage(
@@ -138,6 +136,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             source = MediaList.Type.SEARCH.name,
                             mediaType.rawValue
                         )
+                    )
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
