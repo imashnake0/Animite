@@ -39,10 +39,7 @@ import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.profile.Profile
 import com.imashnake.animite.profile.ProfileScreen
-import com.imashnake.animite.profile.dev.internal.ACCESS_TOKEN
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
-import com.imashnake.animite.profile.dev.internal.EXPIRES_IN
-import com.imashnake.animite.profile.dev.internal.TOKEN_TYPE
 import com.imashnake.animite.rslash.RSlash
 import com.imashnake.animite.rslash.RSlashScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -110,13 +107,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         deepLinks = listOf(
                             navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
                         )
-                    ) { backStackEntry ->
-                        ProfileScreen(
-                            accessToken = backStackEntry.arguments?.getString(ACCESS_TOKEN),
-                            tokenType = backStackEntry.arguments?.getString(TOKEN_TYPE),
-                            expiresIn = backStackEntry.arguments?.getString(EXPIRES_IN)
-                                ?.toIntOrNull()
-                        )
+                    ) {
+                        ProfileScreen()
                     }
                     composable<RSlash> {
                         RSlashScreen()
