@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
@@ -76,6 +77,7 @@ import com.imashnake.animite.dev.SharedContentKey.Component.Image
 import com.imashnake.animite.dev.SharedContentKey.Component.Page
 import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import com.imashnake.animite.features.media.MediaPage
+import com.imashnake.animite.features.navigationbar.NavigationScaffold
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
@@ -83,7 +85,7 @@ import com.imashnake.animite.core.R as coreR
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+    navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -107,97 +109,101 @@ fun HomeScreen(
         rows.all { it is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(scrollState) {
-                Box(
-                    modifier = Modifier
-                        .verticalScroll(scrollState)
-                        .navigationBarsPadding()
+                NavigationScaffold(
+                    navController = navController
                 ) {
-                    BannerLayout(
-                        banner = { bannerModifier ->
-                            Box {
-                                Image(
-                                    painter = painterResource(R.drawable.background),
-                                    contentDescription = null,
-                                    modifier = bannerModifier.bannerParallax(scrollState),
-                                    contentScale = ContentScale.Crop,
-                                    alignment = Alignment.TopCenter
-                                )
+                    Box(
+                        modifier = Modifier
+                            .verticalScroll(scrollState)
+                            .navigationBarsPadding()
+                    ) {
+                        BannerLayout(
+                            banner = { bannerModifier ->
+                                Box {
+                                    Image(
+                                        painter = painterResource(R.drawable.background),
+                                        contentDescription = null,
+                                        modifier = bannerModifier.bannerParallax(scrollState),
+                                        contentScale = ContentScale.Crop,
+                                        alignment = Alignment.TopCenter
+                                    )
 
-                                Box(
-                                    modifier = bannerModifier
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(
-                                                    Color.Transparent,
-                                                    MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                        alpha = 0.5f
+                                    Box(
+                                        modifier = bannerModifier
+                                            .background(
+                                                Brush.verticalGradient(
+                                                    listOf(
+                                                        Color.Transparent,
+                                                        MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                            alpha = 0.5f
+                                                        )
                                                     )
                                                 )
                                             )
-                                        )
-                                )
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .align(Alignment.BottomCenter),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.okaeri),
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                        style = MaterialTheme.typography.displayMedium,
-                                        modifier = Modifier
-                                            .padding(
-                                                start = LocalPaddings.current.large,
-                                                bottom = LocalPaddings.current.medium
-                                            )
-                                            .landscapeCutoutPadding()
-                                            .weight(1f, fill = false),
-                                        maxLines = 1
                                     )
 
-                                    MediaTypeSelector(
+                                    Row(
                                         modifier = Modifier
-                                            .padding(
-                                                end = LocalPaddings.current.large,
-                                                bottom = LocalPaddings.current.medium
-                                            )
-                                            .landscapeCutoutPadding(),
-                                        selectedOption = homeMediaType,
-                                        viewModel = viewModel
-                                    )
-                                }
-                            }
-                        },
-                        content = {
-                            rows.fastForEach { row ->
-                                row.data?.let {
-                                    HomeRow(
-                                        list = it.list,
-                                        type = it.type,
-                                        onItemClicked = { media ->
-                                            onNavigateToMediaItem(
-                                                MediaPage(
-                                                    id = media.id,
-                                                    source = it.type.name,
-                                                    mediaType = homeMediaType.value.rawValue,
+                                            .fillMaxWidth()
+                                            .align(Alignment.BottomCenter),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.okaeri),
+                                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                            style = MaterialTheme.typography.displayMedium,
+                                            modifier = Modifier
+                                                .padding(
+                                                    start = LocalPaddings.current.large,
+                                                    bottom = LocalPaddings.current.medium
                                                 )
-                                            )
-                                        },
-                                        sharedTransitionScope = sharedTransitionScope,
-                                        animatedVisibilityScope = animatedVisibilityScope,
-                                    )
+                                                .landscapeCutoutPadding()
+                                                .weight(1f, fill = false),
+                                            maxLines = 1
+                                        )
+
+                                        MediaTypeSelector(
+                                            modifier = Modifier
+                                                .padding(
+                                                    end = LocalPaddings.current.large,
+                                                    bottom = LocalPaddings.current.medium
+                                                )
+                                                .landscapeCutoutPadding(),
+                                            selectedOption = homeMediaType,
+                                            viewModel = viewModel
+                                        )
+                                    }
                                 }
-                            }
-                        },
-                        contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large,
-                            bottom = dimensionResource(coreR.dimen.navigation_bar_height) + LocalPaddings.current.large
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
-                    )
+                            },
+                            content = {
+                                rows.fastForEach { row ->
+                                    row.data?.let {
+                                        HomeRow(
+                                            list = it.list,
+                                            type = it.type,
+                                            onItemClicked = { media ->
+                                                navController.navigate(
+                                                    MediaPage(
+                                                        id = media.id,
+                                                        source = it.type.name,
+                                                        mediaType = homeMediaType.value.rawValue,
+                                                    )
+                                                )
+                                            },
+                                            sharedTransitionScope = sharedTransitionScope,
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                        )
+                                    }
+                                }
+                            },
+                            contentModifier = Modifier.padding(
+                                top = LocalPaddings.current.large,
+                                bottom = dimensionResource(coreR.dimen.navigation_bar_height) + LocalPaddings.current.large
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
+                        )
+                    }
                 }
             }
         }
