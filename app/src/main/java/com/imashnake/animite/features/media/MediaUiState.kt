@@ -3,6 +3,8 @@ package com.imashnake.animite.features.media
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 
 data class MediaUiState(
+    val source: String? = null,
+    val id: Int? = null,
     val bannerImage: String? = null,
     val coverImage: String? = null,
     val color: Int? = null,

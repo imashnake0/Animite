@@ -106,6 +106,8 @@ fun MediaSmall(
     image: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
     label: String? = null,
 ) {
     Card(
@@ -120,7 +122,7 @@ fun MediaSmall(
             model = crossfadeModel(image),
             contentDescription = label,
             contentScale = ContentScale.Crop,
-            modifier = Modifier
+            modifier = imageModifier
                 .fillMaxWidth()
                 .aspectRatio(0.7f)
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
@@ -138,23 +140,27 @@ fun MediaSmall(
                     )
                 )
 
-                Text(
-                    text = label,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge,
-                    maxLines = 2,
-                    // TODO: Add a custom overflow indicator:
-                    //  https://proandroiddev.com/detect-text-overflow-in-jetpack-compose-56c0b83da5a5.
-                    overflow = TextOverflow.Visible,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
+                Box(
+                    Modifier
                         .align(Alignment.Center)
                         .fillMaxWidth()
                         .padding(
                             horizontal = dimensionResource(R.dimen.media_card_text_padding_horizontal),
                             vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
                         )
-                )
+                ) {
+                    Text(
+                        text = label,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge,
+                        maxLines = 2,
+                        // TODO: Add a custom overflow indicator:
+                        //  https://proandroiddev.com/detect-text-overflow-in-jetpack-compose-56c0b83da5a5.
+                        overflow = TextOverflow.Visible,
+                        textAlign = TextAlign.Center,
+                        modifier = textModifier.align(Alignment.Center),
+                    )
+                }
             }
     }
 }
