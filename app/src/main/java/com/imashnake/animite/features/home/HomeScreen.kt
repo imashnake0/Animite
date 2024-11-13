@@ -1,6 +1,9 @@
 package com.imashnake.animite.features.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -56,6 +59,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
@@ -66,14 +70,22 @@ import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.dev.SharedContentKey
+import com.imashnake.animite.dev.SharedContentKey.Component.Card
+import com.imashnake.animite.dev.SharedContentKey.Component.Image
+import com.imashnake.animite.dev.SharedContentKey.Component.Page
+import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import com.imashnake.animite.features.media.MediaPage
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
@@ -85,14 +97,14 @@ fun HomeScreen(
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
     val rows = listOf(
-        trendingList to stringResource(R.string.trending_now),
-        popularList to stringResource(R.string.popular_this_season),
-        upcomingList to stringResource(R.string.upcoming_next_season),
-        allTimePopularList to stringResource(R.string.all_time_popular)
+        trendingList,
+        popularList,
+        upcomingList,
+        allTimePopularList,
     )
 
     when {
-        rows.all { it.first is Resource.Success } -> {
+        rows.all { it is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(scrollState) {
                 Box(
@@ -161,13 +173,23 @@ fun HomeScreen(
                         },
                         content = {
                             rows.fastForEach { row ->
-                                HomeRow(
-                                    list = row.first.data.orEmpty(),
-                                    title = row.second,
-                                    onItemClicked = {
-                                        onNavigateToMediaItem(MediaPage(it.id, homeMediaType.value.rawValue))
-                                    }
-                                )
+                                row.data?.let {
+                                    HomeRow(
+                                        list = it.list,
+                                        type = it.type,
+                                        onItemClicked = { media ->
+                                            onNavigateToMediaItem(
+                                                MediaPage(
+                                                    id = media.id,
+                                                    source = it.type.name,
+                                                    mediaType = homeMediaType.value.rawValue,
+                                                )
+                                            )
+                                        },
+                                        sharedTransitionScope = sharedTransitionScope,
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                    )
+                                }
                             }
                         },
                         contentModifier = Modifier.padding(
@@ -193,11 +215,14 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeRow(
     list: List<Media.Small>,
-    title: String,
+    type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
@@ -207,13 +232,46 @@ fun HomeRow(
                 + shrinkVertically(tween(durationMillis = 500)),
         label = "animate_media_list_enter_exit"
     ) {
-        MediaSmallRow(title, list, modifier) { media ->
-            MediaSmall(
-                image = media.coverImage,
-                label = media.title,
-                onClick = { onItemClicked(media) },
-                modifier = Modifier.width(dimensionResource(coreR.dimen.media_card_width))
-            )
+        MediaSmallRow(type.title, list, modifier) { media ->
+            with(sharedTransitionScope) {
+                MediaSmall(
+                    image = media.coverImage,
+                    label = media.title,
+                    onClick = { onItemClicked(media) },
+                    modifier = Modifier
+                        .sharedBounds(
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = media.id,
+                                    source = type.name,
+                                    sharedComponents = Card to Page,
+                                )
+                            ),
+                            animatedVisibilityScope
+                        )
+                        .width(dimensionResource(coreR.dimen.media_card_width)),
+                    imageModifier = Modifier.sharedBounds(
+                        rememberSharedContentState(
+                            SharedContentKey(
+                                id = media.id,
+                                source = type.name,
+                                sharedComponents = Image to Image,
+                            )
+                        ),
+                        animatedVisibilityScope,
+                    ),
+                    textModifier = Modifier.sharedBounds(
+                        rememberSharedContentState(
+                            SharedContentKey(
+                                id = media.id,
+                                source = type.name,
+                                sharedComponents = Text to Text,
+                            )
+                        ),
+                        animatedVisibilityScope,
+                    ),
+                )
+            }
         }
     }
 }

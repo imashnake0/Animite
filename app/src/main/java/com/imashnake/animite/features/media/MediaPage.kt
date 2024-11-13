@@ -6,6 +6,9 @@ import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -73,22 +76,33 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.core.ui.MediaSmall
-import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.dev.SharedContentKey
+import com.imashnake.animite.dev.SharedContentKey.Component.Card
+import com.imashnake.animite.dev.SharedContentKey.Component.Image
+import com.imashnake.animite.dev.SharedContentKey.Component.Page
+import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
+// TODO: Need to use WindowInsets to get device corner radius if available.
+private const val DEVICE_CORNER_RADIUS = 30
+
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",
     "LongMethod"
 )
 fun MediaPage(
-    viewModel: MediaPageViewModel = hiltViewModel()
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: MediaPageViewModel = hiltViewModel(),
 ) {
     val scrollState = rememberScrollState()
 
@@ -99,128 +113,170 @@ fun MediaPage(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState)
-                    .padding(bottom = LocalPaddings.current.large)
-            ) {
-                BannerLayout(
-                    banner = { bannerModifier ->
-                        MediaBanner(
-                            imageUrl = media.bannerImage,
-                            tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
-                            modifier = bannerModifier.bannerParallax(scrollState)
-                        )
-                    },
-                    content = {
-                        MediaDetails(
-                            title = media.title.orEmpty(),
-                            description = media.description.orEmpty(),
-                            modifier = Modifier
-                                .padding(
-                                    start = LocalPaddings.current.large
-                                            + dimensionResource(coreR.dimen.media_card_width)
-                                            + LocalPaddings.current.large,
-                                    end = LocalPaddings.current.large
+            with(sharedTransitionScope) {
+                Box(
+                    Modifier
+                        .sharedBounds(
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = media.id,
+                                    source = media.source,
+                                    sharedComponents = Card to Page,
                                 )
-                                .landscapeCutoutPadding()
-                                .height(dimensionResource(R.dimen.media_details_height))
+                            ),
+                            animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                            clipInOverlayDuringTransition = OverlayClip(
+                                RoundedCornerShape(DEVICE_CORNER_RADIUS.dp)
+                            ),
                         )
-
-                        if (!media.ranks.isNullOrEmpty()) {
-                            StatsRow(
-                                stats = media.ranks,
+                        .clip(RoundedCornerShape(DEVICE_CORNER_RADIUS.dp))
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                        .padding(bottom = LocalPaddings.current.large)
+                ) {
+                    BannerLayout(
+                        banner = { bannerModifier ->
+                            MediaBanner(
+                                imageUrl = media.bannerImage,
+                                tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
+                                modifier = bannerModifier.bannerParallax(scrollState)
+                            )
+                        },
+                        content = {
+                            MediaDetails(
+                                title = media.title.orEmpty(),
+                                description = media.description.orEmpty(),
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = LocalPaddings.current.large)
+                                    .skipToLookaheadSize()
+                                    .padding(
+                                        start = LocalPaddings.current.large
+                                                + dimensionResource(coreR.dimen.media_card_width)
+                                                + LocalPaddings.current.large,
+                                        end = LocalPaddings.current.large
+                                    )
                                     .landscapeCutoutPadding()
-                            ) {
-                                Text(
-                                    text = it.type.name,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.labelSmall
-                                )
+                                    .height(dimensionResource(R.dimen.media_details_height)),
+                                textModifier = Modifier.sharedBounds(
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = media.id,
+                                            source = media.source,
+                                            sharedComponents = Text to Text,
+                                        )
+                                    ),
+                                    animatedVisibilityScope,
+                                ),
+                            )
 
-                                Text(
-                                    text = when (it.type) {
-                                        Media.Ranking.Type.SCORE -> "${it.rank}%"
-                                        Media.Ranking.Type.RATED,
-                                        Media.Ranking.Type.POPULAR -> "#${it.rank}"
-                                    },
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.displaySmall
+                            if (!media.ranks.isNullOrEmpty()) {
+                                StatsRow(
+                                    stats = media.ranks,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
+                                ) {
+                                    Text(
+                                        text = it.type.name,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+
+                                    Text(
+                                        text = when (it.type) {
+                                            Media.Ranking.Type.SCORE -> "${it.rank}%"
+                                            Media.Ranking.Type.RATED,
+                                            Media.Ranking.Type.POPULAR -> "#${it.rank}"
+                                        },
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.displaySmall
+                                    )
+                                }
+                            }
+
+                            if (!media.genres.isNullOrEmpty()) {
+                                MediaGenres(
+                                    genres = media.genres,
+                                    contentPadding = PaddingValues(
+                                        start = LocalPaddings.current.large + if (
+                                            LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                                        ) {
+                                            WindowInsets.displayCutout.asPaddingValues()
+                                                .calculateLeftPadding(LayoutDirection.Ltr)
+                                        } else 0.dp,
+                                        end = LocalPaddings.current.large
+                                    ),
+                                    color = Color(media.color ?: 0xFF152232.toInt()),
                                 )
                             }
-                        }
 
-                        if (!media.genres.isNullOrEmpty()) {
-                            MediaGenres(
-                                genres = media.genres,
-                                contentPadding = PaddingValues(
-                                    start = LocalPaddings.current.large + if (
-                                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                                    ) {
-                                        WindowInsets.displayCutout.asPaddingValues()
-                                            .calculateLeftPadding(LayoutDirection.Ltr)
-                                    } else 0.dp,
-                                    end = LocalPaddings.current.large
-                                ),
-                                color = Color(media.color ?: 0xFF152232.toInt()),
+                            if (!media.characters.isNullOrEmpty()) {
+                                MediaCharacters(
+                                    characters = media.characters,
+                                )
+                            }
+
+                            if (media.trailer != null) {
+                                MediaTrailer(
+                                    trailer = media.trailer,
+                                    modifier = Modifier
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
+                                )
+                            }
+                        },
+                        contentModifier = Modifier.padding(top = LocalPaddings.current.medium)
+                    )
+
+                    // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
+                    val offset by animateDpAsState(
+                        targetValue = if (scrollState.value == 0) {
+                            0.dp
+                        } else {
+                            dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
+                        },
+                        animationSpec = tween(durationMillis = 750),
+                        label = "media_card_height"
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            // TODO: Try using `AlignmentLine`s.
+                            .padding(
+                                top = dimensionResource(R.dimen.media_details_height)
+                                        + LocalPaddings.current.medium
+                                        + dimensionResource(coreR.dimen.banner_height)
+                                        - WindowInsets.statusBars
+                                    .asPaddingValues()
+                                    .calculateTopPadding()
+                                        - dimensionResource(coreR.dimen.media_card_height)
+                                        + offset,
+                                start = LocalPaddings.current.large
                             )
-                        }
-
-                        if (!media.characters.isNullOrEmpty()) {
-                            MediaCharacters(
-                                characters = media.characters,
-                            )
-                        }
-
-                        if (media.trailer != null) {
-                            MediaTrailer(
-                                trailer = media.trailer,
-                                modifier = Modifier
-                                    .padding(horizontal = LocalPaddings.current.large)
-                                    .landscapeCutoutPadding()
-                            )
-                        }
-                    },
-                    contentModifier = Modifier.padding(top = LocalPaddings.current.medium)
-                )
-
-                // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
-                val offset by animateDpAsState(
-                    targetValue = if (scrollState.value == 0) {
-                        0.dp
-                    } else {
-                        dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
-                    },
-                    animationSpec = tween(durationMillis = 750),
-                    label = "media_card_height"
-                )
-
-                MediaSmall(
-                    image = media.coverImage,
-                    label = null,
-                    onClick = {},
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        // TODO: Try using `AlignmentLine`s.
-                        .padding(
-                            top = dimensionResource(R.dimen.media_details_height)
-                                    + LocalPaddings.current.medium
-                                    + dimensionResource(coreR.dimen.banner_height)
-                                    - WindowInsets.statusBars
-                                        .asPaddingValues()
-                                        .calculateTopPadding()
-                                    - dimensionResource(coreR.dimen.media_card_height)
-                                    + offset,
-                            start = LocalPaddings.current.large
+                            .landscapeCutoutPadding()
+                            .height(dimensionResource(coreR.dimen.media_card_height) - offset)
+                    ) {
+                        MediaSmall(
+                            image = media.coverImage,
+                            onClick = {},
+                            modifier = Modifier
+                                .sharedBounds(
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = media.id,
+                                            source = media.source,
+                                            sharedComponents = Image to Image,
+                                        )
+                                    ),
+                                    animatedVisibilityScope,
+                                )
+                                .width(dimensionResource(coreR.dimen.media_card_width)),
+                            imageModifier = Modifier
                         )
-                        .landscapeCutoutPadding()
-                        .height(dimensionResource(coreR.dimen.media_card_height) - offset)
-                        .width(dimensionResource(coreR.dimen.media_card_width))
-                )
+                    }
+                }
             }
         }
     }
@@ -263,7 +319,8 @@ fun MediaBanner(
 fun MediaDetails(
     title: String,
     description: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier
 ) {
     val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f).toArgb()
 
@@ -272,13 +329,16 @@ fun MediaDetails(
     }
 
     Column(modifier) {
-        Text(
-            text = title,
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleLarge,
-            maxLines = 4,
-            overflow = TextOverflow.Ellipsis
-        )
+        Box(Modifier.fillMaxWidth()) {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = textModifier.align(Alignment.CenterStart),
+            )
+        }
 
         NestedScrollableContent { contentModifier ->
             // TODO: Get rid of this once Compose supports HTML/Markdown
@@ -423,5 +483,6 @@ fun MediaTrailer(
 @Serializable
 data class MediaPage(
     val id: Int,
+    val source: String,
     val mediaType: String
 )

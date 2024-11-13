@@ -7,8 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.Home
 import com.imashnake.animite.features.home.HomeScreen
@@ -57,12 +61,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AnimiteTheme {
-                MainScreen(Modifier.fillMaxSize())
+                MainScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                )
             }
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -82,26 +91,31 @@ fun MainScreen(modifier: Modifier = Modifier) {
         CompositionLocalProvider(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
-            NavHost(navController = navController, startDestination = Home) {
-                composable<Home> {
-                    HomeScreen(
-                        onNavigateToMediaItem = {
-                            navController.navigate(it)
-                        }
-                    )
-                }
-                composable<MediaPage> {
-                    MediaPage()
-                }
-                composable<Profile>(
-                    deepLinks = listOf(
-                        navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
-                    )
-                ) {
-                    ProfileScreen()
-                }
-                composable<RSlash> {
-                    RSlashScreen()
+            SharedTransitionLayout {
+                NavHost(navController = navController, startDestination = Home) {
+                    composable<Home> {
+                        HomeScreen(
+                            onNavigateToMediaItem = { navController.navigate(it) },
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this,
+                        )
+                    }
+                    composable<MediaPage> {
+                        MediaPage(
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this,
+                        )
+                    }
+                    composable<Profile>(
+                        deepLinks = listOf(
+                            navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
+                        )
+                    ) {
+                        ProfileScreen()
+                    }
+                    composable<RSlash> {
+                        RSlashScreen()
+                    }
                 }
             }
         }
@@ -109,7 +123,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
         SearchFrontDrop(
             hasExtraPadding = isNavBarVisible,
             onItemClick = { id, mediaType ->
-                navController.navigate(MediaPage(id = id, mediaType.rawValue))
+                navController.navigate(
+                    MediaPage(
+                        id = id,
+                        source = MediaList.Type.SEARCH.name,
+                        mediaType.rawValue
+                    )
+                )
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
