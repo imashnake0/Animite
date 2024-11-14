@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
 @Composable
-fun RSlashScreen() {
+fun SocialScreen() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -39,4 +39,4 @@ fun RSlashScreen() {
 }
 
 @Serializable
-data object RSlash
+data object Social
