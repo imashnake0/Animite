@@ -75,7 +75,7 @@ enum class NavigationBarPaths(
 ) {
     RSlash(
         navigateTo = {
-            it.navigate(com.imashnake.animite.rslash.RSlash) {
+            it.navigate(com.imashnake.animite.social.RSlash) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }
@@ -83,7 +83,7 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.rslash.RSlash::class) }
+            it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.social.RSlash::class) }
         },
         icon = {
             Icon(ImageVector.vectorResource(R.drawable.rslash), contentDescription = stringResource(R.string.rslash))

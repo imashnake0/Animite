@@ -20,7 +20,7 @@ android {
     }
     composeCompiler.enableStrongSkippingMode = true
 
-    namespace = "com.imashnake.animite.rslash"
+    namespace = "com.imashnake.animite.social"
 }
 
 kotlin {

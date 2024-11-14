@@ -1,4 +1,4 @@
-package com.imashnake.animite.rslash
+package com.imashnake.animite.social
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

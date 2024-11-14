@@ -40,8 +40,8 @@ import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.profile.Profile
 import com.imashnake.animite.profile.ProfileScreen
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
-import com.imashnake.animite.rslash.RSlash
-import com.imashnake.animite.rslash.RSlashScreen
+import com.imashnake.animite.social.RSlash
+import com.imashnake.animite.social.RSlashScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
