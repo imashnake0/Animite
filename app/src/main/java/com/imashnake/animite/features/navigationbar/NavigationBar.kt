@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -73,9 +71,9 @@ enum class NavigationBarPaths(
     val icon: @Composable () -> Unit,
     @StringRes val labelRes: Int
 ) {
-    RSlash(
+    Social(
         navigateTo = {
-            it.navigate(com.imashnake.animite.rslash.RSlash) {
+            it.navigate(com.imashnake.animite.social.Social) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }
@@ -83,12 +81,12 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.rslash.RSlash::class) }
+            it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.social.Social::class) }
         },
         icon = {
-            Icon(ImageVector.vectorResource(R.drawable.rslash), contentDescription = stringResource(R.string.rslash))
+            Icon(ImageVector.vectorResource(R.drawable.social), contentDescription = stringResource(R.string.social))
         },
-        labelRes = R.string.home
+        labelRes = R.string.social
     ),
     Home(
         navigateTo = {
@@ -122,7 +120,7 @@ enum class NavigationBarPaths(
             it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.profile.Profile::class) }
         },
         icon = {
-            Icon(Icons.Rounded.AccountCircle, contentDescription = stringResource(R.string.profile))
+            Icon(ImageVector.vectorResource(R.drawable.profile), contentDescription = stringResource(R.string.profile))
         },
         labelRes = R.string.profile
     ),
