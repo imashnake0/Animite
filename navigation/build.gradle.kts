@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.detekt)
 }
@@ -26,22 +27,10 @@ kotlin {
 }
 
 dependencies {
-    // Compose
+    api(libs.androidx.navigationCompose)
     implementation(libs.bundles.compose)
     implementation(libs.compose.material)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
-
-    // Coil
-    implementation(libs.coil.compose)
-
-    // Kotlin
-    implementation(libs.kotlin.coroutines.android)
-    implementation(libs.kotlin.coroutines.core)
-
-    testImplementation(libs.test.junit)
-
-    androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.androidx.test.espressoCore)
-    androidTestImplementation(libs.compose.test.ui.testJunit4)
+    implementation(libs.kotlinx.serialization.core)
 }

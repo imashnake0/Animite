@@ -17,14 +17,12 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,9 +47,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.R as coreR
 
@@ -79,7 +77,7 @@ fun SearchFrontDrop(
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = if (hasExtraPadding) {
-            dimensionResource(coreR.dimen.navigation_bar_height)
+            dimensionResource(com.imashnake.animite.navigation.R.dimen.navigation_bar_height)
         } else 0.dp,
         label = "translate_search_bar"
     )
@@ -144,7 +142,7 @@ fun SearchList(
             bottom = dimensionResource(R.dimen.search_bar_height)
                     + LocalPaddings.current.large
                     + LocalPaddings.current.large
-                    + dimensionResource(coreR.dimen.navigation_bar_height)
+                    + dimensionResource(com.imashnake.animite.navigation.R.dimen.navigation_bar_height)
                     + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)

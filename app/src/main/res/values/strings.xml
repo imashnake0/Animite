@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Animite</string>
-    <string name="home">Home</string>
-    <string name="profile">Profile</string>
-    <string name="social">Social</string>
 
     <!-- Home -->
     <string name="okaeri" translatable="false">おかえり</string>

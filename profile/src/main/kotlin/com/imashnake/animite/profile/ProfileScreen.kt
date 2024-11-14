@@ -46,8 +46,6 @@ import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
 import kotlinx.coroutines.launch
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
 @Suppress("LongMethod")
@@ -117,7 +115,7 @@ fun ProfileScreen(
                     contentModifier = Modifier
                         .padding(
                             top = LocalPaddings.current.large,
-                            bottom = dimensionResource(coreR.dimen.navigation_bar_height)
+                            bottom = dimensionResource(com.imashnake.animite.navigation.R.dimen.navigation_bar_height)
                         )
                 )
             }
@@ -221,13 +219,3 @@ private fun UserTabs(
         }
     }
 }
-
-@Serializable
-data class Profile(
-    @SerialName("accessToken")
-    val accessToken: String? = null,
-    @SerialName("tokenType")
-    val tokenType: String? = null,
-    @SerialName("expiresIn")
-    val expiresIn: Int = -1
-)

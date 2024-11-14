@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="social">Social</string>
+</resources>

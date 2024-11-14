@@ -76,7 +76,6 @@ import com.imashnake.animite.dev.SharedContentKey.Component.Image
 import com.imashnake.animite.dev.SharedContentKey.Component.Page
 import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import com.imashnake.animite.features.media.MediaPage
-import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -194,7 +193,7 @@ fun HomeScreen(
                         },
                         contentModifier = Modifier.padding(
                             top = LocalPaddings.current.large,
-                            bottom = dimensionResource(coreR.dimen.navigation_bar_height) + LocalPaddings.current.large
+                            bottom = dimensionResource(com.imashnake.animite.navigation.R.dimen.navigation_bar_height) + LocalPaddings.current.large
                         ),
                         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                     )
@@ -342,6 +341,3 @@ private fun MediaTypeSelector(
         }
     }
 }
-
-@Serializable
-data object Home
