@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -86,9 +84,9 @@ enum class NavigationBarPaths(
             it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.social.Social::class) }
         },
         icon = {
-            Icon(ImageVector.vectorResource(R.drawable.social), contentDescription = stringResource(R.string.rslash))
+            Icon(ImageVector.vectorResource(R.drawable.social), contentDescription = stringResource(R.string.social))
         },
-        labelRes = R.string.rslash
+        labelRes = R.string.social
     ),
     Home(
         navigateTo = {
