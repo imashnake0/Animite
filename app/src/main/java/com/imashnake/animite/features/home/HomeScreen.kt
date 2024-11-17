@@ -1,18 +1,15 @@
 package com.imashnake.animite.features.home
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -172,30 +169,47 @@ fun HomeScreen(
                         content = {
                             rows.fastForEach { row ->
                                 row.data?.let {
-                                    HomeRow(
-                                        list = it.list,
-                                        type = it.type,
-                                        onItemClicked = { media ->
-                                            onNavigateToMediaItem(
-                                                MediaPage(
-                                                    id = media.id,
-                                                    source = it.type.name,
-                                                    mediaType = homeMediaType.value.rawValue,
+                                    AnimatedContent(
+                                        targetState = it,
+                                        transitionSpec = {
+                                            fadeIn(tween(750))
+                                                .togetherWith(fadeOut(tween(750)))
+                                        },
+                                        label = "animate_home_row"
+                                    ) { mediaList ->
+                                        if (mediaList.list.isNotEmpty())
+                                            HomeRow(
+                                                list = mediaList.list,
+                                                type = mediaList.type,
+                                                onItemClicked = { media ->
+                                                    onNavigateToMediaItem(
+                                                        MediaPage(
+                                                            id = media.id,
+                                                            source = mediaList.type.name,
+                                                            mediaType = homeMediaType.value.rawValue,
+                                                        )
+                                                    )
+                                                },
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                                modifier = Modifier.padding(
+                                                    vertical = LocalPaddings.current.large / 2
                                                 )
                                             )
-                                        },
-                                        sharedTransitionScope = sharedTransitionScope,
-                                        animatedVisibilityScope = animatedVisibilityScope,
-                                    )
+                                        else
+                                            /* With this, AnimatedContent shrinks/expands the
+                                            `HomeRow` vertically. */
+                                            Box(Modifier.fillMaxWidth())
+                                    }
                                 }
                             }
                         },
                         contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large,
-                            bottom = LocalPaddings.current.large +
+                            top = LocalPaddings.current.large / 2,
+                            bottom = LocalPaddings.current.large / 2 +
                                     dimensionResource(navigationR.dimen.navigation_bar_height)
                         ),
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
+                        verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
                 }
             }
@@ -224,53 +238,45 @@ fun HomeRow(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
-    AnimatedVisibility(
-        visible = list.isNotEmpty(),
-        enter = fadeIn(tween(delayMillis = 150)) + expandVertically(clip = false),
-        exit = fadeOut(spring(stiffness = Spring.StiffnessHigh))
-                + shrinkVertically(tween(durationMillis = 500)),
-        label = "animate_media_list_enter_exit"
-    ) {
-        MediaSmallRow(type.title, list, modifier) { media ->
-            with(sharedTransitionScope) {
-                MediaSmall(
-                    image = media.coverImage,
-                    label = media.title,
-                    onClick = { onItemClicked(media) },
-                    modifier = Modifier
-                        .sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = type.name,
-                                    sharedComponents = Card to Page,
-                                )
-                            ),
-                            animatedVisibilityScope
+    MediaSmallRow(type.title, list, modifier) { media ->
+        with(sharedTransitionScope) {
+            MediaSmall(
+                image = media.coverImage,
+                label = media.title,
+                onClick = { onItemClicked(media) },
+                modifier = Modifier
+                    .sharedBounds(
+                        rememberSharedContentState(
+                            SharedContentKey(
+                                id = media.id,
+                                source = type.name,
+                                sharedComponents = Card to Page,
+                            )
+                        ),
+                        animatedVisibilityScope
+                    )
+                    .width(dimensionResource(coreR.dimen.media_card_width)),
+                imageModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = type.name,
+                            sharedComponents = Image to Image,
                         )
-                        .width(dimensionResource(coreR.dimen.media_card_width)),
-                    imageModifier = Modifier.sharedBounds(
-                        rememberSharedContentState(
-                            SharedContentKey(
-                                id = media.id,
-                                source = type.name,
-                                sharedComponents = Image to Image,
-                            )
-                        ),
-                        animatedVisibilityScope,
                     ),
-                    textModifier = Modifier.sharedBounds(
-                        rememberSharedContentState(
-                            SharedContentKey(
-                                id = media.id,
-                                source = type.name,
-                                sharedComponents = Text to Text,
-                            )
-                        ),
-                        animatedVisibilityScope,
+                    animatedVisibilityScope,
+                ),
+                textModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = type.name,
+                            sharedComponents = Text to Text,
+                        )
                     ),
-                )
-            }
+                    animatedVisibilityScope,
+                ),
+            )
         }
     }
 }
