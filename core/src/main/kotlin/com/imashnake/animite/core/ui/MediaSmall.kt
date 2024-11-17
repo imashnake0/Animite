@@ -1,11 +1,6 @@
 package com.imashnake.animite.core.ui
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,29 +61,20 @@ fun <T> MediaSmallRow(
                     .landscapeCutoutPadding()
             )
         }
-
-        AnimatedContent(
-            targetState = mediaList,
-            transitionSpec = {
-                fadeIn(tween(500)).togetherWith(fadeOut(tween(500)))
-            },
-            label = "animate_media_list_content"
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            contentPadding = PaddingValues(
+                start = LocalPaddings.current.large + if (
+                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                ) {
+                    WindowInsets.displayCutout.asPaddingValues()
+                        .calculateLeftPadding(LayoutDirection.Ltr)
+                } else 0.dp,
+                end = LocalPaddings.current.large
+            )
         ) {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                contentPadding = PaddingValues(
-                    start = LocalPaddings.current.large + if (
-                        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                    ) {
-                        WindowInsets.displayCutout.asPaddingValues()
-                            .calculateLeftPadding(LayoutDirection.Ltr)
-                    } else 0.dp,
-                    end = LocalPaddings.current.large
-                )
-            ) {
-                items(it) { media ->
-                    content(media)
-                }
+            items(mediaList) { media ->
+                content(media)
             }
         }
     }
