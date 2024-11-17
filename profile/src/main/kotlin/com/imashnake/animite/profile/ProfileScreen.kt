@@ -47,6 +47,7 @@ import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
 import kotlinx.coroutines.launch
 import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.navigation.R as navigationR
 
 @Suppress("LongMethod")
 @Composable
@@ -112,11 +113,10 @@ fun ProfileScreen(
                             )
                         }
                     },
-                    contentModifier = Modifier
-                        .padding(
-                            top = LocalPaddings.current.large,
-                            bottom = dimensionResource(com.imashnake.animite.navigation.R.dimen.navigation_bar_height)
-                        )
+                    contentModifier = Modifier.padding(
+                        top = LocalPaddings.current.large,
+                        bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
+                    )
                 )
             }
             else -> Login()

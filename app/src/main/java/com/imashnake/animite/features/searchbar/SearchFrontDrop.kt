@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +25,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,17 +50,17 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.navigation.R as navigationR
 
 /**
  * Search bar along with a Front Drop list.
  *
  * @param hasExtraPadding if the search bar should have extra bottom padding to accommodate the
- * [com.imashnake.animite.features.navigationbar.NavigationBar].
+ * [com.imashnake.animite.navigation.NavigationBar].
  * @param onItemClick called when media with an ID and [MediaType] is clicked.
  * @param modifier the [Modifier] to be applied to this Front Drop.
  * @param viewModel [SearchViewModel] instance.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchFrontDrop(
     hasExtraPadding: Boolean,
@@ -77,7 +75,7 @@ fun SearchFrontDrop(
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = if (hasExtraPadding) {
-            dimensionResource(com.imashnake.animite.navigation.R.dimen.navigation_bar_height)
+            dimensionResource(navigationR.dimen.navigation_bar_height)
         } else 0.dp,
         label = "translate_search_bar"
     )
@@ -118,9 +116,7 @@ fun SearchFrontDrop(
             .landscapeCutoutPadding()
             .padding(bottom = searchBarBottomPadding)
             .navigationBarsPadding()
-            .consumeWindowInsets(
-                PaddingValues(bottom = searchBarBottomPadding)
-            )
+            .consumeWindowInsets(PaddingValues(bottom = searchBarBottomPadding))
             .imePadding()
             .height(dimensionResource(R.dimen.search_bar_height))
     )
@@ -142,7 +138,7 @@ fun SearchList(
             bottom = dimensionResource(R.dimen.search_bar_height)
                     + LocalPaddings.current.large
                     + LocalPaddings.current.large
-                    + dimensionResource(com.imashnake.animite.navigation.R.dimen.navigation_bar_height)
+                    + dimensionResource(navigationR.dimen.navigation_bar_height)
                     + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
@@ -179,9 +175,7 @@ private fun SearchItem(
             Text(
                 text = item.title.orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold
-                ),
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 maxLines = 2
             )
             if (item.seasonYear != null) {
@@ -206,9 +200,7 @@ private fun SearchItem(
                     item.format.string.takeIf { it.isNotEmpty() },
                     item.episodes?.let { "$it episodes" }
                 ).joinToString(" ꞏ "),
-                color = MaterialTheme.colorScheme.onBackground.copy(
-                    alpha = ContentAlpha.medium
-                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
