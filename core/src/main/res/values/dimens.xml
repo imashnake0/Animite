@@ -9,8 +9,6 @@
 
     <dimen name="markdown_block_corner_radius">3dp</dimen>
 
-    <dimen name="navigation_bar_height">65dp</dimen>
-
     <dimen name="progress_indicator_width">100dp</dimen>
     <dimen name="progress_indicator_height">3dp</dimen>
 

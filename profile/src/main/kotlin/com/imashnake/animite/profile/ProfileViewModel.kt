@@ -8,6 +8,7 @@ import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
+import com.imashnake.animite.navigation.ProfileRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,7 +28,7 @@ class ProfileViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val navArgs = savedStateHandle.toRoute<Profile>()
+    private val navArgs = savedStateHandle.toRoute<ProfileRoute>()
 
     val isLoggedIn = preferencesRepository
         .accessToken

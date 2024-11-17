@@ -28,8 +28,9 @@ include(
     ":api:preferences",
     ":material-color-utilities",
     ":core",
+    ":navigation",
     ":profile",
-    ":rslash",
+    ":social",
     ":app"
 )
 

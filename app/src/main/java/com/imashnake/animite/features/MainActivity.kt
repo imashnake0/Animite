@@ -24,16 +24,18 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.features.home.Home
 import com.imashnake.animite.features.home.HomeScreen
 import com.imashnake.animite.features.media.MediaPage
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
-import com.imashnake.animite.profile.Profile
+import com.imashnake.animite.navigation.HomeRoute
+import com.imashnake.animite.navigation.NavigationBar
+import com.imashnake.animite.navigation.NavigationBarPaths
+import com.imashnake.animite.navigation.ProfileRoute
+import com.imashnake.animite.navigation.SocialRoute
 import com.imashnake.animite.profile.ProfileScreen
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
-import com.imashnake.animite.rslash.RSlash
-import com.imashnake.animite.rslash.RSlashScreen
+import com.imashnake.animite.social.SocialScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -73,8 +75,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
     ) {
         Box(Modifier.padding(it)) {
             SharedTransitionLayout {
-                NavHost(navController = navController, startDestination = Home) {
-                    composable<Home> {
+                NavHost(navController = navController, startDestination = HomeRoute) {
+                    composable<HomeRoute> {
                         HomeScreen(
                             navController = navController,
                             sharedTransitionScope = this@SharedTransitionLayout,
@@ -87,15 +89,15 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             animatedVisibilityScope = this,
                         )
                     }
-                    composable<Profile>(
+                    composable<ProfileRoute>(
                         deepLinks = listOf(
                             navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
                         )
                     ) {
                         ProfileScreen()
                     }
-                    composable<RSlash> {
-                        RSlashScreen()
+                    composable<SocialRoute> {
+                        SocialScreen()
                     }
                 }
             }

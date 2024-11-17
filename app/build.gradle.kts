@@ -59,8 +59,9 @@ kotlin {
 dependencies {
     implementation(projects.api.anilist)
     implementation(projects.core)
+    implementation(projects.navigation)
     implementation(projects.profile)
-    implementation(projects.rslash)
+    implementation(projects.social)
     implementation(projects.materialColorUtilities)
 
     // AndroidX

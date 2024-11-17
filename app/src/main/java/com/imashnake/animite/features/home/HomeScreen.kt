@@ -1,18 +1,15 @@
 package com.imashnake.animite.features.home
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +54,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
@@ -77,15 +73,14 @@ import com.imashnake.animite.dev.SharedContentKey.Component.Image
 import com.imashnake.animite.dev.SharedContentKey.Component.Page
 import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import com.imashnake.animite.features.media.MediaPage
-import com.imashnake.animite.features.navigationbar.NavigationScaffold
-import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
-    navController: NavHostController,
+    onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -109,101 +104,113 @@ fun HomeScreen(
         rows.all { it is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(scrollState) {
-                NavigationScaffold(
-                    navController = navController
+                Box(
+                    modifier = Modifier
+                        .verticalScroll(scrollState)
+                        .navigationBarsPadding()
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .verticalScroll(scrollState)
-                            .navigationBarsPadding()
-                    ) {
-                        BannerLayout(
-                            banner = { bannerModifier ->
-                                Box {
-                                    Image(
-                                        painter = painterResource(R.drawable.background),
-                                        contentDescription = null,
-                                        modifier = bannerModifier.bannerParallax(scrollState),
-                                        contentScale = ContentScale.Crop,
-                                        alignment = Alignment.TopCenter
+                    BannerLayout(
+                        banner = { bannerModifier ->
+                            Box {
+                                Image(
+                                    painter = painterResource(R.drawable.background),
+                                    contentDescription = null,
+                                    modifier = bannerModifier.bannerParallax(scrollState),
+                                    contentScale = ContentScale.Crop,
+                                    alignment = Alignment.TopCenter
+                                )
+
+                                Box(
+                                    modifier = bannerModifier.background(
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                Color.Transparent,
+                                                MaterialTheme.colorScheme.secondaryContainer
+                                                    .copy(alpha = 0.5f)
+                                            )
+                                        )
+                                    )
+                                )
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .align(Alignment.BottomCenter),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.okaeri),
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                        style = MaterialTheme.typography.displayMedium,
+                                        modifier = Modifier
+                                            .padding(
+                                                start = LocalPaddings.current.large,
+                                                bottom = LocalPaddings.current.medium
+                                            )
+                                            .landscapeCutoutPadding()
+                                            .weight(1f, fill = false),
+                                        maxLines = 1
                                     )
 
-                                    Box(
-                                        modifier = bannerModifier
-                                            .background(
-                                                Brush.verticalGradient(
-                                                    listOf(
-                                                        Color.Transparent,
-                                                        MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                            alpha = 0.5f
+                                    MediaTypeSelector(
+                                        modifier = Modifier
+                                            .padding(
+                                                end = LocalPaddings.current.large,
+                                                bottom = LocalPaddings.current.medium
+                                            )
+                                            .landscapeCutoutPadding(),
+                                        selectedOption = homeMediaType,
+                                        viewModel = viewModel
+                                    )
+                                }
+                            }
+                        },
+                        content = {
+                            rows.fastForEach { row ->
+                                row.data?.let {
+                                    AnimatedContent(
+                                        targetState = it,
+                                        transitionSpec = {
+                                            fadeIn(tween(750))
+                                                .togetherWith(fadeOut(tween(750)))
+                                        },
+                                        label = "animate_home_row"
+                                    ) { mediaList ->
+                                        if (mediaList.list.isNotEmpty())
+                                            HomeRow(
+                                                list = mediaList.list,
+                                                type = mediaList.type,
+                                                onItemClicked = { media ->
+                                                    onNavigateToMediaItem(
+                                                        MediaPage(
+                                                            id = media.id,
+                                                            source = mediaList.type.name,
+                                                            mediaType = homeMediaType.value.rawValue,
                                                         )
                                                     )
+                                                },
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                                modifier = Modifier.padding(
+                                                    vertical = LocalPaddings.current.large / 2
                                                 )
                                             )
-                                    )
-
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .align(Alignment.BottomCenter),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.okaeri),
-                                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                            style = MaterialTheme.typography.displayMedium,
-                                            modifier = Modifier
-                                                .padding(
-                                                    start = LocalPaddings.current.large,
-                                                    bottom = LocalPaddings.current.medium
-                                                )
-                                                .landscapeCutoutPadding()
-                                                .weight(1f, fill = false),
-                                            maxLines = 1
-                                        )
-
-                                        MediaTypeSelector(
-                                            modifier = Modifier
-                                                .padding(
-                                                    end = LocalPaddings.current.large,
-                                                    bottom = LocalPaddings.current.medium
-                                                )
-                                                .landscapeCutoutPadding(),
-                                            selectedOption = homeMediaType,
-                                            viewModel = viewModel
-                                        )
+                                        else
+                                            /* With this, AnimatedContent shrinks/expands the
+                                            `HomeRow` vertically. */
+                                            Box(Modifier.fillMaxWidth())
                                     }
                                 }
-                            },
-                            content = {
-                                rows.fastForEach { row ->
-                                    row.data?.let {
-                                        HomeRow(
-                                            list = it.list,
-                                            type = it.type,
-                                            onItemClicked = { media ->
-                                                navController.navigate(
-                                                    MediaPage(
-                                                        id = media.id,
-                                                        source = it.type.name,
-                                                        mediaType = homeMediaType.value.rawValue,
-                                                    )
-                                                )
-                                            },
-                                            sharedTransitionScope = sharedTransitionScope,
-                                            animatedVisibilityScope = animatedVisibilityScope,
-                                        )
-                                    }
-                                }
-                            },
-                            contentModifier = Modifier.padding(
-                                top = LocalPaddings.current.large,
-                                bottom = dimensionResource(coreR.dimen.navigation_bar_height) + LocalPaddings.current.large
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
-                        )
-                    }
+                            }
+                        },
+                        contentModifier = Modifier.padding(
+                            top = LocalPaddings.current.large / 2,
+                            bottom = LocalPaddings.current.large / 2 +
+                                    dimensionResource(navigationR.dimen.navigation_bar_height)
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(0.dp)
+                    )
                 }
             }
         }
@@ -231,53 +238,45 @@ fun HomeRow(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
-    AnimatedVisibility(
-        visible = list.isNotEmpty(),
-        enter = fadeIn(tween(delayMillis = 150)) + expandVertically(clip = false),
-        exit = fadeOut(spring(stiffness = Spring.StiffnessHigh))
-                + shrinkVertically(tween(durationMillis = 500)),
-        label = "animate_media_list_enter_exit"
-    ) {
-        MediaSmallRow(type.title, list, modifier) { media ->
-            with(sharedTransitionScope) {
-                MediaSmall(
-                    image = media.coverImage,
-                    label = media.title,
-                    onClick = { onItemClicked(media) },
-                    modifier = Modifier
-                        .sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = type.name,
-                                    sharedComponents = Card to Page,
-                                )
-                            ),
-                            animatedVisibilityScope
+    MediaSmallRow(type.title, list, modifier) { media ->
+        with(sharedTransitionScope) {
+            MediaSmall(
+                image = media.coverImage,
+                label = media.title,
+                onClick = { onItemClicked(media) },
+                modifier = Modifier
+                    .sharedBounds(
+                        rememberSharedContentState(
+                            SharedContentKey(
+                                id = media.id,
+                                source = type.name,
+                                sharedComponents = Card to Page,
+                            )
+                        ),
+                        animatedVisibilityScope
+                    )
+                    .width(dimensionResource(coreR.dimen.media_card_width)),
+                imageModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = type.name,
+                            sharedComponents = Image to Image,
                         )
-                        .width(dimensionResource(coreR.dimen.media_card_width)),
-                    imageModifier = Modifier.sharedBounds(
-                        rememberSharedContentState(
-                            SharedContentKey(
-                                id = media.id,
-                                source = type.name,
-                                sharedComponents = Image to Image,
-                            )
-                        ),
-                        animatedVisibilityScope,
                     ),
-                    textModifier = Modifier.sharedBounds(
-                        rememberSharedContentState(
-                            SharedContentKey(
-                                id = media.id,
-                                source = type.name,
-                                sharedComponents = Text to Text,
-                            )
-                        ),
-                        animatedVisibilityScope,
+                    animatedVisibilityScope,
+                ),
+                textModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = type.name,
+                            sharedComponents = Text to Text,
+                        )
                     ),
-                )
-            }
+                    animatedVisibilityScope,
+                ),
+            )
         }
     }
 }
@@ -290,11 +289,10 @@ private fun MediaTypeSelector(
     viewModel: HomeViewModel
 ) {
     Box(
-        modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme.onBackground,
-                shape = CircleShape
-            )
+        modifier = modifier.background(
+            color = MaterialTheme.colorScheme.onBackground,
+            shape = CircleShape
+        )
     ) {
         val offset by animateDpAsState(
             targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
@@ -348,6 +346,3 @@ private fun MediaTypeSelector(
         }
     }
 }
-
-@Serializable
-data object Home
