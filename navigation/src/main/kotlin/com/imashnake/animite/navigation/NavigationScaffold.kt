@@ -19,7 +19,13 @@ fun NavigationScaffold(
             NavigationBarPaths.entries.forEach { destination ->
                 item(
                     selected = currentBackStackEntry?.let { destination.matchesDestination(it) } == true,
-                    onClick = { destination.navigateTo(navController) },
+                    onClick = {
+                        navController.navigate(destination.route) {
+                            popUpTo(navController.graph.id) {
+                                inclusive = true
+                            }
+                        }
+                    },
                     icon = destination.icon
                 )
             }

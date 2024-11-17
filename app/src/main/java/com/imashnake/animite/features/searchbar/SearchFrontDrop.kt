@@ -55,8 +55,7 @@ import com.imashnake.animite.navigation.R as navigationR
 /**
  * Search bar along with a Front Drop list.
  *
- * @param hasExtraPadding if the search bar should have extra bottom padding to accommodate the
- * [com.imashnake.animite.navigation.NavigationBar].
+ * @param hasExtraPadding if the search bar should have extra bottom padding to accommodate the bottom navigation bar.
  * @param onItemClick called when media with an ID and [MediaType] is clicked.
  * @param modifier the [Modifier] to be applied to this Front Drop.
  * @param viewModel [SearchViewModel] instance.
