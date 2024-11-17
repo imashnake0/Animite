@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
@@ -42,6 +43,7 @@ import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.navigation.NavigationScaffold
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
@@ -52,18 +54,14 @@ import com.imashnake.animite.navigation.R as navigationR
 @Suppress("LongMethod")
 @Composable
 fun ProfileScreen(
+    navController: NavHostController,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
     val viewerMediaLists by viewModel.viewerMediaList.collectAsState(initial = null)
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    NavigationScaffold(navController) {
         when {
             isLoggedIn -> viewer.data?.run {
                 BannerLayout(

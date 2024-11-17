@@ -29,8 +29,6 @@ import com.imashnake.animite.features.media.MediaPage
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.navigation.HomeRoute
-import com.imashnake.animite.navigation.NavigationBar
-import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.ProfileRoute
 import com.imashnake.animite.navigation.SocialRoute
 import com.imashnake.animite.profile.ProfileScreen
@@ -94,15 +92,16 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
                         )
                     ) {
-                        ProfileScreen()
+                        ProfileScreen(navController)
                     }
                     composable<SocialRoute> {
-                        SocialScreen()
+                        SocialScreen(navController)
                     }
                 }
             }
 
             SearchFrontDrop(
+                hasExtraPadding = true,
                 onItemClick = { id, mediaType ->
                     navController.navigate(
                         MediaPage(
