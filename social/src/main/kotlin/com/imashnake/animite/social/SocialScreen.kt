@@ -37,6 +37,3 @@ fun SocialScreen() {
         }
     }
 }
-
-@Serializable
-data object Social

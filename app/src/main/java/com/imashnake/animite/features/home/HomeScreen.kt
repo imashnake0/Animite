@@ -76,8 +76,8 @@ import com.imashnake.animite.dev.SharedContentKey.Component.Image
 import com.imashnake.animite.dev.SharedContentKey.Component.Page
 import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import com.imashnake.animite.features.media.MediaPage
-import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -124,17 +124,15 @@ fun HomeScreen(
                                 )
 
                                 Box(
-                                    modifier = bannerModifier
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(
-                                                    Color.Transparent,
-                                                    MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                        alpha = 0.5f
-                                                    )
-                                                )
+                                    modifier = bannerModifier.background(
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                Color.Transparent,
+                                                MaterialTheme.colorScheme.secondaryContainer
+                                                    .copy(alpha = 0.5f)
                                             )
                                         )
+                                    )
                                 )
 
                                 Row(
@@ -194,7 +192,8 @@ fun HomeScreen(
                         },
                         contentModifier = Modifier.padding(
                             top = LocalPaddings.current.large,
-                            bottom = dimensionResource(coreR.dimen.navigation_bar_height) + LocalPaddings.current.large
+                            bottom = LocalPaddings.current.large +
+                                    dimensionResource(navigationR.dimen.navigation_bar_height)
                         ),
                         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                     )
@@ -284,11 +283,10 @@ private fun MediaTypeSelector(
     viewModel: HomeViewModel
 ) {
     Box(
-        modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme.onBackground,
-                shape = CircleShape
-            )
+        modifier = modifier.background(
+            color = MaterialTheme.colorScheme.onBackground,
+            shape = CircleShape
+        )
     ) {
         val offset by animateDpAsState(
             targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
@@ -342,6 +340,3 @@ private fun MediaTypeSelector(
         }
     }
 }
-
-@Serializable
-data object Home

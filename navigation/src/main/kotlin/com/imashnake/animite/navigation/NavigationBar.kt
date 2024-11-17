@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.navigationbar
+package com.imashnake.animite.navigation
 
 import android.content.res.Configuration
 import androidx.annotation.StringRes
@@ -27,8 +27,6 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.imashnake.animite.R
-import com.imashnake.animite.core.R as coreR
 
 @Composable
 fun NavigationBar(
@@ -39,7 +37,7 @@ fun NavigationBar(
     // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
         Modifier.height(
-            dimensionResource(coreR.dimen.navigation_bar_height) + WindowInsets
+            dimensionResource(R.dimen.navigation_bar_height) + WindowInsets
                 .navigationBars
                 .asPaddingValues()
                 .calculateBottomPadding()
@@ -73,7 +71,7 @@ enum class NavigationBarPaths(
 ) {
     Social(
         navigateTo = {
-            it.navigate(com.imashnake.animite.social.Social) {
+            it.navigate(SocialRoute) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }
@@ -81,7 +79,7 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.social.Social::class) }
+            it.destination.hierarchy.any { it.hasRoute(SocialRoute::class) }
         },
         icon = {
             Icon(ImageVector.vectorResource(R.drawable.social), contentDescription = stringResource(R.string.social))
@@ -90,7 +88,7 @@ enum class NavigationBarPaths(
     ),
     Home(
         navigateTo = {
-            it.navigate(com.imashnake.animite.features.home.Home) {
+            it.navigate(HomeRoute) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                     inclusive = true
@@ -99,7 +97,7 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.features.home.Home::class) }
+            it.destination.hierarchy.any { it.hasRoute(HomeRoute::class) }
         },
         icon = {
             Icon(ImageVector.vectorResource(R.drawable.home), contentDescription = stringResource(R.string.home))
@@ -109,7 +107,7 @@ enum class NavigationBarPaths(
 
     Profile(
         navigateTo = {
-            it.navigate(com.imashnake.animite.profile.Profile()) {
+            it.navigate(ProfileRoute()) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }
@@ -117,7 +115,7 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(com.imashnake.animite.profile.Profile::class) }
+            it.destination.hierarchy.any { it.hasRoute(ProfileRoute::class) }
         },
         icon = {
             Icon(ImageVector.vectorResource(R.drawable.profile), contentDescription = stringResource(R.string.profile))
