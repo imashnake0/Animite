@@ -404,14 +404,15 @@ fun MediaCharacters(
         title = stringResource(R.string.characters),
         mediaList = characters,
         mediaWidth = dimensionResource(R.dimen.character_card_width),
-        modifier = modifier
-    ) { character, _ ->
+        modifier = modifier,
+    ) { character, clipModifier ->
         MediaSmall(
             image = character.image,
             label = character.name,
             onClick = { Log.d("CharacterId", "${character.id}") },
             imageHeight = dimensionResource(R.dimen.character_image_height),
             cardWidth = dimensionResource(R.dimen.character_card_width),
+            modifier = clipModifier,
         )
     }
 }

@@ -44,13 +44,18 @@ private fun UserMediaList(
         modifier = modifier
     ) {
         lists.fastForEach {
-            MediaSmallRow(it.name, it.list, dimensionResource(coreR.dimen.media_card_width)) { media, _ ->
+            MediaSmallRow(
+                title = it.name,
+                mediaList = it.list,
+                mediaWidth = dimensionResource(coreR.dimen.media_card_width),
+            ) { media, clipModifier ->
                 MediaSmall(
                     image = media.coverImage,
                     label = media.title,
                     onClick = {},
                     imageHeight = dimensionResource(coreR.dimen.media_image_height),
                     cardWidth = dimensionResource(coreR.dimen.media_card_width),
+                    modifier = clipModifier,
                 )
             }
         }
