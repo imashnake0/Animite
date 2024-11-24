@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -110,7 +109,6 @@ fun MediaSmall(
             contentScale = ContentScale.Crop,
             modifier = imageModifier
                 .fillMaxWidth()
-                .aspectRatio(0.7f)
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
         )
 
