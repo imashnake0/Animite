@@ -6,6 +6,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 
 @Composable
@@ -21,12 +22,14 @@ fun NavigationScaffold(
         layoutType = layoutType,
         navigationSuiteItems = {
             NavigationBarPaths.entries.forEach { destination ->
+                val selected = destination == selectedDestination
                 item(
-                    selected = destination == selectedDestination,
+                    selected = selected,
                     onClick = {
-                        navController.navigate(destination.route) {
-                            popUpTo(HomeRoute)
-                            launchSingleTop = true
+                        if (!selected) {
+                            navController.navigate(destination.route) {
+                                popUpTo(HomeRoute)
+                            }
                         }
                     },
                     icon = destination.icon
