@@ -28,9 +28,9 @@ kotlin {
 
 dependencies {
     api(libs.androidx.navigationCompose)
+    api(libs.compose.material3.adaptiveNavigation)
     implementation(libs.bundles.compose)
     implementation(libs.compose.material)
-    implementation(libs.compose.material3.adaptiveNavigation)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
     implementation(libs.kotlinx.serialization.core)
