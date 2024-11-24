@@ -244,30 +244,28 @@ fun HomeRow(
                 image = media.coverImage,
                 label = media.title,
                 onClick = { onItemClicked(media) },
-                modifier = Modifier
-                    .sharedBounds(
-                        rememberSharedContentState(
-                            SharedContentKey(
-                                id = media.id,
-                                source = type.name,
-                                sharedComponents = Card to Page,
-                            )
-                        ),
-                        animatedVisibilityScope
-                    )
-                    .width(dimensionResource(coreR.dimen.media_card_width)),
-                imageModifier = Modifier
-                    .sharedBounds(
-                        rememberSharedContentState(
-                            SharedContentKey(
-                                id = media.id,
-                                source = type.name,
-                                sharedComponents = Image to Image,
-                            )
-                        ),
-                        animatedVisibilityScope,
-                    )
-                    .height(dimensionResource(coreR.dimen.media_image_height)),
+                imageHeight = dimensionResource(coreR.dimen.media_image_height),
+                cardWidth = dimensionResource(coreR.dimen.media_card_width),
+                modifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = type.name,
+                            sharedComponents = Card to Page,
+                        )
+                    ),
+                    animatedVisibilityScope
+                ),
+                imageModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = type.name,
+                            sharedComponents = Image to Image,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                ),
                 textModifier = Modifier.sharedBounds(
                     rememberSharedContentState(
                         SharedContentKey(
