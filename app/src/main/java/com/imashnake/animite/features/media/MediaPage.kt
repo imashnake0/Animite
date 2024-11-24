@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -261,21 +260,18 @@ fun MediaPage(
                         MediaSmall(
                             image = media.coverImage,
                             onClick = {},
-                            modifier = Modifier
-                                .sharedBounds(
-                                    rememberSharedContentState(
-                                        SharedContentKey(
-                                            id = media.id,
-                                            source = media.source,
-                                            sharedComponents = Image to Image,
-                                        )
-                                    ),
-                                    animatedVisibilityScope,
-                                )
-                                .width(dimensionResource(coreR.dimen.media_card_width)),
-                            imageModifier = Modifier.height(
-                                dimensionResource(coreR.dimen.media_image_height)
-                            ),
+                            imageHeight = dimensionResource(coreR.dimen.media_image_height),
+                            cardWidth = dimensionResource(coreR.dimen.media_card_width),
+                            modifier = Modifier.sharedBounds(
+                                rememberSharedContentState(
+                                    SharedContentKey(
+                                        id = media.id,
+                                        source = media.source,
+                                        sharedComponents = Image to Image,
+                                    )
+                                ),
+                                animatedVisibilityScope,
+                            )
                         )
                     }
                 }
@@ -413,8 +409,8 @@ fun MediaCharacters(
             image = character.image,
             label = character.name,
             onClick = { Log.d("CharacterId", "${character.id}") },
-            modifier = Modifier.width(dimensionResource(R.dimen.character_card_width)),
-            imageModifier = Modifier.height(dimensionResource(R.dimen.character_image_height)),
+            imageHeight = dimensionResource(R.dimen.character_image_height),
+            cardWidth = dimensionResource(R.dimen.character_card_width),
         )
     }
 }

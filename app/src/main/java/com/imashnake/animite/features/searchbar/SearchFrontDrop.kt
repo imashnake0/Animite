@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -168,7 +167,8 @@ private fun SearchItem(
         MediaSmall(
             image = item.coverImage,
             onClick = { onClick(item.id) },
-            modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
+            imageHeight = dimensionResource(R.dimen.character_image_height),
+            cardWidth = dimensionResource(R.dimen.character_card_width),
         )
 
         Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {
