@@ -240,7 +240,7 @@ fun HomeRow(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
-    MediaSmallRow(type.title, list, modifier) { media, clipModifier ->
+    MediaSmallRow(type.title, list, dimensionResource(coreR.dimen.media_card_width), modifier) { media, clipModifier ->
         with(sharedTransitionScope) {
             MediaSmall(
                 image = media.coverImage,

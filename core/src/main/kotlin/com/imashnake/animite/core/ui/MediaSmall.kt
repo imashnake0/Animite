@@ -54,6 +54,7 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 fun <T> MediaSmallRow(
     title: String?,
     mediaList: List<T>,
+    mediaWidth: Dp,
     modifier: Modifier = Modifier,
     content: @Composable (T, Modifier) -> Unit
 ) {
@@ -83,7 +84,7 @@ fun <T> MediaSmallRow(
                 } else 0.dp,
                 end = LocalPaddings.current.large
             ),
-            itemWidth = dimensionResource(R.dimen.media_card_width),
+            itemWidth = mediaWidth,
             itemSpacing = LocalPaddings.current.small,
         ) { index ->
             content(mediaList[index], Modifier.maskClip(

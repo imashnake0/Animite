@@ -403,6 +403,7 @@ fun MediaCharacters(
     MediaSmallRow(
         title = stringResource(R.string.characters),
         mediaList = characters,
+        mediaWidth = dimensionResource(R.dimen.character_card_width),
         modifier = modifier
     ) { character, _ ->
         MediaSmall(
