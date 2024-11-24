@@ -260,16 +260,18 @@ fun HomeRow(
                         animatedVisibilityScope
                     )
                     .width(dimensionResource(coreR.dimen.media_card_width)),
-                imageModifier = Modifier.sharedBounds(
-                    rememberSharedContentState(
-                        SharedContentKey(
-                            id = media.id,
-                            source = type.name,
-                            sharedComponents = Image to Image,
-                        )
-                    ),
-                    animatedVisibilityScope,
-                ),
+                imageModifier = Modifier
+                    .sharedBounds(
+                        rememberSharedContentState(
+                            SharedContentKey(
+                                id = media.id,
+                                source = type.name,
+                                sharedComponents = Image to Image,
+                            )
+                        ),
+                        animatedVisibilityScope,
+                    )
+                    .height(dimensionResource(coreR.dimen.media_image_height)),
                 textModifier = Modifier.sharedBounds(
                     rememberSharedContentState(
                         SharedContentKey(
