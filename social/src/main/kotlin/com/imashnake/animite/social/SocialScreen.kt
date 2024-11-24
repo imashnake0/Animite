@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationScaffold
 import com.imashnake.animite.core.R as coreR
 
@@ -16,7 +17,10 @@ import com.imashnake.animite.core.R as coreR
 fun SocialScreen(
     navController: NavHostController
 ) {
-    NavigationScaffold(navController) {
+    NavigationScaffold(
+        navController = navController,
+        selectedDestination = NavigationBarPaths.Social
+    ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(

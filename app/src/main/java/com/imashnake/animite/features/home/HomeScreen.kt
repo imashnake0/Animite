@@ -74,6 +74,7 @@ import com.imashnake.animite.dev.SharedContentKey.Component.Image
 import com.imashnake.animite.dev.SharedContentKey.Component.Page
 import com.imashnake.animite.dev.SharedContentKey.Component.Text
 import com.imashnake.animite.features.media.MediaPage
+import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationScaffold
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
@@ -102,7 +103,10 @@ fun HomeScreen(
         allTimePopularList,
     )
 
-    NavigationScaffold(navController = navController) {
+    NavigationScaffold(
+        navController = navController,
+        selectedDestination = NavigationBarPaths.Home
+    ) {
         when {
             rows.all { it is Resource.Success } -> {
                 val scrollState = rememberScrollState()

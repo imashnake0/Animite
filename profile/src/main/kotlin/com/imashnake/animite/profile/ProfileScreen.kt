@@ -43,6 +43,7 @@ import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationScaffold
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
@@ -61,7 +62,10 @@ fun ProfileScreen(
     val viewer by viewModel.viewer.collectAsState()
     val viewerMediaLists by viewModel.viewerMediaList.collectAsState(initial = null)
 
-    NavigationScaffold(navController) {
+    NavigationScaffold(
+        navController = navController,
+        selectedDestination = NavigationBarPaths.Profile
+    ) {
         when {
             isLoggedIn -> viewer.data?.run {
                 BannerLayout(
