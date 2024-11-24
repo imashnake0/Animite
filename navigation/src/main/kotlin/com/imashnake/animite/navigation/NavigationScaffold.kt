@@ -27,9 +27,7 @@ fun NavigationScaffold(
                     selected = currentBackStackEntry?.let { destination.matchesDestination(it) } == true,
                     onClick = {
                         navController.navigate(destination.route) {
-                            popUpTo(navController.graph.id) {
-                                inclusive = true
-                            }
+                            popUpTo(HomeRoute)
                         }
                     },
                     icon = destination.icon
