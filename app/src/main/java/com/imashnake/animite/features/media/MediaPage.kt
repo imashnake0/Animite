@@ -234,7 +234,7 @@ fun MediaPage(
                         targetValue = if (scrollState.value == 0) {
                             0.dp
                         } else {
-                            dimensionResource(coreR.dimen.media_card_height) - dimensionResource(R.dimen.media_details_height)
+                            dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height)
                         },
                         animationSpec = tween(durationMillis = 750),
                         label = "media_card_height"
@@ -251,12 +251,12 @@ fun MediaPage(
                                         - WindowInsets.statusBars
                                     .asPaddingValues()
                                     .calculateTopPadding()
-                                        - dimensionResource(coreR.dimen.media_card_height)
+                                        - dimensionResource(coreR.dimen.media_image_height)
                                         + offset,
                                 start = LocalPaddings.current.large
                             )
                             .landscapeCutoutPadding()
-                            .height(dimensionResource(coreR.dimen.media_card_height) - offset)
+                            .height(dimensionResource(coreR.dimen.media_image_height) - offset)
                     ) {
                         MediaSmall(
                             image = media.coverImage,
@@ -411,7 +411,8 @@ fun MediaCharacters(
             image = character.image,
             label = character.name,
             onClick = { Log.d("CharacterId", "${character.id}") },
-            modifier = Modifier.width(dimensionResource(R.dimen.character_card_width))
+            modifier = Modifier.width(dimensionResource(R.dimen.character_card_width)),
+            imageModifier = Modifier.height(dimensionResource(R.dimen.character_image_height)),
         )
     }
 }
@@ -419,7 +420,7 @@ fun MediaCharacters(
 @Composable
 fun MediaTrailer(
     trailer: Media.Trailer,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
