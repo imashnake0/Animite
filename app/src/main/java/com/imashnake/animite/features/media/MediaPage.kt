@@ -273,7 +273,9 @@ fun MediaPage(
                                     animatedVisibilityScope,
                                 )
                                 .width(dimensionResource(coreR.dimen.media_card_width)),
-                            imageModifier = Modifier
+                            imageModifier = Modifier.height(
+                                dimensionResource(coreR.dimen.media_image_height)
+                            ),
                         )
                     }
                 }

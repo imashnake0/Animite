@@ -267,9 +267,7 @@ fun HomeRow(
                         ),
                         animatedVisibilityScope,
                     )
-                    .height(
-                        height = dimensionResource(coreR.dimen.media_image_height),
-                    ),
+                    .height(dimensionResource(coreR.dimen.media_image_height)),
                 textModifier = Modifier.sharedBounds(
                     rememberSharedContentState(
                         SharedContentKey(
