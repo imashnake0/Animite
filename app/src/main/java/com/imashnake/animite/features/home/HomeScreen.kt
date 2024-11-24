@@ -36,8 +36,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -238,7 +240,7 @@ fun HomeRow(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
-    MediaSmallRow(type.title, list, modifier) { media ->
+    MediaSmallRow(type.title, list, modifier) { media, clipModifier ->
         with(sharedTransitionScope) {
             MediaSmall(
                 image = media.coverImage,
@@ -246,7 +248,7 @@ fun HomeRow(
                 onClick = { onItemClicked(media) },
                 imageHeight = dimensionResource(coreR.dimen.media_image_height),
                 cardWidth = dimensionResource(coreR.dimen.media_card_width),
-                modifier = Modifier.sharedBounds(
+                modifier = clipModifier.sharedBounds(
                     rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,

@@ -1,6 +1,10 @@
 package com.imashnake.animite.core.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.gestures.TargetedFlingBehavior
+import androidx.compose.foundation.gestures.snapping.SnapLayoutInfoProvider
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.gestures.snapping.snapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +21,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,12 +49,13 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
  *
  * @param mediaList A list of [T]s.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> MediaSmallRow(
     title: String?,
     mediaList: List<T>,
     modifier: Modifier = Modifier,
-    content: @Composable (T) -> Unit
+    content: @Composable (T, Modifier) -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -63,8 +72,8 @@ fun <T> MediaSmallRow(
                     .landscapeCutoutPadding()
             )
         }
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        HorizontalUncontainedCarousel(
+            state = rememberCarouselState { mediaList.count() },
             contentPadding = PaddingValues(
                 start = LocalPaddings.current.large + if (
                     LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -73,11 +82,13 @@ fun <T> MediaSmallRow(
                         .calculateLeftPadding(LayoutDirection.Ltr)
                 } else 0.dp,
                 end = LocalPaddings.current.large
+            ),
+            itemWidth = dimensionResource(R.dimen.media_card_width),
+            itemSpacing = LocalPaddings.current.small,
+        ) { index ->
+            content(mediaList[index], Modifier.maskClip(
+                RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
             )
-        ) {
-            items(mediaList) { media ->
-                content(media)
-            }
         }
     }
 }

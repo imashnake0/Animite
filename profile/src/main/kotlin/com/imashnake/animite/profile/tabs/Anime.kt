@@ -44,7 +44,7 @@ private fun UserMediaList(
         modifier = modifier
     ) {
         lists.fastForEach {
-            MediaSmallRow(it.name, it.list) { media ->
+            MediaSmallRow(it.name, it.list) { media, _ ->
                 MediaSmall(
                     image = media.coverImage,
                     label = media.title,

@@ -404,7 +404,7 @@ fun MediaCharacters(
         title = stringResource(R.string.characters),
         mediaList = characters,
         modifier = modifier
-    ) { character ->
+    ) { character, _ ->
         MediaSmall(
             image = character.image,
             label = character.name,
