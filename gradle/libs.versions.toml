@@ -62,13 +62,13 @@ hilt = "1.2.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "2.0.21"
+kotlin = "2.1.0"
 coroutines = "1.9.0"
 serialization = "1.7.3"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "2.0.21-1.0.28"
+ksp = "2.1.0-1.0.29"
 
 # Test
 # https://github.com/junit-team/junit4/releases.

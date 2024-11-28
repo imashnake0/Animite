@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -81,23 +83,28 @@ fun <T> MediaSmallRow(
 }
 
 /**
- * A [Card] to display a media image and a label.
+ * A [Card] to display a media image and a label. Note that [imageHeight] and [cardWidth] must be
+ * set so that all cards have the same dimensions.
  *
  * @param image A URL of the image to be shown in the card that this component is.
  * @param label A label for the [image], if this is `null`, the [label] is not shown.
  * @param onClick Action to happen when the card is clicked.
+ * @param imageHeight Fixed height of the images in the card.
+ * @param cardWidth Width of the card.
  */
 @Composable
 fun MediaSmall(
     image: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    imageHeight: Dp,
+    cardWidth: Dp,
     imageModifier: Modifier = Modifier,
     textModifier: Modifier = Modifier,
     label: String? = null,
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.width(cardWidth),
         onClick = onClick,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
@@ -109,8 +116,8 @@ fun MediaSmall(
             contentDescription = label,
             contentScale = ContentScale.Crop,
             modifier = imageModifier
+                .height(imageHeight)
                 .fillMaxWidth()
-                .aspectRatio(0.7f)
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
         )
 

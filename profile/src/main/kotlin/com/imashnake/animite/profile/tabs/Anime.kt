@@ -3,7 +3,6 @@ package com.imashnake.animite.profile.tabs
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -14,6 +13,7 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.core.R as coreR
 
 @Composable
 fun AnimeTab(
@@ -49,7 +49,8 @@ private fun UserMediaList(
                     image = media.coverImage,
                     label = media.title,
                     onClick = {},
-                    modifier = Modifier.width(dimensionResource(com.imashnake.animite.core.R.dimen.media_card_width))
+                    imageHeight = dimensionResource(coreR.dimen.media_image_height),
+                    cardWidth = dimensionResource(coreR.dimen.media_card_width),
                 )
             }
         }
