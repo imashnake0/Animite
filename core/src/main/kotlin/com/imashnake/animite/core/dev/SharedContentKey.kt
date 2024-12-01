@@ -1,4 +1,4 @@
-package com.imashnake.animite.dev
+package com.imashnake.animite.core.dev
 
 data class SharedContentKey(
     val id: Int? = null,

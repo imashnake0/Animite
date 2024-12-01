@@ -81,11 +81,11 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.dev.SharedContentKey
-import com.imashnake.animite.dev.SharedContentKey.Component.Card
-import com.imashnake.animite.dev.SharedContentKey.Component.Image
-import com.imashnake.animite.dev.SharedContentKey.Component.Page
-import com.imashnake.animite.dev.SharedContentKey.Component.Text
+import com.imashnake.animite.core.dev.SharedContentKey
+import com.imashnake.animite.core.dev.SharedContentKey.Component.Card
+import com.imashnake.animite.core.dev.SharedContentKey.Component.Image
+import com.imashnake.animite.core.dev.SharedContentKey.Component.Page
+import com.imashnake.animite.core.dev.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
