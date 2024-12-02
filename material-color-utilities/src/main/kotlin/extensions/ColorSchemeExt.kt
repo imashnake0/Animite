@@ -1,4 +1,4 @@
-package com.imashnake.animite.dev.ext
+package extensions
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
@@ -35,6 +35,13 @@ fun ColorScheme.from(scheme: Scheme) =
         outline = Color(scheme.outline),
         outlineVariant = Color(scheme.outlineVariant),
         scrim = Color(scheme.scrim),
+        surfaceBright = surfaceBright,
+        surfaceDim = surfaceDim,
+        surfaceContainer = surfaceContainer,
+        surfaceContainerHigh = surfaceContainerHigh,
+        surfaceContainerHighest = surfaceContainerHighest,
+        surfaceContainerLow = surfaceContainerLow,
+        surfaceContainerLowest = surfaceContainerLowest,
     )
 
 /**

@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.media
+package com.imashnake.media
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.Paddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.imashnake.animite.dev.ext.pastelize
+import extensions.pastelize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

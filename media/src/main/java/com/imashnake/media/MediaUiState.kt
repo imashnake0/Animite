@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.media
+package com.imashnake.media
 
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 

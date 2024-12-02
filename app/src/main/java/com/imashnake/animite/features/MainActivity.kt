@@ -31,7 +31,6 @@ import androidx.navigation.navDeepLink
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.HomeScreen
-import com.imashnake.animite.features.media.MediaPage
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.navigation.HomeRoute
@@ -42,6 +41,7 @@ import com.imashnake.animite.navigation.SocialRoute
 import com.imashnake.animite.profile.ProfileScreen
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.social.SocialScreen
+import com.imashnake.media.MediaPage
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

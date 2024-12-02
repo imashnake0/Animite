@@ -1,4 +1,4 @@
-package com.imashnake.animite.dev.ext
+package extensions
 
 import androidx.core.graphics.ColorUtils
 import scheme.Scheme

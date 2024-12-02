@@ -17,3 +17,8 @@ android {
 kotlin {
     jvmToolchain(21)
 }
+
+dependencies {
+    implementation(libs.compose.material3)
+    implementation(libs.androidx.coreKtx)
+}

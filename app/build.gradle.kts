@@ -61,10 +61,11 @@ kotlin {
 dependencies {
     implementation(projects.api.anilist)
     implementation(projects.core)
+    implementation(projects.materialColorUtilities)
+    implementation(projects.media)
     implementation(projects.navigation)
     implementation(projects.profile)
     implementation(projects.social)
-    implementation(projects.materialColorUtilities)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
