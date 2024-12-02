@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
@@ -16,7 +18,7 @@ android {
     buildFeatures {
         compose = true
     }
-    composeCompiler.enableStrongSkippingMode = true
+    composeCompiler.featureFlags = setOf(ComposeFeatureFlag.StrongSkipping)
 
     namespace = "com.imashnake.animite.core"
 }

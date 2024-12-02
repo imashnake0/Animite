@@ -31,7 +31,8 @@ include(
     ":navigation",
     ":profile",
     ":social",
-    ":app"
+    ":media",
+    ":app",
 )
 
 android {

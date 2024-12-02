@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
 }
 
@@ -21,18 +22,9 @@ android {
     }
     composeCompiler.featureFlags = setOf(ComposeFeatureFlag.StrongSkipping)
 
-    namespace = "com.imashnake.animite.navigation"
-}
-
-kotlin {
-    jvmToolchain(21)
+    namespace = "com.imashnake.animite.media"
 }
 
 dependencies {
-    api(libs.androidx.navigationCompose)
-    implementation(libs.bundles.compose)
-    implementation(libs.compose.material)
-    debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.compose.ui.toolingPreview)
-    implementation(libs.kotlinx.serialization.core)
+
 }
