@@ -38,10 +38,7 @@ android {
         }
     }
 
-    buildFeatures {
-        compose = true
-    }
-    composeCompiler.enableStrongSkippingMode = true
+    buildFeatures { compose = true }
 
     packaging {
         resources {
