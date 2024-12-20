@@ -59,7 +59,8 @@ dependencies {
     implementation(projects.navigation)
     implementation(projects.profile)
     implementation(projects.social)
-    implementation(projects.materialColorUtilities)
+
+    implementation("com.materialkolor:material-kolor:2.0.0")
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
