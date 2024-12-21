@@ -4,10 +4,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import com.imashnake.animite.dev.ext.from
-import com.imashnake.animite.dev.ext.pastelize
-import utils.ThemeUtils
+import androidx.compose.ui.graphics.Color
+import com.materialkolor.rememberDynamicColorScheme
 
 /**
  * Remembers a new Material3 [ColorScheme] based on the given color, or falls back to the default
@@ -23,18 +21,7 @@ fun rememberColorSchemeFor(
     fallbackColorScheme: ColorScheme = MaterialTheme.colorScheme,
     isDark: Boolean = isSystemInDarkTheme()
 ): ColorScheme {
-    return remember(color, isDark) {
-        if (color != null) {
-            fallbackColorScheme.from(
-                if (isDark)
-                    ThemeUtils.themeFromSourceColor(color).schemes.dark
-                else
-                    ThemeUtils.themeFromSourceColor(color).schemes.light.pastelize(
-                        backgroundToPrimary = 0.09f
-                    )
-            )
-        } else {
-            fallbackColorScheme
-        }
-    }
+    return color?.let {
+        rememberDynamicColorScheme(Color(it), isDark = isDark, isAmoled = false)
+    } ?: fallbackColorScheme
 }

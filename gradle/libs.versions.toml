@@ -82,6 +82,9 @@ detekt = "1.23.7"
 # https://github.com/boswelja/compose-markdown.
 composeMarkdown = "1.1.0"
 
+# MaterialKolor
+# https://github.com/jordond/MaterialKolor
+materialKolor = "2.0.0"
 
 [libraries]
 
@@ -116,6 +119,7 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
+materialkolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
 
 [bundles]
 

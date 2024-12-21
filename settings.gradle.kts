@@ -26,7 +26,6 @@ rootProject.name = "Animite"
 include(
     ":api:anilist",
     ":api:preferences",
-    ":material-color-utilities",
     ":core",
     ":navigation",
     ":profile",

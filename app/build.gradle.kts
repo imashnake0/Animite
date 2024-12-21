@@ -59,7 +59,8 @@ dependencies {
     implementation(projects.navigation)
     implementation(projects.profile)
     implementation(projects.social)
-    implementation(projects.materialColorUtilities)
+
+    implementation(libs.materialkolor)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
