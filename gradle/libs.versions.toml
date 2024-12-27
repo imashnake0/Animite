@@ -86,6 +86,7 @@ composeMarkdown = "1.1.0"
 # https://github.com/jordond/MaterialKolor
 materialKolor = "2.0.0"
 
+
 [libraries]
 
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
@@ -119,7 +120,8 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
-materialkolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
+materialKolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
+
 
 [bundles]
 

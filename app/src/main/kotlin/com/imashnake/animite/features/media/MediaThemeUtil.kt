@@ -5,6 +5,8 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.imashnake.animite.core.Constants.PASTELIZE_RATIO
+import com.imashnake.animite.dev.ext.pastelize
 import com.materialkolor.rememberDynamicColorScheme
 
 /**
@@ -23,5 +25,6 @@ fun rememberColorSchemeFor(
 ): ColorScheme {
     return color?.let {
         rememberDynamicColorScheme(Color(it), isDark = isDark, isAmoled = false)
+            .pastelize(PASTELIZE_RATIO)
     } ?: fallbackColorScheme
 }
