@@ -1,7 +1,9 @@
 package com.imashnake.animite.dev.ext
 
 import androidx.compose.material3.ColorScheme
+import com.materialkolor.ktx.blend
 
-fun ColorScheme.pastelize(backgroundToPrimary: Float) = with(this) {
-    copy(background = background.blendWith(primary, backgroundToPrimary))
+fun ColorScheme.modify(useDarkTheme: Boolean) = when {
+    useDarkTheme -> copy(surfaceContainerHighest = surfaceContainerHighest.blend(background, 0.5f))
+    else -> copy(background = background.blend(primary, 0.05f))
 }

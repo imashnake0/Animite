@@ -108,7 +108,7 @@ fun MediaPage(
 
     val media = viewModel.uiState
 
-    MaterialTheme(colorScheme = rememberColorSchemeFor(color = media.color)) {
+    MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
