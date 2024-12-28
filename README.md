@@ -36,6 +36,7 @@ Some apps that I referred to while developing:
 
 Libraries:
 - [Compose Markdown](https://github.com/boswelja/compose-markdown)
+- [MaterialKolor](https://github.com/jordond/MaterialKolor)
 
 ## [License](https://github.com/imashnake0/Animite/blob/15eaac4a80c1e6eef3a4d6c861cab05670fb174b/LICENSE.txt)
 ```

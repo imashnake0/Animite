@@ -59,7 +59,6 @@ dependencies {
     implementation(projects.navigation)
     implementation(projects.profile)
     implementation(projects.social)
-    implementation(projects.materialColorUtilities)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
@@ -86,6 +85,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
+
+    implementation(libs.materialKolor)
 
     coreLibraryDesugaring(libs.android.desugaring)
 
