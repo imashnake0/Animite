@@ -128,7 +128,7 @@ compose = [
     "compose-ui",
 ]
 
-coil-network-compose = [
+coil = [
     "coil-compose",
     "coil-network"
 ]

@@ -75,7 +75,7 @@ dependencies {
     implementation(libs.compose.ui.toolingPreview)
 
     // Coil
-    implementation(libs.bundles.coil.network.compose)
+    implementation(libs.bundles.coil)
 
     // Kotlin
     implementation(libs.kotlin.coroutines.android)
