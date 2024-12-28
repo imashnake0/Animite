@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -104,12 +103,9 @@ fun MediaSmall(
     label: String? = null,
 ) {
     Card(
-        modifier = modifier.width(cardWidth),
         onClick = onClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        ),
-        shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius))
+        shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)),
+        modifier = modifier.width(cardWidth),
     ) {
         AsyncImage(
             model = crossfadeModel(image),
