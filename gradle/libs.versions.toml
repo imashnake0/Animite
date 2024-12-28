@@ -41,7 +41,7 @@ datastore = "1.1.1"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
-coil = "2.7.0"
+coil = "3.0.4"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
@@ -110,7 +110,8 @@ compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-ju
 apollo-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime" }
 apollo-cache-memory = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache", version.ref = "apollo" }
 apollo-cache-sqlite = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache-sqlite", version.ref = "apollo" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 boswelja-composeMarkdown-material3 = { group = "io.github.boswelja.markdown", name = "material3", version.ref = "composeMarkdown" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -131,4 +132,9 @@ compose = [
     "compose-material3",
     "compose-runtime",
     "compose-ui",
+]
+
+coil = [
+    "coil-compose",
+    "coil-network"
 ]
