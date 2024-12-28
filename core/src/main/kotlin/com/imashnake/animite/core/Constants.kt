@@ -5,5 +5,5 @@ object Constants {
     const val CROSSFADE_DURATION = 500
     const val MEDIA_TYPE = "mediaType"
 
-    const val PASTELIZE_RATIO = 0.1f
+    const val PASTELIZE_RATIO = 0.05f
 }
