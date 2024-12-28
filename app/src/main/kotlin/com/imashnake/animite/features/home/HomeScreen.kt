@@ -73,6 +73,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.features.media.MediaPage
+import com.materialkolor.ktx.hasEnoughContrast
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
@@ -126,7 +127,7 @@ fun HomeScreen(
                                             listOf(
                                                 Color.Transparent,
                                                 MaterialTheme.colorScheme.secondaryContainer
-                                                    .copy(alpha = 0.5f)
+                                                    .copy(alpha = 0.2f)
                                             )
                                         )
                                     )
@@ -141,7 +142,10 @@ fun HomeScreen(
                                 ) {
                                     Text(
                                         text = stringResource(R.string.okaeri),
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer.takeIf {
+                                            // This color is what is behind "okaeri".
+                                            it.hasEnoughContrast(Color(0xFF252B33))
+                                        } ?: MaterialTheme.colorScheme.secondaryContainer,
                                         style = MaterialTheme.typography.displayMedium,
                                         modifier = Modifier
                                             .padding(
