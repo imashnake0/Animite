@@ -15,7 +15,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 # Core Library Desugaring
 # https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
-desugaring = "2.1.3"
+desugaring = "2.1.4"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
@@ -28,7 +28,7 @@ core = "1.15.0"
 lifecycle = "2.8.7"
 extJunit = "1.2.1"
 espresso = "3.6.1"
-navigation = "2.8.4"
+navigation = "2.8.5"
 
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
@@ -45,16 +45,16 @@ coil = "3.0.4"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.7.5"
-composeFoundation = "1.7.5"
-composeMaterial = "1.7.5"
+composeAnimation = "1.7.6"
+composeFoundation = "1.7.6"
+composeMaterial = "1.7.6"
 composeMaterial3 = "1.3.1"
-composeRuntime = "1.7.5"
-composeUi = "1.7.5"
+composeRuntime = "1.7.6"
+composeUi = "1.7.6"
 
 # Dagger
 # https://github.com/google/dagger/releases.
-dagger = "2.53"
+dagger = "2.54"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
@@ -63,7 +63,7 @@ hilt = "1.2.0"
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
 kotlin = "2.1.0"
-coroutines = "1.9.0"
+coroutines = "1.10.1"
 serialization = "1.7.3"
 
 # KSP
@@ -81,6 +81,10 @@ detekt = "1.23.7"
 # Compose Markdown
 # https://github.com/boswelja/compose-markdown.
 composeMarkdown = "1.1.0"
+
+# MaterialKolor
+# https://github.com/jordond/MaterialKolor
+materialKolor = "2.0.0"
 
 
 [libraries]
@@ -117,6 +121,8 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
+materialKolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
+
 
 [bundles]
 

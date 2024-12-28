@@ -12,6 +12,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
+import com.imashnake.animite.core.Constants.PASTELIZE_RATIO
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.Paddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
@@ -27,11 +28,11 @@ fun AnimiteTheme(
     val darkTheme = isSystemInDarkTheme()
     val animiteColorScheme = when {
         dynamicColor && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        dynamicColor && !darkTheme -> dynamicLightColorScheme(LocalContext.current).pastelize(
-            backgroundToPrimary = 0.05f
-        )
+        dynamicColor && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
+            .pastelize(PASTELIZE_RATIO)
         darkTheme -> KimiNoDarkColorScheme
-        else -> KimiNoLightColorScheme.pastelize(backgroundToPrimary = 0.05f)
+        else -> KimiNoLightColorScheme
+            .pastelize(PASTELIZE_RATIO)
     }
     val animiteRippleTheme = RippleConfiguration(
         color = MaterialTheme.colorScheme.primary,
