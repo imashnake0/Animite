@@ -92,7 +92,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 NavHost(navController = navController, startDestination = HomeRoute) {
                     composable<HomeRoute> {
                         HomeScreen(
-                            onNavigateToMediaItem = { navController.navigate(it) },
+                            onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
@@ -109,7 +109,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         )
                     ) {
                         ProfileScreen(
-                            onNavigateToMediaItem = { navController.navigate(it) },
+                            onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
