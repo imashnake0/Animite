@@ -1,11 +1,11 @@
-package com.imashnake.animite.features.media
+package com.imashnake.animite.media
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import com.imashnake.animite.dev.ext.modify
+import com.imashnake.animite.media.ext.modify
 import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
 

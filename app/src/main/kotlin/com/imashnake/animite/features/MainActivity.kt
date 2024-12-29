@@ -31,9 +31,9 @@ import androidx.navigation.navDeepLink
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.HomeScreen
-import com.imashnake.animite.features.media.MediaPage
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.HomeRoute
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
