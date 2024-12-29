@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
@@ -37,15 +38,25 @@ fun AnimeTab(
     ) {
         // TODO: Why is this not smart-casting?
         if (!mediaCollection?.namedLists.isNullOrEmpty()) {
-            UserMediaList(mediaCollection!!.namedLists, modifier)
+            UserMediaList(
+                lists =  mediaCollection!!.namedLists,
+                modifier = modifier,
+                onNavigateToMediaItem = onNavigateToMediaItem,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun UserMediaList(
     lists: List<User.MediaCollection.NamedList>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
@@ -56,7 +67,16 @@ private fun UserMediaList(
                 MediaSmall(
                     image = media.coverImage,
                     label = media.title,
-                    onClick = {},
+                    onClick = {
+                        onNavigateToMediaItem(
+                            MediaPage(
+                                id = media.id,
+                                // TODO: Unhardcode these and make them unique.
+                                source = media.title.orEmpty(),
+                                mediaType = MediaType.ANIME.rawValue,
+                            )
+                        )
+                    },
                     imageHeight = dimensionResource(coreR.dimen.media_image_height),
                     cardWidth = dimensionResource(coreR.dimen.media_card_width),
                 )

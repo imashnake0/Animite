@@ -108,7 +108,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
                         )
                     ) {
-                        ProfileScreen()
+                        ProfileScreen(
+                            onNavigateToMediaItem = { navController.navigate(it) },
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this,
+                        )
                     }
                     composable<SocialRoute> {
                         SocialScreen()
