@@ -1,5 +1,6 @@
 package com.imashnake.animite.features.home
 
+import android.annotation.SuppressLint
 import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
@@ -69,6 +70,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
@@ -145,8 +147,8 @@ fun HomeScreen(
                                 )
 
                                 Row(
-                                    modifier = bannerModifier.drawWithCache {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    modifier = bannerModifier.thenIf(shader != null) {
+                                        drawWithCache @SuppressLint("NewApi") {
                                             shader!!.run {
                                                 setFloatUniform(
                                                     "resolution",
@@ -154,7 +156,10 @@ fun HomeScreen(
                                                     size.height
                                                 )
                                                 setFloatUniform("time", time.floatValue)
-                                                setColorUniform("orb", Color(0xFF6C408D).toArgb())
+                                                setColorUniform(
+                                                    "orb",
+                                                    Color(0xFF6C408D).toArgb()
+                                                )
                                                 setColorUniform(
                                                     "bg",
                                                     android.graphics.Color.TRANSPARENT
@@ -163,7 +168,7 @@ fun HomeScreen(
                                                     drawRect(ShaderBrush(this@run))
                                                 }
                                             }
-                                        } else onDrawBehind {}
+                                        }
                                     },
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.Bottom,
