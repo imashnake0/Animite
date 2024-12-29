@@ -1,5 +1,8 @@
 package com.imashnake.animite.profile.tabs
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -13,12 +16,17 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.core.R as coreR
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AnimeTab(
     mediaCollection: User.MediaCollection?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val scrollState = rememberScrollState()
 

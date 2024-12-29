@@ -117,7 +117,10 @@ fun ProfileScreen(
                             Spacer(Modifier.size(LocalPaddings.current.medium))
                             UserTabs(
                                 user = this@run,
-                                mediaCollection = viewerMediaLists?.data
+                                mediaCollection = viewerMediaLists?.data,
+                                onNavigateToMediaItem = onNavigateToMediaItem,
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedVisibilityScope = animatedVisibilityScope,
                             )
                         }
                     },
@@ -154,12 +157,18 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalSharedTransitionApi::class,
+)
 @Composable
 private fun UserTabs(
     user: User,
     mediaCollection: User.MediaCollection?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTabs.entries.size })
@@ -215,7 +224,12 @@ private fun UserTabs(
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTabs.entries[page]) {
                     ProfileTabs.ABOUT -> AboutTab(user)
-                    ProfileTabs.ANIME -> AnimeTab(mediaCollection)
+                    ProfileTabs.ANIME -> AnimeTab(
+                        mediaCollection = mediaCollection,
+                        onNavigateToMediaItem = onNavigateToMediaItem,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                     else -> Text(
                         text = stringResource(coreR.string.coming_soon),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
