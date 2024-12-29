@@ -24,8 +24,8 @@ val etherealShader = """
   uniform float2 resolution;
   uniform float time;
 
-  layout(color) uniform half4 color1;
-  layout(color) uniform half4 color2;
+  layout(color) uniform half4 orb;
+  layout(color) uniform half4 bg;
       
   half4 main(float2 coord) {
       float2 uv = coord.xy / resolution;
@@ -45,7 +45,7 @@ val etherealShader = """
       
       float d = length(coord - center) - (radius - amount);
       float3 pct = float3(smoothstep(0.0, amount, d));
-      float3 color = mix(color1.rgb, color2.rgb, pct);
+      float3 color = mix(orb.rgb, bg.rgb, pct);
       return half4(color, 0.2);
   }
 """.trimIndent()
