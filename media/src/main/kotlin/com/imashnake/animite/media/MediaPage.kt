@@ -126,10 +126,10 @@ fun MediaPage(
                             animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                             clipInOverlayDuringTransition = OverlayClip(
-                                RoundedCornerShape(com.imashnake.animite.media.DEVICE_CORNER_RADIUS.dp)
+                                RoundedCornerShape(DEVICE_CORNER_RADIUS.dp)
                             ),
                         )
-                        .clip(RoundedCornerShape(com.imashnake.animite.media.DEVICE_CORNER_RADIUS.dp))
+                        .clip(RoundedCornerShape(DEVICE_CORNER_RADIUS.dp))
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                         .padding(bottom = LocalPaddings.current.large)
