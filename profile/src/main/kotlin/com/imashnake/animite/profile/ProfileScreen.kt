@@ -1,5 +1,8 @@
 package com.imashnake.animite.profile
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +45,7 @@ import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
@@ -49,9 +53,13 @@ import kotlinx.coroutines.launch
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Suppress("LongMethod")
 @Composable
 fun ProfileScreen(
+    onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
