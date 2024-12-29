@@ -23,4 +23,12 @@ fun Modifier.bannerParallax(scrollState: ScrollState) = graphicsLayer {
     translationY = 0.7f * scrollState.value
 }
 
-fun Modifier.maxHeight(max: Dp) = this.heightIn(0.dp, max)
+fun Modifier.maxHeight(max: Dp) = heightIn(0.dp, max)
+
+/**
+ * [Adding modifiers conditionally in Jetpack Compose](https://patrickmichalik.com/blog/adding-modifiers-conditionally-in-jetpack-compose).
+ */
+fun Modifier.thenIf(
+    condition: Boolean,
+    other: Modifier.() -> Modifier,
+) = if (condition) other() else this

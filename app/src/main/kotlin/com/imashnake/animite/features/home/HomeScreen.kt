@@ -1,8 +1,8 @@
 package com.imashnake.animite.features.home
 
+import android.annotation.SuppressLint
 import android.graphics.RuntimeShader
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -70,6 +70,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
@@ -77,7 +78,7 @@ import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.shaders.etherealShader
-import com.imashnake.animite.features.media.MediaPage
+import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -85,9 +86,9 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.materialkolor.ktx.hasEnoughContrast
 import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress("LongMethod")
@@ -120,7 +121,10 @@ fun HomeScreen(
             }
         } while (true)
     }
-    val shader = remember { RuntimeShader(etherealShader) }
+    val shader = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            RuntimeShader(etherealShader) else null
+    }
 
     when {
         rows.all { it is Resource.Success } -> {
@@ -135,7 +139,7 @@ fun HomeScreen(
                         banner = { bannerModifier ->
                             Box {
                                 Image(
-                                    painter = painterResource(R.drawable.background),
+                                    painter = painterResource(mediaR.drawable.background),
                                     contentDescription = null,
                                     modifier = bannerModifier.bannerParallax(scrollState),
                                     contentScale = ContentScale.Crop,
@@ -143,15 +147,27 @@ fun HomeScreen(
                                 )
 
                                 Row(
-                                    modifier = bannerModifier.drawWithCache {
-                                        with(shader) {
-                                            setFloatUniform("resolution", size.width, size.height)
-                                            setFloatUniform("time", time.floatValue)
-                                            setColorUniform("orb", Color(0xFF6C408D).toArgb())
-                                            setColorUniform("bg", android.graphics.Color.TRANSPARENT)
-                                        }
-                                        onDrawBehind {
-                                            drawRect(ShaderBrush(shader))
+                                    modifier = bannerModifier.thenIf(shader != null) {
+                                        drawWithCache @SuppressLint("NewApi") {
+                                            shader!!.run {
+                                                setFloatUniform(
+                                                    "resolution",
+                                                    size.width,
+                                                    size.height
+                                                )
+                                                setFloatUniform("time", time.floatValue)
+                                                setColorUniform(
+                                                    "orb",
+                                                    Color(0xFF6C408D).toArgb()
+                                                )
+                                                setColorUniform(
+                                                    "bg",
+                                                    android.graphics.Color.TRANSPARENT
+                                                )
+                                                onDrawBehind {
+                                                    drawRect(ShaderBrush(this@run))
+                                                }
+                                            }
                                         }
                                     },
                                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -322,8 +338,8 @@ private fun MediaTypeSelector(
 
         Box(
             modifier = Modifier
-                .padding(dimensionResource(R.dimen.media_type_selector_padding))
-                .size(dimensionResource(R.dimen.media_type_choice_size))
+                .padding(dimensionResource(mediaR.dimen.media_type_selector_padding))
+                .size(dimensionResource(mediaR.dimen.media_type_choice_size))
                 .offset { IntOffset(x = offset.roundToPx(), y = 0) }
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.background)
@@ -331,9 +347,9 @@ private fun MediaTypeSelector(
 
         Row(
             modifier = Modifier
-                .height(dimensionResource(R.dimen.media_type_selector_height))
-                .width(dimensionResource(R.dimen.media_type_selector_width))
-                .padding(dimensionResource(R.dimen.media_type_selector_padding)),
+                .height(dimensionResource(mediaR.dimen.media_type_selector_height))
+                .width(dimensionResource(mediaR.dimen.media_type_selector_width))
+                .padding(dimensionResource(mediaR.dimen.media_type_selector_padding)),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -345,7 +361,7 @@ private fun MediaTypeSelector(
                             selectedOption.value = mediaType
                         }
                     },
-                    modifier = Modifier.requiredWidth(dimensionResource(R.dimen.media_type_choice_size))
+                    modifier = Modifier.requiredWidth(dimensionResource(mediaR.dimen.media_type_choice_size))
                 ) {
                     Icon(
                         imageVector = when (mediaType) {

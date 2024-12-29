@@ -49,6 +49,7 @@ import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
 /**
@@ -167,8 +168,8 @@ private fun SearchItem(
         MediaSmall(
             image = item.coverImage,
             onClick = { onClick(item.id) },
-            imageHeight = dimensionResource(R.dimen.character_image_height),
-            cardWidth = dimensionResource(R.dimen.character_card_width),
+            imageHeight = dimensionResource(mediaR.dimen.character_image_height),
+            cardWidth = dimensionResource(mediaR.dimen.character_card_width),
         )
 
         Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {

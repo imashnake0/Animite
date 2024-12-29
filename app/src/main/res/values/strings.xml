@@ -8,10 +8,6 @@
     <string name="upcoming_next_season">Upcoming Next Season</string>
     <string name="all_time_popular">All Time Popular</string>
 
-    <!-- MediaPage -->
-    <string name="characters">Characters</string>
-    <string name="trailer">Trailer</string>
-
     <!-- SearchFrontDrop -->
     <string name="search">Search</string>
     <string name="collapse">Collapse</string>

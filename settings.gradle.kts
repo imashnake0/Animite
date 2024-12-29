@@ -26,11 +26,12 @@ rootProject.name = "Animite"
 include(
     ":api:anilist",
     ":api:preferences",
+    ":app",
     ":core",
+    ":media",
     ":navigation",
     ":profile",
     ":social",
-    ":app"
 )
 
 android {

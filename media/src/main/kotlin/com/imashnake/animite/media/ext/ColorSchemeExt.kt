@@ -1,4 +1,4 @@
-package com.imashnake.animite.dev.ext
+package com.imashnake.animite.media.ext
 
 import androidx.compose.material3.ColorScheme
 import com.materialkolor.ktx.blend

@@ -56,6 +56,7 @@ kotlin {
 dependencies {
     implementation(projects.api.anilist)
     implementation(projects.core)
+    implementation(projects.media)
     implementation(projects.navigation)
     implementation(projects.profile)
     implementation(projects.social)

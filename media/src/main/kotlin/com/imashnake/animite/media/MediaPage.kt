@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.media
+package com.imashnake.animite.media
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -69,7 +69,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
