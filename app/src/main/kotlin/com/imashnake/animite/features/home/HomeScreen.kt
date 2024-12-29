@@ -1,5 +1,8 @@
 package com.imashnake.animite.features.home
 
+import android.graphics.RuntimeShader
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -34,16 +37,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
@@ -67,16 +76,18 @@ import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.core.ui.shaders.etherealShader
+import com.imashnake.animite.features.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
-import com.imashnake.animite.features.media.MediaPage
 import com.materialkolor.ktx.hasEnoughContrast
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress("LongMethod")
@@ -101,6 +112,16 @@ fun HomeScreen(
         allTimePopularList,
     )
 
+    val time = remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(Unit) {
+        do {
+            withFrameMillis {
+                time.value += 0.01f
+            }
+        } while (true)
+    }
+    val shader = remember { RuntimeShader(etherealShader) }
+
     when {
         rows.all { it is Resource.Success } -> {
             val scrollState = rememberScrollState()
@@ -121,24 +142,20 @@ fun HomeScreen(
                                     alignment = Alignment.TopCenter
                                 )
 
-                                Box(
-                                    modifier = bannerModifier.background(
-                                        Brush.verticalGradient(
-                                            listOf(
-                                                Color.Transparent,
-                                                MaterialTheme.colorScheme.secondaryContainer
-                                                    .copy(alpha = 0.2f)
-                                            )
-                                        )
-                                    )
-                                )
-
                                 Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .align(Alignment.BottomCenter),
+                                    modifier = bannerModifier.drawWithCache {
+                                        with(shader) {
+                                            setFloatUniform("resolution", size.width, size.height)
+                                            setFloatUniform("time", time.floatValue)
+                                            setColorUniform("orb", Color(0xFF6C408D).toArgb())
+                                            setColorUniform("bg", android.graphics.Color.TRANSPARENT)
+                                        }
+                                        onDrawBehind {
+                                            drawRect(ShaderBrush(shader))
+                                        }
+                                    },
                                     horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                    verticalAlignment = Alignment.Bottom,
                                 ) {
                                     Text(
                                         text = stringResource(R.string.okaeri),
