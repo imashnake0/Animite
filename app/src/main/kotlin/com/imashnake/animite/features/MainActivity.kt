@@ -29,7 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
-import com.imashnake.animite.core.ui.LocalPaddings
+import core.ui.LocalPaddings
 import com.imashnake.animite.features.home.HomeScreen
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme

@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.data
+package core.data
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

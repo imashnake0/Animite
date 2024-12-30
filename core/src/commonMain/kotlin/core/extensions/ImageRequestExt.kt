@@ -1,10 +1,10 @@
-package com.imashnake.animite.core.extensions
+package core.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.imashnake.animite.core.Constants
+import core.Constants
 
 /**
  * Crossfades images after the request succeeds.

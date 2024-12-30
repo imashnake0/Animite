@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.compose.ui)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+    implementation(libs.boswelja.composeMarkdown.material3)
 
     // Hilt
     implementation(libs.hilt.android)

@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.layouts
+package core.ui.layouts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import com.imashnake.animite.core.R
-import com.imashnake.animite.core.ui.LocalPaddings
+import core.ui.LocalPaddings
 
 /**
  * Most screens and pages follow a banner-style layout in Animite.

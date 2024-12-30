@@ -25,37 +25,35 @@ kotlin {
     androidTarget()
 
     sourceSets {
-        commonMain {
-            dependencies {
-                // Compose
-                implementation(compose.material3)
-                implementation(compose.uiTooling)
+        commonMain.dependencies {
+            // Compose
+            implementation(compose.material3)
+            implementation(compose.components.uiToolingPreview)
+            implementation(compose.components.resources)
 
-                // Compose Markdown
-                implementation(libs.boswelja.composeMarkdown.material3)
+            // Compose Markdown
+            implementation(libs.boswelja.composeMarkdown.material3)
 
-                // Coil
-                implementation(libs.bundles.coil)
+            // Coil
+            implementation(libs.bundles.coil)
 
-                // Kotlin
-                implementation(libs.kotlin.coroutines.core)
-            }
+            // Kotlin
+            implementation(libs.kotlin.coroutines.core)
         }
-        androidUnitTest {
-            dependencies {
-                implementation(libs.test.junit)
-            }
+        androidMain.dependencies {
+            implementation(libs.ktor.engine.android)
         }
-        androidInstrumentedTest {
-            dependencies {
-                implementation(libs.androidx.test.junit)
-                implementation(libs.androidx.test.espressoCore)
-                implementation(libs.compose.test.ui.testJunit4)
-            }
+        androidUnitTest.dependencies {
+            implementation(libs.test.junit)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(libs.androidx.test.junit)
+            implementation(libs.androidx.test.espressoCore)
+            implementation(libs.compose.test.ui.testJunit4)
         }
     }
 }
 
-dependencies {
-
+compose.resources {
+    publicResClass = true
 }

@@ -1,4 +1,4 @@
-package com.imashnake.animite.core
+package core
 
 object Constants {
     const val ANILIST_BASE_URL = "https://graphql.anilist.co/"

@@ -44,10 +44,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
-import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
+import core.Constants
+import core.extensions.landscapeCutoutPadding
+import core.ui.LocalPaddings
+import core.ui.MediaSmall
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR

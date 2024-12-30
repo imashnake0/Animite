@@ -92,6 +92,9 @@ composeMarkdown = "1.1.0"
 # https://github.com/jordond/MaterialKolor
 materialKolor = "2.0.0"
 
+# Ktor
+# https://github.com/ktorio/ktor
+ktor = "3.0.3"
 
 [libraries]
 
@@ -117,7 +120,10 @@ apollo-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime" 
 apollo-cache-memory = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache", version.ref = "apollo" }
 apollo-cache-sqlite = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache-sqlite", version.ref = "apollo" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
-coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+coil-network = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
+ktor-engine-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-engine-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-engine-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 boswelja-composeMarkdown-material3 = { group = "io.github.boswelja.markdown", name = "material3", version.ref = "composeMarkdown" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }

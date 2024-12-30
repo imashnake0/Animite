@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.extensions
+package core.extensions
 
 import android.content.res.Configuration
 import androidx.compose.foundation.ScrollState
