@@ -39,7 +39,7 @@ object NetworkModule {
                 json(json)
             }
             install(DefaultRequest) {
-                url("https://api.myanimelist.net/v2")
+                url("https://api.myanimelist.net/v2/")
             }
         }
     }
