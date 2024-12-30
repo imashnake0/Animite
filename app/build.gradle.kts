@@ -76,6 +76,7 @@ dependencies {
 
     // Coil
     implementation(libs.bundles.coil)
+    implementation(libs.ktor.engine.android)
 
     // Kotlin
     implementation(libs.kotlin.coroutines.android)

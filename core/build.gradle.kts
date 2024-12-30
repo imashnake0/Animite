@@ -35,13 +35,10 @@ kotlin {
             implementation(libs.boswelja.composeMarkdown.material3)
 
             // Coil
-            implementation(libs.bundles.coil)
+            implementation(libs.coil.compose)
 
             // Kotlin
             implementation(libs.kotlin.coroutines.core)
-        }
-        androidMain.dependencies {
-            implementation(libs.ktor.engine.android)
         }
         androidUnitTest.dependencies {
             implementation(libs.test.junit)

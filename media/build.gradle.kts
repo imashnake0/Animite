@@ -37,7 +37,7 @@ dependencies {
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Coil
-    implementation(libs.coil.compose)
+    implementation(libs.bundles.coil)
     implementation(libs.ktor.engine.android)
 
     // Compose
