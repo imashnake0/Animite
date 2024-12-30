@@ -7,7 +7,6 @@ import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -92,7 +91,6 @@ import com.imashnake.animite.core.R as coreR
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",

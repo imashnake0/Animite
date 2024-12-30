@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -68,7 +67,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -92,7 +90,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 NavHost(navController = navController, startDestination = HomeRoute) {
                     composable<HomeRoute> {
                         HomeScreen(
-                            onNavigateToMediaItem = { navController.navigate(it) },
+                            onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
@@ -108,7 +106,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
                         )
                     ) {
-                        ProfileScreen()
+                        ProfileScreen(
+                            onNavigateToMediaItem = navController::navigate,
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this,
+                        )
                     }
                     composable<SocialRoute> {
                         SocialScreen()

@@ -1,5 +1,7 @@
 package com.imashnake.animite.profile
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,9 +44,10 @@ import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
-import com.imashnake.animite.profile.tabs.ProfileTabs
+import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
@@ -52,6 +55,9 @@ import com.imashnake.animite.navigation.R as navigationR
 @Suppress("LongMethod")
 @Composable
 fun ProfileScreen(
+    onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
@@ -109,7 +115,10 @@ fun ProfileScreen(
                             Spacer(Modifier.size(LocalPaddings.current.medium))
                             UserTabs(
                                 user = this@run,
-                                mediaCollection = viewerMediaLists?.data
+                                mediaCollection = viewerMediaLists?.data,
+                                onNavigateToMediaItem = onNavigateToMediaItem,
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedVisibilityScope = animatedVisibilityScope,
                             )
                         }
                     },
@@ -139,7 +148,7 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
                     ),
                     blockQuoteStyle = animiteBlockQuoteStyle(),
                     codeBlockStyle = animiteCodeBlockStyle(),
-                    modifier = contentModifier
+                    modifier = contentModifier,
                 )
             }
         }
@@ -151,11 +160,14 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
 private fun UserTabs(
     user: User,
     mediaCollection: User.MediaCollection?,
-    modifier: Modifier = Modifier
+    onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(pageCount = { ProfileTabs.entries.size })
-    val titles = ProfileTabs.entries
+    val pagerState = rememberPagerState(pageCount = { ProfileTab.entries.size })
+    val titles = ProfileTab.entries
     val onBackground = MaterialTheme.colorScheme.onBackground
 
     Column(modifier) {
@@ -205,9 +217,14 @@ private fun UserTabs(
                 )
         ) { page ->
             Box(Modifier.fillMaxSize()) {
-                when (ProfileTabs.entries[page]) {
-                    ProfileTabs.ABOUT -> AboutTab(user)
-                    ProfileTabs.ANIME -> AnimeTab(mediaCollection)
+                when (ProfileTab.entries[page]) {
+                    ProfileTab.ABOUT -> AboutTab(user)
+                    ProfileTab.ANIME -> AnimeTab(
+                        mediaCollection = mediaCollection,
+                        onNavigateToMediaItem = onNavigateToMediaItem,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                     else -> Text(
                         text = stringResource(coreR.string.coming_soon),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

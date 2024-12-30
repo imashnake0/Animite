@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin)
@@ -24,11 +26,18 @@ kotlin {
     jvmToolchain(21)
 }
 
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.addAll(
+        "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi"
+    )
+}
+
 dependencies {
-    implementation(projects.navigation)
-    implementation(projects.core)
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
+    implementation(projects.core)
+    implementation(projects.media)
+    implementation(projects.navigation)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
