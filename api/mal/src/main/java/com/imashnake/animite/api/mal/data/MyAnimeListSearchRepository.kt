@@ -6,6 +6,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.http.ContentType
+import io.ktor.http.encodeURLParameter
 import javax.inject.Inject
 
 class MyAnimeListSearchRepository @Inject constructor(
@@ -22,7 +23,8 @@ class MyAnimeListSearchRepository @Inject constructor(
         query: String,
         limit: Int = 50
     ): AnimeSearchResponse {
-        return ktor.get("/anime?q=$query&limit=$limit&fields=$ALL_SEARCH_FIELDS") {
+        val encodedSearchQuery = query.encodeURLParameter(true)
+        return ktor.get("anime?q=${encodedSearchQuery}&limit=$limit&fields=$ALL_SEARCH_FIELDS") {
             accept(ContentType.Application.Json)
             headers.append(CLIENT_AUTH_HEADER, CLIENT_ID)
         }.body()
