@@ -5,7 +5,6 @@ import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -89,7 +88,6 @@ import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
@@ -265,7 +263,6 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeRow(
     list: List<Media.Small>,

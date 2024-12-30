@@ -1,7 +1,6 @@
 package com.imashnake.animite.profile.tabs
 
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,6 @@ import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.core.R as coreR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AnimeTab(
     mediaCollection: User.MediaCollection?,
@@ -49,7 +47,6 @@ fun AnimeTab(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun UserMediaList(
     lists: List<User.MediaCollection.NamedList>,

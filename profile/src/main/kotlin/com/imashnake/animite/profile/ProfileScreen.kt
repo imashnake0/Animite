@@ -1,7 +1,6 @@
 package com.imashnake.animite.profile
 
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -53,7 +52,6 @@ import kotlinx.coroutines.launch
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Suppress("LongMethod")
 @Composable
 fun ProfileScreen(
@@ -157,10 +155,7 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
     }
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalSharedTransitionApi::class,
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UserTabs(
     user: User,
