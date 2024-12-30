@@ -289,7 +289,8 @@ fun HomeRow(
                             sharedComponents = Card to Page,
                         )
                     ),
-                    animatedVisibilityScope
+                    animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                 ),
                 imageModifier = Modifier.sharedBounds(
                     rememberSharedContentState(
