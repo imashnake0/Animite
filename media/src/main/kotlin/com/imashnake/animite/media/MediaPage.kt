@@ -87,7 +87,6 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
-import kotlin.math.log
 import com.imashnake.animite.core.R as coreR
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
@@ -290,8 +289,8 @@ fun MediaBanner(
         model = crossfadeModel(imageUrl),
         contentDescription = null,
         placeholder = ColorPainter(color),
-        error = ColorPainter(color),
-        fallback = ColorPainter(color),
+        error = painterResource(R.drawable.background),
+        fallback = painterResource(R.drawable.background),
         contentScale = ContentScale.Crop,
         modifier = modifier,
         alignment = Alignment.Center,
