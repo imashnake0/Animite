@@ -30,9 +30,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import core.extensions.landscapeCutoutPadding
-import core.ui.LocalPaddings
-import core.ui.StatsRow
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.profile.R
 import kotlinx.coroutines.launch
 

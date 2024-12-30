@@ -11,7 +11,7 @@ import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.media.MediaSmall
 import com.imashnake.animite.media.MediaSmallRow
-import core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.LocalPaddings
 
 @Composable
 fun AnimeTab(

@@ -13,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import core.ui.LocalPaddings
-import core.ui.Paddings
-import core.ui.rememberDefaultPaddings
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.Paddings
+import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.ext.modify
 import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme

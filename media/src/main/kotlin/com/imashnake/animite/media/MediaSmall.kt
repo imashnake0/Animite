@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import core.extensions.crossfadeModel
-import core.extensions.landscapeCutoutPadding
-import core.ui.LocalPaddings
+import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.ui.LocalPaddings
 
 /**
  * A [LazyRow] of [MediaSmall]s.

@@ -1,4 +1,4 @@
-package core.ui.layouts
+package com.imashnake.animite.core.ui.layouts
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
@@ -11,9 +11,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
-import com.imashnake.animite.core.R
 
 @Composable
 @Suppress("LongParameterList")

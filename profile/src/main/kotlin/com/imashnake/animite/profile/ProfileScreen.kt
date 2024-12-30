@@ -34,18 +34,18 @@ import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import core.extensions.animiteBlockQuoteStyle
-import core.extensions.animiteCodeBlockStyle
-import core.extensions.crossfadeModel
-import core.extensions.landscapeCutoutPadding
-import core.extensions.maxHeight
-import core.ui.LocalPaddings
-import core.ui.NestedScrollableContent
-import core.ui.layouts.BannerLayout
+import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
+import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
+import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.NestedScrollableContent
+import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTabs
-import core.ui.ComingSoonMessage
+import com.imashnake.animite.core.ui.ComingSoonMessage
 import kotlinx.coroutines.launch
 import com.imashnake.animite.navigation.R as navigationR
 

@@ -65,21 +65,21 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import core.Constants
-import core.extensions.bannerParallax
-import core.extensions.crossfadeModel
-import core.extensions.landscapeCutoutPadding
-import core.ui.LocalPaddings
-import core.ui.NestedScrollableContent
-import core.ui.StatsRow
-import core.ui.layouts.BannerLayout
-import core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.core.Constants
+import com.imashnake.animite.core.extensions.bannerParallax
+import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.NestedScrollableContent
+import com.imashnake.animite.core.ui.StatsRow
+import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
-import core.ui.layouts.DefaultBannerHeight
+import com.imashnake.animite.core.ui.layouts.DefaultBannerHeight
 import kotlinx.serialization.Serializable
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
