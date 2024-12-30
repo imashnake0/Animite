@@ -11,8 +11,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import core.ui.LocalPaddings
-import core.ui.MediaSmall
-import core.ui.MediaSmallRow
 import com.imashnake.animite.core.R as coreR
 
 @Composable

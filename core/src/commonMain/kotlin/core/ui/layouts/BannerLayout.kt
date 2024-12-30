@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
-import com.imashnake.animite.core.R
+import androidx.compose.ui.unit.dp
 import core.ui.LocalPaddings
+
+val DefaultBannerHeight = 168.dp
 
 /**
  * Most screens and pages follow a banner-style layout in Animite.
@@ -35,7 +36,7 @@ fun BannerLayout(
     banner: @Composable (Modifier) -> Unit,
     content: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
-    bannerHeight: Dp = dimensionResource(R.dimen.banner_height),
+    bannerHeight: Dp = DefaultBannerHeight,
     bannerModifier: Modifier = Modifier
         .height(bannerHeight)
         .fillMaxWidth(),

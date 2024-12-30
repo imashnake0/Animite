@@ -20,7 +20,7 @@ import com.imashnake.animite.core.R
 fun TranslucentStatusBarLayout(
     scrollState: ScrollState,
     modifier: Modifier = Modifier,
-    distanceUntilAnimated: Dp = dimensionResource(R.dimen.banner_height),
+    distanceUntilAnimated: Dp = DefaultBannerHeight,
     targetAlpha: Float = 0.74f,
     targetColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit

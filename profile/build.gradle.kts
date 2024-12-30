@@ -30,6 +30,8 @@ dependencies {
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
 
+    implementation(projects.media)
+
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)

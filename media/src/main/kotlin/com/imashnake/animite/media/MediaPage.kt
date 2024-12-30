@@ -81,6 +81,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
+import core.ui.layouts.DefaultBannerHeight
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
@@ -241,7 +242,7 @@ fun MediaPage(
                             .padding(
                                 top = dimensionResource(R.dimen.media_details_height)
                                         + LocalPaddings.current.medium
-                                        + dimensionResource(coreR.dimen.banner_height)
+                                        + DefaultBannerHeight
                                         - WindowInsets.statusBars
                                     .asPaddingValues()
                                     .calculateTopPadding()

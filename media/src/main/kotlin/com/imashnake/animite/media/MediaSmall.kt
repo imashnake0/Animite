@@ -1,4 +1,4 @@
-package core.ui
+package com.imashnake.animite.media
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.imashnake.animite.core.R
 import core.extensions.crossfadeModel
 import core.extensions.landscapeCutoutPadding
+import core.ui.LocalPaddings
 
 /**
  * A [LazyRow] of [MediaSmall]s.
