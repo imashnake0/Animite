@@ -47,7 +47,7 @@ import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
-import com.imashnake.animite.profile.tabs.ProfileTabs
+import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
@@ -166,8 +166,8 @@ private fun UserTabs(
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val pagerState = rememberPagerState(pageCount = { ProfileTabs.entries.size })
-    val titles = ProfileTabs.entries
+    val pagerState = rememberPagerState(pageCount = { ProfileTab.entries.size })
+    val titles = ProfileTab.entries
     val onBackground = MaterialTheme.colorScheme.onBackground
 
     Column(modifier) {
@@ -217,9 +217,9 @@ private fun UserTabs(
                 )
         ) { page ->
             Box(Modifier.fillMaxSize()) {
-                when (ProfileTabs.entries[page]) {
-                    ProfileTabs.ABOUT -> AboutTab(user)
-                    ProfileTabs.ANIME -> AnimeTab(
+                when (ProfileTab.entries[page]) {
+                    ProfileTab.ABOUT -> AboutTab(user)
+                    ProfileTab.ANIME -> AnimeTab(
                         mediaCollection = mediaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
