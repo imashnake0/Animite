@@ -70,8 +70,6 @@ import core.extensions.bannerParallax
 import core.extensions.crossfadeModel
 import core.extensions.landscapeCutoutPadding
 import core.ui.LocalPaddings
-import core.ui.MediaSmall
-import core.ui.MediaSmallRow
 import core.ui.NestedScrollableContent
 import core.ui.StatsRow
 import core.ui.layouts.BannerLayout
@@ -83,7 +81,6 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import core.ui.layouts.DefaultBannerHeight
 import kotlinx.serialization.Serializable
-import com.imashnake.animite.core.R as coreR
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
@@ -146,7 +143,7 @@ fun MediaPage(
                                     .skipToLookaheadSize()
                                     .padding(
                                         start = LocalPaddings.current.large
-                                                + dimensionResource(coreR.dimen.media_card_width)
+                                                + dimensionResource(R.dimen.media_card_width)
                                                 + LocalPaddings.current.large,
                                         end = LocalPaddings.current.large
                                     )
@@ -229,7 +226,7 @@ fun MediaPage(
                         targetValue = if (scrollState.value == 0) {
                             0.dp
                         } else {
-                            dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height)
+                            dimensionResource(R.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height)
                         },
                         animationSpec = tween(durationMillis = 750),
                         label = "media_card_height"
@@ -246,18 +243,18 @@ fun MediaPage(
                                         - WindowInsets.statusBars
                                     .asPaddingValues()
                                     .calculateTopPadding()
-                                        - dimensionResource(coreR.dimen.media_image_height)
+                                        - dimensionResource(R.dimen.media_image_height)
                                         + offset,
                                 start = LocalPaddings.current.large
                             )
                             .landscapeCutoutPadding()
-                            .height(dimensionResource(coreR.dimen.media_image_height) - offset)
+                            .height(dimensionResource(R.dimen.media_image_height) - offset)
                     ) {
                         MediaSmall(
                             image = media.coverImage,
                             onClick = {},
-                            imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                            cardWidth = dimensionResource(coreR.dimen.media_card_width),
+                            imageHeight = dimensionResource(R.dimen.media_image_height),
+                            cardWidth = dimensionResource(R.dimen.media_card_width),
                             modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(
                                     SharedContentKey(

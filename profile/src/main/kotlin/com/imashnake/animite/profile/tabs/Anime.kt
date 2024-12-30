@@ -7,11 +7,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.media.MediaSmall
+import com.imashnake.animite.media.MediaSmallRow
 import core.ui.LocalPaddings
-import com.imashnake.animite.core.R as coreR
 
 @Composable
 fun AnimeTab(
@@ -47,8 +47,6 @@ private fun UserMediaList(
                     image = media.coverImage,
                     label = media.title,
                     onClick = {},
-                    imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                    cardWidth = dimensionResource(coreR.dimen.media_card_width),
                 )
             }
         }

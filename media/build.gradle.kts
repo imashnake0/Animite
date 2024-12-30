@@ -38,6 +38,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+    implementation(libs.ktor.engine.android)
 
     // Compose
     implementation(libs.compose.animation)

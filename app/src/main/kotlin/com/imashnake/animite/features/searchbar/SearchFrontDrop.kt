@@ -44,12 +44,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.media.MediaSmall
 import core.Constants
 import core.extensions.landscapeCutoutPadding
 import core.ui.LocalPaddings
-import core.ui.MediaSmall
-import com.imashnake.animite.core.R as coreR
-import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
 /**
@@ -162,14 +160,12 @@ private fun SearchItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
+            .clip(RoundedCornerShape(18.dp))
             .clickable { onClick(item.id) }
     ) {
         MediaSmall(
             image = item.coverImage,
             onClick = { onClick(item.id) },
-            imageHeight = dimensionResource(mediaR.dimen.character_image_height),
-            cardWidth = dimensionResource(mediaR.dimen.character_card_width),
         )
 
         Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {

@@ -72,13 +72,13 @@ import core.extensions.bannerParallax
 import core.extensions.landscapeCutoutPadding
 import core.extensions.thenIf
 import core.ui.LocalPaddings
-import core.ui.MediaSmall
-import core.ui.MediaSmallRow
 import core.ui.ProgressIndicator
 import core.ui.layouts.BannerLayout
 import core.ui.layouts.TranslucentStatusBarLayout
 import core.ui.shaders.etherealShader
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.media.MediaSmall
+import com.imashnake.animite.media.MediaSmallRow
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -281,8 +281,6 @@ fun HomeRow(
                 image = media.coverImage,
                 label = media.title,
                 onClick = { onItemClicked(media) },
-                imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                cardWidth = dimensionResource(coreR.dimen.media_card_width),
                 modifier = Modifier.sharedBounds(
                     rememberSharedContentState(
                         SharedContentKey(

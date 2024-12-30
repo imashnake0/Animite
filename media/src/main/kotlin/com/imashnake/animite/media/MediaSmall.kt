@@ -96,10 +96,10 @@ fun MediaSmall(
     image: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageHeight: Dp,
-    cardWidth: Dp,
     imageModifier: Modifier = Modifier,
     textModifier: Modifier = Modifier,
+    imageHeight: Dp = dimensionResource(R.dimen.media_image_height),
+    cardWidth: Dp = dimensionResource(R.dimen.media_card_width),
     label: String? = null,
 ) {
     Card(
