@@ -4,7 +4,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +21,7 @@ fun TranslucentStatusBarLayout(
     scrollState: ScrollState,
     modifier: Modifier = Modifier,
     distanceUntilAnimated: Dp = dimensionResource(R.dimen.banner_height),
-    targetAlpha: Float = ContentAlpha.medium,
+    targetAlpha: Float = 0.74f,
     targetColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit
 ) {

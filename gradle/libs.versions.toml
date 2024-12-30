@@ -1,9 +1,11 @@
 [plugins]
 
 android-application = { id = "com.android.application", version.ref = "agp" }
-composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
@@ -65,6 +67,10 @@ hilt = "1.2.0"
 kotlin = "2.1.0"
 coroutines = "1.10.1"
 serialization = "1.7.3"
+
+# Compose Multiplatform
+# https://github.com/JetBrains/compose-multiplatform
+composeMultiplatform = "1.7.3"
 
 # KSP
 # https://github.com/google/ksp/releases.

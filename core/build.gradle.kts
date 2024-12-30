@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.detekt)
 }
 
@@ -20,33 +21,41 @@ android {
 
 kotlin {
     jvmToolchain(21)
+
+    androidTarget()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                // Compose
+                implementation(compose.material3)
+                implementation(compose.uiTooling)
+
+                // Compose Markdown
+                implementation(libs.boswelja.composeMarkdown.material3)
+
+                // Coil
+                implementation(libs.bundles.coil)
+
+                // Kotlin
+                implementation(libs.kotlin.coroutines.core)
+            }
+        }
+        androidUnitTest {
+            dependencies {
+                implementation(libs.test.junit)
+            }
+        }
+        androidInstrumentedTest {
+            dependencies {
+                implementation(libs.androidx.test.junit)
+                implementation(libs.androidx.test.espressoCore)
+                implementation(libs.compose.test.ui.testJunit4)
+            }
+        }
+    }
 }
 
 dependencies {
-    // AndroidX
-    implementation(libs.androidx.activityCompose)
-    implementation(libs.androidx.coreKtx)
-    implementation(libs.androidx.lifecycleRuntimeKtx)
 
-    // Compose
-    implementation(libs.bundles.compose)
-    implementation(libs.compose.material)
-    debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.compose.ui.toolingPreview)
-
-    // Compose Markdown
-    implementation(libs.boswelja.composeMarkdown.material3)
-
-    // Coil
-    implementation(libs.bundles.coil)
-
-    // Kotlin
-    implementation(libs.kotlin.coroutines.android)
-    implementation(libs.kotlin.coroutines.core)
-
-    testImplementation(libs.test.junit)
-
-    androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.androidx.test.espressoCore)
-    androidTestImplementation(libs.compose.test.ui.testJunit4)
 }
