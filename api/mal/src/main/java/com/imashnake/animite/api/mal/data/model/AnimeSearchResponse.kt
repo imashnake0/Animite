@@ -5,49 +5,82 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AnimeSearchResponse(
-    @SerialName("data") val data: Data
+    @SerialName("data") val data: List<PagingData>,
+    @SerialName("paging") val paging: Paging
 )
 
 @Serializable
-data class Data(
-    @SerialName("page") val page: Page
+data class PagingData(
+    @SerialName("node") val node: Node
 )
 
 @Serializable
-data class Page(
-    @SerialName("media") val media: List<Media>
+data class Paging(
+    @SerialName("next") val next: String?
 )
 
 @Serializable
-data class Media(
+data class AlternativeTitles(
+    @SerialName("synonyms") val synonyms: List<String>,
+    @SerialName("en") val en: String?,
+    @SerialName("ja") val ja: String?
+)
+
+@Serializable
+data class Broadcast(
+    @SerialName("day_of_the_week") val dayOfTheWeek: String?,
+    @SerialName("start_time") val startTime: String?
+)
+
+@Serializable
+data class Genres(
+    @SerialName("id") val id: Int?,
+    @SerialName("name") val name: String?
+)
+
+@Serializable
+data class MainPicture(
+    @SerialName("medium") val medium: String?,
+    @SerialName("large") val large: String?
+)
+
+@Serializable
+data class Node(
     @SerialName("id") val id: Int,
-    @SerialName("coverImage") val coverImage: CoverImage?,
-    @SerialName("title") val title: Title?,
-    @SerialName("season") val season: String?,
-    @SerialName("seasonYear") val seasonYear: Int?,
-    @SerialName("studios") val studios: Studios?,
-    @SerialName("format") val format: String?,
-    @SerialName("episodes") val episodes: Int?
+    @SerialName("title") val title: String?,
+    @SerialName("main_picture") val mainPicture: MainPicture?,
+    @SerialName("alternative_titles") val alternativeTitles: AlternativeTitles?,
+    @SerialName("start_date") val startDate: String?,
+    @SerialName("end_date") val endDate: String?,
+    @SerialName("synopsis") val synopsis: String?,
+    @SerialName("mean") val mean: Double?,
+    @SerialName("rank") val rank: Int?,
+    @SerialName("popularity") val popularity: Int?,
+    @SerialName("num_list_users") val numListUsers: Int?,
+    @SerialName("num_scoring_users") val numScoringUsers: Int?,
+    @SerialName("nsfw") val nsfw: String?,
+    @SerialName("created_at") val createdAt: String?,
+    @SerialName("updated_at") val updatedAt: String?,
+    @SerialName("media_type") val mediaType: String?,
+    @SerialName("status") val status: String?,
+    @SerialName("genres") val genres: List<Genres>,
+    @SerialName("num_episodes") val numEpisodes: Int?,
+    @SerialName("start_season") val startSeason: StartSeason?,
+    @SerialName("broadcast") val broadcast: Broadcast?,
+    @SerialName("source") val source: String?,
+    @SerialName("average_episode_duration") val averageEpisodeDuration: Int?,
+    @SerialName("rating") val rating: String?,
+    @SerialName("studios") val studios: List<PagingStudios>
 )
 
 @Serializable
-data class CoverImage(
-    @SerialName("extraLarge") val extraLarge: String?
+data class StartSeason(
+    @SerialName("year") val year: Int?,
+    @SerialName("season") val season: String?
 )
 
 @Serializable
-data class Title(
-    @SerialName("romaji") val romaji: String?,
-    @SerialName("english") val english: String?,
-    @SerialName("native") val native: String?
-)
-
-@Serializable
-data class Studios(
-    @SerialName("nodes") val nodes: List<Nodes>
-)
-
-@Serializable
-data class Nodes(
+data class PagingStudios(
+    @SerialName("id") val id: Int?,
     @SerialName("name") val name: String?
 )
