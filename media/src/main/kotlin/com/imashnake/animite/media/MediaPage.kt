@@ -51,6 +51,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -284,31 +286,20 @@ fun MediaBanner(
     tintColor: Color,
     modifier: Modifier = Modifier
 ) {
-    if (!imageUrl.isNullOrEmpty()) {
-        AsyncImage(
-            model = crossfadeModel(imageUrl),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier,
-            alignment = Alignment.Center,
-            colorFilter = ColorFilter.tint(
-                color = tintColor,
-                blendMode = BlendMode.SrcAtop
-            )
+    AsyncImage(
+        model = crossfadeModel(imageUrl),
+        contentDescription = null,
+        placeholder = ColorPainter(tintColor),
+        error = ColorPainter(tintColor),
+        fallback = ColorPainter(tintColor),
+        contentScale = ContentScale.Crop,
+        modifier = modifier,
+        alignment = Alignment.Center,
+        colorFilter = ColorFilter.tint(
+            color = tintColor,
+            blendMode = BlendMode.SrcAtop
         )
-    } else {
-        Image(
-            painter = painterResource(R.drawable.background),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier,
-            alignment = Alignment.TopCenter,
-            colorFilter = ColorFilter.tint(
-                color = tintColor,
-                blendMode = BlendMode.SrcAtop
-            )
-        )
-    }
+    )
 }
 
 @Composable
