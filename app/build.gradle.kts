@@ -68,6 +68,7 @@ dependencies {
     implementation(projects.navigation)
     implementation(projects.profile)
     implementation(projects.social)
+    implementation(projects.api.mal)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
