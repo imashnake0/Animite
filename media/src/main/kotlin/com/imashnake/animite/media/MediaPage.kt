@@ -88,6 +88,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
+import kotlin.math.log
 import com.imashnake.animite.core.R as coreR
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
@@ -138,7 +139,7 @@ fun MediaPage(
                         banner = { bannerModifier ->
                             MediaBanner(
                                 imageUrl = media.bannerImage,
-                                tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
+                                color = Color(media.color ?: 0).copy(alpha = 0.5f),
                                 modifier = bannerModifier.bannerParallax(scrollState)
                             )
                         },
@@ -283,20 +284,21 @@ fun MediaPage(
 @Composable
 fun MediaBanner(
     imageUrl: String?,
-    tintColor: Color,
+    color: Color,
     modifier: Modifier = Modifier
 ) {
+    Log.d("thisisit", "MediaBanner: $color")
     AsyncImage(
         model = crossfadeModel(imageUrl),
         contentDescription = null,
-        placeholder = ColorPainter(tintColor),
-        error = ColorPainter(tintColor),
-        fallback = ColorPainter(tintColor),
+        placeholder = ColorPainter(color),
+        error = ColorPainter(color),
+        fallback = ColorPainter(color),
         contentScale = ContentScale.Crop,
         modifier = modifier,
         alignment = Alignment.Center,
         colorFilter = ColorFilter.tint(
-            color = tintColor,
+            color = color.copy(alpha = 0.25f),
             blendMode = BlendMode.SrcAtop
         )
     )
