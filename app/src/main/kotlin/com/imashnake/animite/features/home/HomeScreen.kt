@@ -273,7 +273,7 @@ fun HomeRow(
     onItemClicked: (Media.Small) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     MediaSmallRow(type.title, list, modifier) { media ->
         with(sharedTransitionScope) {

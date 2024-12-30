@@ -150,7 +150,7 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
                     ),
                     blockQuoteStyle = animiteBlockQuoteStyle(),
                     codeBlockStyle = animiteCodeBlockStyle(),
-                    modifier = contentModifier
+                    modifier = contentModifier,
                 )
             }
         }
@@ -165,10 +165,10 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
 private fun UserTabs(
     user: User,
     mediaCollection: User.MediaCollection?,
-    modifier: Modifier = Modifier,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTabs.entries.size })

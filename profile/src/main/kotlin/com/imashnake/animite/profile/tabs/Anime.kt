@@ -24,10 +24,10 @@ import com.imashnake.animite.core.R as coreR
 @Composable
 fun AnimeTab(
     mediaCollection: User.MediaCollection?,
-    modifier: Modifier = Modifier,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
 
@@ -40,10 +40,10 @@ fun AnimeTab(
         if (!mediaCollection?.namedLists.isNullOrEmpty()) {
             UserMediaList(
                 lists =  mediaCollection!!.namedLists,
-                modifier = modifier,
                 onNavigateToMediaItem = onNavigateToMediaItem,
                 sharedTransitionScope = sharedTransitionScope,
                 animatedVisibilityScope = animatedVisibilityScope,
+                modifier = modifier,
             )
         }
     }
@@ -53,10 +53,10 @@ fun AnimeTab(
 @Composable
 private fun UserMediaList(
     lists: List<User.MediaCollection.NamedList>,
-    modifier: Modifier = Modifier,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
