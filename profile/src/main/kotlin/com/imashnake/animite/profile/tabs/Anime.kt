@@ -17,6 +17,11 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.SharedContentKey
+import com.imashnake.animite.navigation.SharedContentKey.Component.Card
+import com.imashnake.animite.navigation.SharedContentKey.Component.Image
+import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.core.R as coreR
 
 @Composable
@@ -61,22 +66,54 @@ private fun UserMediaList(
     ) {
         lists.fastForEach { namedList ->
             MediaSmallRow(namedList.name, namedList.list) { media ->
-                MediaSmall(
-                    image = media.coverImage,
-                    label = media.title,
-                    onClick = {
-                        onNavigateToMediaItem(
-                            MediaPage(
-                                id = media.id,
-                                // TODO: We can use the list's index instead.
-                                source = namedList.name.orEmpty(),
-                                mediaType = MediaType.ANIME.rawValue,
+                with(sharedTransitionScope) {
+                    MediaSmall(
+                        image = media.coverImage,
+                        label = media.title,
+                        onClick = {
+                            onNavigateToMediaItem(
+                                MediaPage(
+                                    id = media.id,
+                                    // TODO: We can use the list's index instead.
+                                    source = namedList.name.orEmpty(),
+                                    mediaType = MediaType.ANIME.rawValue,
+                                )
                             )
-                        )
-                    },
-                    imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                    cardWidth = dimensionResource(coreR.dimen.media_card_width),
-                )
+                        },
+                        imageHeight = dimensionResource(coreR.dimen.media_image_height),
+                        cardWidth = dimensionResource(coreR.dimen.media_card_width),
+                        modifier = Modifier.sharedBounds(
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = media.id,
+                                    source = namedList.name,
+                                    sharedComponents = Card to Page,
+                                )
+                            ),
+                            animatedVisibilityScope
+                        ),
+                        imageModifier = Modifier.sharedBounds(
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = media.id,
+                                    source = namedList.name,
+                                    sharedComponents = Image to Image,
+                                )
+                            ),
+                            animatedVisibilityScope,
+                        ),
+                        textModifier = Modifier.sharedBounds(
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = media.id,
+                                    source = namedList.name,
+                                    sharedComponents = Text to Text,
+                                )
+                            ),
+                            animatedVisibilityScope,
+                        ),
+                    )
+                }
             }
         }
     }
