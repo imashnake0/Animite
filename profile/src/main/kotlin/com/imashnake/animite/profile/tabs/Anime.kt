@@ -59,8 +59,8 @@ private fun UserMediaList(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
         modifier = modifier
     ) {
-        lists.fastForEach {
-            MediaSmallRow(it.name, it.list) { media ->
+        lists.fastForEach { namedList ->
+            MediaSmallRow(namedList.name, namedList.list) { media ->
                 MediaSmall(
                     image = media.coverImage,
                     label = media.title,
@@ -68,8 +68,8 @@ private fun UserMediaList(
                         onNavigateToMediaItem(
                             MediaPage(
                                 id = media.id,
-                                // TODO: Unhardcode these and make them unique.
-                                source = media.title.orEmpty(),
+                                // TODO: We can use the list's index instead.
+                                source = namedList.name.orEmpty(),
                                 mediaType = MediaType.ANIME.rawValue,
                             )
                         )

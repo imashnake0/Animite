@@ -220,6 +220,7 @@ fun HomeScreen(
                                                     onNavigateToMediaItem(
                                                         MediaPage(
                                                             id = media.id,
+                                                            // TODO: We can use the list's index instead.
                                                             source = mediaList.type.name,
                                                             mediaType = homeMediaType.value.rawValue,
                                                         )
