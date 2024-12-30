@@ -34,7 +34,6 @@ object NetworkModule {
         return HttpClient(CIO) {
             install(Logging) {
                 level = LogLevel.ALL
-
             }
             install(ContentNegotiation) {
                 json(json)
