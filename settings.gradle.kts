@@ -25,6 +25,7 @@ plugins {
 rootProject.name = "Animite"
 include(
     ":api:anilist",
+    ":api:mal",
     ":api:preferences",
     ":app",
     ":core",
