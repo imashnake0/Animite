@@ -6,42 +6,42 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AnimeSearchResponse(
     @SerialName("data") val data: List<PagingData>,
-    @SerialName("paging") val paging: Paging
+    @SerialName("paging") val paging: Paging,
 )
 
 @Serializable
 data class PagingData(
-    @SerialName("node") val node: Node
+    @SerialName("node") val node: Node,
 )
 
 @Serializable
 data class Paging(
-    @SerialName("next") val next: String?
+    @SerialName("next") val next: String?,
 )
 
 @Serializable
 data class AlternativeTitles(
     @SerialName("synonyms") val synonyms: List<String>,
     @SerialName("en") val en: String?,
-    @SerialName("ja") val ja: String?
+    @SerialName("ja") val ja: String?,
 )
 
 @Serializable
 data class Broadcast(
     @SerialName("day_of_the_week") val dayOfTheWeek: String?,
-    @SerialName("start_time") val startTime: String?
+    @SerialName("start_time") val startTime: String?,
 )
 
 @Serializable
 data class Genres(
     @SerialName("id") val id: Int?,
-    @SerialName("name") val name: String?
+    @SerialName("name") val name: String?,
 )
 
 @Serializable
 data class MainPicture(
     @SerialName("medium") val medium: String?,
-    @SerialName("large") val large: String?
+    @SerialName("large") val large: String?,
 )
 
 @Serializable
@@ -70,17 +70,17 @@ data class Node(
     @SerialName("source") val source: String?,
     @SerialName("average_episode_duration") val averageEpisodeDuration: Int?,
     @SerialName("rating") val rating: String?,
-    @SerialName("studios") val studios: List<PagingStudios>
+    @SerialName("studios") val studios: List<PagingStudios>,
 )
 
 @Serializable
 data class StartSeason(
     @SerialName("year") val year: Int?,
-    @SerialName("season") val season: String?
+    @SerialName("season") val season: String?,
 )
 
 @Serializable
 data class PagingStudios(
     @SerialName("id") val id: Int?,
-    @SerialName("name") val name: String?
+    @SerialName("name") val name: String?,
 )
