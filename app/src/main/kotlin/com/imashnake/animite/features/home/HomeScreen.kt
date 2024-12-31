@@ -5,7 +5,6 @@ import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -88,7 +87,6 @@ import com.materialkolor.ktx.hasEnoughContrast
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
@@ -221,6 +219,7 @@ fun HomeScreen(
                                                     onNavigateToMediaItem(
                                                         MediaPage(
                                                             id = media.id,
+                                                            // TODO: We can use the list's index instead.
                                                             source = mediaList.type.name,
                                                             mediaType = homeMediaType.value.rawValue,
                                                         )
@@ -264,7 +263,6 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeRow(
     list: List<Media.Small>,
@@ -272,7 +270,7 @@ fun HomeRow(
     onItemClicked: (Media.Small) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     MediaSmallRow(type.title, list, modifier) { media ->
         with(sharedTransitionScope) {
@@ -288,7 +286,8 @@ fun HomeRow(
                             sharedComponents = Card to Page,
                         )
                     ),
-                    animatedVisibilityScope
+                    animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                 ),
                 imageModifier = Modifier.sharedBounds(
                     rememberSharedContentState(

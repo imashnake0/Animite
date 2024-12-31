@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -50,6 +49,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -85,7 +86,6 @@ import kotlinx.serialization.Serializable
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",
@@ -131,7 +131,7 @@ fun MediaPage(
                         banner = { bannerModifier ->
                             MediaBanner(
                                 imageUrl = media.bannerImage,
-                                tintColor = Color(media.color ?: 0).copy(alpha = 0.25f),
+                                color = Color(media.color ?: 0).copy(alpha = 0.5f),
                                 modifier = bannerModifier.bannerParallax(scrollState)
                             )
                         },
@@ -276,34 +276,23 @@ fun MediaPage(
 @Composable
 fun MediaBanner(
     imageUrl: String?,
-    tintColor: Color,
+    color: Color,
     modifier: Modifier = Modifier
 ) {
-    if (!imageUrl.isNullOrEmpty()) {
-        AsyncImage(
-            model = crossfadeModel(imageUrl),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier,
-            alignment = Alignment.Center,
-            colorFilter = ColorFilter.tint(
-                color = tintColor,
-                blendMode = BlendMode.SrcAtop
-            )
+    AsyncImage(
+        model = crossfadeModel(imageUrl),
+        contentDescription = null,
+        placeholder = ColorPainter(color),
+        error = painterResource(R.drawable.background),
+        fallback = painterResource(R.drawable.background),
+        contentScale = ContentScale.Crop,
+        modifier = modifier,
+        alignment = Alignment.Center,
+        colorFilter = ColorFilter.tint(
+            color = color.copy(alpha = 0.25f),
+            blendMode = BlendMode.SrcAtop
         )
-    } else {
-        Image(
-            painter = painterResource(R.drawable.background),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier,
-            alignment = Alignment.TopCenter,
-            colorFilter = ColorFilter.tint(
-                color = tintColor,
-                blendMode = BlendMode.SrcAtop
-            )
-        )
-    }
+    )
 }
 
 @Composable
