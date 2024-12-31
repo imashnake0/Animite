@@ -18,10 +18,4 @@
     <dimen name="icon_size">56dp</dimen>
 
     <dimen name="banner_height">168dp</dimen>
-
-    <dimen name="media_card_width">140dp</dimen>
-    <dimen name="media_image_height">200dp</dimen>
-    <dimen name="media_card_corner_radius">18dp</dimen>
-    <dimen name="media_card_text_padding_horizontal">16dp</dimen>
-    <dimen name="media_card_text_padding_vertical">10dp</dimen>
 </resources>

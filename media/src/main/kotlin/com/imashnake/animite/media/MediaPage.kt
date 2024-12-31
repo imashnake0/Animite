@@ -75,8 +75,6 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
-import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -149,7 +147,7 @@ fun MediaPage(
                                     .skipToLookaheadSize()
                                     .padding(
                                         start = LocalPaddings.current.large
-                                                + dimensionResource(coreR.dimen.media_card_width)
+                                                + dimensionResource(R.dimen.media_card_width)
                                                 + LocalPaddings.current.large,
                                         end = LocalPaddings.current.large
                                     )
@@ -232,7 +230,7 @@ fun MediaPage(
                         targetValue = if (scrollState.value == 0) {
                             0.dp
                         } else {
-                            dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height)
+                            dimensionResource(R.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height)
                         },
                         animationSpec = tween(durationMillis = 750),
                         label = "media_card_height"
@@ -249,18 +247,18 @@ fun MediaPage(
                                         - WindowInsets.statusBars
                                     .asPaddingValues()
                                     .calculateTopPadding()
-                                        - dimensionResource(coreR.dimen.media_image_height)
+                                        - dimensionResource(R.dimen.media_image_height)
                                         + offset,
                                 start = LocalPaddings.current.large
                             )
                             .landscapeCutoutPadding()
-                            .height(dimensionResource(coreR.dimen.media_image_height) - offset)
+                            .height(dimensionResource(R.dimen.media_image_height) - offset)
                     ) {
                         MediaSmall(
                             image = media.coverImage,
                             onClick = {},
-                            imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                            cardWidth = dimensionResource(coreR.dimen.media_card_width),
+                            imageHeight = dimensionResource(R.dimen.media_image_height),
+                            cardWidth = dimensionResource(R.dimen.media_card_width),
                             modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(
                                     SharedContentKey(

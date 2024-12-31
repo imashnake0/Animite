@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui
+package com.imashnake.animite.media
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.ui.LocalPaddings
 
 /**
  * A [LazyRow] of [MediaSmall]s.
@@ -96,10 +96,10 @@ fun MediaSmall(
     image: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    imageHeight: Dp,
-    cardWidth: Dp,
     imageModifier: Modifier = Modifier,
     textModifier: Modifier = Modifier,
+    imageHeight: Dp = dimensionResource(R.dimen.media_image_height),
+    cardWidth: Dp = dimensionResource(R.dimen.media_card_width),
     label: String? = null,
 ) {
     Card(
