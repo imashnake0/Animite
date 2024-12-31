@@ -257,8 +257,6 @@ fun MediaPage(
                         MediaSmall(
                             image = media.coverImage,
                             onClick = {},
-                            imageHeight = dimensionResource(R.dimen.media_image_height),
-                            cardWidth = dimensionResource(R.dimen.media_card_width),
                             modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(
                                     SharedContentKey(
@@ -395,8 +393,6 @@ fun MediaCharacters(
             image = character.image,
             label = character.name,
             onClick = { Log.d("CharacterId", "${character.id}") },
-            imageHeight = dimensionResource(R.dimen.character_image_height),
-            cardWidth = dimensionResource(R.dimen.character_card_width),
         )
     }
 }
