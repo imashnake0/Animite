@@ -41,6 +41,7 @@ import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.ui.ComingSoonMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
