@@ -96,10 +96,6 @@ composeMarkdown = "1.1.0"
 # https://github.com/jordond/MaterialKolor.
 materialKolor = "2.0.0"
 
-# Ktor
-# https://github.com/ktorio/ktor
-ktor = "3.0.3"
-
 [libraries]
 
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
