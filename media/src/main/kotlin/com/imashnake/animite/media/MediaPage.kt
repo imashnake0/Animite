@@ -3,9 +3,7 @@ package com.imashnake.animite.media
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
-import android.text.method.LinkMovementMethod
 import android.util.Log
-import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
@@ -62,21 +60,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.boswelja.markdown.material3.MarkdownDocument
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
-import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -86,8 +80,8 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
+import com.imashnake.animite.core.ui.layouts.DefaultBannerHeight
 import kotlinx.serialization.Serializable
-import com.imashnake.animite.core.R as coreR
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
@@ -149,7 +143,7 @@ fun MediaPage(
                                     .skipToLookaheadSize()
                                     .padding(
                                         start = LocalPaddings.current.large
-                                                + dimensionResource(coreR.dimen.media_card_width)
+                                                + dimensionResource(R.dimen.media_card_width)
                                                 + LocalPaddings.current.large,
                                         end = LocalPaddings.current.large
                                     )
@@ -232,7 +226,7 @@ fun MediaPage(
                         targetValue = if (scrollState.value == 0) {
                             0.dp
                         } else {
-                            dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height)
+                            dimensionResource(R.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height)
                         },
                         animationSpec = tween(durationMillis = 750),
                         label = "media_card_height"
@@ -245,22 +239,22 @@ fun MediaPage(
                             .padding(
                                 top = dimensionResource(R.dimen.media_details_height)
                                         + LocalPaddings.current.medium
-                                        + dimensionResource(coreR.dimen.banner_height)
+                                        + DefaultBannerHeight
                                         - WindowInsets.statusBars
                                     .asPaddingValues()
                                     .calculateTopPadding()
-                                        - dimensionResource(coreR.dimen.media_image_height)
+                                        - dimensionResource(R.dimen.media_image_height)
                                         + offset,
                                 start = LocalPaddings.current.large
                             )
                             .landscapeCutoutPadding()
-                            .height(dimensionResource(coreR.dimen.media_image_height) - offset)
+                            .height(dimensionResource(R.dimen.media_image_height) - offset)
                     ) {
                         MediaSmall(
                             image = media.coverImage,
                             onClick = {},
-                            imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                            cardWidth = dimensionResource(coreR.dimen.media_card_width),
+                            imageHeight = dimensionResource(R.dimen.media_image_height),
+                            cardWidth = dimensionResource(R.dimen.media_card_width),
                             modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(
                                     SharedContentKey(
@@ -308,12 +302,6 @@ fun MediaDetails(
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier
 ) {
-    val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f).toArgb()
-
-    val html = remember(description) {
-        HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-    }
-
     Column(modifier) {
         Box(Modifier.fillMaxWidth()) {
             Text(
@@ -327,23 +315,7 @@ fun MediaDetails(
         }
 
         NestedScrollableContent { contentModifier ->
-            // TODO: Get rid of this once Compose supports HTML/Markdown
-            //  https://issuetracker.google.com/issues/139326648
-            AndroidView(
-                factory = { context ->
-                    TextView(context).apply {
-                        movementMethod = LinkMovementMethod.getInstance()
-                        setTextColor(textColor)
-                        textSize = 14f
-                        // This is needed since `FontFamily` can't be used with `AndroidView`.
-                        typeface = ResourcesCompat.getFont(
-                            context, coreR.font.manrope_medium
-                        )
-                    }
-                },
-                update = { it.text = html },
-                modifier = contentModifier
-            )
+            MarkdownDocument(description, modifier = contentModifier)
         }
     }
 }

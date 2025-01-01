@@ -6,15 +6,14 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.dimensionResource
-import com.imashnake.animite.core.R
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun ProgressIndicator() {
     LinearProgressIndicator(
         modifier = Modifier
-            .width(dimensionResource(R.dimen.progress_indicator_width))
-            .height(dimensionResource(R.dimen.progress_indicator_height)),
+            .width(100.dp)
+            .height(3.dp),
         strokeCap = StrokeCap.Round
     )
 }

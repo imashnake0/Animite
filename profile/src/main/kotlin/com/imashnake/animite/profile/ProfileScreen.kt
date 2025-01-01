@@ -49,6 +49,7 @@ import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.AnimeTab
 import com.imashnake.animite.profile.tabs.ProfileTab
+import com.imashnake.animite.core.ui.ComingSoonMessage
 import kotlinx.coroutines.launch
 import com.imashnake.animite.navigation.R as navigationR
 

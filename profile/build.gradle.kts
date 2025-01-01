@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
 }
@@ -39,6 +39,8 @@ dependencies {
     implementation(projects.media)
     implementation(projects.navigation)
 
+    implementation(projects.media)
+
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
@@ -62,6 +64,7 @@ dependencies {
 
     // Coil
     implementation(libs.bundles.coil)
+    implementation(libs.ktor.engine.android)
 
     // Kotlin
     implementation(libs.kotlin.coroutines.android)

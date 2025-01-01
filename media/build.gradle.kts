@@ -2,10 +2,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.android)
 
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
 }
@@ -45,7 +45,8 @@ dependencies {
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Coil
-    implementation(libs.coil.compose)
+    implementation(libs.bundles.coil)
+    implementation(libs.ktor.engine.android)
 
     // Compose
     implementation(libs.compose.animation)
@@ -56,6 +57,7 @@ dependencies {
     implementation(libs.compose.ui)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+    implementation(libs.boswelja.composeMarkdown.material3)
 
     // Hilt
     implementation(libs.hilt.android)

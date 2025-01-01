@@ -9,8 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.imashnake.animite.core.R
+import animite.core.generated.resources.Res
+import animite.core.generated.resources.coming_soon
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ComingSoonScreen(modifier: Modifier = Modifier) {
@@ -33,7 +34,7 @@ fun ComingSoonScreen(modifier: Modifier = Modifier) {
 @Composable
 fun ComingSoonMessage(modifier: Modifier = Modifier) {
     Text(
-        text = stringResource(R.string.coming_soon),
+        text = stringResource(Res.string.coming_soon),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.labelLarge,
         modifier = modifier

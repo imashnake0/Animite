@@ -39,6 +39,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.R
 
+internal val SearchIconSize = 56.dp
+
 /**
  * A Floating Action Button-esque collapsible search bar. When collapsed, it displays a search icon.
  * Expanding it reveals a text field with collapse and clear buttons.
@@ -128,7 +130,7 @@ internal fun ExpandedSearchBarContent(
         leadingIcon = {
             IconButton(
                 onClick = collapse,
-                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size))
+                modifier = Modifier.size(SearchIconSize)
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
@@ -142,7 +144,7 @@ internal fun ExpandedSearchBarContent(
                     text = ""
                     clearText()
                 },
-                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size))
+                modifier = Modifier.size(SearchIconSize)
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
