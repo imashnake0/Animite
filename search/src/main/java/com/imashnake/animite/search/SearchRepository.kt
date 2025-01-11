@@ -6,6 +6,7 @@ import com.imashnake.animite.api.mal.data.MyAnimeListSearchRepository
 import com.imashnake.animite.search.db.SearchDao
 import com.imashnake.animite.search.db.model.AniListSearch
 import com.imashnake.animite.search.db.model.MyAnimeListSearch
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -23,32 +24,35 @@ class SearchRepository @Inject constructor(
                 .collect(::send)
         }
 
-        launch {
-            aniListSearch.fetchSearch(MediaType.ANIME, 50, query)
-                .map { searchResults ->
-                    searchResults.map { searches ->
-                        searches.map { result ->
-                            AniListSearch(result.id, result.title.orEmpty())
-                        }
+        fetchAndSaveAniList(query)
+        fetchAndSaveMyAnimeList(query)
+    }
+
+    private suspend fun fetchAndSaveAniList(query: String) = coroutineScope {
+        aniListSearch.fetchSearch(MediaType.ANIME, 50, query)
+            .map { searchResults ->
+                searchResults.map { searches ->
+                    searches.map { result ->
+                        AniListSearch(result.id, result.title.orEmpty())
                     }
                 }
-                .collect {
-                    it.fold(
-                        onSuccess = { searchDao.insertAniListResults(it) },
-                        onFailure = { it.printStackTrace() }
-                    )
-                }
-        }
+            }
+            .collect {
+                it.fold(
+                    onSuccess = { results -> searchDao.insertAniListResults(results) },
+                    onFailure = { error -> error.printStackTrace() }
+                )
+            }
+    }
 
-        launch {
-            runCatching {
-                myAnimeListSearch.searchAnime(query, 50)
-            }.map {
-                it.data.map { MyAnimeListSearch(it.node.id, it.node.title.orEmpty()) }
-            }.fold(
-                onSuccess = { searchDao.insertMyAnimeListResults(it) },
-                onFailure = { it.printStackTrace() }
-            )
-        }
+    private suspend fun fetchAndSaveMyAnimeList(query: String) = coroutineScope {
+        runCatching {
+            myAnimeListSearch.searchAnime(query, 50)
+        }.map { results ->
+            results.data.map { result -> MyAnimeListSearch(result.node.id, result.node.title.orEmpty()) }
+        }.fold(
+            onSuccess = { results -> searchDao.insertMyAnimeListResults(results) },
+            onFailure = { error -> error.printStackTrace() }
+        )
     }
 }
