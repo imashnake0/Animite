@@ -19,7 +19,7 @@ desugaring = "2.1.4"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "8.7.3"
+agp = "8.8.0"
 
 # AndroidX
 # https://androidx.tech.
@@ -36,7 +36,7 @@ navigation = "2.8.5"
 apollo = "3.8.5"
 
 # DataStore
-# https://developer.android.com/jetpack/androidx/releases/datastore
+# https://developer.android.com/jetpack/androidx/releases/datastore.
 datastore = "1.1.1"
 
 # COIL
@@ -54,7 +54,7 @@ composeUi = "1.7.6"
 
 # Dagger
 # https://github.com/google/dagger/releases.
-dagger = "2.54"
+dagger = "2.55"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
@@ -64,11 +64,15 @@ hilt = "1.2.0"
 # https://kotlinlang.org/docs/releases.html#release-details.
 kotlin = "2.1.0"
 coroutines = "1.10.1"
-serialization = "1.7.3"
+serialization = "1.8.0"
 
 # KSP
 # https://github.com/google/ksp/releases.
 ksp = "2.1.0-1.0.29"
+
+# Ktor
+# https://ktor.io/docs/releases.html#release-details.
+ktor = "3.0.3"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
@@ -83,7 +87,7 @@ detekt = "1.23.7"
 composeMarkdown = "1.1.0"
 
 # MaterialKolor
-# https://github.com/jordond/MaterialKolor
+# https://github.com/jordond/MaterialKolor.
 materialKolor = "2.0.0"
 
 
@@ -122,7 +126,11 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-navigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt" }
 test-junit = { group = "junit", name = "junit", version.ref = "junit" }
 materialKolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
-
+ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-contentNegotation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 [bundles]
 
@@ -137,4 +145,12 @@ compose = [
 coil = [
     "coil-compose",
     "coil-network"
+]
+
+ktor = [
+    "ktor-core",
+    "ktor-cio",
+    "ktor-logging",
+    "ktor-contentNegotation",
+    "ktor-serialization"
 ]
