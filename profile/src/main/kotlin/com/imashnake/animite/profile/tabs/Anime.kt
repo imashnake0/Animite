@@ -24,7 +24,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.core.R as coreR
 
 @Composable
-fun AnimeTab(
+fun MediaTab(
     mediaCollection: User.MediaCollection?,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,

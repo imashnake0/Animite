@@ -47,7 +47,7 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
-import com.imashnake.animite.profile.tabs.AnimeTab
+import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
 import com.imashnake.animite.navigation.R as navigationR
@@ -222,13 +222,13 @@ private fun UserTabs(
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(user)
-                    ProfileTab.ANIME -> AnimeTab(
+                    ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
-                    ProfileTab.MANGA -> AnimeTab(
+                    ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
