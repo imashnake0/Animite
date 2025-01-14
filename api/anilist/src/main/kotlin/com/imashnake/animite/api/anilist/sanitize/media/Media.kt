@@ -132,7 +132,7 @@ data class Media(
         /** @see MediaSmall.id */
         val id: Int,
         /** @see MediaSmall.type */
-        val type: Type?,
+        val type: Type,
         /** @see MediaSmall.title */
         val title: String?,
         /** @see MediaSmall.coverImage */
@@ -141,12 +141,13 @@ data class Media(
         /** @see MediaSmall.type */
         enum class Type(val type: String) {
             ANIME("Anime"),
-            MANGA("Manga")
+            MANGA("Manga"),
+            UNKNOWN("Unknown"),
         }
 
         internal constructor(query: MediaSmall) : this(
             id = query.id,
-            type = query.type?.name?.let { Type.valueOf(it) },
+            type = query.type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large,
             title = query.title?.romaji ?: query.title?.english ?: query.title?.native
         )

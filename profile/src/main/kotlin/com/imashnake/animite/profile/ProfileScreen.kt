@@ -62,7 +62,8 @@ fun ProfileScreen(
 ) {
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
-    val viewerMediaLists by viewModel.viewerMediaList.collectAsState(initial = null)
+    val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState(initial = null)
+    val viewerMangaLists by viewModel.viewerMangaLists.collectAsState(initial = null)
 
     Box(
         contentAlignment = Alignment.Center,
@@ -115,7 +116,8 @@ fun ProfileScreen(
                             Spacer(Modifier.size(LocalPaddings.current.medium))
                             UserTabs(
                                 user = this@run,
-                                mediaCollection = viewerMediaLists?.data,
+                                animeCollection = viewerAnimeLists?.data,
+                                mangaCollection = viewerMangaLists?.data,
                                 onNavigateToMediaItem = onNavigateToMediaItem,
                                 sharedTransitionScope = sharedTransitionScope,
                                 animatedVisibilityScope = animatedVisibilityScope,
@@ -159,7 +161,8 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
 @Composable
 private fun UserTabs(
     user: User,
-    mediaCollection: User.MediaCollection?,
+    animeCollection: User.MediaCollection?,
+    mangaCollection: User.MediaCollection?,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -220,7 +223,13 @@ private fun UserTabs(
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(user)
                     ProfileTab.ANIME -> AnimeTab(
-                        mediaCollection = mediaCollection,
+                        mediaCollection = animeCollection,
+                        onNavigateToMediaItem = onNavigateToMediaItem,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
+                    ProfileTab.MANGA -> AnimeTab(
+                        mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,

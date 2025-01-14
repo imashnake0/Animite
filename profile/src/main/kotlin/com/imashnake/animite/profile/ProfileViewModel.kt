@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistUserRepository
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
@@ -44,9 +45,16 @@ class ProfileViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
-    val viewerMediaList = preferencesRepository.viewerId.flatMapLatest {
+    val viewerAnimeLists = preferencesRepository.viewerId.flatMapLatest {
         userRepository
-            .fetchUserMediaList(it?.toIntOrNull())
+            .fetchUserMediaList(it?.toIntOrNull(), MediaType.ANIME)
+            .asResource()
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    }
+
+    val viewerMangaLists = preferencesRepository.viewerId.flatMapLatest {
+        userRepository
+            .fetchUserMediaList(it?.toIntOrNull(), MediaType.MANGA)
             .asResource()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
     }
