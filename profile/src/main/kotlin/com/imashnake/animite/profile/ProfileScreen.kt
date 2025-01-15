@@ -47,7 +47,7 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
-import com.imashnake.animite.profile.tabs.AnimeTab
+import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
 import com.imashnake.animite.navigation.R as navigationR
@@ -62,7 +62,8 @@ fun ProfileScreen(
 ) {
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
-    val viewerMediaLists by viewModel.viewerMediaList.collectAsState(initial = null)
+    val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState(initial = null)
+    val viewerMangaLists by viewModel.viewerMangaLists.collectAsState(initial = null)
 
     Box(
         contentAlignment = Alignment.Center,
@@ -115,7 +116,8 @@ fun ProfileScreen(
                             Spacer(Modifier.size(LocalPaddings.current.medium))
                             UserTabs(
                                 user = this@run,
-                                mediaCollection = viewerMediaLists?.data,
+                                animeCollection = viewerAnimeLists?.data,
+                                mangaCollection = viewerMangaLists?.data,
                                 onNavigateToMediaItem = onNavigateToMediaItem,
                                 sharedTransitionScope = sharedTransitionScope,
                                 animatedVisibilityScope = animatedVisibilityScope,
@@ -159,7 +161,8 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
 @Composable
 private fun UserTabs(
     user: User,
-    mediaCollection: User.MediaCollection?,
+    animeCollection: User.MediaCollection?,
+    mangaCollection: User.MediaCollection?,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -219,8 +222,14 @@ private fun UserTabs(
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(user)
-                    ProfileTab.ANIME -> AnimeTab(
-                        mediaCollection = mediaCollection,
+                    ProfileTab.ANIME -> MediaTab(
+                        mediaCollection = animeCollection,
+                        onNavigateToMediaItem = onNavigateToMediaItem,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
+                    ProfileTab.MANGA -> MediaTab(
+                        mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,

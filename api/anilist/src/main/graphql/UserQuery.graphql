@@ -22,9 +22,8 @@ query Viewer {
     }
 }
 
-query UserMediaListQuery($userId: Int) {
-    # TODO: Support MANGA type.
-    mediaListCollection: MediaListCollection(userId: $userId, type: ANIME) {
+query UserMediaListQuery($userId: Int, $type: MediaType) {
+    mediaListCollection: MediaListCollection(userId: $userId, type: $type) {
         lists {
             name
             entries {

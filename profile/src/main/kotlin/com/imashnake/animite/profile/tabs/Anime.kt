@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
@@ -25,7 +24,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.core.R as coreR
 
 @Composable
-fun AnimeTab(
+fun MediaTab(
     mediaCollection: User.MediaCollection?,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
@@ -76,7 +75,7 @@ private fun UserMediaList(
                                     id = media.id,
                                     // TODO: We can use the list's index instead.
                                     source = namedList.name.orEmpty(),
-                                    mediaType = MediaType.ANIME.rawValue,
+                                    mediaType = media.type.name,
                                 )
                             )
                         },
