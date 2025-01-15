@@ -144,13 +144,15 @@ fun MediaPage(
                                 modifier = Modifier
                                     .skipToLookaheadSize()
                                     .padding(
-                                        start = LocalPaddings.current.large
+                                        start = LocalPaddings.current.large / 2
                                                 + dimensionResource(coreR.dimen.media_card_width)
                                                 + LocalPaddings.current.large,
-                                        end = LocalPaddings.current.large
+                                        end = LocalPaddings.current.large / 2
                                     )
                                     .landscapeCutoutPadding()
-                                    .height(dimensionResource(R.dimen.media_details_height)),
+                                    .height(
+                                        dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
+                                    ),
                                 onClick = {  },
                                 textModifier = Modifier.sharedBounds(
                                     rememberSharedContentState(
@@ -221,7 +223,7 @@ fun MediaPage(
                                 )
                             }
                         },
-                        contentModifier = Modifier.padding(top = LocalPaddings.current.medium)
+                        contentModifier = Modifier.padding(top = LocalPaddings.current.medium / 2)
                     )
 
                     // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
@@ -305,7 +307,13 @@ fun MediaDetails(
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier
 ) {
-    Column(modifier.clickable { onClick() }) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(LocalPaddings.current.small))
+            .clickable { onClick() }
+            .padding(horizontal = LocalPaddings.current.large / 2)
+            .padding(top = LocalPaddings.current.medium / 2)
+    ) {
         Box(Modifier.fillMaxWidth()) {
             Text(
                 text = title,
