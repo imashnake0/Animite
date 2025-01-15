@@ -2,10 +2,7 @@ package com.imashnake.animite.media
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
-import android.text.method.LinkMovementMethod
 import android.util.Log
-import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
@@ -52,19 +49,17 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -88,6 +83,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
+import androidx.core.net.toUri
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
@@ -155,6 +151,7 @@ fun MediaPage(
                                     )
                                     .landscapeCutoutPadding()
                                     .height(dimensionResource(R.dimen.media_details_height)),
+                                onClick = {  },
                                 textModifier = Modifier.sharedBounds(
                                     rememberSharedContentState(
                                         SharedContentKey(
@@ -229,11 +226,10 @@ fun MediaPage(
 
                     // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
                     val offset by animateDpAsState(
-                        targetValue = if (scrollState.value == 0) {
+                        targetValue = if (scrollState.value == 0)
                             0.dp
-                        } else {
-                            dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height)
-                        },
+                        else
+                            dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height),
                         animationSpec = tween(durationMillis = 750),
                         label = "media_card_height"
                     )
@@ -305,16 +301,11 @@ fun MediaBanner(
 fun MediaDetails(
     title: String,
     description: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier
 ) {
-    val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f).toArgb()
-
-    val html = remember(description) {
-        HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-    }
-
-    Column(modifier) {
+    Column(modifier.clickable { onClick() }) {
         Box(Modifier.fillMaxWidth()) {
             Text(
                 text = title,
@@ -327,22 +318,11 @@ fun MediaDetails(
         }
 
         NestedScrollableContent { contentModifier ->
-            // TODO: Get rid of this once Compose supports HTML/Markdown
-            //  https://issuetracker.google.com/issues/139326648
-            AndroidView(
-                factory = { context ->
-                    TextView(context).apply {
-                        movementMethod = LinkMovementMethod.getInstance()
-                        setTextColor(textColor)
-                        textSize = 14f
-                        // This is needed since `FontFamily` can't be used with `AndroidView`.
-                        typeface = ResourcesCompat.getFont(
-                            context, coreR.font.manrope_medium
-                        )
-                    }
-                },
-                update = { it.text = html },
-                modifier = contentModifier
+            Text(
+                text = AnnotatedString.fromHtml(description),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = contentModifier,
             )
         }
     }
@@ -425,7 +405,7 @@ fun MediaTrailer(
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
                 .background(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f))
                 .clickable {
-                    val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse(trailer.url))
+                    val appIntent = Intent(Intent.ACTION_VIEW, trailer.url?.toUri())
                     context.startActivity(appIntent)
                 }
         ) {
