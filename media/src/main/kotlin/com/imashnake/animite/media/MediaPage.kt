@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,10 +34,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -88,6 +93,7 @@ import androidx.core.net.toUri
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",
@@ -101,6 +107,11 @@ fun MediaPage(
     val scrollState = rememberScrollState()
 
     val media = viewModel.uiState
+
+    var showSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false,
+    )
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
@@ -153,7 +164,7 @@ fun MediaPage(
                                     .height(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
-                                onClick = {  },
+                                onClick = { showSheet = true },
                                 textModifier = Modifier.sharedBounds(
                                     rememberSharedContentState(
                                         SharedContentKey(
@@ -273,6 +284,30 @@ fun MediaPage(
                     }
                 }
             }
+
+            if (showSheet)
+                ModalBottomSheet(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(horizontal = LocalPaddings.current.medium),
+                    sheetState = sheetState,
+                    onDismissRequest = { showSheet = false },
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = LocalPaddings.current.large),
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+                    ) {
+                        Text(
+                            text = media.title.orEmpty(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+
+                        MediaDescription(
+                            html = media.description.orEmpty(),
+                        )
+                    }
+                }
         }
     }
 }
@@ -326,14 +361,22 @@ fun MediaDetails(
         }
 
         NestedScrollableContent { contentModifier ->
-            Text(
-                text = AnnotatedString.fromHtml(description),
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = contentModifier,
-            )
+            MediaDescription(description, contentModifier)
         }
     }
+}
+
+@Composable
+fun MediaDescription(
+    html: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = AnnotatedString.fromHtml(html),
+        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = modifier,
+    )
 }
 
 @Composable
