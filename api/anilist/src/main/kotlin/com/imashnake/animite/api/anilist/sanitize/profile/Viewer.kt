@@ -30,6 +30,7 @@ data class User(
     val avatar: String?,
     /** @see User.bannerImage */
     val banner: String?,
+
     // region About
     /** @see User.Anime.count */
     val count: Int?,
@@ -38,7 +39,12 @@ data class User(
     /** @see User.Anime.meanScore */
     val meanScore: Float?,
     /** @see User.Anime.genres */
-    val genres: List<Genre>
+    val genres: List<Genre>,
+    // endregion
+
+    // region Fave
+    /** @see User.favourites */
+    val favourites: List<MediaCollection.NamedList>,
     // endregion
 ) {
     /**
@@ -116,7 +122,12 @@ data class User(
                 // Filters out anime genres that contribute to less than 5%.
                 it.mediaCount > totalCount/20
             }.sortedByDescending { it.mediaCount }
-        }
+        },
+        favourites = listOfNotNull(
+            query.favourites?.anime?.let { MediaCollection.NamedList(it) },
+            query.favourites?.manga?.let { MediaCollection.NamedList(it) },
+            query.favourites?.characters?.let { MediaCollection.NamedList(it) },
+        )
     )
 
     enum class Favouritables {
