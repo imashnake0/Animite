@@ -106,12 +106,8 @@ data class Media(
             )
         },
         genres = query.genres?.filterNotNull().orEmpty(),
-        characters = if (query.characters?.nodes == null) { emptyList() } else {
-            // TODO: Is this filter valid?
-            query.characters.nodes.filter { it?.characterSmall?.name != null }.map {
-                Character(it!!.characterSmall)
-            }
-        },
+        characters = query.characters?.nodes.orEmpty().filter { it?.characterSmall?.name != null }
+            .map { Character(it!!.characterSmall) },
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
             null
         } else {

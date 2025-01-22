@@ -131,6 +131,8 @@ data class User(
     )
 
     enum class Favouritables {
-        Anime, Manga, Characters,
+        Anime,
+        Manga,
+        Characters,
     }
 }
