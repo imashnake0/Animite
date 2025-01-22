@@ -47,6 +47,7 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
+import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
@@ -234,6 +235,7 @@ private fun UserTabs(
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
+                    ProfileTab.FAVOURITES -> FavouritesTab(user.favourites)
                     else -> ComingSoonMessage(Modifier.align(Alignment.Center))
                 }
             }

@@ -75,14 +75,14 @@ data class User(
             internal constructor(query: User.Anime1) : this(
                 name = Favouritables.Anime.name,
                 list = query.nodes.orEmpty().mapNotNull {
-                    Media.Small(it?.mediaSmall ?: return@mapNotNull)
+                    Media.Small(it?.mediaSmall ?: return@mapNotNull null)
                 }
             )
 
             internal constructor(query: User.Manga) : this(
                 name = Favouritables.Manga.name,
                 list = query.nodes.orEmpty().mapNotNull {
-                    Media.Small(it?.mediaSmall ?: return@mapNotNull)
+                    Media.Small(it?.mediaSmall ?: return@mapNotNull null)
                 }
             )
 
@@ -124,9 +124,9 @@ data class User(
             }.sortedByDescending { it.mediaCount }
         },
         favourites = listOfNotNull(
-            query.favourites?.anime?.let { MediaCollection.NamedList(it) },
-            query.favourites?.manga?.let { MediaCollection.NamedList(it) },
-            query.favourites?.characters?.let { MediaCollection.NamedList(it) },
+            query.favourites?.anime?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.manga?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.characters?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
         )
     )
 
