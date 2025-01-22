@@ -57,12 +57,33 @@ data class User(
     data class MediaCollection(val namedLists: List<NamedList>) {
         data class NamedList(
             val name: String?,
-            val list: List<Media.Small>
+            val list: List<Any>,
         ) {
             internal constructor(query: UserMediaListQuery.List) : this(
                 name = query.name,
                 list = query.entries.orEmpty().mapNotNull {
                     Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null)
+                }
+            )
+
+            internal constructor(query: User.Anime1) : this(
+                name = Favouritables.Anime.name,
+                list = query.nodes.orEmpty().mapNotNull {
+                    Media.Small(it?.mediaSmall ?: return@mapNotNull)
+                }
+            )
+
+            internal constructor(query: User.Manga) : this(
+                name = Favouritables.Manga.name,
+                list = query.nodes.orEmpty().mapNotNull {
+                    Media.Small(it?.mediaSmall ?: return@mapNotNull)
+                }
+            )
+
+            internal constructor(query: User.Characters) : this(
+                name = Favouritables.Characters.name,
+                list = query.nodes.orEmpty().filter { it?.characterSmall?.name != null }.map {
+                    Media.Character(it!!.characterSmall)
                 }
             )
         }
@@ -97,4 +118,8 @@ data class User(
             }.sortedByDescending { it.mediaCount }
         }
     )
+
+    enum class Favouritables {
+        Anime, Manga, Characters,
+    }
 }

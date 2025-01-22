@@ -54,7 +54,13 @@ data class Media(
         val image: String?,
         /** @see CharacterSmall.name */
         val name: String?,
-    )
+    ) {
+        internal constructor(query: CharacterSmall) : this(
+            id = query.id,
+            image = query.image?.large,
+            name = query.name?.full,
+        )
+    }
 
     data class Trailer(
         /** @see MediaQuery.Trailer.id
@@ -103,11 +109,7 @@ data class Media(
         characters = if (query.characters?.nodes == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.characters.nodes.filter { it?.characterSmall?.name != null }.map {
-                Character(
-                    id = it!!.characterSmall.id,
-                    image = it.characterSmall.image?.large,
-                    name = it.characterSmall.name?.full
-                )
+                Character(it!!.characterSmall)
             }
         },
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
