@@ -1,0 +1,9 @@
+fragment CharacterSmall on Character {
+    id
+    image {
+        large
+    }
+    name {
+        full
+    }
+}
