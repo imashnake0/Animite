@@ -51,6 +51,7 @@ import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
+import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
 @Suppress("LongMethod")
@@ -236,7 +237,10 @@ private fun UserTabs(
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(user.favourites)
-                    else -> ComingSoonMessage(Modifier.align(Alignment.Center))
+                    else -> ComingSoonMessage(
+                        message = stringResource(coreR.string.coming_soon),
+                        modifier = Modifier.align(Alignment.Center),
+                    )
                 }
             }
         }
