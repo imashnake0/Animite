@@ -18,6 +18,11 @@ import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.core.R as coreR
 
+/**
+ * The viewer's favourite Anime, Manga, and Characters.
+ *
+ * @param favouriteLists List of the favourite items as [NamedList]s.
+ */
 @Composable
 fun FavouritesTab(
     favouriteLists: List<NamedList>,
@@ -32,7 +37,6 @@ fun FavouritesTab(
     ) {
         UserFavouriteLists(favouriteLists)
     }
-
 }
 
 @Composable

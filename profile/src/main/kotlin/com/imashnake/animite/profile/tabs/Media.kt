@@ -24,6 +24,12 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.core.R as coreR
 
+/**
+ * This can either be the anime tab or manga tab, it has a collection of lists for different
+ * statuses.
+ *
+ * @param mediaCollection Collection of status lists for anime and manga.
+ */
 @Composable
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
