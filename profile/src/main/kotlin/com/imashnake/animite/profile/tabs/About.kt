@@ -36,6 +36,11 @@ import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.profile.R
 import kotlinx.coroutines.launch
 
+/**
+ * Viewer's stats and genre distribution.
+ *
+ * @param user The viewer.
+ */
 @Composable
 fun AboutTab(
     user: User,

@@ -115,7 +115,7 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         do {
             withFrameMillis {
-                time.value += 0.01f
+                time.floatValue += 0.01f
             }
         } while (true)
     }

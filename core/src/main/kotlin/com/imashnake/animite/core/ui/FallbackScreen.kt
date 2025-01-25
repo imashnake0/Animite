@@ -9,33 +9,34 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.imashnake.animite.core.R
 
 @Composable
-fun ComingSoonScreen(modifier: Modifier = Modifier) {
+fun FallbackScreen(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                LocalPaddings.current.tiny
-            )
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
         ) {
-            ComingSoonMessage()
+            FallbackMessage(message)
         }
     }
 }
 
 @Composable
-fun ComingSoonMessage(modifier: Modifier = Modifier) {
+fun FallbackMessage(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
-        text = stringResource(R.string.coming_soon),
+        text = message,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.labelLarge,
-        modifier = modifier
+        modifier = modifier,
     )
 }

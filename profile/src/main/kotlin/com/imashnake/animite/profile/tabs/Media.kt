@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.util.fastForEach
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
@@ -23,6 +24,12 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.core.R as coreR
 
+/**
+ * This can either be the anime tab or manga tab, it has a collection of lists for different
+ * statuses.
+ *
+ * @param mediaCollection Collection of status lists for anime and manga.
+ */
 @Composable
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
@@ -40,7 +47,7 @@ fun MediaTab(
     ) {
         // TODO: Why is this not smart-casting?
         if (!mediaCollection?.namedLists.isNullOrEmpty()) {
-            UserMediaList(
+            UserMediaLists(
                 lists =  mediaCollection!!.namedLists,
                 onNavigateToMediaItem = onNavigateToMediaItem,
                 sharedTransitionScope = sharedTransitionScope,
@@ -52,7 +59,7 @@ fun MediaTab(
 }
 
 @Composable
-private fun UserMediaList(
+private fun UserMediaLists(
     lists: List<User.MediaCollection.NamedList>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
@@ -64,8 +71,9 @@ private fun UserMediaList(
         modifier = modifier
     ) {
         lists.fastForEach { namedList ->
-            MediaSmallRow(namedList.name, namedList.list) { media ->
+            MediaSmallRow(namedList.name, namedList.list) { item ->
                 with(sharedTransitionScope) {
+                    val media = item as Media.Small
                     MediaSmall(
                         image = media.coverImage,
                         label = media.title,

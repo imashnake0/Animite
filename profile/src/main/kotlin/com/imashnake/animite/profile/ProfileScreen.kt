@@ -41,15 +41,17 @@ import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
-import com.imashnake.animite.core.ui.ComingSoonMessage
+import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
+import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
+import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
 @Suppress("LongMethod")
@@ -234,7 +236,11 @@ private fun UserTabs(
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
-                    else -> ComingSoonMessage(Modifier.align(Alignment.Center))
+                    ProfileTab.FAVOURITES -> FavouritesTab(user.favourites)
+                    else -> FallbackMessage(
+                        message = stringResource(coreR.string.coming_soon),
+                        modifier = Modifier.align(Alignment.Center),
+                    )
                 }
             }
         }

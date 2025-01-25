@@ -2,8 +2,10 @@ package com.imashnake.animite.api.anilist.sanitize.media
 
 import android.graphics.Color
 import com.imashnake.animite.api.anilist.MediaQuery
+import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
+import androidx.core.graphics.toColorInt
 
 private const val HQ_DEFAULT = "hqdefault"
 private const val MAX_RES_DEFAULT = "maxresdefault"
@@ -46,13 +48,19 @@ data class Media(
     }
 
     data class Character(
-        /** @see MediaQuery.Node.id */
+        /** @see CharacterSmall.id */
         val id: Int,
-        /** @see MediaQuery.Node.image */
+        /** @see CharacterSmall.image */
         val image: String?,
-        /** @see MediaQuery.Node.name */
+        /** @see CharacterSmall.name */
         val name: String?,
-    )
+    ) {
+        internal constructor(query: CharacterSmall) : this(
+            id = query.id,
+            image = query.image?.large,
+            name = query.name?.full,
+        )
+    }
 
     data class Trailer(
         /** @see MediaQuery.Trailer.id
@@ -79,7 +87,7 @@ data class Media(
         id = query.id,
         bannerImage = query.bannerImage,
         coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
-        color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
+        color = query.coverImage?.color?.toColorInt() ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
         rankings = if (query.rankings == null) { emptyList() } else {
@@ -98,16 +106,8 @@ data class Media(
             )
         },
         genres = query.genres?.filterNotNull().orEmpty(),
-        characters = if (query.characters?.nodes == null) { emptyList() } else {
-            // TODO: Is this filter valid?
-            query.characters.nodes.filter { it?.name != null }.map {
-                Character(
-                    id = it!!.id,
-                    image = it.image?.large,
-                    name = it.name?.full
-                )
-            }
-        },
+        characters = query.characters?.nodes.orEmpty().filter { it?.characterSmall?.name != null }
+            .map { Character(it!!.characterSmall) },
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
             null
         } else {

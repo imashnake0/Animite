@@ -17,4 +17,22 @@ fragment User on User {
             }
         }
     }
+    favourites {
+        anime(page: 1, perPage: 10) {
+            nodes {
+                ...MediaSmall
+            }
+        }
+        manga(page: 1, perPage: 10) {
+            nodes {
+                ...MediaSmall
+            }
+        }
+        characters(page: 1, perPage: 10) {
+            nodes {
+                ...CharacterSmall
+            }
+        }
+        # TODO: Support staff and studios.
+    }
 }

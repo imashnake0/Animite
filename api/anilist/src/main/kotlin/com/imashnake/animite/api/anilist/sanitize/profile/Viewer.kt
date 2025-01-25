@@ -30,6 +30,7 @@ data class User(
     val avatar: String?,
     /** @see User.bannerImage */
     val banner: String?,
+
     // region About
     /** @see User.Anime.count */
     val count: Int?,
@@ -38,7 +39,12 @@ data class User(
     /** @see User.Anime.meanScore */
     val meanScore: Float?,
     /** @see User.Anime.genres */
-    val genres: List<Genre>
+    val genres: List<Genre>,
+    // endregion
+
+    // region Fave
+    /** @see User.favourites */
+    val favourites: List<MediaCollection.NamedList>,
     // endregion
 ) {
     /**
@@ -57,12 +63,33 @@ data class User(
     data class MediaCollection(val namedLists: List<NamedList>) {
         data class NamedList(
             val name: String?,
-            val list: List<Media.Small>
+            val list: List<Any>,
         ) {
             internal constructor(query: UserMediaListQuery.List) : this(
                 name = query.name,
                 list = query.entries.orEmpty().mapNotNull {
                     Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null)
+                }
+            )
+
+            internal constructor(query: User.Anime1) : this(
+                name = Favouritables.Anime.name,
+                list = query.nodes.orEmpty().mapNotNull {
+                    Media.Small(it?.mediaSmall ?: return@mapNotNull null)
+                }
+            )
+
+            internal constructor(query: User.Manga) : this(
+                name = Favouritables.Manga.name,
+                list = query.nodes.orEmpty().mapNotNull {
+                    Media.Small(it?.mediaSmall ?: return@mapNotNull null)
+                }
+            )
+
+            internal constructor(query: User.Characters) : this(
+                name = Favouritables.Characters.name,
+                list = query.nodes.orEmpty().filter { it?.characterSmall?.name != null }.map {
+                    Media.Character(it!!.characterSmall)
                 }
             )
         }
@@ -95,6 +122,17 @@ data class User(
                 // Filters out anime genres that contribute to less than 5%.
                 it.mediaCount > totalCount/20
             }.sortedByDescending { it.mediaCount }
-        }
+        },
+        favourites = listOfNotNull(
+            query.favourites?.anime?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.manga?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.characters?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
+        )
     )
+
+    enum class Favouritables {
+        Anime,
+        Manga,
+        Characters,
+    }
 }
