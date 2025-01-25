@@ -9,12 +9,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User.MediaCollection.NamedList
+import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.profile.R
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.core.R as coreR
 
@@ -30,12 +33,13 @@ fun FavouritesTab(
 ) {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier
-            .verticalScroll(scrollState)
-            .padding(vertical = LocalPaddings.current.large)
-    ) {
-        UserFavouriteLists(favouriteLists)
+    when {
+        favouriteLists.isEmpty() -> FallbackScreen(stringResource(R.string.no_favourites))
+        else -> Column(
+            modifier
+                .verticalScroll(scrollState)
+                .padding(vertical = LocalPaddings.current.large)
+        ) { UserFavouriteLists(favouriteLists) }
     }
 }
 

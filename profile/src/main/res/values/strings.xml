@@ -11,4 +11,6 @@
     <string name="mean_score">MEAN\nSCORE</string>
 
     <string name="genres">Genres</string>
+
+    <string name="no_favourites">No Favourites</string>
 </resources>
