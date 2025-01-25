@@ -41,7 +41,7 @@ import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
-import com.imashnake.animite.core.ui.ComingSoonMessage
+import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -237,7 +237,7 @@ private fun UserTabs(
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(user.favourites)
-                    else -> ComingSoonMessage(
+                    else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
                         modifier = Modifier.align(Alignment.Center),
                     )

@@ -6,12 +6,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.imashnake.animite.core.ui.ComingSoonScreen
+import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.R as coreR
 
 @Composable
 fun SocialScreen() {
-    ComingSoonScreen(
+    FallbackScreen(
         message = stringResource(coreR.string.coming_soon),
         modifier = Modifier
             .fillMaxSize()
