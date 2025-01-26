@@ -257,9 +257,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
-            ) {
-                ProgressIndicator()
-            }
+            ) { ProgressIndicator() }
         }
     }
 }

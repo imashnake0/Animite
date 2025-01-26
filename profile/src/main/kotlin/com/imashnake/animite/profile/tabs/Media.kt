@@ -68,7 +68,7 @@ private fun UserMediaLists(
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
-        modifier = modifier
+        modifier = modifier,
     ) {
         lists.fastForEach { namedList ->
             MediaSmallRow(namedList.name, namedList.list) { item ->

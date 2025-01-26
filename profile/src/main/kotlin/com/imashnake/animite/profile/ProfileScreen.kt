@@ -36,6 +36,7 @@ import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
@@ -44,6 +45,7 @@ import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
+import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
@@ -64,8 +66,10 @@ fun ProfileScreen(
 ) {
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
-    val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState(initial = null)
-    val viewerMangaLists by viewModel.viewerMangaLists.collectAsState(initial = null)
+    val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
+    val viewerMangaLists by viewModel.viewerMangaLists.collectAsState()
+
+    val data = listOf(viewer, viewerAnimeLists, viewerMangaLists)
 
     Box(
         contentAlignment = Alignment.Center,
@@ -74,63 +78,71 @@ fun ProfileScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         when {
-            isLoggedIn -> viewer.data?.run {
-                BannerLayout(
-                    banner = {
-                        Box {
-                            AsyncImage(
-                                model = crossfadeModel(banner),
-                                contentDescription = "banner",
-                                modifier = it,
-                                contentScale = ContentScale.Crop
-                            )
-                            AsyncImage(
-                                model = crossfadeModel(avatar),
-                                contentDescription = "avatar",
-                                modifier = Modifier
-                                    .align(Alignment.BottomStart)
-                                    .landscapeCutoutPadding()
-                                    .padding(start = LocalPaddings.current.medium)
-                                    .size(100.dp)
-                            )
-                        }
-                    },
-                    content = {
-                        Column {
-                            Text(
-                                text = name,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.titleLarge,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier
-                                    .padding(
-                                        horizontal = LocalPaddings.current.large
-                                    )
-                                    .landscapeCutoutPadding()
-                            )
-                            UserDescription(
-                                description = description,
-                                modifier = Modifier
-                                    .maxHeight(dimensionResource(R.dimen.user_about_height))
-                                    .padding(horizontal = LocalPaddings.current.large)
-                                    .landscapeCutoutPadding()
-                            )
-                            Spacer(Modifier.size(LocalPaddings.current.medium))
-                            UserTabs(
-                                user = this@run,
-                                animeCollection = viewerAnimeLists?.data,
-                                mangaCollection = viewerMangaLists?.data,
-                                onNavigateToMediaItem = onNavigateToMediaItem,
-                                sharedTransitionScope = sharedTransitionScope,
-                                animatedVisibilityScope = animatedVisibilityScope,
-                            )
-                        }
-                    },
-                    contentModifier = Modifier.padding(
-                        top = LocalPaddings.current.large,
-                        bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
+            isLoggedIn -> when {
+                data.all { it is Resource.Success } -> viewer.data?.run {
+                    BannerLayout(
+                        banner = {
+                            Box {
+                                AsyncImage(
+                                    model = crossfadeModel(banner),
+                                    contentDescription = "banner",
+                                    modifier = it,
+                                    contentScale = ContentScale.Crop
+                                )
+                                AsyncImage(
+                                    model = crossfadeModel(avatar),
+                                    contentDescription = "avatar",
+                                    modifier = Modifier
+                                        .align(Alignment.BottomStart)
+                                        .landscapeCutoutPadding()
+                                        .padding(start = LocalPaddings.current.medium)
+                                        .size(100.dp)
+                                )
+                            }
+                        },
+                        content = {
+                            Column {
+                                Text(
+                                    text = name,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
+                                )
+                                UserDescription(
+                                    description = description,
+                                    modifier = Modifier
+                                        .maxHeight(dimensionResource(R.dimen.user_about_height))
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
+                                )
+                                Spacer(Modifier.size(LocalPaddings.current.medium))
+                                UserTabs(
+                                    user = this@run,
+                                    animeCollection = viewerAnimeLists.data,
+                                    mangaCollection = viewerMangaLists.data,
+                                    onNavigateToMediaItem = onNavigateToMediaItem,
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                )
+                            }
+                        },
+                        contentModifier = Modifier.padding(
+                            top = LocalPaddings.current.large,
+                            bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
+                        )
                     )
-                )
+                }
+                else -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                    ) { ProgressIndicator() }
+                }
             }
             else -> Login()
         }
