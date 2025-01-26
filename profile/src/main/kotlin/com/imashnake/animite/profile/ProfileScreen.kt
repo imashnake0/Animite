@@ -243,7 +243,7 @@ private fun UserTabs(
                         )
                     }
                     ProfileTab.MANGA -> when {
-                        animeCollection?.namedLists?.isEmpty() == true -> {
+                        mangaCollection?.namedLists?.isEmpty() == true -> {
                             FallbackScreen(stringResource(R.string.no_manga))
                         }
                         else -> MediaTab(
