@@ -17,7 +17,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -73,7 +72,6 @@ import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
-import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout

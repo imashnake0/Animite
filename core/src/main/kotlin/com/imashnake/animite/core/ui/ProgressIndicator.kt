@@ -25,7 +25,7 @@ fun ProgressIndicatorScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ProgressIndicator() {
+private fun ProgressIndicator() {
     LinearProgressIndicator(
         modifier = Modifier
             .width(dimensionResource(R.dimen.progress_indicator_width))

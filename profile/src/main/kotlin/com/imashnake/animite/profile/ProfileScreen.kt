@@ -45,7 +45,6 @@ import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
-import com.imashnake.animite.core.ui.ProgressIndicator
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.media.MediaPage
