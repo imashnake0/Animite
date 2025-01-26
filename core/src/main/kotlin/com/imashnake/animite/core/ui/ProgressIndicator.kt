@@ -27,9 +27,9 @@ fun ProgressIndicatorScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun ProgressIndicator() {
     LinearProgressIndicator(
+        strokeCap = StrokeCap.Round,
         modifier = Modifier
             .width(dimensionResource(R.dimen.progress_indicator_width))
             .height(dimensionResource(R.dimen.progress_indicator_height)),
-        strokeCap = StrokeCap.Round
     )
 }

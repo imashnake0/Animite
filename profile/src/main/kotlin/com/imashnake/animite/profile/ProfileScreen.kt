@@ -43,6 +43,7 @@ import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.FallbackMessage
+import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
@@ -229,18 +230,29 @@ private fun UserTabs(
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(user)
-                    ProfileTab.ANIME -> MediaTab(
-                        mediaCollection = animeCollection,
-                        onNavigateToMediaItem = onNavigateToMediaItem,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
-                    ProfileTab.MANGA -> MediaTab(
-                        mediaCollection = mangaCollection,
-                        onNavigateToMediaItem = onNavigateToMediaItem,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
+                    // TODO: This fallback duplication can probably be moved to `MediaTab`.
+                    ProfileTab.ANIME -> when {
+                        animeCollection?.namedLists?.isEmpty() == true -> {
+                            FallbackScreen(stringResource(R.string.no_anime))
+                        }
+                        else -> MediaTab(
+                            mediaCollection = animeCollection,
+                            onNavigateToMediaItem = onNavigateToMediaItem,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        )
+                    }
+                    ProfileTab.MANGA -> when {
+                        animeCollection?.namedLists?.isEmpty() == true -> {
+                            FallbackScreen(stringResource(R.string.no_manga))
+                        }
+                        else -> MediaTab(
+                            mediaCollection = mangaCollection,
+                            onNavigateToMediaItem = onNavigateToMediaItem,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        )
+                    }
                     ProfileTab.FAVOURITES -> FavouritesTab(user.favourites)
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
