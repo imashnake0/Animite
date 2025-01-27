@@ -10,9 +10,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
@@ -22,6 +24,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
+import com.imashnake.animite.profile.R
 import com.imashnake.animite.core.R as coreR
 
 /**
@@ -40,20 +43,33 @@ fun MediaTab(
 ) {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier
-            .verticalScroll(scrollState)
-            .padding(vertical = LocalPaddings.current.large)
-    ) {
-        // TODO: Why is this not smart-casting?
-        if (!mediaCollection?.namedLists.isNullOrEmpty()) {
-            UserMediaLists(
-                lists =  mediaCollection!!.namedLists,
-                onNavigateToMediaItem = onNavigateToMediaItem,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedVisibilityScope = animatedVisibilityScope,
-                modifier = modifier,
+    when {
+        mediaCollection?.namedLists?.isEmpty() == true -> {
+            FallbackScreen(
+                stringResource(
+                    when (mediaCollection.type) {
+                        Media.Small.Type.ANIME -> R.string.no_anime
+                        Media.Small.Type.MANGA -> R.string.no_manga
+                        Media.Small.Type.UNKNOWN -> R.string.no_media
+                    }
+                )
             )
+        }
+        else -> Column(
+            modifier
+                .verticalScroll(scrollState)
+                .padding(vertical = LocalPaddings.current.large)
+        ) {
+            // TODO: Why is this not smart-casting?
+            if (!mediaCollection?.namedLists.isNullOrEmpty()) {
+                UserMediaLists(
+                    lists =  mediaCollection!!.namedLists,
+                    onNavigateToMediaItem = onNavigateToMediaItem,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    modifier = modifier,
+                )
+            }
         }
     }
 }

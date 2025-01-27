@@ -38,5 +38,5 @@ class AnilistUserRepository @Inject constructor(
             )
             .fetchPolicy(FetchPolicy.CacheFirst)
             .toFlow()
-            .asResult { User.MediaCollection(it) }
+            .asResult { User.MediaCollection(it, type) }
 }

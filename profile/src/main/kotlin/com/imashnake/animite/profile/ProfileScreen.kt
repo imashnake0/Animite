@@ -230,29 +230,18 @@ private fun UserTabs(
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(user)
-                    // TODO: This fallback duplication can probably be moved to `MediaTab`.
-                    ProfileTab.ANIME -> when {
-                        animeCollection?.namedLists?.isEmpty() == true -> {
-                            FallbackScreen(stringResource(R.string.no_anime))
-                        }
-                        else -> MediaTab(
-                            mediaCollection = animeCollection,
-                            onNavigateToMediaItem = onNavigateToMediaItem,
-                            sharedTransitionScope = sharedTransitionScope,
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        )
-                    }
-                    ProfileTab.MANGA -> when {
-                        mangaCollection?.namedLists?.isEmpty() == true -> {
-                            FallbackScreen(stringResource(R.string.no_manga))
-                        }
-                        else -> MediaTab(
-                            mediaCollection = mangaCollection,
-                            onNavigateToMediaItem = onNavigateToMediaItem,
-                            sharedTransitionScope = sharedTransitionScope,
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        )
-                    }
+                    ProfileTab.ANIME -> MediaTab(
+                        mediaCollection = animeCollection,
+                        onNavigateToMediaItem = onNavigateToMediaItem,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
+                    ProfileTab.MANGA -> MediaTab(
+                        mediaCollection = mangaCollection,
+                        onNavigateToMediaItem = onNavigateToMediaItem,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                     ProfileTab.FAVOURITES -> FavouritesTab(user.favourites)
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
