@@ -39,9 +39,7 @@ class ProfileViewModel @Inject constructor(
         .fetchViewer()
         .asResource()
         .onEach {
-            it.data?.let {
-                preferencesRepository.setViewerId(it.id)
-            }
+            it.data?.let { user -> preferencesRepository.setViewerId(user.id) }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
@@ -49,15 +47,13 @@ class ProfileViewModel @Inject constructor(
         userRepository
             .fetchUserMediaList(it?.toIntOrNull(), MediaType.ANIME)
             .asResource()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
-    }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     val viewerMangaLists = preferencesRepository.viewerId.flatMapLatest {
         userRepository
             .fetchUserMediaList(it?.toIntOrNull(), MediaType.MANGA)
             .asResource()
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
-    }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
     init {
         if (navArgs.accessToken != null) {

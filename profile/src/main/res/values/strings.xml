@@ -12,5 +12,8 @@
 
     <string name="genres">Genres</string>
 
+    <string name="no_anime">No Anime</string>
+    <string name="no_manga">No Manga</string>
+    <string name="no_media">No Media</string>
     <string name="no_favourites">No Favourites</string>
 </resources>
