@@ -88,7 +88,7 @@ composeMarkdown = "1.1.0"
 
 # MaterialKolor
 # https://github.com/jordond/MaterialKolor.
-materialKolor = "2.0.1"
+materialKolor = "2.0.2"
 
 
 [libraries]
