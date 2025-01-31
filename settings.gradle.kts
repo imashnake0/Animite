@@ -29,6 +29,7 @@ include(
     ":api:preferences",
     ":app",
     ":core",
+    ":components",
     ":media",
     ":navigation",
     ":profile",

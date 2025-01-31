@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.detekt)
 }
 
@@ -20,20 +21,21 @@ android {
 
 kotlin {
     jvmToolchain(21)
-}
 
-dependencies {
-    // Compose
-    implementation(libs.bundles.compose)
-    implementation(libs.compose.material)
-    debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.compose.ui.toolingPreview)
+    androidTarget()
+    jvm()
 
-    // Compose Markdown
-    implementation(libs.boswelja.composeMarkdown.material3)
-
-    // Coil
-    implementation(libs.bundles.coil)
-
-    testImplementation(libs.test.junit)
+    sourceSets {
+        commonMain.dependencies {
+            implementation(compose.material3)
+            implementation(compose.uiTooling)
+            implementation(libs.bundles.coil)
+        }
+        androidMain.dependencies {
+            implementation(libs.ktor.engine.android)
+        }
+        jvmMain.dependencies {
+            implementation(libs.ktor.engine.java)
+        }
+    }
 }
