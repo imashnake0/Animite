@@ -1,9 +1,11 @@
 [plugins]
 
 android-application = { id = "com.android.application", version.ref = "agp" }
-composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
@@ -66,6 +68,10 @@ kotlin = "2.1.10"
 coroutines = "1.10.1"
 serialization = "1.8.0"
 
+# Compose Multiplatform
+# https://github.com/JetBrains/compose-multiplatform
+composeMultiplatform = "1.7.3"
+
 # KSP
 # https://github.com/google/ksp/releases.
 ksp = "2.1.10-1.0.29"
@@ -115,7 +121,10 @@ apollo-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime" 
 apollo-cache-memory = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache", version.ref = "apollo" }
 apollo-cache-sqlite = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache-sqlite", version.ref = "apollo" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
-coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+coil-network = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
+ktor-engine-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-engine-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-engine-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 boswelja-composeMarkdown-material3 = { group = "io.github.boswelja.markdown", name = "material3", version.ref = "composeMarkdown" }
 kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }

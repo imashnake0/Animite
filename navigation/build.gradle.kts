@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.detekt)
 }
 
