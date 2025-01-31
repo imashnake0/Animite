@@ -70,16 +70,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.bannerParallax
-import com.imashnake.animite.core.extensions.crossfadeModel
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
-import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
-import com.imashnake.animite.core.ui.MediaSmallRow
-import com.imashnake.animite.core.ui.NestedScrollableContent
-import com.imashnake.animite.core.ui.StatsRow
-import com.imashnake.animite.core.ui.layouts.BannerLayout
-import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.components.extensions.bannerParallax
+import com.imashnake.animite.components.extensions.crossfadeModel
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -88,6 +80,14 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 import androidx.core.net.toUri
+import com.imashnake.animite.components.LocalPaddings
+import com.imashnake.animite.components.NestedScrollableContent
+import com.imashnake.animite.components.StatsRow
+import com.imashnake.animite.components.extensions.CROSSFADE_DURATION
+import com.imashnake.animite.components.layout.BannerLayout
+import com.imashnake.animite.components.layout.TranslucentStatusBarLayout
+import com.imashnake.animite.components.media.MediaSmall
+import com.imashnake.animite.components.media.MediaSmallRow
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
@@ -159,7 +159,6 @@ fun MediaPage(
                                                 + LocalPaddings.current.large,
                                         end = LocalPaddings.current.large / 2
                                     )
-                                    .landscapeCutoutPadding()
                                     .height(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
@@ -182,7 +181,6 @@ fun MediaPage(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
                                 ) {
                                     Text(
                                         text = it.type.name,
@@ -229,7 +227,6 @@ fun MediaPage(
                                     trailer = media.trailer,
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
                                 )
                             }
                         },
@@ -261,7 +258,6 @@ fun MediaPage(
                                         + offset,
                                 start = LocalPaddings.current.large
                             )
-                            .landscapeCutoutPadding()
                             .height(dimensionResource(coreR.dimen.media_image_height) - offset)
                     ) {
                         MediaSmall(
@@ -473,7 +469,7 @@ fun MediaTrailer(
                             }
                         )
                     }
-                    .crossfade(Constants.CROSSFADE_DURATION)
+                    .crossfade(CROSSFADE_DURATION)
                     .build()
             }
 

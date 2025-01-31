@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.layouts
+package com.imashnake.animite.components.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
-import com.imashnake.animite.core.R
-import com.imashnake.animite.core.ui.LocalPaddings
+import androidx.compose.ui.unit.dp
+import com.imashnake.animite.components.LocalPaddings
 
 /**
  * Most screens and pages follow a banner-style layout in Animite.
@@ -35,7 +34,7 @@ fun BannerLayout(
     banner: @Composable (Modifier) -> Unit,
     content: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
-    bannerHeight: Dp = dimensionResource(R.dimen.banner_height),
+    bannerHeight: Dp = 168.dp,
     bannerModifier: Modifier = Modifier
         .height(bannerHeight)
         .fillMaxWidth(),

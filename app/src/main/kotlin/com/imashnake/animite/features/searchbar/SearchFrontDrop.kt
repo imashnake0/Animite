@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -44,10 +46,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.components.LocalPaddings
+import com.imashnake.animite.components.extensions.CROSSFADE_DURATION
+import com.imashnake.animite.components.media.MediaSmall
 import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
-import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
@@ -61,6 +63,7 @@ import com.imashnake.animite.navigation.R as navigationR
  * @param modifier the [Modifier] to be applied to this Front Drop.
  * @param viewModel [SearchViewModel] instance.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchFrontDrop(
     hasExtraPadding: Boolean,
@@ -83,7 +86,7 @@ fun SearchFrontDrop(
         targetValue = MaterialTheme.colorScheme.background.copy(
             alpha = if (isExpanded) 0.95f else 0f
         ),
-        animationSpec = tween(Constants.CROSSFADE_DURATION),
+        animationSpec = tween(CROSSFADE_DURATION),
         label = "show_front_drop"
     )
 
@@ -96,10 +99,7 @@ fun SearchFrontDrop(
     searchList.data?.let {
         SearchList(
             searchList = it,
-            modifier = Modifier
-                // TODO: Add this back; https://issuetracker.google.com/issues/323708850.
-                //.imeNestedScroll()
-                .landscapeCutoutPadding(),
+            modifier = Modifier.imeNestedScroll(),
             onItemClick = { id ->
                 isExpanded = false
                 viewModel.setQuery(null)
@@ -113,7 +113,6 @@ fun SearchFrontDrop(
         setExpanded = { isExpanded = it },
         onSearched = viewModel::setQuery,
         modifier = modifier
-            .landscapeCutoutPadding()
             .padding(bottom = searchBarBottomPadding)
             .navigationBarsPadding()
             .consumeWindowInsets(PaddingValues(bottom = searchBarBottomPadding))

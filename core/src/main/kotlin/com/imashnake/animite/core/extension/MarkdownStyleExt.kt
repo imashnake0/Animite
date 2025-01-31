@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.extensions
+package com.imashnake.animite.core.extension
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
