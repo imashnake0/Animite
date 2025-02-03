@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
@@ -28,7 +29,9 @@ fun Modifier.maxHeight(max: Dp) = heightIn(0.dp, max)
 /**
  * [Adding modifiers conditionally in Jetpack Compose](https://patrickmichalik.com/blog/adding-modifiers-conditionally-in-jetpack-compose).
  */
+@Composable
 fun Modifier.thenIf(
     condition: Boolean,
-    other: Modifier.() -> Modifier,
-) = if (condition) other() else this
+    elseOther: @Composable Modifier.() -> Modifier = { this },
+    other: @Composable Modifier.() -> Modifier,
+) = if (condition) other() else elseOther()

@@ -1,6 +1,7 @@
 package com.imashnake.animite.features.home
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
@@ -53,6 +54,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -182,6 +184,9 @@ fun HomeScreen(
                                                 start = LocalPaddings.current.large,
                                                 bottom = LocalPaddings.current.medium
                                             )
+                                            .thenIf(LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                                padding(start = dimensionResource(navigationR.dimen.navigation_rail_width))
+                                            }
                                             .landscapeCutoutPadding()
                                             .weight(1f, fill = false),
                                         maxLines = 1
@@ -241,8 +246,11 @@ fun HomeScreen(
                         },
                         contentModifier = Modifier.padding(
                             top = LocalPaddings.current.large / 2,
-                            bottom = LocalPaddings.current.large / 2 +
-                                    dimensionResource(navigationR.dimen.navigation_bar_height)
+                            bottom = LocalPaddings.current.large / 2,
+                        ).thenIf(
+                            condition = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE,
+                            other = { padding(start = dimensionResource(navigationR.dimen.navigation_rail_width)) },
+                            elseOther = { padding(bottom = dimensionResource(navigationR.dimen.navigation_bar_height)) }
                         ),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
