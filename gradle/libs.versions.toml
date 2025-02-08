@@ -153,7 +153,8 @@ compose = [
 
 coil = [
     "coil-compose",
-    "coil-network"
+    "coil-network",
+    "ktor-engine-android"
 ]
 
 ktor = [
