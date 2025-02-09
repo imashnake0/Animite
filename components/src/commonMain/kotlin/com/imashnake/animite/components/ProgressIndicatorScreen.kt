@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui
+package com.imashnake.animite.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,8 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.res.dimensionResource
-import com.imashnake.animite.core.R
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun ProgressIndicatorScreen(modifier: Modifier = Modifier) {
@@ -29,7 +28,7 @@ private fun ProgressIndicator() {
     LinearProgressIndicator(
         strokeCap = StrokeCap.Round,
         modifier = Modifier
-            .width(dimensionResource(R.dimen.progress_indicator_width))
-            .height(dimensionResource(R.dimen.progress_indicator_height)),
+            .width(100.dp)
+            .height(3.dp),
     )
 }

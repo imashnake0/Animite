@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.components.LocalPaddings
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_URL
 import com.imashnake.animite.core.R as coreR
 

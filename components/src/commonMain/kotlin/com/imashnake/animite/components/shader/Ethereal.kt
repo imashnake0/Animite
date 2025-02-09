@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.shaders
+package com.imashnake.animite.components.shader
 
 import org.intellij.lang.annotations.Language
 

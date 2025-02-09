@@ -26,6 +26,7 @@ kotlin {
 
 dependencies {
     implementation(projects.core)
+    implementation(projects.components)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)

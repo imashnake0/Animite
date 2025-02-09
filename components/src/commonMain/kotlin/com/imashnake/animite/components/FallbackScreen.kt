@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui
+package com.imashnake.animite.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
