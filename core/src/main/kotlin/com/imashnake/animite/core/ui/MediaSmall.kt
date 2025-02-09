@@ -1,9 +1,13 @@
-package com.imashnake.animite.components.media
+package com.imashnake.animite.core.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,13 +23,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.imashnake.animite.components.LocalPaddings
-import com.imashnake.animite.components.extensions.crossfadeModel
+import com.imashnake.animite.core.R
+import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 
 /**
  * A [LazyRow] of [MediaSmall]s.
@@ -51,12 +59,19 @@ fun <T> MediaSmallRow(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
                     .padding(start = LocalPaddings.current.large)
+                    .landscapeCutoutPadding()
             )
         }
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
             contentPadding = PaddingValues(
-                horizontal = LocalPaddings.current.large,
+                start = LocalPaddings.current.large + if (
+                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+                ) {
+                    WindowInsets.displayCutout.asPaddingValues()
+                        .calculateLeftPadding(LayoutDirection.Ltr)
+                } else 0.dp,
+                end = LocalPaddings.current.large
             )
         ) {
             items(mediaList) { media ->
@@ -89,7 +104,7 @@ fun MediaSmall(
 ) {
     Card(
         onClick = onClick,
-        shape = RoundedCornerShape(18.dp), // TODO should be theme shape
+        shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)),
         modifier = modifier.width(cardWidth),
     ) {
         AsyncImage(
@@ -99,7 +114,7 @@ fun MediaSmall(
             modifier = imageModifier
                 .height(imageHeight)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(18.dp))
+                .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
         )
 
         if (label != null)
@@ -109,7 +124,9 @@ fun MediaSmall(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge,
                     maxLines = 2,
-                    modifier = Modifier.padding(vertical = 10.dp)
+                    modifier = Modifier.padding(
+                        vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
+                    )
                 )
 
                 Box(
@@ -117,8 +134,8 @@ fun MediaSmall(
                         .align(Alignment.Center)
                         .fillMaxWidth()
                         .padding(
-                            horizontal = 16.dp,
-                            vertical = 10.dp
+                            horizontal = dimensionResource(R.dimen.media_card_text_padding_horizontal),
+                            vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
                         )
                 ) {
                     Text(

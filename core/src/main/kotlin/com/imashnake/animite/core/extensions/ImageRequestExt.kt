@@ -1,11 +1,10 @@
-package com.imashnake.animite.components.extensions
+package com.imashnake.animite.core.extensions
 
 import androidx.compose.runtime.Composable
-import coil3.compose.LocalPlatformContext
+import androidx.compose.ui.platform.LocalContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-
-const val CROSSFADE_DURATION = 500
+import com.imashnake.animite.core.Constants
 
 /**
  * Crossfades images after the request succeeds.
@@ -14,7 +13,7 @@ const val CROSSFADE_DURATION = 500
  */
 @Composable
 fun crossfadeModel(model: Any?) = ImageRequest
-    .Builder(LocalPlatformContext.current)
+    .Builder(LocalContext.current)
     .data(model)
-    .crossfade(CROSSFADE_DURATION)
+    .crossfade(Constants.CROSSFADE_DURATION)
     .build()

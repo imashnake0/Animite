@@ -24,12 +24,21 @@ kotlin {
 
 dependencies {
     // AndroidX
+    implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.coreKtx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Compose
-    implementation(libs.compose.material3)
+    implementation(libs.bundles.compose)
+    implementation(libs.compose.material)
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.toolingPreview)
+
+    // Compose Markdown
     implementation(libs.boswelja.composeMarkdown.material3)
+
+    // Coil
+    implementation(libs.bundles.coil)
 
     // Kotlin
     implementation(libs.kotlin.coroutines.android)

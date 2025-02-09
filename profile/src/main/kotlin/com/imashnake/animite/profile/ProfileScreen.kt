@@ -36,16 +36,18 @@ import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.components.FallbackMessage
-import com.imashnake.animite.components.LocalPaddings
-import com.imashnake.animite.components.NestedScrollableContent
-import com.imashnake.animite.components.ProgressIndicatorScreen
 import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.extension.animiteBlockQuoteStyle
-import com.imashnake.animite.core.extension.animiteCodeBlockStyle
-import com.imashnake.animite.components.extensions.crossfadeModel
-import com.imashnake.animite.components.extensions.maxHeight
-import com.imashnake.animite.components.layout.BannerLayout
+import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
+import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
+import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.ui.FallbackMessage
+import com.imashnake.animite.core.ui.FallbackScreen
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.NestedScrollableContent
+import com.imashnake.animite.core.ui.ProgressIndicatorScreen
+import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.FavouritesTab
@@ -93,6 +95,7 @@ fun ProfileScreen(
                                     contentDescription = "avatar",
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
+                                        .landscapeCutoutPadding()
                                         .padding(start = LocalPaddings.current.medium)
                                         .size(100.dp)
                                 )
@@ -107,12 +110,14 @@ fun ProfileScreen(
                                     overflow = TextOverflow.Ellipsis,
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
                                 )
                                 UserDescription(
                                     description = description,
                                     modifier = Modifier
                                         .maxHeight(dimensionResource(R.dimen.user_about_height))
                                         .padding(horizontal = LocalPaddings.current.large)
+                                        .landscapeCutoutPadding()
                                 )
                                 Spacer(Modifier.size(LocalPaddings.current.medium))
                                 UserTabs(
@@ -179,6 +184,7 @@ private fun UserTabs(
     Column(modifier) {
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
+            modifier = Modifier.landscapeCutoutPadding(),
             containerColor = MaterialTheme.colorScheme.background,
             divider = {}
         ) {

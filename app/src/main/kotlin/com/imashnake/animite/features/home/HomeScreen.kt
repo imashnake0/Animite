@@ -65,16 +65,17 @@ import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.components.LocalPaddings
-import com.imashnake.animite.components.ProgressIndicatorScreen
-import com.imashnake.animite.components.extensions.bannerParallax
-import com.imashnake.animite.components.extensions.thenIf
-import com.imashnake.animite.components.layout.BannerLayout
-import com.imashnake.animite.components.layout.TranslucentStatusBarLayout
-import com.imashnake.animite.components.media.MediaSmall
-import com.imashnake.animite.components.media.MediaSmallRow
-import com.imashnake.animite.components.shader.etherealShader
 import com.imashnake.animite.core.data.Resource
+import com.imashnake.animite.core.extensions.bannerParallax
+import com.imashnake.animite.core.extensions.landscapeCutoutPadding
+import com.imashnake.animite.core.extensions.thenIf
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.core.ui.ProgressIndicatorScreen
+import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.core.ui.shaders.etherealShader
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
@@ -181,6 +182,7 @@ fun HomeScreen(
                                                 start = LocalPaddings.current.large,
                                                 bottom = LocalPaddings.current.medium
                                             )
+                                            .landscapeCutoutPadding()
                                             .weight(1f, fill = false),
                                         maxLines = 1
                                     )
@@ -190,7 +192,8 @@ fun HomeScreen(
                                             .padding(
                                                 end = LocalPaddings.current.large,
                                                 bottom = LocalPaddings.current.medium
-                                            ),
+                                            )
+                                            .landscapeCutoutPadding(),
                                         selectedOption = homeMediaType,
                                         viewModel = viewModel
                                     )
