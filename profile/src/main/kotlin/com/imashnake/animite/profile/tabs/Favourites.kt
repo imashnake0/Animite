@@ -13,10 +13,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User.MediaCollection.NamedList
-import com.imashnake.animite.components.FallbackScreen
-import com.imashnake.animite.components.LocalPaddings
-import com.imashnake.animite.components.media.MediaSmall
-import com.imashnake.animite.components.media.MediaSmallRow
+import com.imashnake.animite.core.ui.FallbackScreen
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.profile.R
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.core.R as coreR

@@ -1,4 +1,4 @@
-package com.imashnake.animite.components
+package com.imashnake.animite.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,13 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import com.imashnake.animite.core.R
 
 @Composable
 fun NestedScrollableContent(
     modifier: Modifier = Modifier,
-    gradientSize: Dp = 8.dp,
+    gradientSize: Dp = dimensionResource(R.dimen.edge_gradient_size),
     gradientColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable (Modifier) -> Unit,
 ) {

@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.extension
+package com.imashnake.animite.core.extensions
 
 /**
  * Adds two nullable lists together. If both lists are null, then null is returned.
