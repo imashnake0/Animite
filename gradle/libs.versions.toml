@@ -74,7 +74,7 @@ composeMultiplatform = "1.7.3"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "2.1.10-1.0.29"
+ksp = "2.1.10-1.0.30"
 
 # Ktor
 # https://ktor.io/docs/releases.html#release-details.
