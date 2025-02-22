@@ -16,13 +16,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -53,6 +58,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -93,7 +99,10 @@ fun HomeScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel(),
+    contentInsets: WindowInsets = WindowInsets.safeDrawing
 ) {
+    val insetPaddingValues = contentInsets.asPaddingValues()
+
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
     viewModel.setMediaType(homeMediaType.value)
 
@@ -143,29 +152,38 @@ fun HomeScreen(
                                 )
 
                                 Row(
-                                    modifier = bannerModifier.thenIf(shader != null) {
-                                        drawWithCache @SuppressLint("NewApi") {
-                                            shader!!.run {
-                                                setFloatUniform(
-                                                    "resolution",
-                                                    size.width,
-                                                    size.height
-                                                )
-                                                setFloatUniform("time", time.floatValue)
-                                                setColorUniform(
-                                                    "orb",
-                                                    Color(0xFF6C408D).toArgb()
-                                                )
-                                                setColorUniform(
-                                                    "bg",
-                                                    android.graphics.Color.TRANSPARENT
-                                                )
-                                                onDrawBehind {
-                                                    drawRect(ShaderBrush(this@run))
+                                    modifier = bannerModifier
+                                        .thenIf(shader != null) {
+                                            drawWithCache @SuppressLint("NewApi") {
+                                                shader!!.run {
+                                                    setFloatUniform(
+                                                        "resolution",
+                                                        size.width,
+                                                        size.height
+                                                    )
+                                                    setFloatUniform("time", time.floatValue)
+                                                    setColorUniform(
+                                                        "orb",
+                                                        Color(0xFF6C408D).toArgb()
+                                                    )
+                                                    setColorUniform(
+                                                        "bg",
+                                                        android.graphics.Color.TRANSPARENT
+                                                    )
+                                                    onDrawBehind {
+                                                        drawRect(ShaderBrush(this@run))
+                                                    }
                                                 }
                                             }
                                         }
-                                    },
+                                        .padding(
+                                            start = LocalPaddings.current.large +
+                                                    insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                                            top = LocalPaddings.current.medium + insetPaddingValues.calculateTopPadding(),
+                                            end = LocalPaddings.current.large +
+                                                    insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                                            bottom = LocalPaddings.current.medium
+                                        ),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.Bottom,
                                 ) {
@@ -177,20 +195,11 @@ fun HomeScreen(
                                         } ?: MaterialTheme.colorScheme.secondaryContainer,
                                         style = MaterialTheme.typography.displayMedium,
                                         modifier = Modifier
-                                            .padding(
-                                                start = LocalPaddings.current.large,
-                                                bottom = LocalPaddings.current.medium
-                                            )
                                             .weight(1f, fill = false),
                                         maxLines = 1
                                     )
 
                                     MediaTypeSelector(
-                                        modifier = Modifier
-                                            .padding(
-                                                end = LocalPaddings.current.large,
-                                                bottom = LocalPaddings.current.medium
-                                            ),
                                         selectedOption = homeMediaType,
                                         viewModel = viewModel
                                     )
@@ -208,58 +217,63 @@ fun HomeScreen(
                                         },
                                         label = "animate_home_row"
                                     ) { mediaList ->
-                                        if (mediaList.list.isNotEmpty())
-                                            HomeRow(
-                                                list = mediaList.list,
-                                                type = mediaList.type,
-                                                onItemClicked = { media ->
-                                                    onNavigateToMediaItem(
-                                                        MediaPage(
-                                                            id = media.id,
-                                                            // TODO: We can use the list's index instead.
-                                                            source = mediaList.type.name,
-                                                            mediaType = homeMediaType.value.rawValue,
-                                                        )
+                                        HomeRow(
+                                            items = mediaList.list,
+                                            type = mediaList.type,
+                                            onItemClicked = { media ->
+                                                onNavigateToMediaItem(
+                                                    MediaPage(
+                                                        id = media.id,
+                                                        source = mediaList.type.name,
+                                                        mediaType = homeMediaType.value.rawValue,
                                                     )
-                                                },
-                                                sharedTransitionScope = sharedTransitionScope,
-                                                animatedVisibilityScope = animatedVisibilityScope,
-                                                modifier = Modifier.padding(
-                                                    vertical = LocalPaddings.current.large / 2
                                                 )
+                                            },
+                                            sharedTransitionScope = sharedTransitionScope,
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                            contentPadding = PaddingValues(
+                                                start = LocalPaddings.current.large +
+                                                        insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                                                top = LocalPaddings.current.medium,
+                                                end = LocalPaddings.current.large +
+                                                        insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
+                                                bottom = LocalPaddings.current.medium
                                             )
-                                        else
-                                            /* With this, AnimatedContent shrinks/expands the
-                                            `HomeRow` vertically. */
-                                            Box(Modifier.fillMaxWidth())
+                                        )
                                     }
                                 }
                             }
                         },
                         contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large / 2,
-                            bottom = LocalPaddings.current.large / 2 +
-                                    dimensionResource(navigationR.dimen.navigation_bar_height)
+                            top = LocalPaddings.current.medium,
+                            bottom = LocalPaddings.current.medium +
+                                dimensionResource(navigationR.dimen.navigation_bar_height)
                         ),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
                 }
             }
         }
-        else -> ProgressIndicatorScreen()
+        else -> ProgressIndicatorScreen(Modifier.padding(insetPaddingValues))
     }
 }
 
 @Composable
 fun HomeRow(
-    list: List<Media.Small>,
+    items: List<Media.Small>,
     type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
 ) {
-    MediaSmallRow(type.title, list, modifier) { media ->
+    MediaSmallRow(
+        title = type.title,
+        mediaList = items,
+        modifier = modifier,
+        contentPadding = contentPadding,
+    ) { media ->
         with(sharedTransitionScope) {
             MediaSmall(
                 image = media.coverImage,

@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,27 +40,35 @@ fun <T> MediaSmallRow(
     title: String?,
     mediaList: List<T>,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     content: @Composable (T) -> Unit
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(
+            top = contentPadding.calculateTopPadding(),
+            bottom = contentPadding.calculateBottomPadding()
+        ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        // TODO: Does this behave as expected if `title` is null?
+        val startPadding = contentPadding.calculateStartPadding(LocalLayoutDirection.current)
+        val endPadding = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
         if (title != null) {
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
-                    .padding(start = LocalPaddings.current.large)
+                    .padding(
+                        start = startPadding,
+                        end = endPadding
+                    )
             )
         }
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
             contentPadding = PaddingValues(
-                start = LocalPaddings.current.large,
-                end = LocalPaddings.current.large
+                start = startPadding,
+                end = endPadding
             )
         ) {
             items(mediaList) { media ->
