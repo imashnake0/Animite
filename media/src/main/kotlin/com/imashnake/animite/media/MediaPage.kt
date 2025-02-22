@@ -16,13 +16,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -55,6 +61,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -99,8 +106,14 @@ private const val DEVICE_CORNER_RADIUS = 30
 fun MediaPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
     viewModel: MediaPageViewModel = hiltViewModel(),
 ) {
+    val insetPaddingValues = contentWindowInsets.asPaddingValues()
+    val horizontalInsets = PaddingValues(
+        start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
+        end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current)
+    )
     val scrollState = rememberScrollState()
 
     val media = viewModel.uiState
@@ -152,13 +165,14 @@ fun MediaPage(
                                 modifier = Modifier
                                     .skipToLookaheadSize()
                                     .padding(
-                                        start = LocalPaddings.current.large / 2
+                                        start = LocalPaddings.current.medium
                                                 + dimensionResource(coreR.dimen.media_card_width)
                                                 + LocalPaddings.current.large,
-                                        end = LocalPaddings.current.large / 2
+                                        end = LocalPaddings.current.medium
                                     )
+                                    .padding(horizontalInsets)
                                     .height(
-                                        dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
+                                        dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.small
                                     ),
                                 onClick = { showSheet = true },
                                 textModifier = Modifier.sharedBounds(
@@ -179,6 +193,7 @@ fun MediaPage(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = LocalPaddings.current.large)
+                                        .padding(horizontalInsets)
                                 ) {
                                     Text(
                                         text = it.type.name,
@@ -202,8 +217,10 @@ fun MediaPage(
                                 MediaGenres(
                                     genres = media.genres,
                                     contentPadding = PaddingValues(
-                                        start = LocalPaddings.current.large,
-                                        end = LocalPaddings.current.large
+                                        start = LocalPaddings.current.large +
+                                            horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
+                                        end = LocalPaddings.current.large +
+                                            horizontalInsets.calculateEndPadding(LocalLayoutDirection.current)
                                     ),
                                     color = Color(media.color ?: 0xFF152232.toInt()),
                                 )
@@ -212,6 +229,12 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
+                                    contentPadding = PaddingValues(
+                                        start = LocalPaddings.current.large +
+                                                horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
+                                        end = LocalPaddings.current.large +
+                                                horizontalInsets.calculateEndPadding(LocalLayoutDirection.current)
+                                    ),
                                 )
                             }
 
@@ -220,10 +243,14 @@ fun MediaPage(
                                     trailer = media.trailer,
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
+                                        .padding(horizontalInsets)
                                 )
                             }
                         },
-                        contentModifier = Modifier.padding(top = LocalPaddings.current.medium / 2)
+                        contentModifier = Modifier.padding(
+                            top = LocalPaddings.current.small,
+                            bottom = insetPaddingValues.calculateBottomPadding()
+                        )
                     )
 
                     // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
@@ -245,9 +272,11 @@ fun MediaPage(
                                         + LocalPaddings.current.medium
                                         + dimensionResource(coreR.dimen.banner_height)
                                         - dimensionResource(coreR.dimen.media_image_height)
+                                        - WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
                                         + offset,
                                 start = LocalPaddings.current.large
                             )
+                            .padding(horizontalInsets)
                             .height(dimensionResource(coreR.dimen.media_image_height) - offset)
                     ) {
                         MediaSmall(
@@ -403,11 +432,13 @@ fun MediaGenres(
 fun MediaCharacters(
     characters: List<Media.Character>,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
 ) {
     MediaSmallRow(
         title = stringResource(R.string.characters),
         mediaList = characters,
-        modifier = modifier
+        modifier = modifier,
+        contentPadding = contentPadding,
     ) { character ->
         MediaSmall(
             image = character.image,
