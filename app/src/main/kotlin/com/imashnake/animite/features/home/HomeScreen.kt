@@ -67,7 +67,6 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.bannerParallax
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
@@ -182,7 +181,6 @@ fun HomeScreen(
                                                 start = LocalPaddings.current.large,
                                                 bottom = LocalPaddings.current.medium
                                             )
-                                            .landscapeCutoutPadding()
                                             .weight(1f, fill = false),
                                         maxLines = 1
                                     )
@@ -192,8 +190,7 @@ fun HomeScreen(
                                             .padding(
                                                 end = LocalPaddings.current.large,
                                                 bottom = LocalPaddings.current.medium
-                                            )
-                                            .landscapeCutoutPadding(),
+                                            ),
                                         selectedOption = homeMediaType,
                                         viewModel = viewModel
                                     )

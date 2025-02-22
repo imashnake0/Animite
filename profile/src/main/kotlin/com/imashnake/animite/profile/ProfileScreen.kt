@@ -40,10 +40,8 @@ import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.FallbackMessage
-import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
@@ -95,7 +93,6 @@ fun ProfileScreen(
                                     contentDescription = "avatar",
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
-                                        .landscapeCutoutPadding()
                                         .padding(start = LocalPaddings.current.medium)
                                         .size(100.dp)
                                 )
@@ -110,14 +107,12 @@ fun ProfileScreen(
                                     overflow = TextOverflow.Ellipsis,
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
                                 )
                                 UserDescription(
                                     description = description,
                                     modifier = Modifier
                                         .maxHeight(dimensionResource(R.dimen.user_about_height))
                                         .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
                                 )
                                 Spacer(Modifier.size(LocalPaddings.current.medium))
                                 UserTabs(
@@ -184,7 +179,6 @@ private fun UserTabs(
     Column(modifier) {
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
-            modifier = Modifier.landscapeCutoutPadding(),
             containerColor = MaterialTheme.colorScheme.background,
             divider = {}
         ) {

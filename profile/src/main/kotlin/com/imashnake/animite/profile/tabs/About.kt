@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.profile.R
@@ -58,7 +57,6 @@ fun AboutTab(
     Column(
         modifier
             .verticalScroll(scrollState)
-            .landscapeCutoutPadding()
             .padding(bottom = LocalPaddings.current.large)
     ) {
         Column(
@@ -69,7 +67,6 @@ fun AboutTab(
                 stats = statsLabelToValue,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .landscapeCutoutPadding()
             ) {
                 Text(
                     text = it.first,

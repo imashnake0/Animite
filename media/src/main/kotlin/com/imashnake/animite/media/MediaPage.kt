@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -72,7 +71,6 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.ui.MediaSmallRow
@@ -159,7 +157,6 @@ fun MediaPage(
                                                 + LocalPaddings.current.large,
                                         end = LocalPaddings.current.large / 2
                                     )
-                                    .landscapeCutoutPadding()
                                     .height(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
@@ -182,7 +179,6 @@ fun MediaPage(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
                                 ) {
                                     Text(
                                         text = it.type.name,
@@ -206,12 +202,7 @@ fun MediaPage(
                                 MediaGenres(
                                     genres = media.genres,
                                     contentPadding = PaddingValues(
-                                        start = LocalPaddings.current.large + if (
-                                            LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-                                        ) {
-                                            WindowInsets.displayCutout.asPaddingValues()
-                                                .calculateLeftPadding(LayoutDirection.Ltr)
-                                        } else 0.dp,
+                                        start = LocalPaddings.current.large,
                                         end = LocalPaddings.current.large
                                     ),
                                     color = Color(media.color ?: 0xFF152232.toInt()),
@@ -229,7 +220,6 @@ fun MediaPage(
                                     trailer = media.trailer,
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
                                 )
                             }
                         },
@@ -254,14 +244,10 @@ fun MediaPage(
                                 top = dimensionResource(R.dimen.media_details_height)
                                         + LocalPaddings.current.medium
                                         + dimensionResource(coreR.dimen.banner_height)
-                                        - WindowInsets.statusBars
-                                    .asPaddingValues()
-                                    .calculateTopPadding()
                                         - dimensionResource(coreR.dimen.media_image_height)
                                         + offset,
                                 start = LocalPaddings.current.large
                             )
-                            .landscapeCutoutPadding()
                             .height(dimensionResource(coreR.dimen.media_image_height) - offset)
                     ) {
                         MediaSmall(

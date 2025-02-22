@@ -10,18 +10,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +41,6 @@ import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaSmall
 import com.imashnake.animite.core.R as coreR
@@ -96,10 +91,9 @@ fun SearchFrontDrop(
     searchList.data?.let {
         SearchList(
             searchList = it,
-            modifier = Modifier
+            modifier = Modifier,
                 // TODO: Add this back; https://issuetracker.google.com/issues/323708850.
-                //.imeNestedScroll()
-                .landscapeCutoutPadding(),
+                //.imeNestedScroll(),
             onItemClick = { id ->
                 isExpanded = false
                 viewModel.setQuery(null)
@@ -113,7 +107,6 @@ fun SearchFrontDrop(
         setExpanded = { isExpanded = it },
         onSearched = viewModel::setQuery,
         modifier = modifier
-            .landscapeCutoutPadding()
             .padding(bottom = searchBarBottomPadding)
             .navigationBarsPadding()
             .consumeWindowInsets(PaddingValues(bottom = searchBarBottomPadding))
@@ -133,13 +126,11 @@ fun SearchList(
         contentPadding = PaddingValues(
             start = LocalPaddings.current.large,
             end = LocalPaddings.current.large,
-            top = LocalPaddings.current.large
-                    + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
+            top = LocalPaddings.current.large,
             bottom = dimensionResource(R.dimen.search_bar_height)
                     + LocalPaddings.current.large
                     + LocalPaddings.current.large
                     + dimensionResource(navigationR.dimen.navigation_bar_height)
-                    + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {

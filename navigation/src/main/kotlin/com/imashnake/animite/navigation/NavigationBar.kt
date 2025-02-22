@@ -3,10 +3,8 @@ package com.imashnake.animite.navigation
 import android.content.res.Configuration
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -36,12 +34,7 @@ fun NavigationBar(
 
     // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
-        Modifier.height(
-            dimensionResource(R.dimen.navigation_bar_height) + WindowInsets
-                .navigationBars
-                .asPaddingValues()
-                .calculateBottomPadding()
-        ),
+        Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
         // TODO: Use a `NavigationRail` instead.
         windowInsets = if (LocalConfiguration.current.orientation
             == Configuration.ORIENTATION_LANDSCAPE
