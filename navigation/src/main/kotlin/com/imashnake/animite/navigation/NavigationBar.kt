@@ -14,11 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -32,13 +30,8 @@ fun NavigationBar(
 ) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
-    // TODO: Can we use `navigationBarsPadding()` instead?
     NavigationBar(
         Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
-        // TODO: Use a `NavigationRail` instead.
-        windowInsets = if (LocalConfiguration.current.orientation
-            == Configuration.ORIENTATION_LANDSCAPE
-        ) { WindowInsets.displayCutout } else { WindowInsets(0.dp) }
     ) {
         NavigationBarPaths.entries.forEach { destination ->
             val selected = remember(destination, currentBackStackEntry) {

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -99,9 +100,9 @@ fun HomeScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel(),
-    contentInsets: WindowInsets = WindowInsets.safeDrawing
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing
 ) {
-    val insetPaddingValues = contentInsets.asPaddingValues()
+    val insetPaddingValues = contentWindowInsets.asPaddingValues()
 
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
     viewModel.setMediaType(homeMediaType.value)
@@ -217,29 +218,33 @@ fun HomeScreen(
                                         },
                                         label = "animate_home_row"
                                     ) { mediaList ->
-                                        HomeRow(
-                                            items = mediaList.list,
-                                            type = mediaList.type,
-                                            onItemClicked = { media ->
-                                                onNavigateToMediaItem(
-                                                    MediaPage(
-                                                        id = media.id,
-                                                        source = mediaList.type.name,
-                                                        mediaType = homeMediaType.value.rawValue,
+                                        if (mediaList.list.isNotEmpty()) {
+                                            HomeRow(
+                                                items = mediaList.list,
+                                                type = mediaList.type,
+                                                onItemClicked = { media ->
+                                                    onNavigateToMediaItem(
+                                                        MediaPage(
+                                                            id = media.id,
+                                                            source = mediaList.type.name,
+                                                            mediaType = homeMediaType.value.rawValue,
+                                                        )
                                                     )
+                                                },
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                                contentPadding = PaddingValues(
+                                                    start = LocalPaddings.current.large +
+                                                            insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                                                    top = LocalPaddings.current.medium,
+                                                    end = LocalPaddings.current.large +
+                                                            insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
+                                                    bottom = LocalPaddings.current.medium
                                                 )
-                                            },
-                                            sharedTransitionScope = sharedTransitionScope,
-                                            animatedVisibilityScope = animatedVisibilityScope,
-                                            contentPadding = PaddingValues(
-                                                start = LocalPaddings.current.large +
-                                                        insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                                top = LocalPaddings.current.medium,
-                                                end = LocalPaddings.current.large +
-                                                        insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                                                bottom = LocalPaddings.current.medium
                                             )
-                                        )
+                                        } else {
+                                            Box(Modifier.fillMaxWidth())
+                                        }
                                     }
                                 }
                             }
