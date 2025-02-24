@@ -72,7 +72,7 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
 import com.imashnake.animite.core.ui.layouts.BannerLayout
@@ -85,7 +85,6 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.materialkolor.ktx.hasEnoughContrast
-import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
@@ -272,12 +271,10 @@ fun HomeRow(
 ) {
     MediaSmallRow(type.title, list, modifier) { media ->
         with(sharedTransitionScope) {
-            MediaSmall(
+            MediaCard(
                 image = media.coverImage,
                 label = media.title,
                 onClick = { onItemClicked(media) },
-                imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                cardWidth = dimensionResource(coreR.dimen.media_card_width),
                 modifier = Modifier.sharedBounds(
                     rememberSharedContentState(
                         SharedContentKey(

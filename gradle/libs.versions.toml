@@ -21,7 +21,7 @@ desugaring = "2.1.4"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "8.8.0"
+agp = "8.8.1"
 
 # AndroidX
 # https://androidx.tech.
@@ -30,7 +30,7 @@ core = "1.15.0"
 lifecycle = "2.8.7"
 extJunit = "1.2.1"
 espresso = "3.6.1"
-navigation = "2.8.6"
+navigation = "2.8.7"
 
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
@@ -43,16 +43,16 @@ datastore = "1.1.2"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
-coil = "3.0.4"
+coil = "3.1.0"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.7.7"
-composeFoundation = "1.7.7"
-composeMaterial = "1.7.7"
+composeAnimation = "1.7.8"
+composeFoundation = "1.7.8"
+composeMaterial = "1.7.8"
 composeMaterial3 = "1.3.1"
-composeRuntime = "1.7.7"
-composeUi = "1.7.7"
+composeRuntime = "1.7.8"
+composeUi = "1.7.8"
 
 # Dagger
 # https://github.com/google/dagger/releases.
@@ -74,11 +74,11 @@ composeMultiplatform = "1.7.3"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "2.1.10-1.0.29"
+ksp = "2.1.10-1.0.30"
 
 # Ktor
 # https://ktor.io/docs/releases.html#release-details.
-ktor = "3.0.3"
+ktor = "3.1.0"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
@@ -86,11 +86,11 @@ junit = "4.13.2"
 
 # detekt
 # https://github.com/detekt/detekt/releases.
-detekt = "1.23.7"
+detekt = "1.23.8"
 
 # Compose Markdown
 # https://github.com/boswelja/compose-markdown.
-composeMarkdown = "1.1.0"
+composeMarkdown = "1.1.2"
 
 # MaterialKolor
 # https://github.com/jordond/MaterialKolor.
@@ -153,7 +153,8 @@ compose = [
 
 coil = [
     "coil-compose",
-    "coil-network"
+    "coil-network",
+    "ktor-engine-android"
 ]
 
 ktor = [
