@@ -8,18 +8,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User.MediaCollection.NamedList
+import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.profile.R
-import com.imashnake.animite.media.R as mediaR
-import com.imashnake.animite.core.R as coreR
 
 /**
  * The viewer's favourite Anime, Manga, and Characters.
@@ -56,21 +54,17 @@ private fun UserFavouriteLists(
             MediaSmallRow(namedList.name, namedList.list) { item ->
                 when(item) {
                     is Media.Small -> {
-                        MediaSmall(
+                        MediaCard(
                             image = item.coverImage,
                             label = item.title,
                             onClick = {},
-                            imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                            cardWidth = dimensionResource(coreR.dimen.media_card_width),
                         )
                     }
                     is Media.Character -> {
-                        MediaSmall(
+                        CharacterCard(
                             image = item.image,
                             label = item.name,
                             onClick = { Log.d("CharacterId", "${item.id}") },
-                            imageHeight = dimensionResource(mediaR.dimen.character_image_height),
-                            cardWidth = dimensionResource(mediaR.dimen.character_card_width),
                         )
                     }
                 }
