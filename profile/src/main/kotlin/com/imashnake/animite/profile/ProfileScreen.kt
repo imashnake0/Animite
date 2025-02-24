@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,7 +43,6 @@ import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.FallbackMessage
@@ -94,8 +94,8 @@ fun ProfileScreen(
                                     .padding(start = LocalPaddings.current.medium)
                                     .thenIf(LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                                         padding(start = dimensionResource(navigationR.dimen.navigation_rail_width))
+                                            .displayCutoutPadding()
                                     }
-                                    .landscapeCutoutPadding()
                                     .size(100.dp)
                             )
                         }
@@ -109,14 +109,20 @@ fun ProfileScreen(
                                 overflow = TextOverflow.Ellipsis,
                                 modifier = Modifier
                                     .padding(horizontal = LocalPaddings.current.large)
-                                    .landscapeCutoutPadding()
+                                    .thenIf(LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                        padding(start = dimensionResource(navigationR.dimen.navigation_rail_width))
+                                            .displayCutoutPadding()
+                                    }
                             )
                             UserDescription(
                                 description = description,
                                 modifier = Modifier
                                     .maxHeight(dimensionResource(R.dimen.user_about_height))
                                     .padding(horizontal = LocalPaddings.current.large)
-                                    .landscapeCutoutPadding()
+                                    .thenIf(LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                        padding(start = dimensionResource(navigationR.dimen.navigation_rail_width))
+                                            .displayCutoutPadding()
+                                    }
                             )
                             Spacer(Modifier.size(LocalPaddings.current.medium))
                             UserTabs(
@@ -184,7 +190,10 @@ private fun UserTabs(
     Column(modifier) {
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
-            modifier = Modifier.landscapeCutoutPadding(),
+            modifier = Modifier.thenIf(LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                padding(start = dimensionResource(navigationR.dimen.navigation_rail_width))
+                    .displayCutoutPadding()
+            },
             containerColor = MaterialTheme.colorScheme.background,
             divider = {}
         ) {
