@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.core.extensions.orFalse
 import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
@@ -42,7 +43,7 @@ fun MediaTab(
     val scrollState = rememberScrollState()
 
     when {
-        mediaCollection?.namedLists?.isEmpty() == true -> {
+        mediaCollection?.namedLists?.isEmpty().orFalse() -> {
             FallbackScreen(
                 stringResource(
                     when (mediaCollection.type) {
@@ -58,10 +59,9 @@ fun MediaTab(
                 .verticalScroll(scrollState)
                 .padding(vertical = LocalPaddings.current.large)
         ) {
-            // TODO: Why is this not smart-casting?
             if (!mediaCollection?.namedLists.isNullOrEmpty()) {
                 UserMediaLists(
-                    lists =  mediaCollection!!.namedLists,
+                    lists =  mediaCollection.namedLists,
                     onNavigateToMediaItem = onNavigateToMediaItem,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope,
