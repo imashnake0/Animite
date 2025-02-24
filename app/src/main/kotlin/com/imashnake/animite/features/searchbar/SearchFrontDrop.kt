@@ -75,7 +75,7 @@ fun SearchFrontDrop(
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val searchBarBottomPadding: Dp by animateDpAsState(
         targetValue = if (hasExtraPadding) {
-            dimensionResource(navigationR.dimen.navigation_bar_height)
+            dimensionResource(navigationR.dimen.navigation_bar_height) + insetPaddingValues.calculateBottomPadding()
         } else insetPaddingValues.calculateBottomPadding(),
         label = "translate_search_bar"
     )
@@ -119,7 +119,6 @@ fun SearchFrontDrop(
                 top = insetPaddingValues.calculateTopPadding(),
                 end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current)
             )
-            .imePadding()
             .height(dimensionResource(R.dimen.search_bar_height))
     )
 }
