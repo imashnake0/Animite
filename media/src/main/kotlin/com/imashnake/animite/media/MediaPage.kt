@@ -70,6 +70,7 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -78,8 +79,9 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
@@ -92,7 +94,6 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
-import androidx.core.net.toUri
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
@@ -279,11 +280,10 @@ fun MediaPage(
                             .padding(horizontalInsets)
                             .height(dimensionResource(coreR.dimen.media_image_height) - offset)
                     ) {
-                        MediaSmall(
+                        MediaCard(
                             image = media.coverImage,
+                            label = null,
                             onClick = {},
-                            imageHeight = dimensionResource(coreR.dimen.media_image_height),
-                            cardWidth = dimensionResource(coreR.dimen.media_card_width),
                             modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(
                                     SharedContentKey(
@@ -440,12 +440,10 @@ fun MediaCharacters(
         modifier = modifier,
         contentPadding = contentPadding,
     ) { character ->
-        MediaSmall(
+        CharacterCard(
             image = character.image,
             label = character.name,
             onClick = { Log.d("CharacterId", "${character.id}") },
-            imageHeight = dimensionResource(R.dimen.character_image_height),
-            cardWidth = dimensionResource(R.dimen.character_card_width),
         )
     }
 }

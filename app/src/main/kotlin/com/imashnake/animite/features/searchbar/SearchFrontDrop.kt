@@ -45,9 +45,8 @@ import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaSmall
+import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.R as coreR
-import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
 /**
@@ -170,11 +169,10 @@ private fun SearchItem(
             .clip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
             .clickable { onClick(item.id) }
     ) {
-        MediaSmall(
+        MediaCard(
             image = item.coverImage,
+            label = null,
             onClick = { onClick(item.id) },
-            imageHeight = dimensionResource(mediaR.dimen.character_image_height),
-            cardWidth = dimensionResource(mediaR.dimen.character_card_width),
         )
 
         Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {

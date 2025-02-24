@@ -79,6 +79,62 @@ fun <T> MediaSmallRow(
 }
 
 /**
+ * A [Card] that displays media (anime or manga) thumbnail, and an optional label.
+ *
+ * @param image A URL of the image to be shown in the card that this component is.
+ * @param label A label for the [image], if this is `null`, the [label] is not shown.
+ * @param onClick Action to happen when the card is clicked.
+ */
+@Composable
+fun MediaCard(
+    image: String?,
+    label: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
+) {
+    MediaSmall(
+        image = image,
+        onClick = onClick,
+        imageHeight = 200.dp,
+        cardWidth = 140.dp,
+        modifier = modifier,
+        imageModifier = imageModifier,
+        textModifier = textModifier,
+        label = label
+    )
+}
+
+/**
+ * A [Card] that displays a character thumbnail, and an optional label.
+ *
+ * @param image A URL of the image to be shown in the card that this component is.
+ * @param label A label for the [image], if this is `null`, the [label] is not shown.
+ * @param onClick Action to happen when the card is clicked.
+ */
+@Composable
+fun CharacterCard(
+    image: String?,
+    label: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
+) {
+    MediaSmall(
+        image = image,
+        onClick = onClick,
+        imageHeight = 137.dp,
+        cardWidth = 96.dp,
+        modifier = modifier,
+        imageModifier = imageModifier,
+        textModifier = textModifier,
+        label = label
+    )
+}
+
+/**
  * A [Card] to display a media image and a label. Note that [imageHeight] and [cardWidth] must be
  * set so that all cards have the same dimensions.
  *
@@ -89,15 +145,15 @@ fun <T> MediaSmallRow(
  * @param cardWidth Width of the card.
  */
 @Composable
-fun MediaSmall(
+internal fun MediaSmall(
     image: String?,
+    label: String?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     imageHeight: Dp,
     cardWidth: Dp,
+    modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     textModifier: Modifier = Modifier,
-    label: String? = null,
 ) {
     Card(
         onClick = onClick,
