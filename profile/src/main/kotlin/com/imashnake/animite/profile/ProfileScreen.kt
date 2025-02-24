@@ -132,9 +132,8 @@ fun ProfileScreen(
                     contentModifier = Modifier
                         .padding(top = LocalPaddings.current.large)
                         .thenIf(
-                            condition = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE,
-                            other = { padding(start = dimensionResource(navigationR.dimen.navigation_rail_width)) },
-                            elseOther = { padding(bottom = dimensionResource(navigationR.dimen.navigation_bar_height)) }
+                            condition = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT,
+                            other = { padding(bottom = dimensionResource(navigationR.dimen.navigation_bar_height)) }
                         ),
                 )
             }
