@@ -35,6 +35,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.core.extensions.orFalse
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.HomeScreen
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
@@ -82,11 +83,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isNavBarVisible = remember(currentBackStackEntry) {
-        if (currentBackStackEntry != null)
-            NavigationBarPaths.entries.any {
-                it.matchesDestination(currentBackStackEntry!!)
+        currentBackStackEntry?.let {
+            NavigationBarPaths.entries.any { path ->
+                path.matchesDestination(it)
             }
-        else false
+        }.orFalse()
     }
 
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
