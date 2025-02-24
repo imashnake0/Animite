@@ -72,74 +72,67 @@ fun ProfileScreen(
 
     val data = listOf(viewer, viewerAnimeLists, viewerMangaLists)
 
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        when {
-            isLoggedIn -> when {
-                data.all { it is Resource.Success } -> viewer.data?.run {
-                    BannerLayout(
-                        banner = {
-                            Box {
-                                AsyncImage(
-                                    model = crossfadeModel(banner),
-                                    contentDescription = "banner",
-                                    modifier = it,
-                                    contentScale = ContentScale.Crop
-                                )
-                                AsyncImage(
-                                    model = crossfadeModel(avatar),
-                                    contentDescription = "avatar",
-                                    modifier = Modifier
-                                        .align(Alignment.BottomStart)
-                                        .landscapeCutoutPadding()
-                                        .padding(start = LocalPaddings.current.medium)
-                                        .size(100.dp)
-                                )
-                            }
-                        },
-                        content = {
-                            Column {
-                                Text(
-                                    text = name,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
-                                )
-                                UserDescription(
-                                    description = description,
-                                    modifier = Modifier
-                                        .maxHeight(dimensionResource(R.dimen.user_about_height))
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
-                                )
-                                Spacer(Modifier.size(LocalPaddings.current.medium))
-                                UserTabs(
-                                    user = this@run,
-                                    animeCollection = viewerAnimeLists.data,
-                                    mangaCollection = viewerMangaLists.data,
-                                    onNavigateToMediaItem = onNavigateToMediaItem,
-                                    sharedTransitionScope = sharedTransitionScope,
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                )
-                            }
-                        },
-                        contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large,
-                            bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
-                        )
+    when {
+        isLoggedIn -> when {
+            data.all { it is Resource.Success } -> viewer.data?.run {
+                BannerLayout(
+                    banner = {
+                        Box {
+                            AsyncImage(
+                                model = crossfadeModel(banner),
+                                contentDescription = "banner",
+                                modifier = it,
+                                contentScale = ContentScale.Crop
+                            )
+                            AsyncImage(
+                                model = crossfadeModel(avatar),
+                                contentDescription = "avatar",
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .landscapeCutoutPadding()
+                                    .padding(start = LocalPaddings.current.medium)
+                                    .size(100.dp)
+                            )
+                        }
+                    },
+                    content = {
+                        Column {
+                            Text(
+                                text = name,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleLarge,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .padding(horizontal = LocalPaddings.current.large)
+                                    .landscapeCutoutPadding()
+                            )
+                            UserDescription(
+                                description = description,
+                                modifier = Modifier
+                                    .maxHeight(dimensionResource(R.dimen.user_about_height))
+                                    .padding(horizontal = LocalPaddings.current.large)
+                                    .landscapeCutoutPadding()
+                            )
+                            Spacer(Modifier.size(LocalPaddings.current.medium))
+                            UserTabs(
+                                user = this@run,
+                                animeCollection = viewerAnimeLists.data,
+                                mangaCollection = viewerMangaLists.data,
+                                onNavigateToMediaItem = onNavigateToMediaItem,
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedVisibilityScope = animatedVisibilityScope,
+                            )
+                        }
+                    },
+                    contentModifier = Modifier.padding(
+                        top = LocalPaddings.current.large,
+                        bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
                     )
-                }
-                else -> ProgressIndicatorScreen()
+                )
             }
-            else -> Login()
+            else -> ProgressIndicatorScreen()
         }
+        else -> Login()
     }
 }
 
