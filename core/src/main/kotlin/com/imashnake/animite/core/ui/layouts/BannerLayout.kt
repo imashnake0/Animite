@@ -50,7 +50,6 @@ fun BannerLayout(
                 .fillMaxSize()
                 .padding(top = bannerHeight)
                 .background(MaterialTheme.colorScheme.background)
-                .navigationBarsPadding()
                 .then(contentModifier),
             verticalArrangement = verticalArrangement
         ) { content() }

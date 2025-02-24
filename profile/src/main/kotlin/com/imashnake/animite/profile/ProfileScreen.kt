@@ -1,5 +1,6 @@
 package com.imashnake.animite.profile
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -27,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,6 +45,7 @@ import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -89,8 +93,11 @@ fun ProfileScreen(
                                 contentDescription = "avatar",
                                 modifier = Modifier
                                     .align(Alignment.BottomStart)
-                                    .landscapeCutoutPadding()
                                     .padding(start = LocalPaddings.current.medium)
+                                    .thenIf(LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                        padding(start = dimensionResource(navigationR.dimen.navigation_rail_width))
+                                    }
+                                    .landscapeCutoutPadding()
                                     .size(100.dp)
                             )
                         }
@@ -124,10 +131,13 @@ fun ProfileScreen(
                             )
                         }
                     },
-                    contentModifier = Modifier.padding(
-                        top = LocalPaddings.current.large,
-                        bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
-                    )
+                    contentModifier = Modifier
+                        .padding(top = LocalPaddings.current.large)
+                        .thenIf(
+                            condition = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE,
+                            other = { padding(start = dimensionResource(navigationR.dimen.navigation_rail_width)) },
+                            elseOther = { padding(bottom = dimensionResource(navigationR.dimen.navigation_bar_height)) }
+                        ),
                 )
             }
             else -> ProgressIndicatorScreen()
