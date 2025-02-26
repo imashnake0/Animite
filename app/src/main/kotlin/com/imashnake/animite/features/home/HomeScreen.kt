@@ -73,6 +73,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
+import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -234,13 +235,12 @@ fun HomeScreen(
                                                 },
                                                 sharedTransitionScope = sharedTransitionScope,
                                                 animatedVisibilityScope = animatedVisibilityScope,
-                                                contentPadding = PaddingValues(
-                                                    start = LocalPaddings.current.large +
-                                                            insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                                    top = LocalPaddings.current.medium,
-                                                    end = LocalPaddings.current.large +
-                                                            insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                                                    bottom = LocalPaddings.current.medium
+                                                contentPadding = Paddings(
+                                                    horizontal = LocalPaddings.current.large,
+                                                    vertical = LocalPaddings.current.medium,
+                                                ) + Paddings(
+                                                    start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                                                    end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
                                                 )
                                             )
                                         } else {
