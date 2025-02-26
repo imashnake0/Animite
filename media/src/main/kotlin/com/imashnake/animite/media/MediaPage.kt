@@ -1,7 +1,6 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -16,20 +15,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
@@ -59,7 +54,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
@@ -68,7 +62,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -77,6 +70,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
+import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.ui.CharacterCard
@@ -107,14 +101,16 @@ private const val DEVICE_CORNER_RADIUS = 30
 fun MediaPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
     viewModel: MediaPageViewModel = hiltViewModel(),
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val horizontalInsets = PaddingValues(
-        start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-        end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current)
+    val layoutDirection = LocalLayoutDirection.current
+    val horizontalInsets = Paddings(
+        start = insetPaddingValues.calculateStartPadding(layoutDirection),
+        end = insetPaddingValues.calculateEndPadding(layoutDirection),
     )
+
     val scrollState = rememberScrollState()
 
     val media = viewModel.uiState
@@ -165,15 +161,11 @@ fun MediaPage(
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
                                     .skipToLookaheadSize()
-                                    .padding(
-                                        start = LocalPaddings.current.medium
-                                                + dimensionResource(coreR.dimen.media_card_width)
-                                                + LocalPaddings.current.large,
-                                        end = LocalPaddings.current.medium
-                                    )
+                                    .padding(horizontal = LocalPaddings.current.large / 2)
+                                    .padding(start = dimensionResource(coreR.dimen.media_card_width) + LocalPaddings.current.large)
                                     .padding(horizontalInsets)
                                     .height(
-                                        dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.small
+                                        dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
                                 onClick = { showSheet = true },
                                 textModifier = Modifier.sharedBounds(
@@ -217,11 +209,11 @@ fun MediaPage(
                             if (!media.genres.isNullOrEmpty()) {
                                 MediaGenres(
                                     genres = media.genres,
-                                    contentPadding = PaddingValues(
-                                        start = LocalPaddings.current.large +
-                                            horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
-                                        end = LocalPaddings.current.large +
-                                            horizontalInsets.calculateEndPadding(LocalLayoutDirection.current)
+                                    contentPadding = Paddings(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + Paddings(
+                                        start = horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
+                                        end = horizontalInsets.calculateEndPadding(LocalLayoutDirection.current),
                                     ),
                                     color = Color(media.color ?: 0xFF152232.toInt()),
                                 )
@@ -230,11 +222,11 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
-                                    contentPadding = PaddingValues(
-                                        start = LocalPaddings.current.large +
-                                                horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
-                                        end = LocalPaddings.current.large +
-                                                horizontalInsets.calculateEndPadding(LocalLayoutDirection.current)
+                                    contentPadding = Paddings(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + Paddings(
+                                        start = horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
+                                        end = horizontalInsets.calculateEndPadding(LocalLayoutDirection.current),
                                     ),
                                 )
                             }
@@ -249,8 +241,8 @@ fun MediaPage(
                             }
                         },
                         contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.small,
-                            bottom = insetPaddingValues.calculateBottomPadding()
+                            top = LocalPaddings.current.medium / 2,
+                            bottom = insetPaddingValues.calculateBottomPadding(),
                         )
                     )
 
@@ -273,9 +265,9 @@ fun MediaPage(
                                         + LocalPaddings.current.medium
                                         + dimensionResource(coreR.dimen.banner_height)
                                         - dimensionResource(coreR.dimen.media_image_height)
-                                        - WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
+                                        - contentWindowInsets.asPaddingValues().calculateTopPadding()
                                         + offset,
-                                start = LocalPaddings.current.large
+                                start = LocalPaddings.current.large,
                             )
                             .padding(horizontalInsets)
                             .height(dimensionResource(coreR.dimen.media_image_height) - offset)

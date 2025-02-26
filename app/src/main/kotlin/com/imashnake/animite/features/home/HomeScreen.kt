@@ -181,7 +181,6 @@ fun HomeScreen(
                                             horizontal = LocalPaddings.current.large,
                                             vertical = LocalPaddings.current.medium
                                         )
-                                        // Inset padding
                                         .padding(
                                             start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
                                             top = insetPaddingValues.calculateTopPadding(),
