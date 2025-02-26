@@ -17,7 +17,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 # Core Library Desugaring
 # https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
-desugaring = "2.1.4"
+desugaring = "2.1.5"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
