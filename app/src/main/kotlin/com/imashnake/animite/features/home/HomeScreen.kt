@@ -177,12 +177,14 @@ fun HomeScreen(
                                             }
                                         }
                                         .padding(
-                                            start = LocalPaddings.current.large +
-                                                    insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                            top = LocalPaddings.current.medium + insetPaddingValues.calculateTopPadding(),
-                                            end = LocalPaddings.current.large +
-                                                    insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                            bottom = LocalPaddings.current.medium
+                                            horizontal = LocalPaddings.current.large,
+                                            vertical = LocalPaddings.current.medium
+                                        )
+                                        // Inset padding
+                                        .padding(
+                                            start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
+                                            top = insetPaddingValues.calculateTopPadding(),
+                                            end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
                                         ),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.Bottom,
