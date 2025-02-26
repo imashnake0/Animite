@@ -51,25 +51,25 @@ fun <T> MediaSmallRow(
         ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        val startPadding = contentPadding.calculateStartPadding(LocalLayoutDirection.current)
-        val endPadding = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+        val layoutDirection = LocalLayoutDirection.current
+        val startPadding = contentPadding.calculateStartPadding(layoutDirection)
+        val endPadding = contentPadding.calculateEndPadding(layoutDirection)
         if (title != null) {
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier
-                    .padding(
-                        start = startPadding,
-                        end = endPadding
-                    )
+                modifier = Modifier.padding(
+                    start = startPadding,
+                    end = endPadding,
+                )
             )
         }
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
             contentPadding = PaddingValues(
                 start = startPadding,
-                end = endPadding
+                end = endPadding,
             )
         ) {
             items(mediaList) { media ->
