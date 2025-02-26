@@ -251,8 +251,8 @@ fun HomeScreen(
                             }
                         },
                         contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.medium,
-                            bottom = LocalPaddings.current.medium +
+                            top = LocalPaddings.current.large / 2,
+                            bottom = LocalPaddings.current.large / 2 +
                                 dimensionResource(navigationR.dimen.navigation_bar_height)
                         ),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
