@@ -53,21 +53,20 @@ fun NavigationBar(
         modifier = modifier
     ) {
         Row(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .windowInsetsPadding(windowInsets)
-                    .defaultMinSize(minHeight = dimensionResource(R.dimen.navigation_bar_height))
-                    .selectableGroup(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .windowInsetsPadding(windowInsets)
+                .defaultMinSize(minHeight = dimensionResource(R.dimen.navigation_bar_height))
+                .selectableGroup(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             NavigationBarPaths.entries.forEach { destination ->
                 val selected = remember(destination, currentBackStackEntry) {
-                    currentBackStackEntry?.let { destination.matchesDestination(it) } ?: false
+                    currentBackStackEntry?.let { destination.matchesDestination(it) } == true
                 }
                 NavigationBarItem(
-                    modifier = Modifier
-                        .height(dimensionResource(R.dimen.navigation_bar_height)),
+                    modifier = Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
                     selected = selected,
                     onClick = {
                         if (!selected) destination.navigateTo(navController)
