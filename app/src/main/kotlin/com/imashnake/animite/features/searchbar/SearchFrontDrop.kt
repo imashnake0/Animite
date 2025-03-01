@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -39,11 +41,13 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.search.Search
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.Constants
+import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.R as coreR
@@ -73,10 +77,10 @@ fun SearchFrontDrop(
     val searchList by viewModel.searchList.collectAsState()
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
-    val searchBarBottomPadding: Dp by animateDpAsState(
+    val searchBarBottomPadding by animateDpAsState(
         targetValue = if (hasExtraPadding) {
-            dimensionResource(navigationR.dimen.navigation_bar_height) + insetPaddingValues.calculateBottomPadding()
-        } else insetPaddingValues.calculateBottomPadding(),
+            dimensionResource(navigationR.dimen.navigation_bar_height)
+        } else 0.dp,
         label = "translate_search_bar"
     )
     val frontDropColor by animateColorAsState(
@@ -100,6 +104,7 @@ fun SearchFrontDrop(
                 // TODO: Add this back; https://issuetracker.google.com/issues/323708850.
                 //.imeNestedScroll(),
             contentPadding = insetPaddingValues,
+            searchBarBottomPadding = searchBarBottomPadding,
             onItemClick = { id ->
                 isExpanded = false
                 viewModel.setQuery(null)
@@ -113,12 +118,15 @@ fun SearchFrontDrop(
         setExpanded = { isExpanded = it },
         onSearched = viewModel::setQuery,
         modifier = modifier
-            .padding(bottom = searchBarBottomPadding)
             .padding(
                 start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
                 top = insetPaddingValues.calculateTopPadding(),
                 end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current)
             )
+            .padding(bottom = searchBarBottomPadding)
+            .navigationBarsPadding()
+            .consumeWindowInsets(PaddingValues(bottom = searchBarBottomPadding))
+            .imePadding()
             .height(dimensionResource(R.dimen.search_bar_height))
     )
 }
@@ -126,23 +134,26 @@ fun SearchFrontDrop(
 @Composable
 fun SearchList(
     searchList: List<Search>,
+    searchBarBottomPadding: Dp,
+    onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
-    onItemClick: (Int) -> Unit
 ) {
     LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(
-            start = LocalPaddings.current.large +
-                contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-            end = LocalPaddings.current.large +
-                contentPadding.calculateEndPadding(LocalLayoutDirection.current),
-            top = LocalPaddings.current.large +
-                contentPadding.calculateTopPadding(),
-            bottom = dimensionResource(R.dimen.search_bar_height) +
-                    LocalPaddings.current.large +
-                    dimensionResource(navigationR.dimen.navigation_bar_height) +
-                    contentPadding.calculateBottomPadding()
+        modifier = modifier
+            .padding(bottom = searchBarBottomPadding)
+            .navigationBarsPadding()
+            .consumeWindowInsets(PaddingValues(bottom = searchBarBottomPadding))
+            .imePadding(),
+        contentPadding = Paddings(
+            all = LocalPaddings.current.large
+        ) + Paddings(
+            bottom = LocalPaddings.current.large +
+                    dimensionResource(R.dimen.search_bar_height)
+        ) + Paddings(
+            start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+            top = contentPadding.calculateTopPadding(),
+            end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
         ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {

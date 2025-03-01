@@ -68,7 +68,7 @@ class PaddingValuesExt(
     /**
      * Add paddings without regard to the current [LayoutDirection].
      */
-    operator fun plus(other: PaddingValuesExt): PaddingValues {
+    operator fun plus(other: PaddingValuesExt): PaddingValuesExt {
         return Paddings(
             start = start + other.start,
             top = top + other.top,
