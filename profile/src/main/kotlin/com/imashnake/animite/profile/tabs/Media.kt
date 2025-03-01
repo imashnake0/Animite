@@ -51,7 +51,8 @@ fun MediaTab(
                         Media.Small.Type.MANGA -> R.string.no_manga
                         Media.Small.Type.UNKNOWN -> R.string.no_media
                     }
-                )
+                ),
+                modifier = Modifier.padding(contentPadding)
             )
         }
         else -> Column(
