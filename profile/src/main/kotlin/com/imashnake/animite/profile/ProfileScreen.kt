@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -131,6 +132,9 @@ fun ProfileScreen(
                                     onNavigateToMediaItem = onNavigateToMediaItem,
                                     sharedTransitionScope = sharedTransitionScope,
                                     animatedVisibilityScope = animatedVisibilityScope,
+                                    contentInsetPadding = PaddingValues(
+                                        start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current)
+                                    )
                                 )
                             }
                         },
@@ -179,7 +183,7 @@ private fun UserTabs(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    
+    contentInsetPadding: PaddingValues = PaddingValues(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTab.entries.size })
@@ -190,7 +194,8 @@ private fun UserTabs(
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
             containerColor = MaterialTheme.colorScheme.background,
-            divider = {}
+            divider = {},
+            modifier = Modifier.padding(contentInsetPadding)
         ) {
             titles.forEachIndexed { index, tab ->
                 Tab(
@@ -230,6 +235,7 @@ private fun UserTabs(
                         )
                     )
                 )
+                .padding(contentInsetPadding)
         ) { page ->
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
