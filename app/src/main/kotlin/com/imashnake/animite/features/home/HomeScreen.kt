@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
@@ -136,11 +135,7 @@ fun HomeScreen(
         rows.all { it is Resource.Success } -> {
             val scrollState = rememberScrollState()
             TranslucentStatusBarLayout(scrollState) {
-                Box(
-                    modifier = Modifier
-                        .verticalScroll(scrollState)
-                        .navigationBarsPadding()
-                ) {
+                Box(Modifier.verticalScroll(scrollState)) {
                     BannerLayout(
                         banner = { bannerModifier ->
                             Box {
@@ -236,7 +231,7 @@ fun HomeScreen(
                                                 animatedVisibilityScope = animatedVisibilityScope,
                                                 contentPadding = Paddings(
                                                     horizontal = LocalPaddings.current.large,
-                                                    vertical = LocalPaddings.current.medium,
+                                                    vertical = LocalPaddings.current.large / 2,
                                                 ) + Paddings(
                                                     start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
                                                     end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
@@ -249,11 +244,13 @@ fun HomeScreen(
                                 }
                             }
                         },
-                        contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large / 2,
-                            bottom = LocalPaddings.current.large / 2 +
-                                    dimensionResource(navigationR.dimen.navigation_bar_height)
-                        ),
+                        contentModifier = Modifier
+                            .padding(
+                                top = LocalPaddings.current.large / 2,
+                                bottom = LocalPaddings.current.large / 2 +
+                                        dimensionResource(navigationR.dimen.navigation_bar_height)
+                            )
+                            .padding(bottom = insetPaddingValues.calculateBottomPadding()),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
                 }

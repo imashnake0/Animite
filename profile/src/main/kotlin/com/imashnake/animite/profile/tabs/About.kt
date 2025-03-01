@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,7 +44,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AboutTab(
     user: User,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val scrollState = rememberScrollState()
 
@@ -58,6 +60,7 @@ fun AboutTab(
         modifier
             .verticalScroll(scrollState)
             .padding(bottom = LocalPaddings.current.large)
+            .padding(contentPadding)
     ) {
         Column(
             modifier = Modifier.padding(LocalPaddings.current.large),
