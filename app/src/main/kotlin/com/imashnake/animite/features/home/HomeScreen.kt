@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
@@ -250,7 +251,7 @@ fun HomeScreen(
                                 bottom = LocalPaddings.current.large / 2 +
                                         dimensionResource(navigationR.dimen.navigation_bar_height)
                             )
-                            .padding(bottom = insetPaddingValues.calculateBottomPadding()),
+                            .navigationBarsPadding(),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
                 }

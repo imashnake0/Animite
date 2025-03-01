@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -224,10 +225,7 @@ fun MediaPage(
                                     characters = media.characters,
                                     contentPadding = Paddings(
                                         horizontal = LocalPaddings.current.large
-                                    ) + Paddings(
-                                        start = horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
-                                        end = horizontalInsets.calculateEndPadding(LocalLayoutDirection.current),
-                                    ),
+                                    ) + horizontalInsets,
                                 )
                             }
 
@@ -240,10 +238,9 @@ fun MediaPage(
                                 )
                             }
                         },
-                        contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.medium / 2,
-                            bottom = insetPaddingValues.calculateBottomPadding(),
-                        )
+                        contentModifier = Modifier
+                            .padding(top = LocalPaddings.current.medium / 2)
+                            .navigationBarsPadding()
                     )
 
                     // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
@@ -265,7 +262,7 @@ fun MediaPage(
                                         + LocalPaddings.current.medium
                                         + dimensionResource(coreR.dimen.banner_height)
                                         - dimensionResource(coreR.dimen.media_image_height)
-                                        - contentWindowInsets.asPaddingValues().calculateTopPadding()
+                                        - insetPaddingValues.calculateTopPadding()
                                         + offset,
                                 start = LocalPaddings.current.large,
                             )
