@@ -100,7 +100,7 @@ fun HomeScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: HomeViewModel = hiltViewModel(),
-    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
 

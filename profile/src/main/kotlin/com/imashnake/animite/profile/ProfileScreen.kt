@@ -3,11 +3,15 @@ package com.imashnake.animite.profile
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -27,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -62,7 +67,10 @@ fun ProfileScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: ProfileViewModel = hiltViewModel(),
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
+    val insetPaddingValues = contentWindowInsets.asPaddingValues()
+
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
     val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
@@ -94,27 +102,28 @@ fun ProfileScreen(
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
                                         .padding(start = LocalPaddings.current.medium)
+                                        .padding(start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current))
                                         .size(100.dp)
                                 )
                             }
                         },
                         content = {
-                            Column {
-                                Text(
-                                    text = name,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                )
-                                UserDescription(
-                                    description = description,
-                                    modifier = Modifier
-                                        .maxHeight(dimensionResource(R.dimen.user_about_height))
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                )
-                                Spacer(Modifier.size(LocalPaddings.current.medium))
+                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                                Column(Modifier.padding(start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current))) {
+                                    Text(
+                                        text = name,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
+                                    )
+                                    UserDescription(
+                                        description = description,
+                                        modifier = Modifier
+                                            .maxHeight(dimensionResource(R.dimen.user_about_height))
+                                            .padding(horizontal = LocalPaddings.current.large)
+                                    )
+                                }
                                 UserTabs(
                                     user = this@run,
                                     animeCollection = viewerAnimeLists.data,
@@ -170,6 +179,7 @@ private fun UserTabs(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTab.entries.size })
