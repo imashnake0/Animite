@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -43,7 +44,6 @@ import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.extensions.PaddingValuesExt
 import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
@@ -195,7 +195,7 @@ private fun UserTabs(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    contentInsetPadding: PaddingValuesExt = Paddings(),
+    contentInsetPadding: PaddingValues = PaddingValues(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTab.entries.size })
@@ -262,7 +262,12 @@ private fun UserTabs(
                         contentPadding = Paddings(
                             horizontal = LocalPaddings.current.large,
                             vertical = LocalPaddings.current.large / 2,
-                        ) + contentInsetPadding,
+                        ) + Paddings(
+                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
+                            top = contentInsetPadding.calculateTopPadding(),
+                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
+                            bottom = contentInsetPadding.calculateBottomPadding()
+                        ),
                     )
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
@@ -272,14 +277,24 @@ private fun UserTabs(
                         contentPadding = Paddings(
                             horizontal = LocalPaddings.current.large,
                             vertical = LocalPaddings.current.large / 2,
-                        ) + contentInsetPadding,
+                        ) + Paddings(
+                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
+                            top = contentInsetPadding.calculateTopPadding(),
+                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
+                            bottom = contentInsetPadding.calculateBottomPadding()
+                        ),
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
                         contentPadding = Paddings(
                             horizontal = LocalPaddings.current.large,
                             vertical = LocalPaddings.current.large / 2,
-                        ) + contentInsetPadding,
+                        ) + Paddings(
+                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
+                            top = contentInsetPadding.calculateTopPadding(),
+                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
+                            bottom = contentInsetPadding.calculateBottomPadding()
+                        ),
                     )
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),

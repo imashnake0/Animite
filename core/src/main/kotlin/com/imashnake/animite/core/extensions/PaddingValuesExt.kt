@@ -25,7 +25,7 @@ fun Paddings(
     bottom: Dp = 0.dp
 ) = PaddingValuesExt(start, top, end, bottom)
 
-class PaddingValuesExt(
+class PaddingValuesExt internal constructor(
     @Stable
     val start: Dp = 0.dp,
     @Stable
