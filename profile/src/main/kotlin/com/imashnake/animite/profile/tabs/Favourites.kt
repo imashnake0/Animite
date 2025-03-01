@@ -1,8 +1,8 @@
 package com.imashnake.animite.profile.tabs
 
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -28,6 +28,7 @@ import com.imashnake.animite.profile.R
 fun FavouritesTab(
     favouriteLists: List<NamedList>,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val scrollState = rememberScrollState()
 
@@ -36,22 +37,30 @@ fun FavouritesTab(
         else -> Column(
             modifier
                 .verticalScroll(scrollState)
-                .padding(vertical = LocalPaddings.current.large)
-        ) { UserFavouriteLists(favouriteLists) }
+                .padding(vertical = LocalPaddings.current.large / 2)
+                .padding(bottom = contentPadding.calculateBottomPadding())
+        ) {
+            UserFavouriteLists(
+                lists = favouriteLists,
+                contentPadding = contentPadding,
+            )
+        }
     }
 }
 
 @Composable
 private fun UserFavouriteLists(
     lists: List<NamedList>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         lists.fastForEach { namedList ->
-            MediaSmallRow(namedList.name, namedList.list) { item ->
+            MediaSmallRow(
+                title = namedList.name,
+                mediaList = namedList.list,
+                contentPadding = contentPadding,
+            ) { item ->
                 when(item) {
                     is Media.Small -> {
                         MediaCard(

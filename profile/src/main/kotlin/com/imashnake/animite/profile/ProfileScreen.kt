@@ -274,7 +274,13 @@ private fun UserTabs(
                             vertical = LocalPaddings.current.large / 2,
                         ) + contentInsetPadding,
                     )
-                    ProfileTab.FAVOURITES -> FavouritesTab(user.favourites)
+                    ProfileTab.FAVOURITES -> FavouritesTab(
+                        favouriteLists = user.favourites,
+                        contentPadding = Paddings(
+                            horizontal = LocalPaddings.current.large,
+                            vertical = LocalPaddings.current.large / 2,
+                        ) + contentInsetPadding,
+                    )
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
                         modifier = Modifier.align(Alignment.Center),
