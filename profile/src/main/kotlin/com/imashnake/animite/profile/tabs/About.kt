@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +31,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.profile.R
@@ -44,7 +44,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AboutTab(
     user: User,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val scrollState = rememberScrollState()
 
@@ -58,8 +59,8 @@ fun AboutTab(
     Column(
         modifier
             .verticalScroll(scrollState)
-            .landscapeCutoutPadding()
             .padding(bottom = LocalPaddings.current.large)
+            .padding(contentPadding)
     ) {
         Column(
             modifier = Modifier.padding(LocalPaddings.current.large),
@@ -69,7 +70,6 @@ fun AboutTab(
                 stats = statsLabelToValue,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .landscapeCutoutPadding()
             ) {
                 Text(
                     text = it.first,

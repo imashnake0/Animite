@@ -2,8 +2,8 @@ package com.imashnake.animite.profile.tabs
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,6 +38,7 @@ fun MediaTab(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val scrollState = rememberScrollState()
 
@@ -50,22 +51,24 @@ fun MediaTab(
                         Media.Small.Type.MANGA -> R.string.no_manga
                         Media.Small.Type.UNKNOWN -> R.string.no_media
                     }
-                )
+                ),
+                modifier = Modifier.padding(contentPadding)
             )
         }
         else -> Column(
             modifier
                 .verticalScroll(scrollState)
-                .padding(vertical = LocalPaddings.current.large)
+                .padding(vertical = LocalPaddings.current.large / 2)
+                .padding(bottom = contentPadding.calculateBottomPadding())
         ) {
-            // TODO: Why is this not smart-casting?
             if (!mediaCollection?.namedLists.isNullOrEmpty()) {
                 UserMediaLists(
-                    lists =  mediaCollection!!.namedLists,
+                    lists =  mediaCollection.namedLists,
                     onNavigateToMediaItem = onNavigateToMediaItem,
                     sharedTransitionScope = sharedTransitionScope,
                     animatedVisibilityScope = animatedVisibilityScope,
                     modifier = modifier,
+                    contentPadding = contentPadding,
                 )
             }
         }
@@ -79,13 +82,15 @@ private fun UserMediaLists(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
-        modifier = modifier,
-    ) {
+    Column(modifier = modifier) {
         lists.fastForEach { namedList ->
-            MediaSmallRow(namedList.name, namedList.list) { item ->
+            MediaSmallRow(
+                title = namedList.name,
+                mediaList = namedList.list,
+                contentPadding = contentPadding,
+            ) { item ->
                 with(sharedTransitionScope) {
                     val media = item as Media.Small
                     MediaCard(

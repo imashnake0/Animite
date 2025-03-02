@@ -3,11 +3,17 @@ package com.imashnake.animite.profile
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -27,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,13 +44,12 @@ import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.data.Resource
+import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
-import com.imashnake.animite.core.extensions.landscapeCutoutPadding
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.ui.FallbackMessage
-import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
@@ -64,7 +70,15 @@ fun ProfileScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: ProfileViewModel = hiltViewModel(),
+    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
+    val insetPaddingValues = contentWindowInsets.asPaddingValues()
+    val layoutDirection = LocalLayoutDirection.current
+    val horizontalInsets = Paddings(
+        start = insetPaddingValues.calculateStartPadding(layoutDirection),
+        end = insetPaddingValues.calculateEndPadding(layoutDirection),
+    )
+
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
     val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
@@ -95,31 +109,29 @@ fun ProfileScreen(
                                     contentDescription = "avatar",
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
-                                        .landscapeCutoutPadding()
                                         .padding(start = LocalPaddings.current.medium)
+                                        .padding(horizontalInsets)
                                         .size(100.dp)
                                 )
                             }
                         },
                         content = {
-                            Column {
-                                Text(
-                                    text = name,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
-                                )
-                                UserDescription(
-                                    description = description,
-                                    modifier = Modifier
-                                        .maxHeight(dimensionResource(R.dimen.user_about_height))
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .landscapeCutoutPadding()
-                                )
-                                Spacer(Modifier.size(LocalPaddings.current.medium))
+                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                                Column(Modifier.padding(horizontalInsets)) {
+                                    Text(
+                                        text = name,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
+                                    )
+                                    UserDescription(
+                                        description = description,
+                                        modifier = Modifier
+                                            .maxHeight(dimensionResource(R.dimen.user_about_height))
+                                            .padding(horizontal = LocalPaddings.current.large)
+                                    )
+                                }
                                 UserTabs(
                                     user = this@run,
                                     animeCollection = viewerAnimeLists.data,
@@ -127,12 +139,14 @@ fun ProfileScreen(
                                     onNavigateToMediaItem = onNavigateToMediaItem,
                                     sharedTransitionScope = sharedTransitionScope,
                                     animatedVisibilityScope = animatedVisibilityScope,
+                                    contentInsetPadding = horizontalInsets
                                 )
                             }
                         },
                         contentModifier = Modifier.padding(
-                            top = LocalPaddings.current.large,
-                            bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
+                            top = LocalPaddings.current.large / 2,
+                            bottom = LocalPaddings.current.large / 2 +
+                                    dimensionResource(navigationR.dimen.navigation_bar_height)
                         )
                     )
                 }
@@ -175,6 +189,7 @@ private fun UserTabs(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    contentInsetPadding: PaddingValues = PaddingValues(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTab.entries.size })
@@ -184,9 +199,9 @@ private fun UserTabs(
     Column(modifier) {
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
-            modifier = Modifier.landscapeCutoutPadding(),
             containerColor = MaterialTheme.colorScheme.background,
-            divider = {}
+            divider = {},
+            modifier = Modifier.padding(contentInsetPadding)
         ) {
             titles.forEachIndexed { index, tab ->
                 Tab(
@@ -229,23 +244,57 @@ private fun UserTabs(
         ) { page ->
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
-                    ProfileTab.ABOUT -> AboutTab(user)
+                    ProfileTab.ABOUT -> AboutTab(
+                        user = user,
+                        contentPadding = contentInsetPadding,
+                    )
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
+                        contentPadding = Paddings(
+                            horizontal = LocalPaddings.current.large,
+                            vertical = LocalPaddings.current.large / 2,
+                        ) + Paddings(
+                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
+                            top = contentInsetPadding.calculateTopPadding(),
+                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
+                            bottom = contentInsetPadding.calculateBottomPadding()
+                        ),
                     )
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
+                        contentPadding = Paddings(
+                            horizontal = LocalPaddings.current.large,
+                            vertical = LocalPaddings.current.large / 2,
+                        ) + Paddings(
+                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
+                            top = contentInsetPadding.calculateTopPadding(),
+                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
+                            bottom = contentInsetPadding.calculateBottomPadding()
+                        ),
                     )
-                    ProfileTab.FAVOURITES -> FavouritesTab(user.favourites)
+                    ProfileTab.FAVOURITES -> FavouritesTab(
+                        favouriteLists = user.favourites,
+                        contentPadding = Paddings(
+                            horizontal = LocalPaddings.current.large,
+                            vertical = LocalPaddings.current.large / 2,
+                        ) + Paddings(
+                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
+                            top = contentInsetPadding.calculateTopPadding(),
+                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
+                            bottom = contentInsetPadding.calculateBottomPadding()
+                        ),
+                    )
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
-                        modifier = Modifier.align(Alignment.Center),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(contentInsetPadding),
                     )
                 }
             }

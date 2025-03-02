@@ -1,25 +1,31 @@
 package com.imashnake.animite.navigation
 
-import android.content.res.Configuration
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Surface
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -30,35 +36,42 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun NavigationBar(
-    navController: NavController
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    containerColor: Color = NavigationBarDefaults.containerColor,
+    contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),
+    tonalElevation: Dp = NavigationBarDefaults.Elevation,
+    windowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
 ) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
-    // TODO: Can we use `navigationBarsPadding()` instead?
-    NavigationBar(
-        Modifier.height(
-            dimensionResource(R.dimen.navigation_bar_height) + WindowInsets
-                .navigationBars
-                .asPaddingValues()
-                .calculateBottomPadding()
-        ),
-        // TODO: Use a `NavigationRail` instead.
-        windowInsets = if (LocalConfiguration.current.orientation
-            == Configuration.ORIENTATION_LANDSCAPE
-        ) { WindowInsets.displayCutout } else { WindowInsets(0.dp) }
+    // This is a clone of Material3 NavigationBar, except we've shrunk the height from 80dp to 65dp
+    Surface(
+        color = containerColor,
+        contentColor = contentColor,
+        tonalElevation = tonalElevation,
+        modifier = modifier
     ) {
-        NavigationBarPaths.entries.forEach { destination ->
-            val selected = remember(destination, currentBackStackEntry) {
-                currentBackStackEntry?.let { destination.matchesDestination(it) } ?: false
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .windowInsetsPadding(windowInsets)
+                .defaultMinSize(minHeight = dimensionResource(R.dimen.navigation_bar_height))
+                .selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            NavigationBarPaths.entries.forEach { destination ->
+                val selected = remember(destination, currentBackStackEntry) {
+                    currentBackStackEntry?.let { destination.matchesDestination(it) } == true
+                }
+                NavigationBarItem(
+                    modifier = Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
+                    selected = selected,
+                    onClick = { if (!selected) destination.navigateTo(navController) },
+                    icon = destination.icon
+                )
             }
-            NavigationBarItem(
-                modifier = Modifier.navigationBarsPadding(),
-                selected = selected,
-                onClick = {
-                    if (!selected) destination.navigateTo(navController)
-                },
-                icon = destination.icon
-            )
         }
     }
 }
