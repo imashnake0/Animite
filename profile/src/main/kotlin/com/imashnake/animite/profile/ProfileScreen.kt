@@ -73,6 +73,11 @@ fun ProfileScreen(
     contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
+    val layoutDirection = LocalLayoutDirection.current
+    val horizontalInsets = Paddings(
+        start = insetPaddingValues.calculateStartPadding(layoutDirection),
+        end = insetPaddingValues.calculateEndPadding(layoutDirection),
+    )
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
@@ -105,22 +110,14 @@ fun ProfileScreen(
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
                                         .padding(start = LocalPaddings.current.medium)
-                                        .padding(
-                                            start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                            end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                                        )
+                                        .padding(horizontalInsets)
                                         .size(100.dp)
                                 )
                             }
                         },
                         content = {
                             Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
-                                Column(
-                                    Modifier.padding(
-                                        start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                        end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                                    )
-                                ) {
+                                Column(Modifier.padding(horizontalInsets)) {
                                     Text(
                                         text = name,
                                         color = MaterialTheme.colorScheme.onBackground,
@@ -142,10 +139,7 @@ fun ProfileScreen(
                                     onNavigateToMediaItem = onNavigateToMediaItem,
                                     sharedTransitionScope = sharedTransitionScope,
                                     animatedVisibilityScope = animatedVisibilityScope,
-                                    contentInsetPadding = Paddings(
-                                        start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                        end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                                    )
+                                    contentInsetPadding = horizontalInsets
                                 )
                             }
                         },
