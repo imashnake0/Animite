@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -33,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,11 +41,12 @@ import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
@@ -73,11 +71,7 @@ fun ProfileScreen(
     contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val layoutDirection = LocalLayoutDirection.current
-    val horizontalInsets = Paddings(
-        start = insetPaddingValues.calculateStartPadding(layoutDirection),
-        end = insetPaddingValues.calculateEndPadding(layoutDirection),
-    )
+    val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
@@ -253,42 +247,27 @@ private fun UserTabs(
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
-                        contentPadding = Paddings(
+                        contentPadding = PaddingValues(
                             horizontal = LocalPaddings.current.large,
                             vertical = LocalPaddings.current.large / 2,
-                        ) + Paddings(
-                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
-                            top = contentInsetPadding.calculateTopPadding(),
-                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
-                            bottom = contentInsetPadding.calculateBottomPadding()
-                        ),
+                        ) + contentInsetPadding,
                     )
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
-                        contentPadding = Paddings(
+                        contentPadding = PaddingValues(
                             horizontal = LocalPaddings.current.large,
                             vertical = LocalPaddings.current.large / 2,
-                        ) + Paddings(
-                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
-                            top = contentInsetPadding.calculateTopPadding(),
-                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
-                            bottom = contentInsetPadding.calculateBottomPadding()
-                        ),
+                        ) + contentInsetPadding,
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
-                        contentPadding = Paddings(
+                        contentPadding = PaddingValues(
                             horizontal = LocalPaddings.current.large,
                             vertical = LocalPaddings.current.large / 2,
-                        ) + Paddings(
-                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
-                            top = contentInsetPadding.calculateTopPadding(),
-                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
-                            bottom = contentInsetPadding.calculateBottomPadding()
-                        ),
+                        ) + contentInsetPadding,
                     )
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
