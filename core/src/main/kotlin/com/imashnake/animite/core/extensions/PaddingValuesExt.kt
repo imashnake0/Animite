@@ -3,77 +3,51 @@
 package com.imashnake.animite.core.extensions
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
-@Stable
-fun Paddings(all: Dp) = PaddingValuesExt(all, all, all, all)
+// Stolen from:
+// https://github.com/uragiristereo/Mikansei/blob/main/core/ui/src/main/java/com/uragiristereo/mikansei/core/ui/extension/PaddingValues.kt
 
-@Stable
-fun Paddings(
-    horizontal: Dp = 0.dp,
-    vertical: Dp = 0.dp
-) = PaddingValuesExt(horizontal, vertical, horizontal, vertical)
+@Composable
+operator fun PaddingValues.plus(other: PaddingValues): PaddingValues {
+    val direction = LocalLayoutDirection.current
 
-@Stable
-fun Paddings(
-    start: Dp = 0.dp,
-    top: Dp = 0.dp,
-    end: Dp = 0.dp,
-    bottom: Dp = 0.dp
-) = PaddingValuesExt(start, top, end, bottom)
-
-class PaddingValuesExt internal constructor(
-    @Stable
-    val start: Dp = 0.dp,
-    @Stable
-    val top: Dp = 0.dp,
-    @Stable
-    val end: Dp = 0.dp,
-    @Stable
-    val bottom: Dp = 0.dp,
-) : PaddingValues {
-    init {
-        require(start.value >= 0) { "Start padding must be non-negative" }
-        require(top.value >= 0) { "Top padding must be non-negative" }
-        require(end.value >= 0) { "End padding must be non-negative" }
-        require(bottom.value >= 0) { "Bottom padding must be non-negative" }
-    }
-
-    override fun calculateLeftPadding(layoutDirection: LayoutDirection) =
-        if (layoutDirection == LayoutDirection.Ltr) start else end
-
-    override fun calculateTopPadding() = top
-
-    override fun calculateRightPadding(layoutDirection: LayoutDirection) =
-        if (layoutDirection == LayoutDirection.Ltr) end else start
-
-    override fun calculateBottomPadding() = bottom
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is PaddingValuesExt) return false
-        return start == other.start &&
-                top == other.top &&
-                end == other.end &&
-                bottom == other.bottom
-    }
-
-    override fun hashCode() =
-        ((start.hashCode() * 31 + top.hashCode()) * 31 + end.hashCode()) * 31 + bottom.hashCode()
-
-    override fun toString() = "PaddingValues(start=$start, top=$top, end=$end, bottom=$bottom)"
-
-    /**
-     * Add paddings without regard to the current [LayoutDirection].
-     */
-    operator fun plus(other: PaddingValuesExt): PaddingValuesExt {
-        return Paddings(
-            start = start + other.start,
-            top = top + other.top,
-            end = end + other.end,
-            bottom = bottom + other.bottom,
-        )
-    }
+    return PaddingValues(
+        start = calculateStartPadding(direction) + other.calculateStartPadding(direction),
+        top = calculateTopPadding() + other.calculateTopPadding(),
+        end = calculateEndPadding(direction) + other.calculateEndPadding(direction),
+        bottom = calculateBottomPadding() + other.calculateBottomPadding(),
+    )
 }
+
+@Composable
+@Stable
+fun PaddingValues.copy(
+    start: Dp = calculateStartPadding(LocalLayoutDirection.current),
+    top: Dp = calculateTopPadding(),
+    end: Dp = calculateEndPadding(LocalLayoutDirection.current),
+    bottom: Dp = calculateBottomPadding(),
+): PaddingValues {
+    return PaddingValues(
+        start = start,
+        top = top,
+        end = end,
+        bottom = bottom,
+    )
+}
+
+@Stable
+val PaddingValues.verticalOnly: PaddingValues
+    @Composable
+    get() = this.copy(start = 0.dp, end = 0.dp)
+
+@Stable
+val PaddingValues.horizontalOnly: PaddingValues
+    @Composable
+    get() = this.copy(top = 0.dp, bottom = 0.dp)

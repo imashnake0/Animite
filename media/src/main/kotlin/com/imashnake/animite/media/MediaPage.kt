@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,7 +54,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,9 +68,10 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.horizontalOnly
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
@@ -106,11 +104,7 @@ fun MediaPage(
     contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val layoutDirection = LocalLayoutDirection.current
-    val horizontalInsets = Paddings(
-        start = insetPaddingValues.calculateStartPadding(layoutDirection),
-        end = insetPaddingValues.calculateEndPadding(layoutDirection),
-    )
+    val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val scrollState = rememberScrollState()
 
@@ -210,12 +204,9 @@ fun MediaPage(
                             if (!media.genres.isNullOrEmpty()) {
                                 MediaGenres(
                                     genres = media.genres,
-                                    contentPadding = Paddings(
+                                    contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
-                                    ) + Paddings(
-                                        start = horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
-                                        end = horizontalInsets.calculateEndPadding(LocalLayoutDirection.current),
-                                    ),
+                                    ) + horizontalInsets,
                                     color = Color(media.color ?: 0xFF152232.toInt()),
                                 )
                             }
@@ -223,7 +214,7 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
-                                    contentPadding = Paddings(
+                                    contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
                                 )
