@@ -99,8 +99,8 @@ fun HomeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    viewModel: HomeViewModel = hiltViewModel(),
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
 

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -100,8 +103,8 @@ private const val DEVICE_CORNER_RADIUS = 30
 fun MediaPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: MediaPageViewModel = hiltViewModel(),
-    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
     val horizontalInsets = insetPaddingValues.horizontalOnly
@@ -140,7 +143,6 @@ fun MediaPage(
                         .clip(RoundedCornerShape(DEVICE_CORNER_RADIUS.dp))
                         .fillMaxSize()
                         .verticalScroll(scrollState)
-                        .padding(bottom = LocalPaddings.current.large)
                 ) {
                     BannerLayout(
                         banner = { bannerModifier ->
@@ -231,7 +233,8 @@ fun MediaPage(
                         },
                         contentPadding = PaddingValues(
                             top = LocalPaddings.current.medium / 2,
-                            bottom = insetPaddingValues.calculateBottomPadding()
+                            bottom = LocalPaddings.current.large +
+                                    insetPaddingValues.calculateBottomPadding()
                         )
                     )
 
