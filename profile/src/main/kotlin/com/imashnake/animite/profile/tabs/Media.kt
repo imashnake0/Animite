@@ -14,7 +14,6 @@ import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.FallbackScreen
-import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.media.MediaPage
@@ -55,12 +54,7 @@ fun MediaTab(
                 modifier = Modifier.padding(contentPadding)
             )
         }
-        else -> Column(
-            modifier
-                .verticalScroll(scrollState)
-                .padding(vertical = LocalPaddings.current.large / 2)
-                .padding(bottom = contentPadding.calculateBottomPadding())
-        ) {
+        else -> Column(modifier.verticalScroll(scrollState)) {
             if (!mediaCollection?.namedLists.isNullOrEmpty()) {
                 UserMediaLists(
                     lists =  mediaCollection.namedLists,

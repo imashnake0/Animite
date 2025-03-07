@@ -3,7 +3,6 @@ package com.imashnake.animite.profile.tabs
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -14,7 +13,6 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User.MediaCollection.NamedList
 import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.FallbackScreen
-import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.profile.R
@@ -34,12 +32,7 @@ fun FavouritesTab(
 
     when {
         favouriteLists.isEmpty() -> FallbackScreen(stringResource(R.string.no_favourites))
-        else -> Column(
-            modifier
-                .verticalScroll(scrollState)
-                .padding(vertical = LocalPaddings.current.large / 2)
-                .padding(bottom = contentPadding.calculateBottomPadding())
-        ) {
+        else -> Column(modifier.verticalScroll(scrollState)) {
             UserFavouriteLists(
                 lists = favouriteLists,
                 contentPadding = contentPadding,
