@@ -1,16 +1,17 @@
 package com.imashnake.animite.navigation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -26,7 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun NavigationBar(
+fun NavigationRail(
     navController: NavController,
     modifier: Modifier = Modifier,
     containerColor: Color = NavigationBarDefaults.containerColor,
@@ -36,31 +37,32 @@ fun NavigationBar(
 ) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
-    // This is a clone of Material3 NavigationBar, except we've shrunk the height from 80dp to 65dp
+    // This is a clone of Material3 NavigationRail, with a required width of 80dp
     Surface(
         color = containerColor,
         contentColor = contentColor,
         tonalElevation = tonalElevation,
-        modifier = modifier
+        modifier = modifier,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(windowInsets)
-                .defaultMinSize(minHeight = dimensionResource(R.dimen.navigation_bar_height))
-                .selectableGroup(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+             modifier = Modifier
+                 .fillMaxHeight()
+                 .windowInsetsPadding(windowInsets)
+                 .defaultMinSize(minWidth = dimensionResource(R.dimen.navigation_rail_width))
+                 .padding(vertical = 4.dp)
+                 .selectableGroup(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             NavigationBarPaths.entries.forEach { destination ->
                 val selected = remember(destination, currentBackStackEntry) {
                     currentBackStackEntry?.let { destination.matchesDestination(it) } == true
                 }
-                NavigationBarItem(
+                NavigationRailItem(
                     selected = selected,
                     onClick = { if (!selected) destination.navigateTo(navController) },
                     icon = destination.icon,
-                    modifier = Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
+                    modifier = Modifier.width(dimensionResource(R.dimen.navigation_rail_width))
                 )
             }
         }
