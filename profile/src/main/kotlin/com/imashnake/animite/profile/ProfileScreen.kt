@@ -48,6 +48,7 @@ import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
@@ -192,13 +193,14 @@ private fun UserTabs(
     val pagerState = rememberPagerState(pageCount = { ProfileTab.entries.size })
     val titles = ProfileTab.entries
     val onBackground = MaterialTheme.colorScheme.onBackground
+    val horizontalContentPadding = contentPadding.horizontalOnly
 
     Column(modifier) {
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
             containerColor = MaterialTheme.colorScheme.background,
             divider = {},
-            modifier = Modifier.padding(contentPadding.horizontalOnly)
+            modifier = Modifier.padding(horizontalContentPadding)
         ) {
             titles.forEachIndexed { index, tab ->
                 Tab(
@@ -239,10 +241,14 @@ private fun UserTabs(
                     )
                 )
         ) { page ->
+            val tabContentPadding = PaddingValues(
+                all = LocalPaddings.current.large
+            ) + horizontalContentPadding
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(
                         user = user,
+                        contentPadding = tabContentPadding,
                     )
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
