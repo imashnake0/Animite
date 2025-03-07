@@ -241,9 +241,11 @@ private fun UserTabs(
                     )
                 )
         ) { page ->
+
             val tabContentPadding = PaddingValues(
                 all = LocalPaddings.current.large
             ) + horizontalContentPadding
+
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(
@@ -266,6 +268,7 @@ private fun UserTabs(
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
+                        contentPadding = tabContentPadding,
                     )
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
