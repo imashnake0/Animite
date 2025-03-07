@@ -135,7 +135,7 @@ fun ProfileScreen(
                                     onNavigateToMediaItem = onNavigateToMediaItem,
                                     sharedTransitionScope = sharedTransitionScope,
                                     animatedVisibilityScope = animatedVisibilityScope,
-//                                    contentPadding = insetPaddingValues,
+                                    contentPadding = insetPaddingValues,
                                 )
                             }
                         },
@@ -198,7 +198,7 @@ private fun UserTabs(
             selectedTabIndex = pagerState.currentPage,
             containerColor = MaterialTheme.colorScheme.background,
             divider = {},
-            modifier = Modifier.padding(contentPadding)
+            modifier = Modifier.padding(contentPadding.horizontalOnly)
         ) {
             titles.forEachIndexed { index, tab ->
                 Tab(
@@ -243,7 +243,6 @@ private fun UserTabs(
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(
                         user = user,
-                        contentPadding = contentPadding,
                     )
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
