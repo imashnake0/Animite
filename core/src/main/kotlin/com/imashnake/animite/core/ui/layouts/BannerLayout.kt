@@ -27,7 +27,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
  * @param bannerHeight The height of the banner in [Dp]s.
  * @param bannerModifier Modifier for [banner]. Use this if a [Composable] in [banner] should have
  * the dimensions of the banner.
- * @param contentModifier Modifier for [content].
+ * @param contentPadding Padding modifier for [content].
  */
 @Composable
 fun BannerLayout(
@@ -38,7 +38,7 @@ fun BannerLayout(
     bannerModifier: Modifier = Modifier
         .height(bannerHeight)
         .fillMaxWidth(),
-    contentModifier: Modifier = Modifier,
+    contentPadding: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(LocalPaddings.current.large)
 ) {
     Box(modifier) {
@@ -49,7 +49,7 @@ fun BannerLayout(
                 .fillMaxSize()
                 .padding(top = bannerHeight)
                 .background(MaterialTheme.colorScheme.background)
-                .then(contentModifier),
+                .then(contentPadding),
             verticalArrangement = verticalArrangement
         ) { content() }
     }

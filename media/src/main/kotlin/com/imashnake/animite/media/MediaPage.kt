@@ -229,7 +229,7 @@ fun MediaPage(
                                 )
                             }
                         },
-                        contentModifier = Modifier
+                        contentPadding = Modifier
                             .padding(top = LocalPaddings.current.medium / 2)
                             .navigationBarsPadding()
                     )

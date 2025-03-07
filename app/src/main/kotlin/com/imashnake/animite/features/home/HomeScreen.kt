@@ -237,7 +237,7 @@ fun HomeScreen(
                                 }
                             }
                         },
-                        contentModifier = Modifier
+                        contentPadding = Modifier
                             .padding(
                                 top = LocalPaddings.current.large / 2,
                                 bottom = LocalPaddings.current.large / 2 +
