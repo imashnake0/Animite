@@ -137,7 +137,7 @@ fun ProfileScreen(
                                 )
                             }
                         },
-                        contentPadding = Modifier.padding(
+                        contentPadding = PaddingValues(
                             top = LocalPaddings.current.large / 2,
                             bottom = LocalPaddings.current.large / 2 +
                                     dimensionResource(navigationR.dimen.navigation_bar_height)

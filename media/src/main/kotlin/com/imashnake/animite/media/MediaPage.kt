@@ -229,9 +229,10 @@ fun MediaPage(
                                 )
                             }
                         },
-                        contentPadding = Modifier
-                            .padding(top = LocalPaddings.current.medium / 2)
-                            .navigationBarsPadding()
+                        contentPadding = PaddingValues(
+                            top = LocalPaddings.current.medium / 2,
+                            bottom = insetPaddingValues.calculateBottomPadding()
+                        )
                     )
 
                     // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations

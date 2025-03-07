@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
@@ -237,13 +236,12 @@ fun HomeScreen(
                                 }
                             }
                         },
-                        contentPadding = Modifier
-                            .padding(
-                                top = LocalPaddings.current.large / 2,
-                                bottom = LocalPaddings.current.large / 2 +
-                                        dimensionResource(navigationR.dimen.navigation_bar_height)
-                            )
-                            .navigationBarsPadding(),
+                        contentPadding = PaddingValues(
+                            top = LocalPaddings.current.large / 2,
+                            bottom = LocalPaddings.current.large / 2 +
+                                    dimensionResource(navigationR.dimen.navigation_bar_height) +
+                                    insetPaddingValues.calculateBottomPadding()
+                        ),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
                 }
