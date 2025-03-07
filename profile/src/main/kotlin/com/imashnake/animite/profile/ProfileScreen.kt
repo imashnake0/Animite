@@ -272,7 +272,9 @@ private fun UserTabs(
                     )
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(tabContentPadding)
                     )
                 }
             }
