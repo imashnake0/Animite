@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,7 +28,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
  * @param bannerHeight The height of the banner in [Dp]s.
  * @param bannerModifier Modifier for [banner]. Use this if a [Composable] in [banner] should have
  * the dimensions of the banner.
- * @param contentModifier Modifier for [content].
+ * @param contentPadding Padding modifier for [content].
  */
 @Composable
 fun BannerLayout(
@@ -38,7 +39,7 @@ fun BannerLayout(
     bannerModifier: Modifier = Modifier
         .height(bannerHeight)
         .fillMaxWidth(),
-    contentModifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(LocalPaddings.current.large)
 ) {
     Box(modifier) {
@@ -49,7 +50,7 @@ fun BannerLayout(
                 .fillMaxSize()
                 .padding(top = bannerHeight)
                 .background(MaterialTheme.colorScheme.background)
-                .then(contentModifier),
+                .padding(contentPadding),
             verticalArrangement = verticalArrangement
         ) { content() }
     }

@@ -1,6 +1,7 @@
 package com.imashnake.animite.profile.tabs
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User.MediaCollection.NamedList
+import com.imashnake.animite.core.extensions.horizontalOnly
+import com.imashnake.animite.core.extensions.verticalOnly
 import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -30,21 +33,16 @@ fun FavouritesTab(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val scrollState = rememberScrollState()
-
     when {
-        favouriteLists.isEmpty() -> FallbackScreen(stringResource(R.string.no_favourites))
-        else -> Column(
-            modifier
-                .verticalScroll(scrollState)
-                .padding(vertical = LocalPaddings.current.large / 2)
-                .padding(bottom = contentPadding.calculateBottomPadding())
-        ) {
-            UserFavouriteLists(
-                lists = favouriteLists,
-                contentPadding = contentPadding,
-            )
-        }
+        favouriteLists.isEmpty() -> FallbackScreen(
+            message = stringResource(R.string.no_favourites),
+            modifier = modifier.padding(contentPadding),
+        )
+        else -> UserFavouriteLists(
+            lists = favouriteLists,
+            modifier = modifier,
+            contentPadding = contentPadding,
+        )
     }
 }
 
@@ -54,12 +52,19 @@ private fun UserFavouriteLists(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    Column(modifier = modifier) {
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = modifier
+            .verticalScroll(scrollState)
+            .padding(contentPadding.verticalOnly),
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
+    ) {
         lists.fastForEach { namedList ->
             MediaSmallRow(
                 title = namedList.name,
                 mediaList = namedList.list,
-                contentPadding = contentPadding,
+                contentPadding = contentPadding.horizontalOnly,
             ) { item ->
                 when(item) {
                     is Media.Small -> {

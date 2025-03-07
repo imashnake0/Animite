@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,11 +43,12 @@ import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
@@ -69,15 +69,11 @@ fun ProfileScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: ProfileViewModel = hiltViewModel(),
-    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val layoutDirection = LocalLayoutDirection.current
-    val horizontalInsets = Paddings(
-        start = insetPaddingValues.calculateStartPadding(layoutDirection),
-        end = insetPaddingValues.calculateEndPadding(layoutDirection),
-    )
+    val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
@@ -117,19 +113,20 @@ fun ProfileScreen(
                         },
                         content = {
                             Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
-                                Column(Modifier.padding(horizontalInsets)) {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .padding(horizontalInsets)
+                                ) {
                                     Text(
                                         text = name,
                                         color = MaterialTheme.colorScheme.onBackground,
                                         style = MaterialTheme.typography.titleLarge,
                                         overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
                                     )
                                     UserDescription(
                                         description = description,
-                                        modifier = Modifier
-                                            .maxHeight(dimensionResource(R.dimen.user_about_height))
-                                            .padding(horizontal = LocalPaddings.current.large)
+                                        modifier = Modifier.maxHeight(dimensionResource(R.dimen.user_about_height))
                                     )
                                 }
                                 UserTabs(
@@ -139,14 +136,15 @@ fun ProfileScreen(
                                     onNavigateToMediaItem = onNavigateToMediaItem,
                                     sharedTransitionScope = sharedTransitionScope,
                                     animatedVisibilityScope = animatedVisibilityScope,
-                                    contentInsetPadding = horizontalInsets
+                                    contentPadding = insetPaddingValues,
                                 )
                             }
                         },
-                        contentModifier = Modifier.padding(
+                        contentPadding = PaddingValues(
                             top = LocalPaddings.current.large / 2,
-                            bottom = LocalPaddings.current.large / 2 +
-                                    dimensionResource(navigationR.dimen.navigation_bar_height)
+                            // TODO: This should be removed when we start using navigation rail.
+                            bottom = dimensionResource(navigationR.dimen.navigation_bar_height) +
+                                    insetPaddingValues.calculateBottomPadding()
                         )
                     )
                 }
@@ -189,19 +187,20 @@ private fun UserTabs(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    contentInsetPadding: PaddingValues = PaddingValues(),
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { ProfileTab.entries.size })
     val titles = ProfileTab.entries
     val onBackground = MaterialTheme.colorScheme.onBackground
+    val horizontalContentPadding = contentPadding.horizontalOnly
 
     Column(modifier) {
         PrimaryTabRow(
             selectedTabIndex = pagerState.currentPage,
             containerColor = MaterialTheme.colorScheme.background,
             divider = {},
-            modifier = Modifier.padding(contentInsetPadding)
+            modifier = Modifier.padding(horizontalContentPadding)
         ) {
             titles.forEachIndexed { index, tab ->
                 Tab(
@@ -242,59 +241,40 @@ private fun UserTabs(
                     )
                 )
         ) { page ->
+
+            val tabContentPadding = PaddingValues(
+                all = LocalPaddings.current.large
+            ) + horizontalContentPadding
+
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(
                         user = user,
-                        contentPadding = contentInsetPadding,
+                        contentPadding = tabContentPadding,
                     )
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
-                        contentPadding = Paddings(
-                            horizontal = LocalPaddings.current.large,
-                            vertical = LocalPaddings.current.large / 2,
-                        ) + Paddings(
-                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
-                            top = contentInsetPadding.calculateTopPadding(),
-                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
-                            bottom = contentInsetPadding.calculateBottomPadding()
-                        ),
+                        contentPadding = tabContentPadding,
                     )
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
-                        contentPadding = Paddings(
-                            horizontal = LocalPaddings.current.large,
-                            vertical = LocalPaddings.current.large / 2,
-                        ) + Paddings(
-                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
-                            top = contentInsetPadding.calculateTopPadding(),
-                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
-                            bottom = contentInsetPadding.calculateBottomPadding()
-                        ),
+                        contentPadding = tabContentPadding,
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
-                        contentPadding = Paddings(
-                            horizontal = LocalPaddings.current.large,
-                            vertical = LocalPaddings.current.large / 2,
-                        ) + Paddings(
-                            start = contentInsetPadding.calculateStartPadding(LocalLayoutDirection.current),
-                            top = contentInsetPadding.calculateTopPadding(),
-                            end = contentInsetPadding.calculateEndPadding(LocalLayoutDirection.current),
-                            bottom = contentInsetPadding.calculateBottomPadding()
-                        ),
+                        contentPadding = tabContentPadding,
                     )
                     else -> FallbackMessage(
                         message = stringResource(coreR.string.coming_soon),
                         modifier = Modifier
                             .align(Alignment.Center)
-                            .padding(contentInsetPadding),
+                            .padding(tabContentPadding)
                     )
                 }
             }

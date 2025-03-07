@@ -20,16 +20,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -59,7 +58,6 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -73,8 +71,10 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.bannerParallax
+import com.imashnake.animite.core.extensions.copy
+import com.imashnake.animite.core.extensions.horizontalOnly
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
@@ -99,8 +99,8 @@ fun HomeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: HomeViewModel = hiltViewModel(),
-    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
 
@@ -177,11 +177,7 @@ fun HomeScreen(
                                             horizontal = LocalPaddings.current.large,
                                             vertical = LocalPaddings.current.medium
                                         )
-                                        .padding(
-                                            start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                            top = insetPaddingValues.calculateTopPadding(),
-                                            end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                                        ),
+                                        .padding(insetPaddingValues.copy(bottom = 0.dp)),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.Bottom,
                                 ) {
@@ -230,13 +226,10 @@ fun HomeScreen(
                                                 },
                                                 sharedTransitionScope = sharedTransitionScope,
                                                 animatedVisibilityScope = animatedVisibilityScope,
-                                                contentPadding = Paddings(
+                                                contentPadding = PaddingValues(
                                                     horizontal = LocalPaddings.current.large,
                                                     vertical = LocalPaddings.current.large / 2,
-                                                ) + Paddings(
-                                                    start = insetPaddingValues.calculateStartPadding(LocalLayoutDirection.current),
-                                                    end = insetPaddingValues.calculateEndPadding(LocalLayoutDirection.current),
-                                                )
+                                                ) + insetPaddingValues.horizontalOnly
                                             )
                                         } else {
                                             Box(Modifier.fillMaxWidth())
@@ -245,13 +238,12 @@ fun HomeScreen(
                                 }
                             }
                         },
-                        contentModifier = Modifier
-                            .padding(
-                                top = LocalPaddings.current.large / 2,
-                                bottom = LocalPaddings.current.large / 2 +
-                                        dimensionResource(navigationR.dimen.navigation_bar_height)
-                            )
-                            .navigationBarsPadding(),
+                        contentPadding = PaddingValues(
+                            top = LocalPaddings.current.large / 2,
+                            bottom = LocalPaddings.current.large / 2 +
+                                    dimensionResource(navigationR.dimen.navigation_bar_height) +
+                                    insetPaddingValues.calculateBottomPadding()
+                        ),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
                 }

@@ -55,40 +55,33 @@ fun AboutTab(
         stringResource(R.string.mean_score) to user.meanScore?.let { "%.1f".format(it) }
     ).filter { it.second != null }
 
-    // TODO: Cleanup this layout.
     Column(
-        modifier
+        modifier = modifier
             .verticalScroll(scrollState)
-            .padding(bottom = LocalPaddings.current.large)
-            .padding(contentPadding)
+            .padding(contentPadding),
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        Column(
-            modifier = Modifier.padding(LocalPaddings.current.large),
-            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+        StatsRow(
+            stats = statsLabelToValue,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            StatsRow(
-                stats = statsLabelToValue,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
+            Text(
+                text = it.first,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center
+            )
+
+            it.second?.let { value ->
                 Text(
-                    text = it.first,
+                    text = value,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall,
-                    textAlign = TextAlign.Center
+                    style = MaterialTheme.typography.displaySmall
                 )
-
-                it.second?.let { value ->
-                    Text(
-                        text = value,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.displaySmall
-                    )
-                }
             }
-
-            if (user.genres.isNotEmpty()) Genres(user.genres)
         }
+
+        if (user.genres.isNotEmpty()) Genres(user.genres)
     }
 }
 

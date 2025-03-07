@@ -17,8 +17,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +26,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -56,7 +57,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,9 +71,10 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.Paddings
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
+import com.imashnake.animite.core.extensions.horizontalOnly
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
@@ -102,15 +103,11 @@ private const val DEVICE_CORNER_RADIUS = 30
 fun MediaPage(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: MediaPageViewModel = hiltViewModel(),
-    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val layoutDirection = LocalLayoutDirection.current
-    val horizontalInsets = Paddings(
-        start = insetPaddingValues.calculateStartPadding(layoutDirection),
-        end = insetPaddingValues.calculateEndPadding(layoutDirection),
-    )
+    val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val scrollState = rememberScrollState()
 
@@ -146,7 +143,6 @@ fun MediaPage(
                         .clip(RoundedCornerShape(DEVICE_CORNER_RADIUS.dp))
                         .fillMaxSize()
                         .verticalScroll(scrollState)
-                        .padding(bottom = LocalPaddings.current.large)
                 ) {
                     BannerLayout(
                         banner = { bannerModifier ->
@@ -210,12 +206,9 @@ fun MediaPage(
                             if (!media.genres.isNullOrEmpty()) {
                                 MediaGenres(
                                     genres = media.genres,
-                                    contentPadding = Paddings(
+                                    contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
-                                    ) + Paddings(
-                                        start = horizontalInsets.calculateStartPadding(LocalLayoutDirection.current),
-                                        end = horizontalInsets.calculateEndPadding(LocalLayoutDirection.current),
-                                    ),
+                                    ) + horizontalInsets,
                                     color = Color(media.color ?: 0xFF152232.toInt()),
                                 )
                             }
@@ -223,7 +216,7 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
-                                    contentPadding = Paddings(
+                                    contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
                                 )
@@ -238,9 +231,11 @@ fun MediaPage(
                                 )
                             }
                         },
-                        contentModifier = Modifier
-                            .padding(top = LocalPaddings.current.medium / 2)
-                            .navigationBarsPadding()
+                        contentPadding = PaddingValues(
+                            top = LocalPaddings.current.medium / 2,
+                            bottom = LocalPaddings.current.large +
+                                    insetPaddingValues.calculateBottomPadding()
+                        )
                     )
 
                     // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
