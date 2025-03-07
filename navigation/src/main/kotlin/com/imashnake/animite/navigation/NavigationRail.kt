@@ -3,9 +3,13 @@ package com.imashnake.animite.navigation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
@@ -23,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -40,6 +45,9 @@ fun NavigationRail(
 ) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
+    val insetPaddingValues = windowInsets.asPaddingValues()
+    val layoutDirection = LocalLayoutDirection.current
+
     // This is a clone of Material3 NavigationRail, with a required width of 80dp
     Surface(
         color = containerColor,
@@ -50,7 +58,8 @@ fun NavigationRail(
         Column(
              modifier = Modifier
                  .fillMaxHeight()
-                 .windowInsetsPadding(windowInsets)
+                 .padding(start = insetPaddingValues.calculateStartPadding(layoutDirection))
+                 .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Vertical))
                  .defaultMinSize(minWidth = dimensionResource(R.dimen.navigation_rail_width))
                  .padding(vertical = 4.dp)
                  .selectableGroup(),
