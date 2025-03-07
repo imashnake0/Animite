@@ -46,14 +46,14 @@ fun MediaTab(
     when {
         mediaCollection?.namedLists?.isEmpty() == true -> {
             FallbackScreen(
-                stringResource(
+                message = stringResource(
                     when (mediaCollection.type) {
                         Media.Small.Type.ANIME -> R.string.no_anime
                         Media.Small.Type.MANGA -> R.string.no_manga
                         Media.Small.Type.UNKNOWN -> R.string.no_media
                     }
                 ),
-                modifier = Modifier.padding(contentPadding)
+                modifier = modifier.padding(contentPadding),
             )
         }
 

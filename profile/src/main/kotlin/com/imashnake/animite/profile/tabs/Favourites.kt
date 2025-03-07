@@ -34,7 +34,10 @@ fun FavouritesTab(
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     when {
-        favouriteLists.isEmpty() -> FallbackScreen(stringResource(R.string.no_favourites))
+        favouriteLists.isEmpty() -> FallbackScreen(
+            message = stringResource(R.string.no_favourites),
+            modifier = modifier.padding(contentPadding),
+        )
         else -> UserFavouriteLists(
             lists = favouriteLists,
             modifier = modifier,
