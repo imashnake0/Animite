@@ -1,15 +1,19 @@
 package com.imashnake.animite.features
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
@@ -20,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -34,6 +39,7 @@ import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.HomeRoute
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
+import com.imashnake.animite.navigation.NavigationRail
 import com.imashnake.animite.navigation.ProfileRoute
 import com.imashnake.animite.navigation.SocialRoute
 import com.imashnake.animite.profile.ProfileScreen
@@ -60,6 +66,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
@@ -67,10 +74,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isNavBarVisible = remember(currentBackStackEntry) {
         if (currentBackStackEntry != null) {
-            NavigationBarPaths.entries.any { it.matchesDestination(currentBackStackEntry!!) }
-        } else {
-            false
-        }
+            NavigationBarPaths.entries.any {
+                it.matchesDestination(currentBackStackEntry!!)
+            }
+        } else false
     }
 
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
@@ -112,8 +119,28 @@ fun MainScreen(modifier: Modifier = Modifier) {
             }
         }
 
+        when(LocalConfiguration.current.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                AnimatedVisibility(
+                    visible = isNavBarVisible,
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    enter = slideInHorizontally { -it },
+                    exit = slideOutHorizontally { -it }
+                ) { NavigationRail(navController = navController) }
+            }
+            else -> {
+                AnimatedVisibility(
+                    visible = isNavBarVisible,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    enter = slideInVertically { it },
+                    exit = slideOutVertically { it }
+                ) { NavigationBar(navController = navController) }
+            }
+        }
+
         SearchFrontDrop(
-            hasExtraPadding = isNavBarVisible,
+            hasExtraPadding = isNavBarVisible &&
+                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT,
             onItemClick = { id, mediaType ->
                 navController.navigate(
                     MediaPage(
@@ -128,17 +155,8 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 .padding(
                     start = LocalPaddings.current.large,
                     end = LocalPaddings.current.large,
-                    bottom = LocalPaddings.current.large
+                    bottom = LocalPaddings.current.large,
                 )
         )
-
-        AnimatedVisibility(
-            visible = isNavBarVisible,
-            modifier = Modifier.align(Alignment.BottomCenter),
-            enter = slideInVertically { it },
-            exit = slideOutVertically { it }
-        ) {
-            NavigationBar(navController = navController)
-        }
     }
 }

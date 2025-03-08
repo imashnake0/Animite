@@ -1,6 +1,7 @@
 package com.imashnake.animite.features.home
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.compose.animation.AnimatedContent
@@ -58,6 +59,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -103,6 +105,14 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
+    val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
+        Configuration.ORIENTATION_PORTRAIT -> PaddingValues(
+            bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
+        )
+        else -> PaddingValues(
+            start = dimensionResource(navigationR.dimen.navigation_rail_width)
+        )
+    }
 
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
     viewModel.setMediaType(homeMediaType.value)
@@ -189,7 +199,8 @@ fun HomeScreen(
                                         } ?: MaterialTheme.colorScheme.secondaryContainer,
                                         style = MaterialTheme.typography.displayMedium,
                                         modifier = Modifier
-                                            .weight(1f, fill = false),
+                                            .weight(1f, fill = false)
+                                            .padding(navigationComponentPaddingValues.horizontalOnly),
                                         maxLines = 1
                                     )
 
@@ -241,9 +252,8 @@ fun HomeScreen(
                         contentPadding = PaddingValues(
                             top = LocalPaddings.current.large / 2,
                             bottom = LocalPaddings.current.large / 2 +
-                                    dimensionResource(navigationR.dimen.navigation_bar_height) +
                                     insetPaddingValues.calculateBottomPadding()
-                        ),
+                        ) + navigationComponentPaddingValues,
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
                 }

@@ -1,5 +1,6 @@
 package com.imashnake.animite.profile
 
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,6 +47,7 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
+import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.maxHeight
@@ -73,7 +76,15 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val horizontalInsets = insetPaddingValues.horizontalOnly
+    val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
+        Configuration.ORIENTATION_PORTRAIT -> PaddingValues(
+            bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
+        )
+        else -> PaddingValues(
+            start = dimensionResource(navigationR.dimen.navigation_rail_width)
+        )
+    }
+    val allPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
@@ -106,8 +117,8 @@ fun ProfileScreen(
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
                                         .padding(start = LocalPaddings.current.medium)
-                                        .padding(horizontalInsets)
-                                        .size(100.dp)
+                                        .padding(allPaddingValues.horizontalOnly)
+                                        .size(100.dp),
                                 )
                             }
                         },
@@ -116,7 +127,7 @@ fun ProfileScreen(
                                 Column(
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
-                                        .padding(horizontalInsets)
+                                        .padding(allPaddingValues.horizontalOnly)
                                 ) {
                                     Text(
                                         text = name,
@@ -136,21 +147,16 @@ fun ProfileScreen(
                                     onNavigateToMediaItem = onNavigateToMediaItem,
                                     sharedTransitionScope = sharedTransitionScope,
                                     animatedVisibilityScope = animatedVisibilityScope,
-                                    contentPadding = insetPaddingValues,
+                                    contentPadding = navigationComponentPaddingValues + insetPaddingValues,
                                 )
                             }
                         },
-                        contentPadding = PaddingValues(
-                            top = LocalPaddings.current.large / 2,
-                            // TODO: This should be removed when we start using navigation rail.
-                            bottom = dimensionResource(navigationR.dimen.navigation_bar_height) +
-                                    insetPaddingValues.calculateBottomPadding()
-                        )
+                        contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
                     )
                 }
-                else -> ProgressIndicatorScreen()
+                else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
             }
-            else -> Login()
+            else -> Login(Modifier.padding(allPaddingValues))
         }
     }
 }
@@ -244,7 +250,7 @@ private fun UserTabs(
 
             val tabContentPadding = PaddingValues(
                 all = LocalPaddings.current.large
-            ) + horizontalContentPadding
+            ) + contentPadding.copy(top = 0.dp)
 
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
