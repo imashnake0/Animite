@@ -121,6 +121,25 @@ fun MainScreen(modifier: Modifier = Modifier) {
             }
         }
 
+        when(LocalConfiguration.current.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                AnimatedVisibility(
+                    visible = isNavBarVisible && !WindowInsets.isImeVisible,
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    enter = slideInHorizontally { -it },
+                    exit = slideOutHorizontally { -it }
+                ) { NavigationRail(navController = navController) }
+            }
+            else -> {
+                AnimatedVisibility(
+                    visible = isNavBarVisible,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    enter = slideInVertically { it },
+                    exit = slideOutVertically { it }
+                ) { NavigationBar(navController = navController) }
+            }
+        }
+
         SearchFrontDrop(
             hasExtraPadding = isNavBarVisible &&
                     LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT,
@@ -141,24 +160,5 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     bottom = LocalPaddings.current.large
                 )
         )
-
-        when(LocalConfiguration.current.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                AnimatedVisibility(
-                    visible = isNavBarVisible && !WindowInsets.isImeVisible,
-                    modifier = Modifier.align(Alignment.CenterStart),
-                    enter = slideInHorizontally { -it },
-                    exit = slideOutHorizontally { -it }
-                ) { NavigationRail(navController = navController) }
-            }
-            else -> {
-                AnimatedVisibility(
-                    visible = isNavBarVisible,
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    enter = slideInVertically { it },
-                    exit = slideOutVertically { it }
-                ) { NavigationBar(navController = navController) }
-            }
-        }
     }
 }
