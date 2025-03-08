@@ -48,7 +48,7 @@ fun NavigationRail(
     val insetPaddingValues = windowInsets.asPaddingValues()
     val layoutDirection = LocalLayoutDirection.current
 
-    // This is a clone of Material3 NavigationRail, with a required width of 80dp
+    // This is a clone of Material3 NavigationRail
     Surface(
         color = containerColor,
         contentColor = contentColor,
