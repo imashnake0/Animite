@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,8 +22,9 @@ import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -68,7 +70,7 @@ fun SearchFrontDrop(
     hasExtraPadding: Boolean,
     onItemClick: (Int, MediaType) -> Unit,
     modifier: Modifier = Modifier,
-    contentWindowInsets: WindowInsets = WindowInsets.safeDrawing,
+    contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: SearchViewModel = viewModel()
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
@@ -99,17 +101,19 @@ fun SearchFrontDrop(
     )
 
     searchList.data?.let {
-        SearchList(
-            searchList = it,
-            modifier = Modifier.imeNestedScroll(),
-            contentPadding = insetPaddingValues,
-            searchBarBottomPadding = searchBarBottomPadding,
-            onItemClick = { id ->
-                isExpanded = false
-                viewModel.setQuery(null)
-                onItemClick(id, searchMediaType)
-            }
-        )
+        if (it.isNotEmpty()) {
+            SearchList(
+                searchList = it,
+                modifier = Modifier.imeNestedScroll(),
+                contentPadding = insetPaddingValues,
+                searchBarBottomPadding = searchBarBottomPadding,
+                onItemClick = { id ->
+                    isExpanded = false
+                    viewModel.setQuery(null)
+                    onItemClick(id, searchMediaType)
+                }
+            )
+        }
     }
 
     SearchFab(
@@ -136,15 +140,19 @@ fun SearchList(
 ) {
     LazyColumn(
         modifier = modifier
-            .padding(bottom = searchBarBottomPadding)
-            .navigationBarsPadding()
-            .consumeWindowInsets(PaddingValues(bottom = searchBarBottomPadding))
+            .consumeWindowInsets(
+                PaddingValues(
+                    bottom = searchBarBottomPadding + contentPadding.calculateBottomPadding()
+                )
+            )
             .imePadding(),
         contentPadding = PaddingValues(
             LocalPaddings.current.large
         ) + PaddingValues(
-            bottom = LocalPaddings.current.large + dimensionResource(R.dimen.search_bar_height)
-        ) + contentPadding.copy(bottom = 0.dp),
+            bottom = LocalPaddings.current.large +
+                    dimensionResource(R.dimen.search_bar_height) +
+                    searchBarBottomPadding
+        ) + contentPadding,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
         items(searchList.size, key = { searchList[it].id }) { index ->

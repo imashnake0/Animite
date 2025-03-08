@@ -14,9 +14,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -124,7 +122,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
         when(LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 AnimatedVisibility(
-                    visible = isNavBarVisible && !WindowInsets.isImeVisible,
+                    visible = isNavBarVisible,
                     modifier = Modifier.align(Alignment.CenterStart),
                     enter = slideInHorizontally { -it },
                     exit = slideOutHorizontally { -it }
@@ -157,7 +155,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 .padding(
                     start = LocalPaddings.current.large,
                     end = LocalPaddings.current.large,
-                    bottom = LocalPaddings.current.large
+                    bottom = LocalPaddings.current.large,
                 )
         )
     }
