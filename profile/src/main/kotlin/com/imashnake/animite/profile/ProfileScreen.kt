@@ -84,7 +84,7 @@ fun ProfileScreen(
             start = dimensionResource(navigationR.dimen.navigation_rail_width)
         )
     }
-    val horizontalPadding = (insetPaddingValues + navigationComponentPaddingValues).horizontalOnly
+    val allPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val viewer by viewModel.viewer.collectAsState()
@@ -117,7 +117,7 @@ fun ProfileScreen(
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
                                         .padding(start = LocalPaddings.current.medium)
-                                        .padding(horizontalPadding)
+                                        .padding(allPaddingValues.horizontalOnly)
                                         .size(100.dp),
                                 )
                             }
@@ -127,7 +127,7 @@ fun ProfileScreen(
                                 Column(
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
-                                        .padding(horizontalPadding)
+                                        .padding(allPaddingValues.horizontalOnly)
                                 ) {
                                     Text(
                                         text = name,
@@ -154,9 +154,9 @@ fun ProfileScreen(
                         contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
                     )
                 }
-                else -> ProgressIndicatorScreen()
+                else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
             }
-            else -> Login()
+            else -> Login(Modifier.padding(allPaddingValues))
         }
     }
 }
