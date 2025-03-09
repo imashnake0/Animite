@@ -1,5 +1,6 @@
 package com.imashnake.animite.features
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -103,7 +104,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     }
                     composable<ProfileRoute>(
                         deepLinks = listOf(
-                            navDeepLink { uriPattern = ANILIST_AUTH_DEEPLINK }
+                            navDeepLink {
+                                uriPattern = ANILIST_AUTH_DEEPLINK
+                                action = Intent.ACTION_VIEW
+                            }
                         )
                     ) {
                         ProfileScreen(
