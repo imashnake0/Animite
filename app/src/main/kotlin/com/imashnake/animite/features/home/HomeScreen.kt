@@ -86,11 +86,11 @@ import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.shaders.etherealShader
 import com.imashnake.animite.media.MediaPage
-import com.imashnake.animite.navigation.SharedContentKey
-import com.imashnake.animite.navigation.SharedContentKey.Component.Card
-import com.imashnake.animite.navigation.SharedContentKey.Component.Image
-import com.imashnake.animite.navigation.SharedContentKey.Component.Page
-import com.imashnake.animite.navigation.SharedContentKey.Component.Text
+import com.imashnake.animite.core.SharedContentKey
+import com.imashnake.animite.core.SharedContentKey.Component.Card
+import com.imashnake.animite.core.SharedContentKey.Component.Image
+import com.imashnake.animite.core.SharedContentKey.Component.Page
+import com.imashnake.animite.core.SharedContentKey.Component.Text
 import com.materialkolor.ktx.hasEnoughContrast
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
