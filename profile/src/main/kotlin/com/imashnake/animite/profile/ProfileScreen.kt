@@ -274,6 +274,9 @@ private fun UserTabs(
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
+                        onNavigateToMediaItem = onNavigateToMediaItem,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
                         contentPadding = tabContentPadding,
                     )
                     else -> FallbackMessage(
