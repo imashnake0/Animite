@@ -1,9 +1,12 @@
 package com.imashnake.animite.profile.tabs
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +23,12 @@ import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.SharedContentKey
+import com.imashnake.animite.navigation.SharedContentKey.Component.Card
+import com.imashnake.animite.navigation.SharedContentKey.Component.Image
+import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.profile.R
 
 /**
@@ -30,6 +39,9 @@ import com.imashnake.animite.profile.R
 @Composable
 fun FavouritesTab(
     favouriteLists: List<NamedList>,
+    onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -40,6 +52,9 @@ fun FavouritesTab(
         )
         else -> UserFavouriteLists(
             lists = favouriteLists,
+            onNavigateToMediaItem = onNavigateToMediaItem,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = animatedVisibilityScope,
             modifier = modifier,
             contentPadding = contentPadding,
         )
@@ -49,6 +64,9 @@ fun FavouritesTab(
 @Composable
 private fun UserFavouriteLists(
     lists: List<NamedList>,
+    onNavigateToMediaItem: (MediaPage) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -56,6 +74,7 @@ private fun UserFavouriteLists(
 
     Column(
         modifier = modifier
+            .fillMaxWidth()
             .verticalScroll(scrollState)
             .padding(contentPadding.verticalOnly),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
@@ -68,11 +87,52 @@ private fun UserFavouriteLists(
             ) { item ->
                 when(item) {
                     is Media.Small -> {
-                        MediaCard(
-                            image = item.coverImage,
-                            label = item.title,
-                            onClick = {},
-                        )
+                        with(sharedTransitionScope) {
+                            MediaCard(
+                                image = item.coverImage,
+                                label = item.title,
+                                onClick = {
+                                    onNavigateToMediaItem(
+                                        MediaPage(
+                                            id = item.id,
+                                            source = namedList.name.orEmpty(),
+                                            mediaType = item.type.name,
+                                        )
+                                    )
+                                },
+                                modifier = Modifier.sharedBounds(
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = item.id,
+                                            source = namedList.name,
+                                            sharedComponents = Card to Page,
+                                        )
+                                    ),
+                                    animatedVisibilityScope,
+                                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                                ),
+                                imageModifier = Modifier.sharedBounds(
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = item.id,
+                                            source = namedList.name,
+                                            sharedComponents = Image to Image,
+                                        )
+                                    ),
+                                    animatedVisibilityScope,
+                                ),
+                                textModifier = Modifier.sharedBounds(
+                                    rememberSharedContentState(
+                                        SharedContentKey(
+                                            id = item.id,
+                                            source = namedList.name,
+                                            sharedComponents = Text to Text,
+                                        )
+                                    ),
+                                    animatedVisibilityScope,
+                                ),
+                            )
+                        }
                     }
                     is Media.Character -> {
                         CharacterCard(
