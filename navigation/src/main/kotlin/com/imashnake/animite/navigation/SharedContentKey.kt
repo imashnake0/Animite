@@ -1,4 +1,4 @@
-package com.imashnake.animite.core
+package com.imashnake.animite.navigation
 
 /**
  * Builds a key via [toString] for shared element transitions from [Component] to [Component].

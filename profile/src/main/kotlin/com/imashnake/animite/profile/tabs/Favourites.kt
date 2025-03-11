@@ -24,11 +24,11 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.media.MediaPage
-import com.imashnake.animite.core.SharedContentKey
-import com.imashnake.animite.core.SharedContentKey.Component.Card
-import com.imashnake.animite.core.SharedContentKey.Component.Image
-import com.imashnake.animite.core.SharedContentKey.Component.Page
-import com.imashnake.animite.core.SharedContentKey.Component.Text
+import com.imashnake.animite.navigation.SharedContentKey
+import com.imashnake.animite.navigation.SharedContentKey.Component.Card
+import com.imashnake.animite.navigation.SharedContentKey.Component.Image
+import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.profile.R
 
 /**
