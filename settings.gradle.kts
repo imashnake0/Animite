@@ -45,6 +45,7 @@ include(
     ":navigation",
     ":profile",
     ":social",
+    ":search"
 )
 
 android {
