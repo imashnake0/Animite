@@ -64,7 +64,7 @@ hilt = "1.2.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 coroutines = "1.10.1"
 serialization = "1.8.0"
 
