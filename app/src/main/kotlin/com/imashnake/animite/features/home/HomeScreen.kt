@@ -88,9 +88,7 @@ import com.imashnake.animite.core.ui.shaders.etherealShader
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
-import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
-import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.materialkolor.ktx.hasEnoughContrast
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
@@ -113,6 +111,7 @@ fun HomeScreen(
             start = dimensionResource(navigationR.dimen.navigation_rail_width)
         )
     }
+    val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
     val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
     viewModel.setMediaType(homeMediaType.value)
@@ -217,8 +216,7 @@ fun HomeScreen(
                                     AnimatedContent(
                                         targetState = it,
                                         transitionSpec = {
-                                            fadeIn(tween(750))
-                                                .togetherWith(fadeOut(tween(750)))
+                                            fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
                                         },
                                         label = "animate_home_row"
                                     ) { mediaList ->
@@ -240,7 +238,7 @@ fun HomeScreen(
                                                 contentPadding = PaddingValues(
                                                     horizontal = LocalPaddings.current.large,
                                                     vertical = LocalPaddings.current.large / 2,
-                                                ) + insetPaddingValues.horizontalOnly
+                                                ) + insetAndNavigationPaddingValues.horizontalOnly
                                             )
                                         } else {
                                             Box(Modifier.fillMaxWidth())
@@ -252,8 +250,8 @@ fun HomeScreen(
                         contentPadding = PaddingValues(
                             top = LocalPaddings.current.large / 2,
                             bottom = LocalPaddings.current.large / 2 +
-                                    insetPaddingValues.calculateBottomPadding()
-                        ) + navigationComponentPaddingValues,
+                                    insetAndNavigationPaddingValues.calculateBottomPadding()
+                        ),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     )
                 }
