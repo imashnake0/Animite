@@ -60,6 +60,9 @@ dependencies {
     // Compose Markdown
     implementation(libs.boswelja.composeMarkdown.material3)
 
+    // Cascade Compose
+    implementation(libs.saket.cascade)
+
     // Coil
     implementation(libs.bundles.coil)
 
