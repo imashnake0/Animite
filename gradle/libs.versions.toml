@@ -64,7 +64,7 @@ hilt = "1.2.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "2.1.10"
+kotlin = "2.1.20"
 coroutines = "1.10.1"
 serialization = "1.8.0"
 
@@ -74,7 +74,7 @@ composeMultiplatform = "1.7.3"
 
 # KSP
 # https://github.com/google/ksp/releases.
-ksp = "2.1.10-1.0.31"
+ksp = "2.1.20-1.0.32"
 
 # Ktor
 # https://ktor.io/docs/releases.html#release-details.
