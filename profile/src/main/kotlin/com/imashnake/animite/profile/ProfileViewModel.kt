@@ -55,6 +55,13 @@ class ProfileViewModel @Inject constructor(
             .asResource()
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
+    fun logOut() {
+        viewModelScope.launch(Dispatchers.IO) {
+            preferencesRepository.setAccessToken(null)
+            preferencesRepository.setViewerId(null)
+        }
+    }
+
     init {
         if (navArgs.accessToken != null) {
             viewModelScope.launch(Dispatchers.IO) {
