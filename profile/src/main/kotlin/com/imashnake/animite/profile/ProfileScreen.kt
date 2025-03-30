@@ -119,13 +119,13 @@ fun ProfileScreen(
                             Box {
                                 AsyncImage(
                                     model = crossfadeModel(banner),
-                                    contentDescription = "banner",
+                                    contentDescription = null,
                                     modifier = it,
                                     contentScale = ContentScale.Crop
                                 )
                                 AsyncImage(
                                     model = crossfadeModel(avatar),
-                                    contentDescription = "avatar",
+                                    contentDescription = "Avatar",
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
                                         .padding(start = LocalPaddings.current.medium)
@@ -209,7 +209,7 @@ private fun Dropdown(
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    Box(modifier.padding(16.dp)) {
+    Box(modifier.padding(LocalPaddings.current.medium)) {
         Surface(
             color = MaterialTheme.colorScheme.primary,
             shape = CircleShape,
@@ -231,7 +231,7 @@ private fun Dropdown(
             // TODO: The material3 DropdownMenuItem doesn't respect layout direction padding.
             //  Figure out why/create an issue. saket-cascade works just fine.
             DropdownMenuItem(
-                text = { Text("Log out") },
+                text = { Text(stringResource(R.string.log_out)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
