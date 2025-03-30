@@ -3,7 +3,9 @@ package com.imashnake.animite.profile
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,15 +21,28 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ExitToApp
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +53,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -63,6 +79,8 @@ import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
+import me.saket.cascade.CascadeDropdownMenu
+import me.saket.cascade.rememberCascadeState
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
@@ -93,6 +111,9 @@ fun ProfileScreen(
 
     val data = listOf(viewer, viewerAnimeLists, viewerMangaLists)
 
+    var isLogOutDialogShown by remember { mutableStateOf(false) }
+    var isDropdownExpanded by remember { mutableStateOf(false) }
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -107,18 +128,26 @@ fun ProfileScreen(
                             Box {
                                 AsyncImage(
                                     model = crossfadeModel(banner),
-                                    contentDescription = "banner",
+                                    contentDescription = null,
                                     modifier = it,
                                     contentScale = ContentScale.Crop
                                 )
                                 AsyncImage(
                                     model = crossfadeModel(avatar),
-                                    contentDescription = "avatar",
+                                    contentDescription = "Avatar",
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
                                         .padding(start = LocalPaddings.current.medium)
                                         .padding(allPaddingValues.horizontalOnly)
                                         .size(100.dp),
+                                )
+                                Dropdown(
+                                    logOut = { isLogOutDialogShown = true },
+                                    expanded = isDropdownExpanded,
+                                    setExpanded = { isDropdownExpanded = it },
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(allPaddingValues.copy(bottom = 0.dp)),
                                 )
                             }
                         },
@@ -158,6 +187,18 @@ fun ProfileScreen(
             }
             else -> Login(Modifier.padding(allPaddingValues))
         }
+
+        if (isLogOutDialogShown)
+            LogOutDialog(
+                logOut = {
+                    viewModel.logOut()
+                    isLogOutDialogShown = false
+                },
+                dismiss = {
+                    isLogOutDialogShown = false
+                    isDropdownExpanded = false
+                },
+            )
     }
 }
 
@@ -181,6 +222,101 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
             }
         }
     }
+}
+
+@Composable
+private fun Dropdown(
+    expanded: Boolean,
+    setExpanded: (Boolean) -> Unit,
+    logOut: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val cascadeState = rememberCascadeState()
+    val cornerRadius by animateIntAsState(
+        targetValue = if (expanded) 10 else 50,
+        label = "corner_radius_animation",
+    )
+
+    Box(modifier.padding(LocalPaddings.current.large)) {
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            shape = RoundedCornerShape(
+                topStartPercent = 50,
+                topEndPercent = 50,
+                bottomEndPercent = cornerRadius,
+                bottomStartPercent = 50,
+            ),
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "More options",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .clickable { setExpanded(!expanded) }
+                    .padding(LocalPaddings.current.medium)
+                    .size(LocalPaddings.current.large)
+            )
+        }
+        CascadeDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { setExpanded(false) },
+            state = cascadeState,
+            shape = RoundedCornerShape(
+                topStartPercent = 50,
+                topEndPercent = 10,
+                bottomEndPercent = 50,
+                bottomStartPercent = 50,
+            ),
+            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+        ) {
+            // TODO: The material3 DropdownMenuItem doesn't respect layout direction padding.
+            //  Figure out why/create an issue. saket-cascade works just fine.
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.log_out)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
+                        contentDescription = "Log out",
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                },
+                colors = MenuDefaults.itemColors(
+                    leadingIconColor = MaterialTheme.colorScheme.primary
+                ),
+                onClick = logOut,
+                contentPadding = PaddingValues(LocalPaddings.current.medium)
+            )
+        }
+    }
+}
+
+@Composable
+fun LogOutDialog(
+    logOut: () -> Unit,
+    dismiss: () -> Unit,
+) {
+    AlertDialog(
+        icon = {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
+                contentDescription = "Log out",
+                tint = MaterialTheme.colorScheme.error,
+            )
+        },
+        title = { Text(text = stringResource(R.string.log_out)) },
+        text = { Text(text = stringResource(R.string.log_out_confirmation)) },
+        onDismissRequest = dismiss,
+        confirmButton = {
+            TextButton(onClick = logOut) {
+                Text(stringResource(R.string.log_out))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = dismiss) {
+                Text(stringResource(R.string.dismiss))
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

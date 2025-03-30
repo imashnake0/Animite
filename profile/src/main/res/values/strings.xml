@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="log_out">Log out</string>
+    <string name="log_out_confirmation">Are you sure you want to log out?</string>
+    <string name="dismiss">Dismiss</string>
+
     <string name="about">About</string>
     <string name="anime">Anime</string>
     <string name="manga">Manga</string>
