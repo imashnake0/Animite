@@ -112,9 +112,7 @@ fun MediaPage(
     val media = viewModel.uiState
 
     var showSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = false,
-    )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
@@ -283,9 +281,7 @@ fun MediaPage(
 
             if (showSheet)
                 ModalBottomSheet(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(horizontal = LocalPaddings.current.medium),
+                    modifier = Modifier.fillMaxHeight(),
                     sheetState = sheetState,
                     onDismissRequest = { showSheet = false },
                 ) {
@@ -299,9 +295,7 @@ fun MediaPage(
                             style = MaterialTheme.typography.titleLarge,
                         )
 
-                        MediaDescription(
-                            html = media.description.orEmpty(),
-                        )
+                        MediaDescription(html = media.description.orEmpty())
                     }
                 }
         }
