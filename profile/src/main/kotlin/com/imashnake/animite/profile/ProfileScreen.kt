@@ -112,6 +112,7 @@ fun ProfileScreen(
     val data = listOf(viewer, viewerAnimeLists, viewerMangaLists)
 
     var isLogOutDialogShown by remember { mutableStateOf(false) }
+    var isDropdownExpanded by remember { mutableStateOf(false) }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -142,6 +143,8 @@ fun ProfileScreen(
                                 )
                                 Dropdown(
                                     logOut = { isLogOutDialogShown = true },
+                                    expanded = isDropdownExpanded,
+                                    setExpanded = { isDropdownExpanded = it },
                                     modifier = Modifier
                                         .align(Alignment.TopEnd)
                                         .padding(allPaddingValues.copy(bottom = 0.dp)),
@@ -191,7 +194,10 @@ fun ProfileScreen(
                     viewModel.logOut()
                     isLogOutDialogShown = false
                 },
-                dismiss = { isLogOutDialogShown = false },
+                dismiss = {
+                    isLogOutDialogShown = false
+                    isDropdownExpanded = false
+                },
             )
     }
 }
@@ -220,10 +226,11 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
 
 @Composable
 private fun Dropdown(
+    expanded: Boolean,
+    setExpanded: (Boolean) -> Unit,
     logOut: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var expanded by remember { mutableStateOf(false) }
     val cascadeState = rememberCascadeState()
     val cornerRadius by animateIntAsState(
         targetValue = if (expanded) 10 else 50,
@@ -245,14 +252,14 @@ private fun Dropdown(
                 contentDescription = "More options",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .clickable { expanded = !expanded }
+                    .clickable { setExpanded(!expanded) }
                     .padding(LocalPaddings.current.medium)
                     .size(LocalPaddings.current.large)
             )
         }
         CascadeDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
+            onDismissRequest = { setExpanded(false) },
             state = cascadeState,
             shape = RoundedCornerShape(
                 topStartPercent = 50,
@@ -270,6 +277,7 @@ private fun Dropdown(
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
                         contentDescription = "Log out",
+                        tint = MaterialTheme.colorScheme.error,
                     )
                 },
                 colors = MenuDefaults.itemColors(
