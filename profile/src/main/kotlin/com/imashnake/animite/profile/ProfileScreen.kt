@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -109,6 +111,8 @@ fun ProfileScreen(
 
     val data = listOf(viewer, viewerAnimeLists, viewerMangaLists)
 
+    var isLogOutDialogShown by remember { mutableStateOf(false) }
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -137,7 +141,7 @@ fun ProfileScreen(
                                         .size(100.dp),
                                 )
                                 Dropdown(
-                                    logOut = viewModel::logOut,
+                                    logOut = { isLogOutDialogShown = true },
                                     modifier = Modifier
                                         .align(Alignment.TopEnd)
                                         .padding(allPaddingValues.copy(bottom = 0.dp)),
@@ -180,6 +184,15 @@ fun ProfileScreen(
             }
             else -> Login(Modifier.padding(allPaddingValues))
         }
+
+        if (isLogOutDialogShown)
+            LogOutDialog(
+                logOut = {
+                    viewModel.logOut()
+                    isLogOutDialogShown = false
+                },
+                dismiss = { isLogOutDialogShown = false },
+            )
     }
 }
 
@@ -267,6 +280,35 @@ private fun Dropdown(
             )
         }
     }
+}
+
+@Composable
+fun LogOutDialog(
+    logOut: () -> Unit,
+    dismiss: () -> Unit,
+) {
+    AlertDialog(
+        icon = {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
+                contentDescription = "Log out",
+                tint = MaterialTheme.colorScheme.error,
+            )
+        },
+        title = { Text(text = stringResource(R.string.log_out)) },
+        text = { Text(text = stringResource(R.string.log_out_confirmation)) },
+        onDismissRequest = dismiss,
+        confirmButton = {
+            TextButton(onClick = logOut) {
+                Text(stringResource(R.string.log_out))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = dismiss) {
+                Text(stringResource(R.string.dismiss))
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
