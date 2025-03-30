@@ -3,6 +3,7 @@ package com.imashnake.animite.profile
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
@@ -49,6 +51,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -75,6 +78,7 @@ import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
+import me.saket.cascade.rememberCascadeState
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
@@ -136,9 +140,7 @@ fun ProfileScreen(
                                     logOut = viewModel::logOut,
                                     modifier = Modifier
                                         .align(Alignment.TopEnd)
-                                        .padding(
-                                            allPaddingValues.copy(bottom = 0.dp)
-                                        ),
+                                        .padding(allPaddingValues.copy(bottom = 0.dp)),
                                 )
                             }
                         },
@@ -209,14 +211,26 @@ private fun Dropdown(
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    Box(modifier.padding(LocalPaddings.current.medium)) {
+    val cascadeState = rememberCascadeState()
+    val cornerRadius by animateIntAsState(
+        targetValue = if (expanded) 10 else 50,
+        label = "corner_radius_animation",
+    )
+
+    Box(modifier.padding(LocalPaddings.current.large)) {
         Surface(
-            color = MaterialTheme.colorScheme.primary,
-            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            shape = RoundedCornerShape(
+                topStartPercent = 50,
+                topEndPercent = 50,
+                bottomEndPercent = cornerRadius,
+                bottomStartPercent = 50,
+            ),
         ) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = "More options",
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .clickable { expanded = !expanded }
                     .padding(LocalPaddings.current.medium)
@@ -226,7 +240,14 @@ private fun Dropdown(
         CascadeDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            shape = CircleShape,
+            state = cascadeState,
+            shape = RoundedCornerShape(
+                topStartPercent = 50,
+                topEndPercent = 10,
+                bottomEndPercent = 50,
+                bottomStartPercent = 50,
+            ),
+            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
         ) {
             // TODO: The material3 DropdownMenuItem doesn't respect layout direction padding.
             //  Figure out why/create an issue. saket-cascade works just fine.
