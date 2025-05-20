@@ -51,7 +51,7 @@ composeAnimation = "1.8.2"
 composeFoundation = "1.8.1"
 composeMaterial = "1.8.1"
 composeMaterial3 = "1.3.2"
-composeRuntime = "1.8.1"
+composeRuntime = "1.8.2"
 composeUi = "1.8.2"
 
 # Dagger
