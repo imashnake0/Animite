@@ -90,7 +90,7 @@ detekt = "1.23.8"
 
 # Compose Markdown
 # https://github.com/boswelja/compose-markdown.
-composeMarkdown = "1.1.2"
+composeMarkdown = "1.1.5"
 
 # MaterialKolor
 # https://github.com/jordond/MaterialKolor.
