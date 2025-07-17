@@ -56,7 +56,7 @@ composeUi = "1.8.3"
 
 # Dagger
 # https://github.com/google/dagger/releases.
-dagger = "2.56.2"
+dagger = "2.57"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
