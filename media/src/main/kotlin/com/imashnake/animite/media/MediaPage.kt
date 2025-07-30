@@ -6,6 +6,8 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -150,7 +152,7 @@ fun MediaPage(
                         },
                         content = {
                             MediaDetails(
-                                title = media.title.orEmpty(),
+                                title = media.title,
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
                                     .skipToLookaheadSize()
@@ -326,7 +328,7 @@ fun MediaBanner(
 
 @Composable
 fun MediaDetails(
-    title: String,
+    title: String?,
     description: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -340,14 +342,20 @@ fun MediaDetails(
             .padding(top = LocalPaddings.current.medium / 2)
     ) {
         Box(Modifier.fillMaxWidth()) {
-            Text(
-                text = title,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = textModifier.align(Alignment.CenterStart),
-            )
+            androidx.compose.animation.AnimatedVisibility(
+                visible = title != null,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                Text(
+                    text = title.orEmpty(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = textModifier.align(Alignment.CenterStart),
+                )
+            }
         }
 
         NestedScrollableContent { contentModifier ->
