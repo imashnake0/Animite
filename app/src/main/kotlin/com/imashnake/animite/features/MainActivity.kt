@@ -145,12 +145,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
         SearchFrontDrop(
             hasExtraPadding = isNavBarVisible &&
                     LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT,
-            onItemClick = { id, mediaType ->
+            onItemClick = { id, mediaType, title ->
                 navController.navigate(
                     MediaPage(
                         id = id,
                         source = MediaList.Type.SEARCH.name,
-                        mediaType.rawValue
+                        mediaType = mediaType.rawValue,
+                        title = title,
                     )
                 )
             },
