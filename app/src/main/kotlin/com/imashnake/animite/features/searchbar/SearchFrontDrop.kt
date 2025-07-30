@@ -71,7 +71,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @Composable
 fun SearchFrontDrop(
     hasExtraPadding: Boolean,
-    onItemClick: (Int, MediaType) -> Unit,
+    onItemClick: (Int, MediaType, String?) -> Unit,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: SearchViewModel = viewModel()
@@ -114,10 +114,10 @@ fun SearchFrontDrop(
                 modifier = Modifier.imeNestedScroll(),
                 contentPadding = insetPaddingValues,
                 searchBarBottomPadding = searchBarBottomPadding,
-                onItemClick = { id ->
+                onItemClick = { id, title ->
                     isExpanded = false
                     viewModel.setQuery(null)
-                    onItemClick(id, searchMediaType)
+                    onItemClick(id, searchMediaType, title)
                 }
             )
         }
@@ -141,7 +141,7 @@ fun SearchFrontDrop(
 fun SearchList(
     searchList: List<Search>,
     searchBarBottomPadding: Dp,
-    onItemClick: (Int) -> Unit,
+    onItemClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -175,19 +175,19 @@ fun SearchList(
 @Composable
 private fun SearchItem(
     item: Search,
-    onClick: (Int) -> Unit,
+    onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
-            .clickable { onClick(item.id) }
+            .clickable { onClick(item.id, item.title) }
     ) {
         MediaCard(
             image = item.coverImage,
             label = null,
-            onClick = { onClick(item.id) },
+            onClick = { onClick(item.id, item.title) },
         )
 
         Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {

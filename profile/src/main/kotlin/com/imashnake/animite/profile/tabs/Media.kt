@@ -106,6 +106,7 @@ private fun UserMediaLists(
                                     id = media.id,
                                     source = namedList.name.orEmpty(),
                                     mediaType = media.type.name,
+                                    title = media.title,
                                 )
                             )
                         },

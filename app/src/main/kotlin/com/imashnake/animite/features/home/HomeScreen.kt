@@ -232,6 +232,7 @@ fun HomeScreen(
                                                             id = media.id,
                                                             source = mediaList.type.name,
                                                             mediaType = homeMediaType.value.rawValue,
+                                                            title = media.title,
                                                         )
                                                     )
                                                 },

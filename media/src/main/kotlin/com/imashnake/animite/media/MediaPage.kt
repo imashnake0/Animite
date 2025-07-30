@@ -500,5 +500,6 @@ fun MediaTrailer(
 data class MediaPage(
     val id: Int,
     val source: String,
-    val mediaType: String
+    val mediaType: String,
+    val title: String?,
 )
