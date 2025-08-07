@@ -2,7 +2,9 @@ package com.imashnake.animite.profile
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -209,20 +211,22 @@ fun ProfileScreen(
 @Composable
 private fun UserDescription(description: String?, modifier: Modifier = Modifier) {
     description?.let {
-        Box(modifier) {
-            NestedScrollableContent { contentModifier ->
-                MarkdownDocument(
-                    markdown = it,
-                    // TODO: Fix typography and make this an `animiteTextStyle()`.
-                    textStyles = m3TextStyles().copy(
-                        textStyle = m3TextStyles().textStyle.copy(
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)
-                        )
-                    ),
-                    blockQuoteStyle = animiteBlockQuoteStyle(),
-                    codeBlockStyle = animiteCodeBlockStyle(),
-                    modifier = contentModifier,
-                )
+        Crossfade(targetState = description, modifier = modifier.animateContentSize()) {
+            Box {
+                NestedScrollableContent { contentModifier ->
+                    MarkdownDocument(
+                        markdown = it,
+                        // TODO: Fix typography and make this an `animiteTextStyle()`.
+                        textStyles = m3TextStyles().copy(
+                            textStyle = m3TextStyles().textStyle.copy(
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)
+                            )
+                        ),
+                        blockQuoteStyle = animiteBlockQuoteStyle(),
+                        codeBlockStyle = animiteCodeBlockStyle(),
+                        modifier = contentModifier,
+                    )
+                }
             }
         }
     }
