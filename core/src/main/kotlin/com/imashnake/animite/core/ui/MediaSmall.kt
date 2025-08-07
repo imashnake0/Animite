@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,7 +43,7 @@ fun <T> MediaSmallRow(
     mediaList: List<T>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
-    content: @Composable (T) -> Unit
+    content: @Composable LazyItemScope.(T) -> Unit
 ) {
     Column(
         modifier = modifier.padding(
