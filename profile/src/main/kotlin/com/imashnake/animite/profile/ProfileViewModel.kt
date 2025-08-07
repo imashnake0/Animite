@@ -13,10 +13,13 @@ import com.imashnake.animite.navigation.ProfileRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,13 +33,19 @@ class ProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val navArgs = savedStateHandle.toRoute<ProfileRoute>()
+    private val refreshTrigger = MutableSharedFlow<Unit>()
+
+    var useNetwork = false
 
     val isLoggedIn = preferencesRepository
         .accessToken
         .map { !it.isNullOrEmpty() }
 
-    val viewer = userRepository
-        .fetchViewer()
+    val viewer = refreshTrigger
+        .onStart { emit(Unit) }
+        .flatMapLatest {
+            userRepository.fetchViewer(useNetwork)
+        }
         .asResource()
         .onEach {
             it.data?.let { user -> preferencesRepository.setViewerId(user.id) }
@@ -60,6 +69,14 @@ class ProfileViewModel @Inject constructor(
             preferencesRepository.setAccessToken(null)
             preferencesRepository.setViewerId(null)
         }
+    }
+
+    fun refresh() {
+        useNetwork = true
+        viewModelScope.launch {
+            refreshTrigger.emit(Unit)
+        }
+        useNetwork = false
     }
 
     init {

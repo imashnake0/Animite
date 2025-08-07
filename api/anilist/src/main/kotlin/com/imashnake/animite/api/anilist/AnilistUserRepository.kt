@@ -4,9 +4,12 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.apollographql.apollo3.cache.normalized.refetchPolicy
+import com.apollographql.apollo3.cache.normalized.watch
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 /**
@@ -17,12 +20,16 @@ import javax.inject.Inject
  * @property fetchUserMediaList Fetches a chunked list of media associated with the user.
  */
 class AnilistUserRepository @Inject constructor(
-    @AuthorizedClient private val apolloClient: ApolloClient
+    @param:AuthorizedClient private val apolloClient: ApolloClient
 ) {
-    fun fetchViewer(): Flow<Result<User>> {
+    fun fetchViewer(useNetwork: Boolean): Flow<Result<User>> {
         return apolloClient
             .query(ViewerQuery())
-            .fetchPolicy(FetchPolicy.CacheAndNetwork)
+            .fetchPolicy(
+                fetchPolicy = if (useNetwork) {
+                    FetchPolicy.NetworkFirst
+                } else FetchPolicy.CacheFirst
+            )
             .toFlow()
             .asResult { User(it.viewer?.user!!) }
     }
