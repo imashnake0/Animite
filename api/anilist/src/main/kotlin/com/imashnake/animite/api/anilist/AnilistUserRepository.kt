@@ -4,12 +4,9 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
-import com.apollographql.apollo3.cache.normalized.refetchPolicy
-import com.apollographql.apollo3.cache.normalized.watch
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
-import okhttp3.internal.wait
 import javax.inject.Inject
 
 /**
@@ -35,7 +32,11 @@ class AnilistUserRepository @Inject constructor(
     }
 
     /** @param id The id of the user. */
-    fun fetchUserMediaList(id: Int?, type: MediaType?): Flow<Result<User.MediaCollection>> =
+    fun fetchUserMediaList(
+        id: Int?,
+        type: MediaType?,
+        useNetwork: Boolean
+    ): Flow<Result<User.MediaCollection>> =
         apolloClient
             .query(
                 UserMediaListQuery(
@@ -43,7 +44,11 @@ class AnilistUserRepository @Inject constructor(
                     type = Optional.presentIfNotNull(type)
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheFirst)
+            .fetchPolicy(
+                fetchPolicy = if (useNetwork) {
+                    FetchPolicy.NetworkFirst
+                } else FetchPolicy.CacheFirst
+            )
             .toFlow()
             .asResult { User.MediaCollection(it, type) }
 }

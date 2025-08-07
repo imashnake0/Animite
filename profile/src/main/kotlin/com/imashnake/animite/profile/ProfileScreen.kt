@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -84,6 +85,8 @@ import me.saket.cascade.rememberCascadeState
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
+private const val DROP_DOWN_ITEMS_COUNT = 2
+
 @Suppress("LongMethod")
 @Composable
 fun ProfileScreen(
@@ -124,12 +127,12 @@ fun ProfileScreen(
             isLoggedIn -> when {
                 data.all { it is Resource.Success } -> viewer.data?.run {
                     BannerLayout(
-                        banner = {
+                        banner = { modifier ->
                             Box {
                                 AsyncImage(
                                     model = crossfadeModel(banner),
                                     contentDescription = null,
-                                    modifier = it,
+                                    modifier = modifier,
                                     contentScale = ContentScale.Crop
                                 )
                                 AsyncImage(
@@ -143,6 +146,7 @@ fun ProfileScreen(
                                 )
                                 Dropdown(
                                     logOut = { isLogOutDialogShown = true },
+                                    refresh = { viewModel.refresh { isDropdownExpanded = false } },
                                     expanded = isDropdownExpanded,
                                     setExpanded = { isDropdownExpanded = it },
                                     modifier = Modifier
@@ -229,6 +233,7 @@ private fun Dropdown(
     expanded: Boolean,
     setExpanded: (Boolean) -> Unit,
     logOut: () -> Unit,
+    refresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val cascadeState = rememberCascadeState()
@@ -262,13 +267,29 @@ private fun Dropdown(
             onDismissRequest = { setExpanded(false) },
             state = cascadeState,
             shape = RoundedCornerShape(
-                topStartPercent = 50,
-                topEndPercent = 10,
-                bottomEndPercent = 50,
-                bottomStartPercent = 50,
+                topStartPercent = 50 / DROP_DOWN_ITEMS_COUNT,
+                topEndPercent = 10 / DROP_DOWN_ITEMS_COUNT,
+                bottomEndPercent = 50 / DROP_DOWN_ITEMS_COUNT,
+                bottomStartPercent = 50 / DROP_DOWN_ITEMS_COUNT,
             ),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
         ) {
+            // TODO: This is horrible UX, use nested scroll <-> pull to refresh.
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.refresh)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Refresh,
+                        contentDescription = "Refresh",
+                    )
+                },
+                colors = MenuDefaults.itemColors(
+                    leadingIconColor = MaterialTheme.colorScheme.primary
+                ),
+                onClick = refresh,
+                contentPadding = PaddingValues(LocalPaddings.current.medium)
+            )
+
             // TODO: The material3 DropdownMenuItem doesn't respect layout direction padding.
             //  Figure out why/create an issue. saket-cascade works just fine.
             DropdownMenuItem(
@@ -277,11 +298,10 @@ private fun Dropdown(
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
                         contentDescription = "Log out",
-                        tint = MaterialTheme.colorScheme.error,
                     )
                 },
                 colors = MenuDefaults.itemColors(
-                    leadingIconColor = MaterialTheme.colorScheme.primary
+                    leadingIconColor = MaterialTheme.colorScheme.error
                 ),
                 onClick = logOut,
                 contentPadding = PaddingValues(LocalPaddings.current.medium)
