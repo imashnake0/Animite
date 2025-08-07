@@ -16,7 +16,7 @@ enum class NavigationBarPaths(
     val navigateTo: (NavController) -> Unit,
     val matchesDestination: (NavBackStackEntry) -> Boolean,
     val icon: @Composable () -> Unit,
-    @StringRes val labelRes: Int
+    @param:StringRes val labelRes: Int
 ) {
     Social(
         navigateTo = {

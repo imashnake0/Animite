@@ -120,7 +120,7 @@ private fun UserMediaLists(
                             ),
                             animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                        ),
+                        ).animateItem(),
                         imageModifier = Modifier.sharedBounds(
                             rememberSharedContentState(
                                 SharedContentKey(

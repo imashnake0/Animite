@@ -17,18 +17,26 @@ import javax.inject.Inject
  * @property fetchUserMediaList Fetches a chunked list of media associated with the user.
  */
 class AnilistUserRepository @Inject constructor(
-    @AuthorizedClient private val apolloClient: ApolloClient
+    @param:AuthorizedClient private val apolloClient: ApolloClient
 ) {
-    fun fetchViewer(): Flow<Result<User>> {
+    fun fetchViewer(useNetwork: Boolean): Flow<Result<User>> {
         return apolloClient
             .query(ViewerQuery())
-            .fetchPolicy(FetchPolicy.CacheAndNetwork)
+            .fetchPolicy(
+                fetchPolicy = if (useNetwork) {
+                    FetchPolicy.NetworkFirst
+                } else FetchPolicy.CacheFirst
+            )
             .toFlow()
             .asResult { User(it.viewer?.user!!) }
     }
 
     /** @param id The id of the user. */
-    fun fetchUserMediaList(id: Int?, type: MediaType?): Flow<Result<User.MediaCollection>> =
+    fun fetchUserMediaList(
+        id: Int?,
+        type: MediaType?,
+        useNetwork: Boolean
+    ): Flow<Result<User.MediaCollection>> =
         apolloClient
             .query(
                 UserMediaListQuery(
@@ -36,7 +44,11 @@ class AnilistUserRepository @Inject constructor(
                     type = Optional.presentIfNotNull(type)
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheFirst)
+            .fetchPolicy(
+                fetchPolicy = if (useNetwork) {
+                    FetchPolicy.NetworkFirst
+                } else FetchPolicy.CacheFirst
+            )
             .toFlow()
             .asResult { User.MediaCollection(it, type) }
 }
