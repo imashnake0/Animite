@@ -60,7 +60,7 @@ dagger = "2.57.1"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
-hilt = "1.2.0"
+hilt = "1.3.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
