@@ -77,14 +77,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun refresh(setIsRefreshing: (Boolean) -> Unit) {
-        setIsRefreshing(true)
+    fun refresh(onRefresh: () -> Unit) = viewModelScope.launch {
+        onRefresh()
         useNetwork = true
-        viewModelScope.launch {
-            refreshTrigger.emit(Unit)
-        }
+        refreshTrigger.emit(Unit)
         useNetwork = false
-        setIsRefreshing(false)
     }
 
     init {
