@@ -28,6 +28,7 @@ class AnilistMediaRepository @Inject constructor(
         mediaListType: MediaList.Type,
         mediaType: MediaType,
         sort: List<MediaSort>,
+        useNetwork: Boolean,
         page: Int = 0,
         perPage: Int = 10,
         season: MediaSeason? = null,
@@ -44,7 +45,11 @@ class AnilistMediaRepository @Inject constructor(
                     seasonYear = Optional.presentIfNotNull(seasonYear)
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheAndNetwork)
+            .fetchPolicy(
+                fetchPolicy = if (useNetwork) {
+                    FetchPolicy.NetworkFirst
+                } else FetchPolicy.CacheFirst
+            )
             .toFlow()
             .asResult {
                 MediaList(
