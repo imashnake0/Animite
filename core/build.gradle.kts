@@ -25,7 +25,7 @@ kotlin {
 dependencies {
     // AndroidX
     implementation(libs.androidx.activityCompose)
-    implementation(libs.androidx.coreKtx)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
     // Compose

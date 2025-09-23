@@ -72,7 +72,8 @@ dependencies {
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
-    implementation(libs.androidx.coreKtx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycleRuntimeKtx)
     implementation(libs.androidx.navigationCompose)
 
