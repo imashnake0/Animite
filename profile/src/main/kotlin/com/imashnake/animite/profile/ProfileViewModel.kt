@@ -45,30 +45,37 @@ class ProfileViewModel @Inject constructor(
         .onStart { emit(Unit) }
         .flatMapLatest {
             userRepository.fetchViewer(useNetwork)
-        }
-        .asResource()
-        .onEach {
+        }.asResource().onEach {
             it.data?.let { user -> preferencesRepository.setViewerId(user.id) }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = Resource.loading(),
+        )
 
-    val viewerAnimeLists = refreshTrigger
-        .onStart { emit(Unit) }
-        .combine(preferencesRepository.viewerId, ::Pair)
-        .flatMapLatest {
-            userRepository.fetchUserMediaList(it.second?.toIntOrNull(), MediaType.ANIME, useNetwork)
-        }
-        .asResource()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    val viewerAnimeLists = combine(
+        flow = refreshTrigger.onStart { emit(Unit) },
+        flow2 = preferencesRepository.viewerId,
+        transform = ::Pair,
+    ).flatMapLatest {
+        userRepository.fetchUserMediaList(it.second?.toIntOrNull(), MediaType.ANIME, useNetwork)
+    }.asResource().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading(),
+    )
 
-    val viewerMangaLists = refreshTrigger
-        .onStart { emit(Unit) }
-        .combine(preferencesRepository.viewerId, ::Pair)
-        .flatMapLatest {
-            userRepository.fetchUserMediaList(it.second?.toIntOrNull(), MediaType.MANGA, useNetwork)
-        }
-        .asResource()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    val viewerMangaLists = combine(
+        flow = refreshTrigger.onStart { emit(Unit) },
+        flow2 = preferencesRepository.viewerId,
+        transform = ::Pair,
+    ).flatMapLatest {
+        userRepository.fetchUserMediaList(it.second?.toIntOrNull(), MediaType.MANGA, useNetwork)
+    }.asResource().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading(),
+    )
 
     fun logOut() {
         viewModelScope.launch(Dispatchers.IO) {
