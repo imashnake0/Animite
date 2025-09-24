@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -55,10 +56,14 @@ class ProfileViewModel @Inject constructor(
 
     val viewerAnimeLists = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
-        flow2 = preferencesRepository.viewerId,
+        flow2 = preferencesRepository.viewerId.filterNotNull(),
         transform = ::Pair,
     ).flatMapLatest {
-        userRepository.fetchUserMediaList(it.second?.toIntOrNull(), MediaType.ANIME, useNetwork)
+        userRepository.fetchUserMediaList(
+            id = it.second.toIntOrNull(),
+            type = MediaType.MANGA,
+            useNetwork = useNetwork,
+        )
     }.asResource().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(1000),
@@ -67,10 +72,14 @@ class ProfileViewModel @Inject constructor(
 
     val viewerMangaLists = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
-        flow2 = preferencesRepository.viewerId,
+        flow2 = preferencesRepository.viewerId.filterNotNull(),
         transform = ::Pair,
     ).flatMapLatest {
-        userRepository.fetchUserMediaList(it.second?.toIntOrNull(), MediaType.MANGA, useNetwork)
+        userRepository.fetchUserMediaList(
+            id = it.second.toIntOrNull(),
+            type = MediaType.MANGA,
+            useNetwork = useNetwork,
+        )
     }.asResource().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(1000),
