@@ -61,7 +61,7 @@ class ProfileViewModel @Inject constructor(
     ).flatMapLatest {
         userRepository.fetchUserMediaList(
             id = it.second.toIntOrNull(),
-            type = MediaType.MANGA,
+            type = MediaType.ANIME,
             useNetwork = useNetwork,
         )
     }.asResource().stateIn(
