@@ -7,7 +7,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-apolloKotlin = { id = "com.apollographql.apollo3", version.ref = "apollo" }
+apolloKotlin = { id = "com.apollographql.apollo", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
@@ -35,7 +35,7 @@ navigation = "2.9.4"
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
-apollo = "3.8.6"
+apollo = "4.3.3"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore.
@@ -120,9 +120,9 @@ compose-ui-text-googleFonts = { group = "androidx.compose.ui", name = "ui-text-g
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
 compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
 compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
-apollo-runtime = { group = "com.apollographql.apollo3", name = "apollo-runtime" }
-apollo-cache-memory = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache", version.ref = "apollo" }
-apollo-cache-sqlite = { group = "com.apollographql.apollo3", name = "apollo-normalized-cache-sqlite", version.ref = "apollo" }
+apollo-runtime = { group = "com.apollographql.apollo", name = "apollo-runtime" }
+apollo-cache-memory = { group = "com.apollographql.apollo", name = "apollo-normalized-cache", version.ref = "apollo" }
+apollo-cache-sqlite = { group = "com.apollographql.apollo", name = "apollo-normalized-cache-sqlite", version.ref = "apollo" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 ktor-engine-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
