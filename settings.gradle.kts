@@ -48,9 +48,9 @@ include(
 )
 
 android {
-    buildToolsVersion = "35.0.0"
-    compileSdk = 35
-    targetSdk = 35
+    buildToolsVersion = "36.0.0"
+    compileSdk = 36
+    targetSdk = 36
     minSdk = 29
 }
 
