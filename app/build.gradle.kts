@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "com.imashnake.animite"
-        versionCode = 15
-        versionName = "0.1.2-alpha02"
+        versionCode = 16
+        versionName = "0.2.0-alpha01"
     }
 
     signingConfigs {
@@ -72,7 +72,8 @@ dependencies {
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
-    implementation(libs.androidx.coreKtx)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycleRuntimeKtx)
     implementation(libs.androidx.navigationCompose)
 

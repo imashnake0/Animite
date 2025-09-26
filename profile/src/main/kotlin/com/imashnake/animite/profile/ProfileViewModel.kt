@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -45,30 +46,45 @@ class ProfileViewModel @Inject constructor(
         .onStart { emit(Unit) }
         .flatMapLatest {
             userRepository.fetchViewer(useNetwork)
-        }
-        .asResource()
-        .onEach {
+        }.asResource().onEach {
             it.data?.let { user -> preferencesRepository.setViewerId(user.id) }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = Resource.loading(),
+        )
 
-    val viewerAnimeLists = refreshTrigger
-        .onStart { emit(Unit) }
-        .combine(preferencesRepository.viewerId, ::Pair)
-        .flatMapLatest {
-            userRepository.fetchUserMediaList(it.second?.toIntOrNull(), MediaType.ANIME, useNetwork)
-        }
-        .asResource()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    val viewerAnimeLists = combine(
+        flow = refreshTrigger.onStart { emit(Unit) },
+        flow2 = preferencesRepository.viewerId.filterNotNull(),
+        transform = ::Pair,
+    ).flatMapLatest {
+        userRepository.fetchUserMediaList(
+            id = it.second.toIntOrNull(),
+            type = MediaType.ANIME,
+            useNetwork = useNetwork,
+        )
+    }.asResource().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading(),
+    )
 
-    val viewerMangaLists = refreshTrigger
-        .onStart { emit(Unit) }
-        .combine(preferencesRepository.viewerId, ::Pair)
-        .flatMapLatest {
-            userRepository.fetchUserMediaList(it.second?.toIntOrNull(), MediaType.MANGA, useNetwork)
-        }
-        .asResource()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+    val viewerMangaLists = combine(
+        flow = refreshTrigger.onStart { emit(Unit) },
+        flow2 = preferencesRepository.viewerId.filterNotNull(),
+        transform = ::Pair,
+    ).flatMapLatest {
+        userRepository.fetchUserMediaList(
+            id = it.second.toIntOrNull(),
+            type = MediaType.MANGA,
+            useNetwork = useNetwork,
+        )
+    }.asResource().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading(),
+    )
 
     fun logOut() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -77,14 +93,11 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun refresh(setIsRefreshing: (Boolean) -> Unit) {
-        setIsRefreshing(true)
+    fun refresh(onRefresh: () -> Unit) = viewModelScope.launch {
+        onRefresh()
         useNetwork = true
-        viewModelScope.launch {
-            refreshTrigger.emit(Unit)
-        }
+        refreshTrigger.emit(Unit)
         useNetwork = false
-        setIsRefreshing(false)
     }
 
     init {

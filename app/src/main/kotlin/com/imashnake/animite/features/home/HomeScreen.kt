@@ -36,10 +36,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -49,6 +52,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,6 +99,7 @@ import com.materialkolor.ktx.hasEnoughContrast
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongMethod")
 fun HomeScreen(
@@ -143,120 +148,129 @@ fun HomeScreen(
             RuntimeShader(etherealShader) else null
     }
 
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullToRefreshState = rememberPullToRefreshState()
+
     when {
         rows.all { it is Resource.Success } -> {
             val scrollState = rememberScrollState()
-            TranslucentStatusBarLayout(scrollState) {
-                Box(Modifier.verticalScroll(scrollState)) {
-                    BannerLayout(
-                        banner = { bannerModifier ->
-                            Box {
-                                Image(
-                                    painter = painterResource(mediaR.drawable.background),
-                                    contentDescription = null,
-                                    modifier = bannerModifier.bannerParallax(scrollState),
-                                    contentScale = ContentScale.Crop,
-                                    alignment = Alignment.TopCenter
-                                )
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.refresh { isRefreshing = it } },
+                state = pullToRefreshState,
+            ) {
+                TranslucentStatusBarLayout(scrollState) {
+                    Box(Modifier.verticalScroll(scrollState)) {
+                        BannerLayout(
+                            banner = { bannerModifier ->
+                                Box {
+                                    Image(
+                                        painter = painterResource(mediaR.drawable.background),
+                                        contentDescription = null,
+                                        modifier = bannerModifier.bannerParallax(scrollState),
+                                        contentScale = ContentScale.Crop,
+                                        alignment = Alignment.TopCenter
+                                    )
 
-                                Row(
-                                    modifier = bannerModifier
-                                        .thenIf(shader != null) {
-                                            drawWithCache @SuppressLint("NewApi") {
-                                                shader!!.run {
-                                                    setFloatUniform(
-                                                        "resolution",
-                                                        size.width,
-                                                        size.height
-                                                    )
-                                                    setFloatUniform("time", time.floatValue)
-                                                    setColorUniform(
-                                                        "orb",
-                                                        Color(0xFF6C408D).toArgb()
-                                                    )
-                                                    setColorUniform(
-                                                        "bg",
-                                                        android.graphics.Color.TRANSPARENT
-                                                    )
-                                                    onDrawBehind {
-                                                        drawRect(ShaderBrush(this@run))
+                                    Row(
+                                        modifier = bannerModifier
+                                            .thenIf(shader != null) {
+                                                drawWithCache @SuppressLint("NewApi") {
+                                                    shader!!.run {
+                                                        setFloatUniform(
+                                                            "resolution",
+                                                            size.width,
+                                                            size.height
+                                                        )
+                                                        setFloatUniform("time", time.floatValue)
+                                                        setColorUniform(
+                                                            "orb",
+                                                            Color(0xFF6C408D).toArgb()
+                                                        )
+                                                        setColorUniform(
+                                                            "bg",
+                                                            android.graphics.Color.TRANSPARENT
+                                                        )
+                                                        onDrawBehind {
+                                                            drawRect(ShaderBrush(this@run))
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                        .padding(
-                                            horizontal = LocalPaddings.current.large,
-                                            vertical = LocalPaddings.current.medium
-                                        )
-                                        .padding(insetPaddingValues.copy(bottom = 0.dp)),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.Bottom,
-                                ) {
-                                    Text(
-                                        text = stringResource(R.string.okaeri),
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer.takeIf {
-                                            // This color is what is behind "okaeri".
-                                            it.hasEnoughContrast(Color(0xFF252B33))
-                                        } ?: MaterialTheme.colorScheme.secondaryContainer,
-                                        style = MaterialTheme.typography.displayMedium,
-                                        modifier = Modifier
-                                            .weight(1f, fill = false)
-                                            .padding(navigationComponentPaddingValues.horizontalOnly),
-                                        maxLines = 1
-                                    )
-
-                                    MediaTypeSelector(
-                                        selectedOption = homeMediaType,
-                                        viewModel = viewModel
-                                    )
-                                }
-                            }
-                        },
-                        content = {
-                            rows.fastForEach { row ->
-                                row.data?.let {
-                                    AnimatedContent(
-                                        targetState = it,
-                                        transitionSpec = {
-                                            fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
-                                        },
-                                        label = "animate_home_row"
-                                    ) { mediaList ->
-                                        if (mediaList.list.isNotEmpty()) {
-                                            HomeRow(
-                                                items = mediaList.list,
-                                                type = mediaList.type,
-                                                onItemClicked = { media ->
-                                                    onNavigateToMediaItem(
-                                                        MediaPage(
-                                                            id = media.id,
-                                                            source = mediaList.type.name,
-                                                            mediaType = homeMediaType.value.rawValue,
-                                                            title = media.title,
-                                                        )
-                                                    )
-                                                },
-                                                sharedTransitionScope = sharedTransitionScope,
-                                                animatedVisibilityScope = animatedVisibilityScope,
-                                                contentPadding = PaddingValues(
-                                                    horizontal = LocalPaddings.current.large,
-                                                    vertical = LocalPaddings.current.large / 2,
-                                                ) + insetAndNavigationPaddingValues.horizontalOnly
+                                            .padding(
+                                                horizontal = LocalPaddings.current.large,
+                                                vertical = LocalPaddings.current.medium
                                             )
-                                        } else {
-                                            Box(Modifier.fillMaxWidth())
+                                            .padding(insetPaddingValues.copy(bottom = 0.dp)),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.Bottom,
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.okaeri),
+                                            color = MaterialTheme.colorScheme.onSecondaryContainer.takeIf {
+                                                // This color is what is behind "okaeri".
+                                                it.hasEnoughContrast(Color(0xFF252B33))
+                                            } ?: MaterialTheme.colorScheme.secondaryContainer,
+                                            style = MaterialTheme.typography.displayMedium,
+                                            modifier = Modifier
+                                                .weight(1f, fill = false)
+                                                .padding(navigationComponentPaddingValues.horizontalOnly),
+                                            maxLines = 1
+                                        )
+
+                                        MediaTypeSelector(
+                                            selectedOption = homeMediaType,
+                                            viewModel = viewModel
+                                        )
+                                    }
+                                }
+                            },
+                            content = {
+                                rows.fastForEach { row ->
+                                    row.data?.let {
+                                        AnimatedContent(
+                                            targetState = it,
+                                            transitionSpec = {
+                                                fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
+                                            },
+                                            label = "animate_home_row"
+                                        ) { mediaList ->
+                                            if (mediaList.list.isNotEmpty()) {
+                                                HomeRow(
+                                                    items = mediaList.list,
+                                                    type = mediaList.type,
+                                                    onItemClicked = { media ->
+                                                        onNavigateToMediaItem(
+                                                            MediaPage(
+                                                                id = media.id,
+                                                                source = mediaList.type.name,
+                                                                mediaType = homeMediaType.value.rawValue,
+                                                                title = media.title,
+                                                            )
+                                                        )
+                                                    },
+                                                    sharedTransitionScope = sharedTransitionScope,
+                                                    animatedVisibilityScope = animatedVisibilityScope,
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = LocalPaddings.current.large,
+                                                        vertical = LocalPaddings.current.large / 2,
+                                                    ) + insetAndNavigationPaddingValues.horizontalOnly
+                                                )
+                                            } else {
+                                                Box(Modifier.fillMaxWidth())
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        },
-                        contentPadding = PaddingValues(
-                            top = LocalPaddings.current.large / 2,
-                            bottom = LocalPaddings.current.large / 2 +
-                                    insetAndNavigationPaddingValues.calculateBottomPadding()
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(0.dp)
-                    )
+                            },
+                            contentPadding = PaddingValues(
+                                top = LocalPaddings.current.large / 2,
+                                bottom = LocalPaddings.current.large / 2 +
+                                        insetAndNavigationPaddingValues.calculateBottomPadding()
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(0.dp)
+                        )
+                    }
                 }
             }
         }
