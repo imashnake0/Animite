@@ -25,7 +25,7 @@ agp = "8.13.0"
 
 # AndroidX
 # https://androidx.tech.
-activity = "1.10.1"
+activity = "1.11.0"
 core = "1.17.0"
 coreSplashscreen = "1.0.1"
 lifecycle = "2.9.4"
