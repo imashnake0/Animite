@@ -13,9 +13,8 @@ fun <T: Operation.Data, R> Flow<ApolloResponse<T>>.asResult(transform: (T) -> R)
     .mapLatest { response ->
         if (response.data != null) {
             Result.success(transform(response.dataAssertNoErrors))
-        } else if (response.hasErrors()) {
-            // TODO What kind of exception do we provide here?
-            throw IOException(response.errors!!.joinToString())
+        } else if (response.exception != null) {
+            Result.failure(response.exception!!)
         } else {
             // No data, but also no exception. That's illegal
             error("Unknown error occurred, no data or errors received.")

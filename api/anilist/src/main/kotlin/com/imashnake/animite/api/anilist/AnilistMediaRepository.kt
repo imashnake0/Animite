@@ -10,6 +10,7 @@ import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import javax.inject.Inject
 
 /**
@@ -51,6 +52,7 @@ class AnilistMediaRepository @Inject constructor(
                 } else FetchPolicy.CacheFirst
             )
             .toFlow()
+            .filter { it.exception == null }
             .asResult {
                 MediaList(
                     type = mediaListType,
@@ -71,6 +73,7 @@ class AnilistMediaRepository @Inject constructor(
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
+            .filter { it.exception == null }
             .asResult { Media(it.media!!) }
     }
 }

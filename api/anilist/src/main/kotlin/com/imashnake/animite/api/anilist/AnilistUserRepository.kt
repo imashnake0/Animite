@@ -7,6 +7,7 @@ import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import javax.inject.Inject
 
 /**
@@ -28,6 +29,7 @@ class AnilistUserRepository @Inject constructor(
                 } else FetchPolicy.CacheFirst
             )
             .toFlow()
+            .filter { it.exception == null }
             .asResult { User(it.viewer?.user!!) }
     }
 
@@ -50,5 +52,6 @@ class AnilistUserRepository @Inject constructor(
                 } else FetchPolicy.CacheFirst
             )
             .toFlow()
+            .filter { it.exception == null }
             .asResult { User.MediaCollection(it, type) }
 }
