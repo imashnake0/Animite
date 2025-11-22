@@ -31,6 +31,7 @@ dependencies {
     // Compose
     implementation(libs.bundles.compose)
     implementation(libs.compose.material)
+    implementation(libs.compose.animation.graphics)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
