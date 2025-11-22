@@ -338,7 +338,8 @@ fun MediaPage(
                                         Chip(
                                             color = Color(0xFF80DF87),
                                             text = dob,
-                                            icon = ImageVector.vectorResource(R.drawable.rounded_cake_24)
+                                            iconModifier = Modifier.padding(bottom = 2.dp),
+                                            icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
                                         )
                                     }
 
@@ -503,6 +504,7 @@ private fun Chip(
     color: Color,
     icon: ImageVector,
     text: String,
+    iconModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -517,7 +519,7 @@ private fun Chip(
             imageVector = icon,
             contentDescription = null,
             tint = color,
-            modifier = Modifier.size(15.dp)
+            modifier = iconModifier.size(15.dp)
         )
         Text(
             text = text,
