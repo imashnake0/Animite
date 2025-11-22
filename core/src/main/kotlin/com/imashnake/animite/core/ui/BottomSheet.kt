@@ -45,7 +45,7 @@ fun BottomSheet(
                 Image(
                     painter = rememberAnimatedVectorPainter(
                         AnimatedImageVector.animatedVectorResource(R.drawable.chevron_to_cross_anim),
-                        atEnd = sheetState.currentValue == SheetValue.Expanded
+                        atEnd = sheetState.targetValue == SheetValue.Expanded
                     ),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),

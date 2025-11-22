@@ -6,7 +6,6 @@ import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import androidx.core.graphics.toColorInt
-import com.imashnake.animite.api.anilist.type.Favourites
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
@@ -82,8 +81,23 @@ data class Media(
             ): String? {
                 if (year == null && month == null && day == null) return null
                 val formattedYear = year?.let { ", $it" }.orEmpty()
-                val formattedMonth = month?.let { Month.of(it) }?.getDisplayName(TextStyle.SHORT, Locale.getDefault()).orEmpty()
+                val formattedMonth = month?.let {
+                    Month.of(it)
+                }?.getDisplayName(TextStyle.SHORT, Locale.getDefault()).orEmpty()
                 return "$formattedMonth $day$formattedYear"
+            }
+
+            fun getFormattedFavourites(favouritesCount: Int?): String? {
+                if (favouritesCount == null) return null
+                return if (favouritesCount > 1000) {
+                    if (favouritesCount % 1000f < 100) {
+                        "${(favouritesCount / 1000f).toInt()}k"
+                    } else {
+                        "${String.format(Locale.getDefault(), format = "%.1f", favouritesCount / 1000f)}k"
+                    }
+                } else {
+                    favouritesCount.toString()
+                }
             }
         }
 
@@ -100,7 +114,7 @@ data class Media(
                 day = query.dateOfBirth?.day
             ),
             age = query.age,
-            favourites = query.favourites?.toString()
+            favourites = getFormattedFavourites(query.favourites)
         )
     }
 
