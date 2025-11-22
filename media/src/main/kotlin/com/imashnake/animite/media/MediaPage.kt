@@ -309,22 +309,22 @@ fun MediaPage(
                     sheetState = characterSheetState,
                     onDismissRequest = { viewModel.setSelectedCharacter(null) },
                 ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
                         CharacterCard(
                             image = it.image,
                             label = null,
                             onClick = {},
                         )
 
-                        Column {
+                        Column(modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))) {
                             Text(
                                 text = it.name.orEmpty(),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.titleLarge,
                             )
 
-                            if (it.alternativeNames.isNotEmpty()) {
-                                MediaDescription(it.alternativeNames.joinToString())
+                            if (it.alternativeNames.isNotBlank()) {
+                                MediaDescription(it.alternativeNames)
                             }
                         }
                     }
@@ -409,6 +409,7 @@ fun MediaDescription(
         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
         style = MaterialTheme.typography.bodyMedium,
         modifier = modifier,
+        overflow = TextOverflow.Ellipsis
     )
 }
 

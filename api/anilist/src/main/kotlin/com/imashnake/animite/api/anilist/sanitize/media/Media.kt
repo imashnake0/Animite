@@ -55,7 +55,7 @@ data class Media(
         /** @see CharacterSmall.Name.full */
         val name: String?,
         /** @see CharacterSmall.Name.alternative */
-        val alternativeNames: List<String>,
+        val alternativeNames: String,
         /** @see CharacterSmall.description */
         val description: String?,
         /** @see CharacterSmall.gender */
@@ -72,7 +72,7 @@ data class Media(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
-            alternativeNames = query.name?.alternative.orEmpty().filterNotNull(),
+            alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
             description = query.description,
             gender = query.gender,
             dob = Triple(
