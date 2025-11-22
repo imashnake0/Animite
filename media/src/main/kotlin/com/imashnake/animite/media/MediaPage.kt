@@ -1,7 +1,6 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
@@ -16,15 +15,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
@@ -35,9 +35,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
@@ -55,15 +58,19 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -71,10 +78,12 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
+import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
+import com.imashnake.animite.core.ui.BottomSheet
 import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
@@ -113,8 +122,10 @@ fun MediaPage(
 
     val media = viewModel.uiState
 
-    var showSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    var showDetailsSheet by remember { mutableStateOf(false) }
+    val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+
+    val characterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
@@ -162,7 +173,7 @@ fun MediaPage(
                                     .height(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
-                                onClick = { showSheet = true },
+                                onClick = { showDetailsSheet = true },
                                 textModifier = Modifier.sharedBounds(
                                     rememberSharedContentState(
                                         SharedContentKey(
@@ -214,6 +225,9 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
+                                    onCharacterClick = {
+                                        viewModel.setSelectedCharacter(it)
+                                    },
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
@@ -281,31 +295,82 @@ fun MediaPage(
                 }
             }
 
-            if (showSheet)
-                ModalBottomSheet(
-                    modifier = Modifier.fillMaxHeight(),
-                    sheetState = sheetState,
-                    onDismissRequest = { showSheet = false },
+            if (showDetailsSheet) {
+                BottomSheet(
+                    sheetState = detailsSheetState,
+                    onDismissRequest = { showDetailsSheet = false },
                 ) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = LocalPaddings.current.large),
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
-                    ) {
-                        Text(
-                            text = media.title.orEmpty(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleLarge,
+                    Text(
+                        text = media.title.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+
+                    MediaDescription(html = media.description.orEmpty())
+                }
+            }
+
+            viewModel.uiState.selectedCharacter?.let {
+                BottomSheet(
+                    sheetState = characterSheetState,
+                    onDismissRequest = { viewModel.setSelectedCharacter(null) },
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                        CharacterCard(
+                            image = it.image,
+                            label = null,
+                            onClick = {},
                         )
 
-                        MediaDescription(html = media.description.orEmpty())
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                            modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
+                        ) {
+                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                                Text(
+                                    text = it.name.orEmpty(),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+
+                                Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+                                    it.dob?.let { dob ->
+                                        Chip(
+                                            color = Color(0xFF80DF87),
+                                            text = dob,
+                                            iconModifier = Modifier.padding(bottom = 2.dp),
+                                            icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
+                                        )
+                                    }
+
+                                    it.favourites?.let { fav ->
+                                        Chip(
+                                            color = Color(0xFFFF9999),
+                                            text = fav,
+                                            icon = Icons.Rounded.Favorite
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (it.alternativeNames.isNotBlank()) {
+                                MediaDescription(it.alternativeNames)
+                            }
+                        }
+                    }
+
+                    // TODO: Remove spoilers.
+                    it.description?.let { description ->
+                        MediaDescription(description.addNewlineAfterParagraph())
                     }
                 }
+            }
         }
     }
 }
 
 @Composable
-fun MediaBanner(
+private fun MediaBanner(
     imageUrl: String?,
     color: Color,
     modifier: Modifier = Modifier
@@ -327,7 +392,7 @@ fun MediaBanner(
 }
 
 @Composable
-fun MediaDetails(
+private fun MediaDetails(
     title: String?,
     description: String,
     onClick: () -> Unit,
@@ -365,7 +430,7 @@ fun MediaDetails(
 }
 
 @Composable
-fun MediaDescription(
+private fun MediaDescription(
     html: String,
     modifier: Modifier = Modifier,
 ) {
@@ -374,11 +439,12 @@ fun MediaDescription(
         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
         style = MaterialTheme.typography.bodyMedium,
         modifier = modifier,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
 @Composable
-fun MediaGenres(
+private fun MediaGenres(
     genres: List<String>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
@@ -413,8 +479,9 @@ fun MediaGenres(
 }
 
 @Composable
-fun MediaCharacters(
+private fun MediaCharacters(
     characters: List<Media.Character>,
+    onCharacterClick: (Media.Character) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -427,13 +494,44 @@ fun MediaCharacters(
         CharacterCard(
             image = character.image,
             label = character.name,
-            onClick = { Log.d("CharacterId", "${character.id}") },
+            onClick = { onCharacterClick(character) },
         )
     }
 }
 
 @Composable
-fun MediaTrailer(
+private fun Chip(
+    color: Color,
+    icon: ImageVector,
+    text: String,
+    iconModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .clip(CircleShape)
+            .background(color.copy(alpha = 0.2f))
+            .padding(horizontal = LocalPaddings.current.small)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = color,
+            modifier = iconModifier.size(15.dp)
+        )
+        Text(
+            text = text,
+            color = color,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
+private fun MediaTrailer(
     trailer: Media.Trailer,
     modifier: Modifier = Modifier,
 ) {

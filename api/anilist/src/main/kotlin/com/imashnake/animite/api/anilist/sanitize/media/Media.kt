@@ -6,6 +6,10 @@ import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import androidx.core.graphics.toColorInt
+import com.imashnake.animite.api.anilist.type.Favourites
+import java.time.Month
+import java.time.format.TextStyle
+import java.util.Locale
 
 private const val HQ_DEFAULT = "hqdefault"
 private const val MAX_RES_DEFAULT = "maxresdefault"
@@ -52,13 +56,51 @@ data class Media(
         val id: Int,
         /** @see CharacterSmall.image */
         val image: String?,
-        /** @see CharacterSmall.name */
+        /** @see CharacterSmall.Name.full */
         val name: String?,
+        /** @see CharacterSmall.Name.alternative */
+        val alternativeNames: String,
+        /** @see CharacterSmall.description */
+        val description: String?,
+        /** @see CharacterSmall.gender */
+        val gender: String?,
+        /**
+         * Year, Month, Day.
+         * @see CharacterSmall.dateOfBirth
+         * */
+        val dob: String?,
+        /** @see CharacterSmall.age */
+        val age: String?,
+        /** @see CharacterSmall.favourites */
+        val favourites: String?,
     ) {
+        companion object {
+            fun getFormattedDob(
+                year: Int?,
+                month: Int?,
+                day: Int?,
+            ): String? {
+                if (year == null && month == null && day == null) return null
+                val formattedYear = year?.let { ", $it" }.orEmpty()
+                val formattedMonth = month?.let { Month.of(it) }?.getDisplayName(TextStyle.SHORT, Locale.getDefault()).orEmpty()
+                return "$formattedMonth $day$formattedYear"
+            }
+        }
+
         internal constructor(query: CharacterSmall) : this(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
+            alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
+            description = query.description,
+            gender = query.gender,
+            dob = getFormattedDob(
+                year = query.dateOfBirth?.year,
+                month = query.dateOfBirth?.month,
+                day = query.dateOfBirth?.day
+            ),
+            age = query.age,
+            favourites = query.favourites?.toString()
         )
     }
 
@@ -106,8 +148,10 @@ data class Media(
             )
         },
         genres = query.genres?.filterNotNull().orEmpty(),
-        characters = query.characters?.nodes.orEmpty().filter { it?.characterSmall?.name != null }
-            .map { Character(it!!.characterSmall) },
+        characters = query.characters?.nodes.orEmpty().mapNotNull {
+            if (it?.characterSmall?.name == null) return@mapNotNull null
+            Character(it.characterSmall)
+        },
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
             null
         } else {

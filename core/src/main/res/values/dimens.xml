@@ -17,4 +17,6 @@
     <dimen name="media_card_corner_radius">18dp</dimen>
     <dimen name="media_card_text_padding_horizontal">16dp</dimen>
     <dimen name="media_card_text_padding_vertical">10dp</dimen>
+
+    <dimen name="character_image_height">137dp</dimen>
 </resources>

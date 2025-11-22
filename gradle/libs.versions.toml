@@ -114,6 +114,7 @@ androidx-navigationCompose = { group = "androidx.navigation", name = "navigation
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
+compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version.ref = "composeAnimation" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "composeIcons" }
