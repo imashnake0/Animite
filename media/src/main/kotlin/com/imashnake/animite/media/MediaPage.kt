@@ -31,6 +31,8 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -307,10 +309,7 @@ fun MediaPage(
                     sheetState = characterSheetState,
                     onDismissRequest = { viewModel.setSelectedCharacter(null) },
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-                        modifier = Modifier.height(IntrinsicSize.Max)
-                    ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),) {
                         CharacterCard(
                             image = it.image,
                             label = null,
