@@ -14,13 +14,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,10 +35,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
@@ -77,6 +75,7 @@ import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
+import com.imashnake.animite.core.ui.BottomSheet
 import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
@@ -289,76 +288,51 @@ fun MediaPage(
             }
 
             if (showDetailsSheet) {
-                ModalBottomSheet(
-                    modifier = Modifier.fillMaxHeight(),
+                BottomSheet(
                     sheetState = detailsSheetState,
-                    dragHandle = {
-                        Box(Modifier.clip(CircleShape)) {
-                            BottomSheetDefaults.DragHandle(
-                                Modifier.padding(horizontal = 22.dp).clip(CircleShape)
-                            )
-                        }
-                    },
                     onDismissRequest = { showDetailsSheet = false },
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = LocalPaddings.current.large)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-                    ) {
-                        Text(
-                            text = media.title.orEmpty(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleLarge,
-                        )
+                    Text(
+                        text = media.title.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
 
-                        MediaDescription(html = media.description.orEmpty())
-                    }
+                    MediaDescription(html = media.description.orEmpty())
                 }
             }
 
             viewModel.uiState.selectedCharacter?.let {
-                ModalBottomSheet(
-                    modifier = Modifier.fillMaxHeight(),
+                BottomSheet(
                     sheetState = characterSheetState,
-                    dragHandle = {
-                        Box(Modifier.clip(CircleShape)) {
-                            BottomSheetDefaults.DragHandle(
-                                Modifier.padding(horizontal = 22.dp).clip(CircleShape)
-                            )
-                        }
-                    },
-                    onDismissRequest = {
-                        viewModel.setSelectedCharacter(null)
-                    },
+                    onDismissRequest = { viewModel.setSelectedCharacter(null) },
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = LocalPaddings.current.large)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                        modifier = Modifier.height(IntrinsicSize.Max)
                     ) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
-                            CharacterCard(
-                                image = it.image,
-                                label = null,
-                                onClick = {},
+                        CharacterCard(
+                            image = it.image,
+                            label = null,
+                            onClick = {},
+                        )
+
+                        Column {
+                            Text(
+                                text = it.name.orEmpty(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleLarge,
                             )
 
-                            Column {
-                                Text(
-                                    text = it.name.orEmpty(),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.titleLarge,
-                                )
-
+                            if (it.alternativeNames.isNotEmpty()) {
                                 MediaDescription(it.alternativeNames.joinToString())
                             }
                         }
+                    }
 
-                        // TODO: Remove spoilers.
-                        MediaDescription(it.description.orEmpty().addNewlineAfterParagraph())
+                    // TODO: Remove spoilers.
+                    it.description?.let { description ->
+                        MediaDescription(description.addNewlineAfterParagraph())
                     }
                 }
             }
