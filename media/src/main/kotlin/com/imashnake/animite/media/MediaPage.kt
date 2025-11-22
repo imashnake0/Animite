@@ -36,7 +36,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -299,23 +298,33 @@ fun MediaPage(
                 BottomSheet(
                     sheetState = detailsSheetState,
                     onDismissRequest = { showDetailsSheet = false },
-                ) {
-                    Text(
-                        text = media.title.orEmpty(),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                ) { paddingValues ->
+                    Column(Modifier.padding(paddingValues)) {
+                        Text(
+                            text = media.title.orEmpty(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
 
-                    MediaDescription(html = media.description.orEmpty())
+                        MediaDescription(html = media.description.orEmpty())
+                    }
                 }
             }
 
             viewModel.uiState.selectedCharacter?.let {
                 BottomSheet(
                     sheetState = characterSheetState,
+                    dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     onDismissRequest = { viewModel.setSelectedCharacter(null) },
-                ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                ) { paddingValues ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            .padding(paddingValues)
+                            .padding(bottom = LocalPaddings.current.large)
+                    ) {
                         CharacterCard(
                             image = it.image,
                             label = null,
@@ -338,7 +347,7 @@ fun MediaPage(
                                         Chip(
                                             color = Color(0xFF80DF87),
                                             text = dob,
-                                            iconModifier = Modifier.padding(bottom = 2.dp),
+                                            iconPadding = PaddingValues(bottom = 2.dp),
                                             icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
                                         )
                                     }
@@ -361,7 +370,12 @@ fun MediaPage(
 
                     // TODO: Remove spoilers.
                     it.description?.let { description ->
-                        MediaDescription(description.addNewlineAfterParagraph())
+                        MediaDescription(
+                            html = description.addNewlineAfterParagraph(),
+                            modifier = Modifier
+                                .padding(paddingValues)
+                                .padding(top = LocalPaddings.current.medium)
+                        )
                     }
                 }
             }
@@ -504,8 +518,8 @@ private fun Chip(
     color: Color,
     icon: ImageVector,
     text: String,
-    iconModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
+    iconPadding: PaddingValues = PaddingValues(),
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
@@ -519,7 +533,9 @@ private fun Chip(
             imageVector = icon,
             contentDescription = null,
             tint = color,
-            modifier = iconModifier.size(15.dp)
+            modifier = Modifier
+                .padding(iconPadding)
+                .size(15.dp)
         )
         Text(
             text = text,
