@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -53,5 +54,9 @@ class MediaPageViewModel @Inject constructor(
                 TODO()
             }
         }
+    }
+
+    fun setSelectedCharacter(character: Media.Character?) {
+        uiState = uiState.copy(selectedCharacter = character)
     }
 }

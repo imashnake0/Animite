@@ -5,5 +5,14 @@ fragment CharacterSmall on Character {
     }
     name {
         full
+        alternative
     }
+    description(asHtml: true)
+    gender
+    dateOfBirth {
+        year
+        month
+        day
+    }
+    age
 }

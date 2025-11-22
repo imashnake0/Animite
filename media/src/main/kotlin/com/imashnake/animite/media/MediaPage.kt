@@ -1,7 +1,6 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -35,6 +35,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -113,8 +114,10 @@ fun MediaPage(
 
     val media = viewModel.uiState
 
-    var showSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    var showDetailsSheet by remember { mutableStateOf(false) }
+    val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+
+    val characterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
@@ -162,7 +165,7 @@ fun MediaPage(
                                     .height(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
-                                onClick = { showSheet = true },
+                                onClick = { showDetailsSheet = true },
                                 textModifier = Modifier.sharedBounds(
                                     rememberSharedContentState(
                                         SharedContentKey(
@@ -214,6 +217,9 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
+                                    onCharacterClick = {
+                                        viewModel.setSelectedCharacter(it)
+                                    },
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
@@ -281,15 +287,24 @@ fun MediaPage(
                 }
             }
 
-            if (showSheet)
+            if (showDetailsSheet) {
                 ModalBottomSheet(
                     modifier = Modifier.fillMaxHeight(),
-                    sheetState = sheetState,
-                    onDismissRequest = { showSheet = false },
+                    sheetState = detailsSheetState,
+                    dragHandle = {
+                        Box(Modifier.clip(CircleShape)) {
+                            BottomSheetDefaults.DragHandle(
+                                Modifier.padding(horizontal = 22.dp).clip(CircleShape)
+                            )
+                        }
+                    },
+                    onDismissRequest = { showDetailsSheet = false },
                 ) {
                     Column(
-                        modifier = Modifier.padding(horizontal = LocalPaddings.current.large),
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+                        modifier = Modifier
+                            .padding(horizontal = LocalPaddings.current.large)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                     ) {
                         Text(
                             text = media.title.orEmpty(),
@@ -300,6 +315,52 @@ fun MediaPage(
                         MediaDescription(html = media.description.orEmpty())
                     }
                 }
+            }
+
+            viewModel.uiState.selectedCharacter?.let {
+                ModalBottomSheet(
+                    modifier = Modifier.fillMaxHeight(),
+                    sheetState = characterSheetState,
+                    dragHandle = {
+                        Box(Modifier.clip(CircleShape)) {
+                            BottomSheetDefaults.DragHandle(
+                                Modifier.padding(horizontal = 22.dp).clip(CircleShape)
+                            )
+                        }
+                    },
+                    onDismissRequest = {
+                        viewModel.setSelectedCharacter(null)
+                    },
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = LocalPaddings.current.large)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                    ) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                            CharacterCard(
+                                image = it.image,
+                                label = null,
+                                onClick = {},
+                            )
+
+                            Column {
+                                Text(
+                                    text = it.name.orEmpty(),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+
+                                MediaDescription(it.alternativeNames.joinToString())
+                            }
+                        }
+
+                        // TODO: Remove spoilers.
+                        MediaDescription(it.description.orEmpty().replace("</p>", "</p><br>"))
+                    }
+                }
+            }
         }
     }
 }
@@ -415,6 +476,7 @@ fun MediaGenres(
 @Composable
 fun MediaCharacters(
     characters: List<Media.Character>,
+    onCharacterClick: (Media.Character) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -427,7 +489,7 @@ fun MediaCharacters(
         CharacterCard(
             image = character.image,
             label = character.name,
-            onClick = { Log.d("CharacterId", "${character.id}") },
+            onClick = { onCharacterClick(character) },
         )
     }
 }

@@ -52,13 +52,35 @@ data class Media(
         val id: Int,
         /** @see CharacterSmall.image */
         val image: String?,
-        /** @see CharacterSmall.name */
+        /** @see CharacterSmall.Name.full */
         val name: String?,
+        /** @see CharacterSmall.Name.alternative */
+        val alternativeNames: List<String>,
+        /** @see CharacterSmall.description */
+        val description: String?,
+        /** @see CharacterSmall.gender */
+        val gender: String?,
+        /**
+         * Year, Month, Day.
+         * @see CharacterSmall.dateOfBirth
+         * */
+        val dob: Triple<Int?, Int?, Int?>,
+        /** @see CharacterSmall.age */
+        val age: String?,
     ) {
         internal constructor(query: CharacterSmall) : this(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
+            alternativeNames = query.name?.alternative.orEmpty().filterNotNull(),
+            description = query.description,
+            gender = query.gender,
+            dob = Triple(
+                first = query.dateOfBirth?.year,
+                second = query.dateOfBirth?.month,
+                third = query.dateOfBirth?.day,
+            ),
+            age = query.age,
         )
     }
 
@@ -106,8 +128,10 @@ data class Media(
             )
         },
         genres = query.genres?.filterNotNull().orEmpty(),
-        characters = query.characters?.nodes.orEmpty().filter { it?.characterSmall?.name != null }
-            .map { Character(it!!.characterSmall) },
+        characters = query.characters?.nodes.orEmpty().mapNotNull {
+                if (it?.characterSmall?.name == null) return@mapNotNull null
+                Character(it.characterSmall)
+        },
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
             null
         } else {
