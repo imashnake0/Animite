@@ -72,6 +72,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
+import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
@@ -357,7 +358,7 @@ fun MediaPage(
                         }
 
                         // TODO: Remove spoilers.
-                        MediaDescription(it.description.orEmpty().replace("</p>", "</p><br>"))
+                        MediaDescription(it.description.orEmpty().addNewlineAfterParagraph())
                     }
                 }
             }

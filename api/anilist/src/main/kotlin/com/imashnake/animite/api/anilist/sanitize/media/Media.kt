@@ -129,8 +129,8 @@ data class Media(
         },
         genres = query.genres?.filterNotNull().orEmpty(),
         characters = query.characters?.nodes.orEmpty().mapNotNull {
-                if (it?.characterSmall?.name == null) return@mapNotNull null
-                Character(it.characterSmall)
+            if (it?.characterSmall?.name == null) return@mapNotNull null
+            Character(it.characterSmall)
         },
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
             null
