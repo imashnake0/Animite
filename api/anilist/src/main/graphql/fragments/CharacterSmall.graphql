@@ -15,4 +15,5 @@ fragment CharacterSmall on Character {
         day
     }
     age
+    favourites
 }

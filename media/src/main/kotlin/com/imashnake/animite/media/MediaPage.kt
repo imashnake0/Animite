@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
@@ -36,6 +35,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -324,18 +326,30 @@ fun MediaPage(
                             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                             modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
                         ) {
-                            Text(
-                                text = it.name.orEmpty(),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-
-                            it.dob?.let { dob ->
-                                Chip(
-                                    color = Color(0xFF80DF87),
-                                    text = dob,
-                                    icon = ImageVector.vectorResource(R.drawable.rounded_cake_24)
+                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                                Text(
+                                    text = it.name.orEmpty(),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.titleLarge,
                                 )
+
+                                Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+                                    it.dob?.let { dob ->
+                                        Chip(
+                                            color = Color(0xFF80DF87),
+                                            text = dob,
+                                            icon = ImageVector.vectorResource(R.drawable.rounded_cake_24)
+                                        )
+                                    }
+
+                                    it.favourites?.let { fav ->
+                                        Chip(
+                                            color = Color(0xFFFF9999),
+                                            text = fav,
+                                            icon = Icons.Rounded.Favorite
+                                        )
+                                    }
+                                }
                             }
 
                             if (it.alternativeNames.isNotBlank()) {

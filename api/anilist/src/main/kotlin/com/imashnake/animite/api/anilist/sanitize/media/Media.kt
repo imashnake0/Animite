@@ -6,6 +6,7 @@ import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import androidx.core.graphics.toColorInt
+import com.imashnake.animite.api.anilist.type.Favourites
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
@@ -70,6 +71,8 @@ data class Media(
         val dob: String?,
         /** @see CharacterSmall.age */
         val age: String?,
+        /** @see CharacterSmall.favourites */
+        val favourites: String?,
     ) {
         companion object {
             fun getFormattedDob(
@@ -97,6 +100,7 @@ data class Media(
                 day = query.dateOfBirth?.day
             ),
             age = query.age,
+            favourites = query.favourites?.toString()
         )
     }
 
