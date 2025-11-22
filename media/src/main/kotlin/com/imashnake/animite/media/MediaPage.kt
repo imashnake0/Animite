@@ -14,7 +14,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -25,19 +24,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
@@ -56,15 +56,19 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -316,12 +320,23 @@ fun MediaPage(
                             onClick = {},
                         )
 
-                        Column(modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                            modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
+                        ) {
                             Text(
                                 text = it.name.orEmpty(),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.titleLarge,
                             )
+
+                            it.dob?.let { dob ->
+                                Chip(
+                                    color = Color(0xFF80DF87),
+                                    text = dob,
+                                    icon = ImageVector.vectorResource(R.drawable.rounded_cake_24)
+                                )
+                            }
 
                             if (it.alternativeNames.isNotBlank()) {
                                 MediaDescription(it.alternativeNames)
@@ -340,7 +355,7 @@ fun MediaPage(
 }
 
 @Composable
-fun MediaBanner(
+private fun MediaBanner(
     imageUrl: String?,
     color: Color,
     modifier: Modifier = Modifier
@@ -362,7 +377,7 @@ fun MediaBanner(
 }
 
 @Composable
-fun MediaDetails(
+private fun MediaDetails(
     title: String?,
     description: String,
     onClick: () -> Unit,
@@ -400,7 +415,7 @@ fun MediaDetails(
 }
 
 @Composable
-fun MediaDescription(
+private fun MediaDescription(
     html: String,
     modifier: Modifier = Modifier,
 ) {
@@ -414,7 +429,7 @@ fun MediaDescription(
 }
 
 @Composable
-fun MediaGenres(
+private fun MediaGenres(
     genres: List<String>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
@@ -449,7 +464,7 @@ fun MediaGenres(
 }
 
 @Composable
-fun MediaCharacters(
+private fun MediaCharacters(
     characters: List<Media.Character>,
     onCharacterClick: (Media.Character) -> Unit,
     modifier: Modifier = Modifier,
@@ -470,7 +485,37 @@ fun MediaCharacters(
 }
 
 @Composable
-fun MediaTrailer(
+private fun Chip(
+    color: Color,
+    icon: ImageVector,
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .clip(CircleShape)
+            .background(color.copy(alpha = 0.2f))
+            .padding(horizontal = LocalPaddings.current.small)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(15.dp)
+        )
+        Text(
+            text = text,
+            color = color,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Composable
+private fun MediaTrailer(
     trailer: Media.Trailer,
     modifier: Modifier = Modifier,
 ) {

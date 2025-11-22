@@ -6,6 +6,9 @@ import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import androidx.core.graphics.toColorInt
+import java.time.Month
+import java.time.format.TextStyle
+import java.util.Locale
 
 private const val HQ_DEFAULT = "hqdefault"
 private const val MAX_RES_DEFAULT = "maxresdefault"
@@ -64,10 +67,23 @@ data class Media(
          * Year, Month, Day.
          * @see CharacterSmall.dateOfBirth
          * */
-        val dob: Triple<Int?, Int?, Int?>,
+        val dob: String?,
         /** @see CharacterSmall.age */
         val age: String?,
     ) {
+        companion object {
+            fun getFormattedDob(
+                year: Int?,
+                month: Int?,
+                day: Int?,
+            ): String? {
+                if (year == null && month == null && day == null) return null
+                val formattedYear = year?.let { ", $it" }.orEmpty()
+                val formattedMonth = month?.let { Month.of(it) }?.getDisplayName(TextStyle.SHORT, Locale.getDefault()).orEmpty()
+                return "$formattedMonth $day$formattedYear"
+            }
+        }
+
         internal constructor(query: CharacterSmall) : this(
             id = query.id,
             image = query.image?.large,
@@ -75,10 +91,10 @@ data class Media(
             alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
             description = query.description,
             gender = query.gender,
-            dob = Triple(
-                first = query.dateOfBirth?.year,
-                second = query.dateOfBirth?.month,
-                third = query.dateOfBirth?.day,
+            dob = getFormattedDob(
+                year = query.dateOfBirth?.year,
+                month = query.dateOfBirth?.month,
+                day = query.dateOfBirth?.day
             ),
             age = query.age,
         )
