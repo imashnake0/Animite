@@ -79,17 +79,18 @@ data class Media(
                 month: Int?,
                 day: Int?,
             ): String? {
-                if (year == null && month == null && day == null) return null
-                val formattedYear = year?.let { ", $it" }.orEmpty()
+                if (year == null && month == null) return null
+                if (year != null && month == null && day != null) return year.toString()
+                val formattedDayYear = listOfNotNull(day, year).joinToString().ifEmpty { null }
                 val formattedMonth = month?.let {
                     Month.of(it)
-                }?.getDisplayName(TextStyle.SHORT, Locale.getDefault()).orEmpty()
-                return "$formattedMonth $day$formattedYear"
+                }?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
             }
 
             fun getFormattedFavourites(favouritesCount: Int?): String? {
                 if (favouritesCount == null) return null
-                return if (favouritesCount > 1000) {
+                return if (favouritesCount >= 1000) {
                     if (favouritesCount % 1000f < 100) {
                         "${(favouritesCount / 1000f).toInt()}k"
                     } else {
