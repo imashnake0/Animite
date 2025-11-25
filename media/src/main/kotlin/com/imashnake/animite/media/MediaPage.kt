@@ -59,6 +59,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -73,6 +74,8 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
+import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -101,6 +104,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlin.math.absoluteValue
 import com.imashnake.animite.core.R as coreR
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
@@ -347,6 +351,27 @@ fun MediaPage(
                                     .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                                     .padding(paddingValues)
                                     .padding(bottom = LocalPaddings.current.large)
+                                    .graphicsLayer {
+                                        val pageOffset = (
+                                            characterPagerState.currentPage - page + characterPagerState.currentPageOffsetFraction
+                                        ).absoluteValue
+
+                                        alpha = lerp(
+                                            start = 0f,
+                                            stop = 1f,
+                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                        )
+                                        scaleY = lerp(
+                                            start = 0.9f,
+                                            stop = 1f,
+                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                        )
+                                        scaleX = lerp(
+                                            start = 0.9f,
+                                            stop = 1f,
+                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                        )
+                                    }
                             ) {
                                 CharacterCard(
                                     image = currentCharacter.image,
@@ -403,6 +428,32 @@ fun MediaPage(
                                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
                                         .padding(paddingValues)
                                         .padding(top = LocalPaddings.current.medium)
+                                        .graphicsLayer {
+                                            val pageOffset = (
+                                                characterPagerState.currentPage - page + characterPagerState.currentPageOffsetFraction
+                                            ).absoluteValue
+
+                                            alpha = lerp(
+                                                start = 0f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                            scaleY = lerp(
+                                                start = 0.9f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                            scaleX = lerp(
+                                                start = 0.9f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                            translationY = lerp(
+                                                start = size.height * -0.025f,
+                                                stop = 0f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                        }
                                 )
                             }
                         }
