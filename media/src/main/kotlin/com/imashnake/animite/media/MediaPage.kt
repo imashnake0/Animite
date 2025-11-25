@@ -130,7 +130,7 @@ fun MediaPage(
 
     var showCharacterSheet by remember { mutableStateOf(false) }
     val characterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
-    val characterPagerState = rememberPagerState(pageCount = { 10 })
+    val characterPagerState = rememberPagerState(pageCount = { media.characters.orEmpty().size })
     val coroutineScope = rememberCoroutineScope()
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
@@ -338,10 +338,8 @@ fun MediaPage(
                     onDismissRequest = { showCharacterSheet = false },
                 ) { paddingValues, modifier ->
                     HorizontalPager(state = characterPagerState) { page ->
-                        Column(
-                            modifier = modifier
-                        ) {
-                            val currentCharacter = media.characters!![page]
+                        Column(modifier = modifier) {
+                            val currentCharacter = media.characters.orEmpty()[page]
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                                 modifier = Modifier
