@@ -6,8 +6,6 @@ import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +35,7 @@ fun BottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     dragHandleBackgroundColor: Color? = null,
-    content: @Composable ColumnScope.(contentPadding: PaddingValues) -> Unit,
+    content: @Composable (contentPadding: PaddingValues, modifier: Modifier) -> Unit,
 ) {
     ModalBottomSheet(
         modifier = modifier.fillMaxHeight(),
@@ -65,13 +63,12 @@ fun BottomSheet(
         onDismissRequest = onDismissRequest,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
     ) {
-        Column(
-            modifier = Modifier
+        content(
+            PaddingValues(horizontal = LocalPaddings.current.large),
+            Modifier
                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-        ) {
-            content(PaddingValues(horizontal = LocalPaddings.current.large))
-        }
+        )
     }
 }

@@ -293,7 +293,7 @@ fun HomeRow(
         mediaList = items,
         modifier = modifier,
         contentPadding = contentPadding,
-    ) { media ->
+    ) { _, media ->
         with(sharedTransitionScope) {
             MediaCard(
                 image = media.coverImage,

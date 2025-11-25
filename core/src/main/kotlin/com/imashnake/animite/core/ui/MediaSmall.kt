@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +44,7 @@ fun <T> MediaSmallRow(
     mediaList: List<T>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
-    content: @Composable LazyItemScope.(T) -> Unit
+    content: @Composable LazyItemScope.(Int, T) -> Unit
 ) {
     Column(
         modifier = modifier.padding(
@@ -73,8 +74,8 @@ fun <T> MediaSmallRow(
                 end = endPadding,
             )
         ) {
-            items(mediaList) { media ->
-                content(media)
+            itemsIndexed(mediaList) { index, media ->
+                content(index, media)
             }
         }
     }

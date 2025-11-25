@@ -31,6 +31,8 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -96,6 +99,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
@@ -124,7 +128,10 @@ fun MediaPage(
     var showDetailsSheet by remember { mutableStateOf(false) }
     val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
+    var showCharacterSheet by remember { mutableStateOf(false) }
     val characterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    val characterPagerState = rememberPagerState(pageCount = { 10 })
+    val coroutineScope = rememberCoroutineScope()
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
@@ -224,8 +231,11 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
-                                    onCharacterClick = {
-                                        viewModel.setSelectedCharacter(it)
+                                    onCharacterClick = { index, character ->
+                                        coroutineScope.launch {
+                                            characterPagerState.scrollToPage(index)
+                                        }
+                                        showCharacterSheet = true
                                     },
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
@@ -298,8 +308,8 @@ fun MediaPage(
                 BottomSheet(
                     sheetState = detailsSheetState,
                     onDismissRequest = { showDetailsSheet = false },
-                ) { paddingValues ->
-                    Column {
+                ) { paddingValues, modifier ->
+                    Column(modifier) {
                         Text(
                             text = media.title.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
@@ -321,72 +331,83 @@ fun MediaPage(
                 }
             }
 
-            viewModel.uiState.selectedCharacter?.let {
+            if (showCharacterSheet) {
                 BottomSheet(
                     sheetState = characterSheetState,
                     dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    onDismissRequest = { viewModel.setSelectedCharacter(null) },
-                ) { paddingValues ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .padding(paddingValues)
-                            .padding(bottom = LocalPaddings.current.large)
-                    ) {
-                        CharacterCard(
-                            image = it.image,
-                            label = null,
-                            onClick = {},
-                        )
-
+                    onDismissRequest = { showCharacterSheet = false },
+                ) { paddingValues, modifier ->
+                    HorizontalPager(state = characterPagerState) { page ->
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
+                            modifier = modifier
                         ) {
-                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
-                                Text(
-                                    text = it.name.orEmpty(),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.titleLarge,
+                            val currentCharacter = media.characters!![page]
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                    .padding(paddingValues)
+                                    .padding(bottom = LocalPaddings.current.large)
+                            ) {
+                                CharacterCard(
+                                    image = currentCharacter.image,
+                                    label = null,
+                                    onClick = {},
                                 )
 
-                                Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
-                                    it.dob?.let { dob ->
-                                        Chip(
-                                            color = Color(0xFF80DF87),
-                                            text = dob,
-                                            iconPadding = PaddingValues(bottom = 2.dp),
-                                            icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                    modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
+                                ) {
+                                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                                        Text(
+                                            text = currentCharacter.name.orEmpty(),
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            style = MaterialTheme.typography.titleLarge,
                                         )
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                LocalPaddings.current.small
+                                            )
+                                        ) {
+                                            currentCharacter.dob?.let { dob ->
+                                                Chip(
+                                                    color = Color(0xFF80DF87),
+                                                    text = dob,
+                                                    iconPadding = PaddingValues(bottom = 2.dp),
+                                                    icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
+                                                )
+                                            }
+
+                                            currentCharacter.favourites?.let { fav ->
+                                                Chip(
+                                                    color = Color(0xFFFF9999),
+                                                    text = fav,
+                                                    icon = Icons.Rounded.Favorite
+                                                )
+                                            }
+                                        }
                                     }
 
-                                    it.favourites?.let { fav ->
-                                        Chip(
-                                            color = Color(0xFFFF9999),
-                                            text = fav,
-                                            icon = Icons.Rounded.Favorite
-                                        )
+                                    if (currentCharacter.alternativeNames.isNotBlank()) {
+                                        MediaDescription(currentCharacter.alternativeNames)
                                     }
                                 }
                             }
 
-                            if (it.alternativeNames.isNotBlank()) {
-                                MediaDescription(it.alternativeNames)
+                            // TODO: Remove spoilers.
+                            currentCharacter.description?.let { description ->
+                                MediaDescription(
+                                    html = description.addNewlineAfterParagraph(),
+                                    modifier = Modifier
+                                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                        .padding(paddingValues)
+                                        .padding(top = LocalPaddings.current.medium)
+                                )
                             }
                         }
-                    }
-
-                    // TODO: Remove spoilers.
-                    it.description?.let { description ->
-                        MediaDescription(
-                            html = description.addNewlineAfterParagraph(),
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                .padding(paddingValues)
-                                .padding(top = LocalPaddings.current.medium)
-                        )
                     }
                 }
             }
@@ -506,7 +527,7 @@ private fun MediaGenres(
 @Composable
 private fun MediaCharacters(
     characters: List<Media.Character>,
-    onCharacterClick: (Media.Character) -> Unit,
+    onCharacterClick: (Int, Media.Character) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -515,11 +536,11 @@ private fun MediaCharacters(
         mediaList = characters,
         modifier = modifier,
         contentPadding = contentPadding,
-    ) { character ->
+    ) { index, character ->
         CharacterCard(
             image = character.image,
             label = character.name,
-            onClick = { onCharacterClick(character) },
+            onClick = { onCharacterClick(index, character) },
         )
     }
 }
