@@ -373,6 +373,7 @@ fun MediaPage(
                         MediaDescription(
                             html = description.addNewlineAfterParagraph(),
                             modifier = Modifier
+                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
                                 .padding(paddingValues)
                                 .padding(top = LocalPaddings.current.medium)
                         )

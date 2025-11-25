@@ -62,6 +62,7 @@ fun BottomSheet(
             }
         },
         onDismissRequest = onDismissRequest,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
     ) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             content(PaddingValues(horizontal = LocalPaddings.current.large))
