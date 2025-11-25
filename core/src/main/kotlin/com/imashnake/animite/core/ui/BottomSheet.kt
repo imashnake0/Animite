@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -64,7 +65,12 @@ fun BottomSheet(
         onDismissRequest = onDismissRequest,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
     ) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
             content(PaddingValues(horizontal = LocalPaddings.current.large))
         }
     }

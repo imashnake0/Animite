@@ -299,14 +299,24 @@ fun MediaPage(
                     sheetState = detailsSheetState,
                     onDismissRequest = { showDetailsSheet = false },
                 ) { paddingValues ->
-                    Column(Modifier.padding(paddingValues)) {
+                    Column {
                         Text(
                             text = media.title.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                .padding(paddingValues)
+                                .padding(vertical = LocalPaddings.current.medium)
                         )
 
-                        MediaDescription(html = media.description.orEmpty())
+                        MediaDescription(
+                            html = media.description.orEmpty(),
+                            modifier = Modifier
+                                .padding(paddingValues)
+                                .padding(top = LocalPaddings.current.medium)
+                        )
                     }
                 }
             }
