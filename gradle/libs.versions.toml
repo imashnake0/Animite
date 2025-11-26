@@ -80,7 +80,7 @@ ksp = "2.3.3"
 
 # Ktor
 # https://ktor.io/docs/releases.html#release-details.
-ktor = "3.3.2"
+ktor = "3.3.3"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
