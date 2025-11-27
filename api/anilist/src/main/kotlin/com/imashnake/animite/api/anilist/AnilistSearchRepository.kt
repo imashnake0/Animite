@@ -35,6 +35,10 @@ class AnilistSearchRepository @Inject constructor(
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
             .filter { it.exception == null }
-            .asResult { it.page!!.media.orEmpty().filterNotNull().map { query -> Search(query) } }
+            .asResult {
+                it.page!!.media.orEmpty().filterNotNull().map { query ->
+                    Search(query.mediaMedium)
+                }
+            }
     }
 }

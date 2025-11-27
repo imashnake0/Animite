@@ -1,26 +1,26 @@
 package com.imashnake.animite.api.anilist.sanitize.search
 
-import com.imashnake.animite.api.anilist.SearchQuery
+import com.imashnake.animite.api.anilist.fragment.MediaMedium
 
 data class Search(
-    /** @see SearchQuery.Medium.id */
+    /** @see id */
     val id: Int,
-    /** @see SearchQuery.Medium.coverImage */
+    /** @see coverImage */
     val coverImage: String?,
-    /** @see SearchQuery.Medium.title */
+    /** @see title */
     val title: String?,
-    /** @see SearchQuery.Medium.season */
+    /** @see season */
     val season: Season,
-    /** @see SearchQuery.Medium.seasonYear */
+    /** @see seasonYear */
     val seasonYear: Int?,
-    /** @see SearchQuery.Medium.studios */
+    /** @see studios */
     val studios: List<String>,
-    /** @see SearchQuery.Medium.format */
+    /** @see format */
     val format: Format,
-    /** @see SearchQuery.Medium.episodes */
+    /** @see episodes */
     val episodes: Int?,
 ) {
-    /** @see SearchQuery.Medium.season */
+    /** @see season */
     enum class Season(val season: String) {
         WINTER("Winter"),
         SPRING("Spring"),
@@ -29,7 +29,7 @@ data class Search(
         UNKNOWN("")
     }
 
-    /** @see SearchQuery.Medium.format */
+    /** @see format */
     enum class Format(val string: String) {
         TV("TV"),
         TV_SHORT("TV SHORT"),
@@ -44,7 +44,7 @@ data class Search(
         UNKNOWN("")
     }
 
-    internal constructor(query: SearchQuery.Medium) : this(
+    internal constructor(query: MediaMedium) : this(
         id = query.id,
         coverImage = query.coverImage?.extraLarge,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,

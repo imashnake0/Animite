@@ -3,7 +3,7 @@ query Search(
     $perPage: Int,
     $search: String
 ) {
-    page: Page (
+    page: Page(
         page: 0,
         perPage: $perPage
     ) {
@@ -12,24 +12,7 @@ query Search(
             sort: [POPULARITY_DESC],
             search: $search
         ) {
-            id
-            coverImage {
-                extraLarge
-            }
-            title {
-                romaji
-                english
-                native
-            }
-            season
-            seasonYear
-            studios(sort: [FAVOURITES_DESC], isMain: true) {
-                nodes {
-                    name
-                }
-            }
-            format
-            episodes
+            ...MediaMedium
         }
     }
 }
