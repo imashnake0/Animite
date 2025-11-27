@@ -55,6 +55,7 @@ import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
+import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
@@ -109,10 +110,11 @@ fun SearchFrontDrop(
             enter = fadeIn(tween(750)),
             exit = fadeOut(tween(750)),
         ) {
-            SearchList(
+            MediaMediumList(
                 mediaMediumList = it,
                 modifier = Modifier.imeNestedScroll(),
                 contentPadding = insetPaddingValues,
+                searchBarHeight = dimensionResource(R.dimen.search_bar_height),
                 searchBarBottomPadding = searchBarBottomPadding,
                 onItemClick = { id, title ->
                     isExpanded = false
@@ -135,95 +137,4 @@ fun SearchFrontDrop(
             .imePadding()
             .height(dimensionResource(R.dimen.search_bar_height))
     )
-}
-
-@Composable
-fun SearchList(
-    mediaMediumList: List<MediaMedium>,
-    searchBarBottomPadding: Dp,
-    onItemClick: (Int, String?) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(),
-) {
-    LazyColumn(
-        modifier = modifier
-            .consumeWindowInsets(
-                PaddingValues(
-                    bottom = searchBarBottomPadding + contentPadding.calculateBottomPadding()
-                )
-            )
-            .imePadding(),
-        contentPadding = PaddingValues(
-            LocalPaddings.current.large
-        ) + PaddingValues(
-            bottom = LocalPaddings.current.large +
-                    dimensionResource(R.dimen.search_bar_height) +
-                    searchBarBottomPadding
-        ) + contentPadding,
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-    ) {
-        items(mediaMediumList.size, key = { mediaMediumList[it].id }) { index ->
-            SearchItem(
-                item = mediaMediumList[index],
-                onClick = onItemClick,
-                modifier = Modifier.animateItem()
-            )
-        }
-    }
-}
-
-@Composable
-private fun SearchItem(
-    item: MediaMedium,
-    onClick: (Int, String?) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
-            .clickable { onClick(item.id, item.title) }
-    ) {
-        MediaCard(
-            image = item.coverImage,
-            label = null,
-            onClick = { onClick(item.id, item.title) },
-        )
-
-        Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {
-            Text(
-                text = item.title.orEmpty(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                maxLines = 2
-            )
-            if (item.seasonYear != null) {
-                Text(
-                    text = item.seasonYear.toString(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall
-                )
-            }
-
-            Spacer(Modifier.size(LocalPaddings.current.medium))
-
-            Text(
-                text = item.studios.joinToString(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = listOfNotNull(
-                    item.format.string.takeIf { it.isNotEmpty() },
-                    item.episodes?.let { "$it episodes" }
-                ).joinToString(" ꞏ "),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
 }
