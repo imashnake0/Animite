@@ -10,5 +10,6 @@ data class MediaList(
         UPCOMING_NEXT_SEASON("Upcoming Next Season"),
         ALL_TIME_POPULAR("All Time Popular"),
         SEARCH,
+        GENRE_LIST,
     }
 }

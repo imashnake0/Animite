@@ -85,6 +85,8 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
@@ -119,6 +121,7 @@ private const val DEVICE_CORNER_RADIUS = 30
     "LongMethod"
 )
 fun MediaPage(
+    onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -493,8 +496,14 @@ fun MediaPage(
                         mediaMediumList = it,
                         contentPadding = insetPaddingValues,
                         onItemClick = { id, title ->
-                            isExpanded = false
-//                            onItemClick(id, searchMediaType, title)
+                            onNavigateToMediaItem(
+                                MediaPage(
+                                    id = id,
+                                    source = MediaList.Type.GENRE_LIST.name,
+                                    mediaType = viewModel.uiState.type ?: MediaType.UNKNOWN__.rawValue,
+                                    title = title
+                                )
+                            )
                         }
                     )
                 }
