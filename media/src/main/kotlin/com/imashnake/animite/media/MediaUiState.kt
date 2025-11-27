@@ -13,6 +13,5 @@ data class MediaUiState(
     val ranks: List<Media.Ranking>? = null,
     val genres: List<String>? = null,
     val characters: List<Media.Character>? = null,
-    val selectedCharacter: Media.Character? = null,
     val trailer: Media.Trailer? = null
 )

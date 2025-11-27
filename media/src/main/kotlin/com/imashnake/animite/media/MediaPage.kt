@@ -31,6 +31,8 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +59,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -70,6 +74,7 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -77,7 +82,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
@@ -96,7 +100,9 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlin.math.absoluteValue
 import com.imashnake.animite.core.R as coreR
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
@@ -124,7 +130,10 @@ fun MediaPage(
     var showDetailsSheet by remember { mutableStateOf(false) }
     val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
+    var showCharacterSheet by remember { mutableStateOf(false) }
     val characterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    val characterPagerState = rememberPagerState(pageCount = { media.characters.orEmpty().size })
+    val coroutineScope = rememberCoroutineScope()
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
@@ -224,8 +233,11 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
-                                    onCharacterClick = {
-                                        viewModel.setSelectedCharacter(it)
+                                    onCharacterClick = { index, character ->
+                                        coroutineScope.launch {
+                                            characterPagerState.scrollToPage(index)
+                                        }
+                                        showCharacterSheet = true
                                     },
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
@@ -298,84 +310,151 @@ fun MediaPage(
                 BottomSheet(
                     sheetState = detailsSheetState,
                     onDismissRequest = { showDetailsSheet = false },
-                ) { paddingValues ->
-                    Column(Modifier.padding(paddingValues)) {
+                ) { paddingValues, modifier ->
+                    Column(modifier) {
                         Text(
                             text = media.title.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                .padding(paddingValues)
+                                .padding(vertical = LocalPaddings.current.medium)
                         )
 
-                        MediaDescription(html = media.description.orEmpty())
-                    }
-                }
-            }
-
-            viewModel.uiState.selectedCharacter?.let {
-                BottomSheet(
-                    sheetState = characterSheetState,
-                    dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    onDismissRequest = { viewModel.setSelectedCharacter(null) },
-                ) { paddingValues ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .padding(paddingValues)
-                            .padding(bottom = LocalPaddings.current.large)
-                    ) {
-                        CharacterCard(
-                            image = it.image,
-                            label = null,
-                            onClick = {},
-                        )
-
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
-                        ) {
-                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
-                                Text(
-                                    text = it.name.orEmpty(),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.titleLarge,
-                                )
-
-                                Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
-                                    it.dob?.let { dob ->
-                                        Chip(
-                                            color = Color(0xFF80DF87),
-                                            text = dob,
-                                            iconPadding = PaddingValues(bottom = 2.dp),
-                                            icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
-                                        )
-                                    }
-
-                                    it.favourites?.let { fav ->
-                                        Chip(
-                                            color = Color(0xFFFF9999),
-                                            text = fav,
-                                            icon = Icons.Rounded.Favorite
-                                        )
-                                    }
-                                }
-                            }
-
-                            if (it.alternativeNames.isNotBlank()) {
-                                MediaDescription(it.alternativeNames)
-                            }
-                        }
-                    }
-
-                    // TODO: Remove spoilers.
-                    it.description?.let { description ->
                         MediaDescription(
-                            html = description.addNewlineAfterParagraph(),
+                            html = media.description.orEmpty(),
                             modifier = Modifier
                                 .padding(paddingValues)
                                 .padding(top = LocalPaddings.current.medium)
                         )
+                    }
+                }
+            }
+
+            if (showCharacterSheet) {
+                BottomSheet(
+                    sheetState = characterSheetState,
+                    dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    onDismissRequest = { showCharacterSheet = false },
+                ) { paddingValues, modifier ->
+                    HorizontalPager(state = characterPagerState) { page ->
+                        Column(modifier = modifier) {
+                            val currentCharacter = media.characters.orEmpty()[page]
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                    .padding(paddingValues)
+                                    .padding(bottom = LocalPaddings.current.large)
+                                    .graphicsLayer {
+                                        val pageOffset = (
+                                            characterPagerState.currentPage - page + characterPagerState.currentPageOffsetFraction
+                                        ).absoluteValue
+
+                                        alpha = lerp(
+                                            start = 0f,
+                                            stop = 1f,
+                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                        )
+                                        scaleY = lerp(
+                                            start = 0.9f,
+                                            stop = 1f,
+                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                        )
+                                        scaleX = lerp(
+                                            start = 0.9f,
+                                            stop = 1f,
+                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                        )
+                                    }
+                            ) {
+                                CharacterCard(
+                                    image = currentCharacter.image,
+                                    label = null,
+                                    onClick = {},
+                                )
+
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                    modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
+                                ) {
+                                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                                        Text(
+                                            text = currentCharacter.name.orEmpty(),
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            style = MaterialTheme.typography.titleLarge,
+                                        )
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                LocalPaddings.current.small
+                                            )
+                                        ) {
+                                            currentCharacter.dob?.let { dob ->
+                                                Chip(
+                                                    color = Color(0xFF80DF87),
+                                                    text = dob,
+                                                    iconPadding = PaddingValues(bottom = 2.dp),
+                                                    icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
+                                                )
+                                            }
+
+                                            currentCharacter.favourites?.let { fav ->
+                                                Chip(
+                                                    color = Color(0xFFFF9999),
+                                                    text = fav,
+                                                    icon = Icons.Rounded.Favorite
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    if (currentCharacter.alternativeNames.isNotBlank()) {
+                                        MediaDescription(currentCharacter.alternativeNames)
+                                    }
+                                }
+                            }
+
+                            // TODO: Remove spoilers.
+                            currentCharacter.description?.let { description ->
+                                MediaDescription(
+                                    html = description,
+                                    modifier = Modifier
+                                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                        .padding(paddingValues)
+                                        .padding(top = LocalPaddings.current.medium)
+                                        .graphicsLayer {
+                                            val pageOffset = (
+                                                characterPagerState.currentPage - page + characterPagerState.currentPageOffsetFraction
+                                            ).absoluteValue
+
+                                            alpha = lerp(
+                                                start = 0f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                            scaleY = lerp(
+                                                start = 0.9f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                            scaleX = lerp(
+                                                start = 0.9f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                            translationY = lerp(
+                                                start = size.height * -0.025f,
+                                                stop = 0f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                        }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -495,7 +574,7 @@ private fun MediaGenres(
 @Composable
 private fun MediaCharacters(
     characters: List<Media.Character>,
-    onCharacterClick: (Media.Character) -> Unit,
+    onCharacterClick: (Int, Media.Character) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -504,11 +583,11 @@ private fun MediaCharacters(
         mediaList = characters,
         modifier = modifier,
         contentPadding = contentPadding,
-    ) { character ->
+    ) { index, character ->
         CharacterCard(
             image = character.image,
             label = character.name,
-            onClick = { onCharacterClick(character) },
+            onClick = { onCharacterClick(index, character) },
         )
     }
 }

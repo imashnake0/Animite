@@ -55,8 +55,4 @@ class MediaPageViewModel @Inject constructor(
             }
         }
     }
-
-    fun setSelectedCharacter(character: Media.Character?) {
-        uiState = uiState.copy(selectedCharacter = character)
-    }
 }

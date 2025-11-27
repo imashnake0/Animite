@@ -94,7 +94,7 @@ private fun UserMediaLists(
                 title = namedList.name,
                 mediaList = namedList.list,
                 contentPadding = contentPadding.horizontalOnly,
-            ) { item ->
+            ) { _, item ->
                 with(sharedTransitionScope) {
                     val media = item as Media.Small
                     MediaCard(

@@ -84,7 +84,7 @@ private fun UserFavouriteLists(
                 title = namedList.name,
                 mediaList = namedList.list,
                 contentPadding = contentPadding.horizontalOnly,
-            ) { item ->
+            ) { _, item ->
                 when(item) {
                     is Media.Small -> {
                         with(sharedTransitionScope) {

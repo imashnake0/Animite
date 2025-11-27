@@ -24,6 +24,7 @@ kotlin {
 
 dependencies {
     implementation(projects.api.preferences)
+    implementation(projects.core)
 
     // Apollo Kotlin
     implementation(libs.apollo.runtime)
@@ -33,6 +34,8 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    testImplementation(libs.test.junit)
 }
 
 apollo {

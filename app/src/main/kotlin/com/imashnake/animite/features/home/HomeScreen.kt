@@ -293,7 +293,7 @@ fun HomeRow(
         mediaList = items,
         modifier = modifier,
         contentPadding = contentPadding,
-    ) { media ->
+    ) { _, media ->
         with(sharedTransitionScope) {
             MediaCard(
                 image = media.coverImage,
@@ -370,7 +370,7 @@ private fun MediaTypeSelector(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            MediaType.knownValues().forEach { mediaType ->
+            MediaType.knownEntries.forEach { mediaType ->
                 IconButton(
                     onClick = {
                         if (selectedOption.value != mediaType) {

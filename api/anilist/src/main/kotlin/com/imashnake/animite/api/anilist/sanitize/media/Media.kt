@@ -6,6 +6,7 @@ import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import androidx.core.graphics.toColorInt
+import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
@@ -57,21 +58,19 @@ data class Media(
         val image: String?,
         /** @see CharacterSmall.Name.full */
         val name: String?,
-        /** @see CharacterSmall.Name.alternative */
-        val alternativeNames: String,
-        /** @see CharacterSmall.description */
-        val description: String?,
-        /** @see CharacterSmall.gender */
-        val gender: String?,
+
         /**
          * Year, Month, Day.
          * @see CharacterSmall.dateOfBirth
          * */
         val dob: String?,
-        /** @see CharacterSmall.age */
-        val age: String?,
         /** @see CharacterSmall.favourites */
         val favourites: String?,
+        /** @see CharacterSmall.Name.alternative */
+        val alternativeNames: String,
+
+        /** @see CharacterSmall.description */
+        val description: String?,
     ) {
         companion object {
             fun getFormattedDob(
@@ -79,17 +78,18 @@ data class Media(
                 month: Int?,
                 day: Int?,
             ): String? {
-                if (year == null && month == null && day == null) return null
-                val formattedYear = year?.let { ", $it" }.orEmpty()
+                if (year == null && month == null) return null
+                if (year != null && month == null && day != null) return year.toString()
+                val formattedDayYear = listOfNotNull(day, year).joinToString().ifEmpty { null }
                 val formattedMonth = month?.let {
                     Month.of(it)
-                }?.getDisplayName(TextStyle.SHORT, Locale.getDefault()).orEmpty()
-                return "$formattedMonth $day$formattedYear"
+                }?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
             }
 
             fun getFormattedFavourites(favouritesCount: Int?): String? {
                 if (favouritesCount == null) return null
-                return if (favouritesCount > 1000) {
+                return if (favouritesCount >= 1000) {
                     if (favouritesCount % 1000f < 100) {
                         "${(favouritesCount / 1000f).toInt()}k"
                     } else {
@@ -99,22 +99,37 @@ data class Media(
                     favouritesCount.toString()
                 }
             }
+
+            fun getDescription(
+                age: String?,
+                gender: String?,
+                description: String?
+            ): String? {
+                if (age == null && gender == null && description == null) return null
+                return listOfNotNull(
+                    age?.let { "<b>Age:</b> $it" },
+                    gender?.let { "<b>Gender:</b> $it" },
+                    description,
+                ).joinToString("<br>").addNewlineAfterParagraph()
+            }
         }
 
         internal constructor(query: CharacterSmall) : this(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
-            alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
-            description = query.description,
-            gender = query.gender,
             dob = getFormattedDob(
                 year = query.dateOfBirth?.year,
                 month = query.dateOfBirth?.month,
                 day = query.dateOfBirth?.day
             ),
-            age = query.age,
-            favourites = getFormattedFavourites(query.favourites)
+            favourites = getFormattedFavourites(query.favourites),
+            alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
+            description = getDescription(
+                age = query.age,
+                gender = query.gender,
+                description = query.description,
+            ),
         )
     }
 
