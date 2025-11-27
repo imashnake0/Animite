@@ -75,7 +75,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -83,7 +82,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
@@ -423,7 +421,7 @@ fun MediaPage(
                             // TODO: Remove spoilers.
                             currentCharacter.description?.let { description ->
                                 MediaDescription(
-                                    html = description.addNewlineAfterParagraph(),
+                                    html = description,
                                     modifier = Modifier
                                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
                                         .padding(paddingValues)

@@ -128,6 +128,34 @@ class MediaTest {
         assertEquals("123.5k", actual.favourites)
     }
 
+    @Test
+    fun `character description when age is null`() {
+        val actual = Media.Character(getCharacterSmall(
+            age = null,
+        ))
+
+        assertEquals("<b>Gender:</b> male<br>description", actual.description)
+    }
+
+    @Test
+    fun `character description when gender is null`() {
+        val actual = Media.Character(getCharacterSmall(
+            gender = null,
+        ))
+
+        assertEquals("<b>Age:</b> 50<br>description", actual.description)
+    }
+
+    @Test
+    fun `character description when age and gender are null`() {
+        val actual = Media.Character(getCharacterSmall(
+            age = null,
+            gender = null,
+        ))
+
+        assertEquals("description", actual.description)
+    }
+
     private fun getCharacterSmall(
         alternative: List<String?>? = listOf("name1", "name2"),
         dateOfBirth: CharacterSmall.DateOfBirth = CharacterSmall.DateOfBirth(
@@ -135,7 +163,9 @@ class MediaTest {
             month = 11,
             day = 23
         ),
-        favourites: Int? = 150
+        favourites: Int? = 150,
+        age: String? = "50",
+        gender: String? = "male"
     ) = CharacterSmall(
         id = 12345,
         image = CharacterSmall.Image(
@@ -146,9 +176,9 @@ class MediaTest {
             alternative = alternative
         ),
         description = "description",
-        gender = "male",
+        gender = gender,
         dateOfBirth = dateOfBirth,
-        age = "50",
+        age = age,
         favourites = favourites
     )
 
@@ -157,10 +187,8 @@ class MediaTest {
         image = "image",
         name = "fullName",
         alternativeNames = "name1, name2",
-        description = "description",
-        gender = "male",
+        description = "<b>Age:</b> 50<br><b>Gender:</b> male<br>description",
         dob = "Nov 23, 2025",
-        age = "50",
         favourites = "150"
     )
     // endregion
