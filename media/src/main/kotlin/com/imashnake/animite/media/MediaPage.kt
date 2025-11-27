@@ -492,12 +492,15 @@ fun MediaPage(
                 enter = fadeIn(tween(750)),
                 exit = fadeOut(tween(750)),
             ) {
-                Column(modifier = Modifier.padding(insetPaddingValues)) {
+                Column {
                     Text(
                         text = media.genreTitleList?.first.orEmpty(),
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            .padding(insetPaddingValues)
                             .padding(horizontal = LocalPaddings.current.large)
                             .padding(top = LocalPaddings.current.large)
                     )
