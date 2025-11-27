@@ -93,15 +93,15 @@ fun SearchFrontDrop(
         ) {
             MediaMediumList(
                 mediaMediumList = it,
-                modifier = Modifier.imeNestedScroll(),
-                contentPadding = insetPaddingValues,
-                searchBarHeight = dimensionResource(R.dimen.search_bar_height),
-                searchBarBottomPadding = searchBarBottomPadding,
                 onItemClick = { id, title ->
                     isExpanded = false
                     viewModel.setQuery(null)
                     onItemClick(id, searchMediaType, title)
-                }
+                },
+                modifier = Modifier.imeNestedScroll(),
+                searchBarHeight = dimensionResource(R.dimen.search_bar_height),
+                searchBarBottomPadding = searchBarBottomPadding,
+                contentPadding = insetPaddingValues,
             )
         }
     }

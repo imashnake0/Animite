@@ -57,10 +57,14 @@ class MediaPageViewModel @Inject constructor(
         }
     }
 
-    fun getGenreMediaMediums(genre: String) = viewModelScope.launch {
+    fun getGenreMediaMediums(genre: String?) = viewModelScope.launch {
+        if (genre == null) {
+            uiState = uiState.copy(genreList = null)
+            return@launch
+        }
         val list = mediaRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
-            sort = listOf(MediaSort.POPULARITY_DESC),
+            sort = listOf(MediaSort.SCORE_DESC),
             genre = genre,
         ).firstOrNull()?.getOrNull()
 
