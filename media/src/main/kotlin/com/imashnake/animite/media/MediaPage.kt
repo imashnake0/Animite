@@ -504,6 +504,7 @@ fun MediaPage(
                             .padding(horizontal = LocalPaddings.current.large)
                             .padding(top = LocalPaddings.current.large)
                     )
+                    // TODO: Create and use a grid layout.
                     MediaMediumList(
                         mediaMediumList = media.genreTitleList?.second.orEmpty(),
                         onItemClick = { id, title ->
