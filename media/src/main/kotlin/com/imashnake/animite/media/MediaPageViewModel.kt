@@ -59,7 +59,7 @@ class MediaPageViewModel @Inject constructor(
 
     fun getGenreMediaMediums(genre: String?) = viewModelScope.launch {
         if (genre == null) {
-            uiState = uiState.copy(genreList = null)
+            uiState = uiState.copy(genreTitleList = null)
             return@launch
         }
         val list = mediaRepository.fetchMediaMediumList(
@@ -70,6 +70,6 @@ class MediaPageViewModel @Inject constructor(
             genre = genre,
         ).firstOrNull()?.getOrNull()
 
-        uiState = uiState.copy(genreList = list)
+        uiState = uiState.copy(genreTitleList = list?.let { genre to it })
     }
 }

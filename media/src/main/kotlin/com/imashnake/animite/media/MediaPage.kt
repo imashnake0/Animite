@@ -486,21 +486,29 @@ fun MediaPage(
                     .drawBehind { drawRect(frontDropColor) }
             )
 
-            viewModel.uiState.genreList?.let {
-                AnimatedVisibility(
-                    visible = it.isNotEmpty(),
-                    enter = fadeIn(tween(750)),
-                    exit = fadeOut(tween(750)),
-                ) {
+            // TODO: Add progress indicator.
+            AnimatedVisibility(
+                visible = media.genreTitleList?.second?.isNotEmpty() ?: false,
+                enter = fadeIn(tween(750)),
+                exit = fadeOut(tween(750)),
+            ) {
+                Column(modifier = Modifier.padding(insetPaddingValues)) {
+                    Text(
+                        text = media.genreTitleList?.first.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .padding(horizontal = LocalPaddings.current.large)
+                            .padding(top = LocalPaddings.current.large)
+                    )
                     MediaMediumList(
-                        mediaMediumList = it,
-                        contentPadding = insetPaddingValues,
+                        mediaMediumList = media.genreTitleList?.second.orEmpty(),
                         onItemClick = { id, title ->
                             onNavigateToMediaItem(
                                 MediaPage(
                                     id = id,
                                     source = MediaList.Type.GENRE_LIST.name,
-                                    mediaType = viewModel.uiState.type ?: MediaType.UNKNOWN__.rawValue,
+                                    mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
                                     title = title
                                 )
                             )
@@ -511,7 +519,7 @@ fun MediaPage(
         }
     }
 
-    BackHandler(viewModel.uiState.genreList != null) {
+    BackHandler(media.genreTitleList != null) {
         viewModel.getGenreMediaMediums(null)
         isExpanded = false
     }
