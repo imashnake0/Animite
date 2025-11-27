@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
-import com.imashnake.animite.api.anilist.sanitize.search.Search
+import com.imashnake.animite.api.anilist.sanitize.media.MediaMedium
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.copy
@@ -110,7 +110,7 @@ fun SearchFrontDrop(
             exit = fadeOut(tween(750)),
         ) {
             SearchList(
-                searchList = it,
+                mediaMediumList = it,
                 modifier = Modifier.imeNestedScroll(),
                 contentPadding = insetPaddingValues,
                 searchBarBottomPadding = searchBarBottomPadding,
@@ -139,7 +139,7 @@ fun SearchFrontDrop(
 
 @Composable
 fun SearchList(
-    searchList: List<Search>,
+    mediaMediumList: List<MediaMedium>,
     searchBarBottomPadding: Dp,
     onItemClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier,
@@ -162,9 +162,9 @@ fun SearchList(
         ) + contentPadding,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
-        items(searchList.size, key = { searchList[it].id }) { index ->
+        items(mediaMediumList.size, key = { mediaMediumList[it].id }) { index ->
             SearchItem(
-                item = searchList[index],
+                item = mediaMediumList[index],
                 onClick = onItemClick,
                 modifier = Modifier.animateItem()
             )
@@ -174,7 +174,7 @@ fun SearchList(
 
 @Composable
 private fun SearchItem(
-    item: Search,
+    item: MediaMedium,
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {

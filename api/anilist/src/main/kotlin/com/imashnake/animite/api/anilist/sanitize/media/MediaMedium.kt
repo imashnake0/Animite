@@ -1,8 +1,8 @@
-package com.imashnake.animite.api.anilist.sanitize.search
+package com.imashnake.animite.api.anilist.sanitize.media
 
 import com.imashnake.animite.api.anilist.fragment.MediaMedium
 
-data class Search(
+data class MediaMedium(
     /** @see id */
     val id: Int,
     /** @see coverImage */
