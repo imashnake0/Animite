@@ -1,6 +1,5 @@
 package com.imashnake.animite.media
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,6 +26,7 @@ class MediaPageViewModel @Inject constructor(
     var uiState by mutableStateOf(MediaUiState(
             source = navArgs.source,
             id = navArgs.id,
+            type = navArgs.mediaType,
             title = navArgs.title
         ))
         private set
@@ -63,14 +63,12 @@ class MediaPageViewModel @Inject constructor(
             return@launch
         }
         val list = mediaRepository.fetchMediaMediumList(
-            mediaType = MediaType.ANIME,
+            mediaType = uiState.type?.let {
+                MediaType.safeValueOf(it)
+            } ?: MediaType.UNKNOWN__,
             sort = listOf(MediaSort.SCORE_DESC),
             genre = genre,
         ).firstOrNull()?.getOrNull()
-
-        list?.forEach {
-            Log.d("whatthehelly", "getGenreMediaMediums: $it")
-        }
 
         uiState = uiState.copy(genreList = list)
     }

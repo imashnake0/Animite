@@ -1,11 +1,11 @@
 package com.imashnake.animite.media
 
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.MediaMedium
 
 data class MediaUiState(
     val source: String? = null,
     val id: Int? = null,
+    val type: String? = null,
     val bannerImage: String? = null,
     val coverImage: String? = null,
     val color: Int? = null,
@@ -13,7 +13,7 @@ data class MediaUiState(
     val description: String? = null,
     val ranks: List<Media.Ranking>? = null,
     val genres: List<String>? = null,
-    val genreList: List<MediaMedium>? = null,
+    val genreList: List<Media.Medium>? = null,
     val characters: List<Media.Character>? = null,
     val trailer: Media.Trailer? = null
 )

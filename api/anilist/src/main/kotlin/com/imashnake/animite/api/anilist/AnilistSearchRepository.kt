@@ -4,7 +4,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
-import com.imashnake.animite.api.anilist.sanitize.media.MediaMedium
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
@@ -23,7 +23,7 @@ class AnilistSearchRepository @Inject constructor(
         type: MediaType,
         perPage: Int,
         search: String
-    ): Flow<Result<List<MediaMedium>>> {
+    ): Flow<Result<List<Media.Medium>>> {
         return apolloClient
             .query(
                 SearchQuery(
@@ -37,7 +37,7 @@ class AnilistSearchRepository @Inject constructor(
             .filter { it.exception == null }
             .asResult {
                 it.page!!.media.orEmpty().filterNotNull().map { query ->
-                    MediaMedium(query.mediaMedium)
+                    Media.Medium(query.mediaMedium)
                 }
             }
     }

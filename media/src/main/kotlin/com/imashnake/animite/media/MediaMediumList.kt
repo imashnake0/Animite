@@ -1,6 +1,5 @@
 package com.imashnake.animite.media
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.imashnake.animite.api.anilist.sanitize.media.MediaMedium
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
@@ -32,7 +31,7 @@ import com.imashnake.animite.core.R as coreR
 
 @Composable
 fun MediaMediumList(
-    mediaMediumList: List<MediaMedium>,
+    mediaMediumList: List<Media.Medium>,
     onItemClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier,
     searchBarHeight: Dp = 0.dp,
@@ -68,7 +67,7 @@ fun MediaMediumList(
 
 @Composable
 private fun MediaMediumItem(
-    item: MediaMedium,
+    item: Media.Medium,
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
