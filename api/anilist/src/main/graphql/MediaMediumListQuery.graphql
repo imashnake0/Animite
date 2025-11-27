@@ -1,0 +1,20 @@
+query MediaMediumListQuery(
+    $type: MediaType,
+    $page: Int,
+    $perPage: Int,
+    $sort: [MediaSort],
+    $genre: String
+) {
+    page: Page (
+        page: $page,
+        perPage: $perPage
+    ) {
+        media(
+            type: $type,
+            sort: $sort,
+            genre: $genre,
+        ) {
+            ...MediaMedium
+        }
+    }
+}

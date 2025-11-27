@@ -223,6 +223,7 @@ fun MediaPage(
                             if (!media.genres.isNullOrEmpty()) {
                                 MediaGenres(
                                     genres = media.genres,
+                                    onGenreClick = { viewModel.getGenreMediaMediums(it) },
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
@@ -539,6 +540,7 @@ private fun MediaDescription(
 @Composable
 private fun MediaGenres(
     genres: List<String>,
+    onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
     color: Color = MaterialTheme.colorScheme.primaryContainer
@@ -560,7 +562,7 @@ private fun MediaGenres(
                         )
                     )
                 },
-                onClick = { },
+                onClick = { onGenreClick(genre) },
                 shape = CircleShape,
                 colors = SuggestionChipDefaults.suggestionChipColors(
                     containerColor = color.copy(alpha = 0.25f)

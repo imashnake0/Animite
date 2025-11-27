@@ -6,12 +6,15 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.api.anilist.sanitize.media.MediaMedium
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import javax.inject.Inject
+import kotlin.collections.filterNotNull
+import kotlin.collections.orEmpty
 
 /**
  * Repository for fetching [MediaQuery.Media] or a list of [MediaListQuery.Medium].
@@ -60,6 +63,33 @@ class AnilistMediaRepository @Inject constructor(
                         Media.Small(query.mediaSmall)
                     }
                 )
+            }
+    }
+
+    fun fetchMediaMediumList(
+        mediaType: MediaType,
+        sort: List<MediaSort>,
+        page: Int = 0,
+        perPage: Int = 10,
+        genre: String,
+    ): Flow<Result<List<MediaMedium>>> {
+        return apolloClient
+            .query(
+                MediaMediumListQuery(
+                    type = Optional.presentIfNotNull(mediaType),
+                    page = Optional.presentIfNotNull(page),
+                    perPage = Optional.presentIfNotNull(perPage),
+                    sort = Optional.presentIfNotNull(sort),
+                    genre = Optional.presentIfNotNull(genre)
+                )
+            )
+            .fetchPolicy(FetchPolicy.CacheAndNetwork)
+            .toFlow()
+            .filter { it.exception == null }
+            .asResult {
+                it.page!!.media.orEmpty().filterNotNull().map { query ->
+                    MediaMedium(query.mediaMedium)
+                }
             }
     }
 

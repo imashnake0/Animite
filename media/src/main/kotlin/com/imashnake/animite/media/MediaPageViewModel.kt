@@ -1,5 +1,6 @@
 package com.imashnake.animite.media
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
-import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -54,5 +55,19 @@ class MediaPageViewModel @Inject constructor(
                 TODO()
             }
         }
+    }
+
+    fun getGenreMediaMediums(genre: String) = viewModelScope.launch {
+        val list = mediaRepository.fetchMediaMediumList(
+            mediaType = MediaType.ANIME,
+            sort = listOf(MediaSort.POPULARITY_DESC),
+            genre = genre,
+        ).firstOrNull()?.getOrNull()
+
+        list?.forEach {
+            Log.d("whatthehelly", "getGenreMediaMediums: $it")
+        }
+
+        uiState = uiState.copy(genreList = list)
     }
 }
