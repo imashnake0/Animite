@@ -525,7 +525,7 @@ fun MediaPage(
         }
     }
 
-    BackHandler(media.genreTitleList != null) {
+    BackHandler(!media.genreTitleList?.second.isNullOrEmpty()) {
         viewModel.getGenreMediaMediums(null)
         isExpanded = false
     }
