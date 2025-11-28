@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
-import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -26,6 +26,7 @@ class MediaPageViewModel @Inject constructor(
     var uiState by mutableStateOf(MediaUiState(
             source = navArgs.source,
             id = navArgs.id,
+            type = navArgs.mediaType,
             title = navArgs.title
         ))
         private set
@@ -54,5 +55,21 @@ class MediaPageViewModel @Inject constructor(
                 TODO()
             }
         }
+    }
+
+    fun getGenreMediaMediums(genre: String?) = viewModelScope.launch {
+        if (genre == null) {
+            uiState = uiState.copy(genreTitleList = uiState.genreTitleList?.first.orEmpty() to emptyList())
+            return@launch
+        }
+        val list = mediaRepository.fetchMediaMediumList(
+            mediaType = uiState.type?.let {
+                MediaType.safeValueOf(it)
+            } ?: MediaType.UNKNOWN__,
+            sort = listOf(MediaSort.SCORE_DESC),
+            genre = genre,
+        ).firstOrNull()?.getOrNull()
+
+        uiState = uiState.copy(genreTitleList = list?.let { genre to it })
     }
 }

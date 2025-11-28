@@ -1,8 +1,11 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -56,6 +59,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -75,12 +79,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.crossfadeModel
@@ -115,6 +122,7 @@ private const val DEVICE_CORNER_RADIUS = 30
     "LongMethod"
 )
 fun MediaPage(
+    onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -134,6 +142,8 @@ fun MediaPage(
     val characterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val characterPagerState = rememberPagerState(pageCount = { media.characters.orEmpty().size })
     val coroutineScope = rememberCoroutineScope()
+
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
@@ -223,6 +233,10 @@ fun MediaPage(
                             if (!media.genres.isNullOrEmpty()) {
                                 MediaGenres(
                                     genres = media.genres,
+                                    onGenreClick = {
+                                        isExpanded = true
+                                        viewModel.getGenreMediaMediums(it)
+                                    },
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
@@ -458,7 +472,62 @@ fun MediaPage(
                     }
                 }
             }
+
+            val frontDropColor by animateColorAsState(
+                targetValue = MaterialTheme.colorScheme.background.copy(
+                    alpha = if (isExpanded) 0.95f else 0f
+                ),
+                animationSpec = tween(Constants.CROSSFADE_DURATION),
+                label = "show_front_drop"
+            )
+
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .drawBehind { drawRect(frontDropColor) }
+            )
+
+            // TODO: Add progress indicator.
+            AnimatedVisibility(
+                visible = media.genreTitleList?.second?.isNotEmpty() ?: false,
+                enter = fadeIn(tween(750)),
+                exit = fadeOut(tween(750)),
+            ) {
+                Column {
+                    Text(
+                        text = media.genreTitleList?.first.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            .padding(insetPaddingValues)
+                            .padding(horizontal = LocalPaddings.current.large)
+                            .padding(top = LocalPaddings.current.large)
+                            .zIndex(2f)
+                    )
+                    // TODO: Create and use a grid layout.
+                    MediaMediumList(
+                        mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                        onItemClick = { id, title ->
+                            onNavigateToMediaItem(
+                                MediaPage(
+                                    id = id,
+                                    source = MediaList.Type.GENRE_LIST.name,
+                                    mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
+                                    title = title
+                                )
+                            )
+                        }
+                    )
+                }
+            }
         }
+    }
+
+    BackHandler(media.genreTitleList != null) {
+        viewModel.getGenreMediaMediums(null)
+        isExpanded = false
     }
 }
 
@@ -539,6 +608,7 @@ private fun MediaDescription(
 @Composable
 private fun MediaGenres(
     genres: List<String>,
+    onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
     color: Color = MaterialTheme.colorScheme.primaryContainer
@@ -560,7 +630,7 @@ private fun MediaGenres(
                         )
                     )
                 },
-                onClick = { },
+                onClick = { onGenreClick(genre) },
                 shape = CircleShape,
                 colors = SuggestionChipDefaults.suggestionChipColors(
                     containerColor = color.copy(alpha = 0.25f)
