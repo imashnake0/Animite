@@ -79,6 +79,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -503,6 +504,7 @@ fun MediaPage(
                             .padding(insetPaddingValues)
                             .padding(horizontal = LocalPaddings.current.large)
                             .padding(top = LocalPaddings.current.large)
+                            .zIndex(2f)
                     )
                     // TODO: Create and use a grid layout.
                     MediaMediumList(
