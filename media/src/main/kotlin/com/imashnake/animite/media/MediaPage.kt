@@ -1,6 +1,7 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -114,6 +116,7 @@ import com.imashnake.animite.core.R as coreR
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
+private const val RECOMMENDATIONS = "Recommendations"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -271,6 +274,18 @@ fun MediaPage(
                             if (!media.recommendations.isNullOrEmpty()) {
                                 MediaRecommendations(
                                     recommendations = media.recommendations,
+                                    onItemClicked = {
+                                        onNavigateToMediaItem(
+                                            MediaPage(
+                                                id = it.id,
+                                                source = RECOMMENDATIONS,
+                                                mediaType = it.type.name,
+                                                title = it.title,
+                                            )
+                                        )
+                                    },
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedVisibilityScope = animatedVisibilityScope,
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
@@ -771,6 +786,9 @@ private fun MediaTrailer(
 @Composable
 fun MediaRecommendations(
     recommendations: List<Media.Small>,
+    onItemClicked: (Media.Small) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -780,11 +798,44 @@ fun MediaRecommendations(
         modifier = modifier,
         contentPadding = contentPadding,
     ) { _, media ->
-        MediaCard(
-            image = media.coverImage,
-            label = media.title,
-            onClick = { },
-        )
+        with(sharedTransitionScope) {
+            MediaCard(
+                image = media.coverImage,
+                label = media.title,
+                onClick = { onItemClicked(media) },
+                modifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = stringResource(R.string.recommendations),
+                            sharedComponents = Card to Page,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                ),
+                imageModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = stringResource(R.string.recommendations),
+                            sharedComponents = Image to Image,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                ),
+                textModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = stringResource(R.string.recommendations),
+                            sharedComponents = Text to Text,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                ),
+            )
+        }
     }
 }
 
