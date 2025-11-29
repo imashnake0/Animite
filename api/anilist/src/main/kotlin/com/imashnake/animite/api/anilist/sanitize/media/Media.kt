@@ -35,7 +35,9 @@ data class Media(
     /** @see MediaQuery.Media.characters */
     val characters: List<Character>,
     /** @see MediaQuery.Media.trailer */
-    val trailer: Trailer?
+    val trailer: Trailer?,
+    /** @see MediaQuery.Media.recommendations */
+    val recommendations: List<Small>
 ) {
     data class Ranking(
         /** @see MediaQuery.Ranking.rank */
@@ -198,6 +200,9 @@ data class Media(
                     )
                 }
             )
+        },
+        recommendations = query.recommendations?.nodes.orEmpty().mapNotNull { node ->
+            node?.mediaRecommendation?.mediaSmall?.let { Small(it) }
         }
     )
 

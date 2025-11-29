@@ -267,6 +267,15 @@ fun MediaPage(
                                         .padding(horizontalInsets)
                                 )
                             }
+
+                            if (!media.recommendations.isNullOrEmpty()) {
+                                MediaRecommendations(
+                                    recommendations = media.recommendations,
+                                    contentPadding = PaddingValues(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + horizontalInsets,
+                                )
+                            }
                         },
                         contentPadding = PaddingValues(
                             top = LocalPaddings.current.medium / 2,
@@ -756,6 +765,26 @@ private fun MediaTrailer(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
+    }
+}
+
+@Composable
+fun MediaRecommendations(
+    recommendations: List<Media.Small>,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+) {
+    MediaSmallRow(
+        title = stringResource(R.string.recommendations),
+        mediaList = recommendations,
+        modifier = modifier,
+        contentPadding = contentPadding,
+    ) { _, media ->
+        MediaCard(
+            image = media.coverImage,
+            label = media.title,
+            onClick = { },
+        )
     }
 }
 

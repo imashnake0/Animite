@@ -92,12 +92,17 @@ class AnilistMediaRepository @Inject constructor(
             }
     }
 
-    fun fetchMedia(id: Int?, mediaType: MediaType): Flow<Result<Media>> {
+    fun fetchMedia(
+        id: Int?,
+        mediaType: MediaType,
+        recommendationCount: Int = 10
+    ): Flow<Result<Media>> {
         return apolloClient
             .query(
                 MediaQuery(
                     id = Optional.presentIfNotNull(id),
-                    type = Optional.presentIfNotNull(mediaType)
+                    type = Optional.presentIfNotNull(mediaType),
+                    recommendationsPerPage = Optional.presentIfNotNull(recommendationCount)
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)

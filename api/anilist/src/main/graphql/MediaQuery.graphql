@@ -1,6 +1,7 @@
 query MediaQuery(
     $id: Int,
     $type: MediaType
+    $recommendationsPerPage: Int
 ) {
     media: Media(id: $id, type: $type) {
         id
@@ -42,6 +43,18 @@ query MediaQuery(
             id
             site
             thumbnail
+        }
+
+        recommendations(
+            sort: RATING_DESC,
+            page: 0,
+            perPage: $recommendationsPerPage
+        ) {
+            nodes {
+                mediaRecommendation {
+                    ...MediaSmall
+                }
+            }
         }
     }
 }
