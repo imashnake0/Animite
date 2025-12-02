@@ -114,6 +114,7 @@ import com.imashnake.animite.core.R as coreR
 
 // TODO: Need to use WindowInsets to get device corner radius if available.
 private const val DEVICE_CORNER_RADIUS = 30
+private const val RECOMMENDATIONS = "Recommendations"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -265,6 +266,27 @@ fun MediaPage(
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
                                         .padding(horizontalInsets)
+                                )
+                            }
+
+                            if (!media.recommendations.isNullOrEmpty()) {
+                                MediaRecommendations(
+                                    recommendations = media.recommendations,
+                                    onItemClicked = {
+                                        onNavigateToMediaItem(
+                                            MediaPage(
+                                                id = it.id,
+                                                source = RECOMMENDATIONS,
+                                                mediaType = it.type.name,
+                                                title = it.title,
+                                            )
+                                        )
+                                    },
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    contentPadding = PaddingValues(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + horizontalInsets,
                                 )
                             }
                         },
@@ -754,6 +776,62 @@ private fun MediaTrailer(
                 painter = painterResource(R.drawable.youtube),
                 contentDescription = null,
                 modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
+
+@Composable
+fun MediaRecommendations(
+    recommendations: List<Media.Small>,
+    onItemClicked: (Media.Small) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+) {
+    MediaSmallRow(
+        title = stringResource(R.string.recommendations),
+        mediaList = recommendations,
+        modifier = modifier,
+        contentPadding = contentPadding,
+    ) { _, media ->
+        with(sharedTransitionScope) {
+            MediaCard(
+                image = media.coverImage,
+                label = media.title,
+                onClick = { onItemClicked(media) },
+                modifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = stringResource(R.string.recommendations),
+                            sharedComponents = Card to Page,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                ),
+                imageModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = stringResource(R.string.recommendations),
+                            sharedComponents = Image to Image,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                ),
+                textModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.id,
+                            source = stringResource(R.string.recommendations),
+                            sharedComponents = Text to Text,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                ),
             )
         }
     }

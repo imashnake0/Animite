@@ -15,5 +15,6 @@ data class MediaUiState(
     val genres: List<String>? = null,
     val genreTitleList: Pair<String, List<Media.Medium>>? = null,
     val characters: List<Media.Character>? = null,
-    val trailer: Media.Trailer? = null
+    val trailer: Media.Trailer? = null,
+    val recommendations: List<Media.Small>? = null
 )
