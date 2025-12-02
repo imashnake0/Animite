@@ -68,11 +68,14 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.LinkInteractionListener
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
@@ -458,6 +461,17 @@ fun MediaPage(
                             currentCharacter.description?.let { description ->
                                 MediaDescription(
                                     html = description,
+                                    onLinkClick = onLinkClick@{
+                                        val id = it?.split("/")?.getOrNull(4)?.toIntOrNull() ?: return@onLinkClick null
+                                        val character = media.characters?.find { character -> character.id == id } ?: return@onLinkClick null
+                                        val index = media.characters.indexOf(character)
+                                        if (index != -1) {
+                                            coroutineScope.launch {
+                                                characterPagerState.animateScrollToPage(index)
+                                            }
+                                        } else return@onLinkClick null
+                                        return@onLinkClick Unit
+                                    },
                                     modifier = Modifier
                                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
                                         .padding(paddingValues)
@@ -617,9 +631,23 @@ private fun MediaDetails(
 private fun MediaDescription(
     html: String,
     modifier: Modifier = Modifier,
+    onLinkClick: ((String?) -> Unit?)? = null,
 ) {
+    val uriHandler = LocalUriHandler.current
     Text(
-        text = AnnotatedString.fromHtml(html),
+        text = AnnotatedString.fromHtml(
+            htmlString = html,
+            linkInteractionListener = object : LinkInteractionListener {
+                override fun onClick(link: LinkAnnotation) {
+                    val url = (link as? LinkAnnotation.Url)?.url
+                    if (onLinkClick == null || onLinkClick(url) == null) {
+                        url?.let { uriHandler.openUri(it) }
+                    } else {
+                        onLinkClick(url)
+                    }
+                }
+            }
+        ),
         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
         style = MaterialTheme.typography.bodyMedium,
         modifier = modifier,
