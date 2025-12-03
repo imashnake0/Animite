@@ -14,6 +14,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -126,6 +128,7 @@ private const val RECOMMENDATIONS = "Recommendations"
     "LongMethod"
 )
 fun MediaPage(
+    onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -342,6 +345,22 @@ fun MediaPage(
                             )
                         )
                     }
+
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = stringResource(R.string.back),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(insetPaddingValues)
+                            .padding(
+                                start = LocalPaddings.current.medium,
+                                top = LocalPaddings.current.small
+                            )
+                            .clip(CircleShape)
+                            .clickable { onBack() }
+                            .padding(LocalPaddings.current.small),
+                        tint = if (isSystemInDarkTheme()) Color.White else Color.Black
+                    )
                 }
             }
 

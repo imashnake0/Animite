@@ -98,6 +98,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     }
                     composable<MediaPage> {
                         MediaPage(
+                            onBack = navController::navigateUp,
                             onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
