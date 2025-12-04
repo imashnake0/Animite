@@ -52,7 +52,7 @@ composeAnimation = "1.10.0"
 composeFoundation = "1.9.5"
 composeMaterial = "1.9.5"
 composeMaterial3 = "1.4.0"
-composeRuntime = "1.9.5"
+composeRuntime = "1.10.0"
 composeUi = "1.10.0"
 composeIcons = "1.7.8"
 
