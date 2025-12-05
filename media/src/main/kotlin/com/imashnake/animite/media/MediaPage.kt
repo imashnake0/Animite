@@ -43,6 +43,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -357,7 +358,7 @@ fun MediaPage(
                                 top = LocalPaddings.current.small
                             )
                             .clip(CircleShape)
-                            .clickable { onBack() }
+                            .clickable(enabled = !isExpanded) { onBack() }
                             .padding(LocalPaddings.current.small),
                         tint = if (isSystemInDarkTheme()) Color.White else Color.Black
                     )
@@ -549,18 +550,36 @@ fun MediaPage(
                 exit = fadeOut(tween(750)),
             ) {
                 Column {
-                    Text(
-                        text = media.genreTitleList?.first.orEmpty(),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge,
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                             .padding(insetPaddingValues)
                             .padding(horizontal = LocalPaddings.current.large)
                             .padding(top = LocalPaddings.current.large)
-                            .zIndex(2f)
-                    )
+                    ) {
+                        Text(
+                            text = media.genreTitleList?.first.orEmpty(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier
+                        )
+
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = stringResource(R.string.back),
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable {
+                                    viewModel.getGenreMediaMediums(null)
+                                    isExpanded = false
+                                }
+                                .padding(LocalPaddings.current.small)
+                                .zIndex(2f)
+                        )
+                    }
                     // TODO: Create and use a grid layout.
                     MediaMediumList(
                         mediaMediumList = media.genreTitleList?.second.orEmpty(),
