@@ -138,8 +138,12 @@ internal fun ExpandedSearchBarContent(
         trailingIcon = {
             IconButton(
                 onClick = {
-                    text = ""
-                    clearText()
+                    if (text.isEmpty()) {
+                        collapse()
+                    } else {
+                        text = ""
+                        clearText()
+                    }
                 },
                 modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size))
             ) {
