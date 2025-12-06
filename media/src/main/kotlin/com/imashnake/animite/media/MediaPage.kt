@@ -112,7 +112,6 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
-import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
@@ -199,23 +198,15 @@ fun MediaPage(
                                     .height(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
+                                textModifier = Modifier.skipToLookaheadSize(),
                                 onClick = { showDetailsSheet = true },
-                                textModifier = Modifier.sharedBounds(
-                                    rememberSharedContentState(
-                                        SharedContentKey(
-                                            id = media.id,
-                                            source = media.source,
-                                            sharedComponents = Text to Text,
-                                        )
-                                    ),
-                                    animatedVisibilityScope,
-                                ),
                             )
 
                             if (!media.ranks.isNullOrEmpty()) {
                                 StatsRow(
                                     stats = media.ranks,
                                     modifier = Modifier
+                                        .skipToLookaheadSize()
                                         .fillMaxWidth()
                                         .padding(horizontal = LocalPaddings.current.large)
                                         .padding(horizontalInsets)
@@ -271,6 +262,7 @@ fun MediaPage(
                                 MediaTrailer(
                                     trailer = media.trailer,
                                     modifier = Modifier
+                                        .skipToLookaheadSize()
                                         .padding(horizontal = LocalPaddings.current.large)
                                         .padding(horizontalInsets)
                                 )
@@ -884,16 +876,6 @@ fun MediaRecommendations(
                             id = media.id,
                             source = stringResource(R.string.recommendations),
                             sharedComponents = Image to Image,
-                        )
-                    ),
-                    animatedVisibilityScope,
-                ),
-                textModifier = Modifier.sharedBounds(
-                    rememberSharedContentState(
-                        SharedContentKey(
-                            id = media.id,
-                            source = stringResource(R.string.recommendations),
-                            sharedComponents = Text to Text,
                         )
                     ),
                     animatedVisibilityScope,

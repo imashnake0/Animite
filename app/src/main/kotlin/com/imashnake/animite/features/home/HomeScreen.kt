@@ -96,7 +96,6 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
-import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.materialkolor.ktx.hasEnoughContrast
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
@@ -322,6 +321,8 @@ fun HomeRow(
                         )
                     ),
                     animatedVisibilityScope,
+                    enter = fadeIn(tween(500)),
+                    exit = fadeOut(tween(500)),
                     resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                 ),
                 imageModifier = Modifier.sharedBounds(
@@ -334,16 +335,7 @@ fun HomeRow(
                     ),
                     animatedVisibilityScope,
                 ),
-                textModifier = Modifier.sharedBounds(
-                    rememberSharedContentState(
-                        SharedContentKey(
-                            id = media.id,
-                            source = type.name,
-                            sharedComponents = Text to Text,
-                        )
-                    ),
-                    animatedVisibilityScope,
-                ),
+                textModifier = Modifier.skipToLookaheadSize(),
             )
         }
     }
