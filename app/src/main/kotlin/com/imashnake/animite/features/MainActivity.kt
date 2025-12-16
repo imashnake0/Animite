@@ -45,6 +45,7 @@ import com.imashnake.animite.navigation.ProfileRoute
 import com.imashnake.animite.navigation.SocialRoute
 import com.imashnake.animite.profile.ProfileScreen
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
+import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.social.SocialScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -114,9 +115,13 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     ) {
                         ProfileScreen(
                             onNavigateToMediaItem = navController::navigate,
+                            onNavigateToSettings = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
+                    }
+                    composable<SettingsPage> {
+                        SettingsPage()
                     }
                     composable<SocialRoute> {
                         SocialScreen()

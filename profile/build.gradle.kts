@@ -38,6 +38,7 @@ dependencies {
     implementation(projects.core)
     implementation(projects.media)
     implementation(projects.navigation)
+    implementation(projects.settings)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)

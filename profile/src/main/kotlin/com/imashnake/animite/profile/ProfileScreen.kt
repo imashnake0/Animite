@@ -92,6 +92,7 @@ import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
+import com.imashnake.animite.settings.SettingsPage
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
@@ -104,6 +105,7 @@ private const val DROP_DOWN_ITEMS_COUNT = 2
 @Composable
 fun ProfileScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToSettings: (SettingsPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -157,7 +159,8 @@ fun ProfileScreen(
                                         .padding(allPaddingValues.horizontalOnly)
                                         .size(100.dp),
                                 )
-                                Dropdown(
+                                SettingsAndMore(
+                                    onNavigateToSettings = onNavigateToSettings,
                                     logOut = { isLogOutDialogShown = true },
                                     refresh = { viewModel.refresh { isDropdownExpanded = false } },
                                     expanded = isDropdownExpanded,
@@ -244,7 +247,8 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun Dropdown(
+private fun SettingsAndMore(
+    onNavigateToSettings: (SettingsPage) -> Unit,
     expanded: Boolean,
     setExpanded: (Boolean) -> Unit,
     logOut: () -> Unit,
@@ -281,6 +285,7 @@ private fun Dropdown(
                 contentDescription = stringResource(R.string.settings),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
+                    .clickable { onNavigateToSettings(SettingsPage) }
                     .padding(LocalPaddings.current.small)
                     .size(LocalPaddings.current.medium)
                     .graphicsLayer { rotationZ = angle }

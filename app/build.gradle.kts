@@ -63,12 +63,13 @@ tasks.withType<KotlinCompile>().configureEach {
 
 dependencies {
     implementation(projects.api.anilist)
+    implementation(projects.api.mal)
     implementation(projects.core)
     implementation(projects.media)
     implementation(projects.navigation)
     implementation(projects.profile)
+    implementation(projects.settings)
     implementation(projects.social)
-    implementation(projects.api.mal)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
