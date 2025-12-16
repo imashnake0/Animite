@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -162,6 +163,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                     )
                 )
             },
+            isFabVisible = currentBackStackEntry?.destination?.hasRoute<SettingsPage>() == false,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
