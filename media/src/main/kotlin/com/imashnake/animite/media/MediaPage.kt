@@ -71,6 +71,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -117,8 +118,6 @@ import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
 import com.imashnake.animite.core.R as coreR
 
-// TODO: Need to use WindowInsets to get device corner radius if available.
-private const val DEVICE_CORNER_RADIUS = 30
 private const val RECOMMENDATIONS = "Recommendations"
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,6 +129,7 @@ private const val RECOMMENDATIONS = "Recommendations"
 fun MediaPage(
     onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    deviceScreenCornerRadius: Int,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -152,6 +152,10 @@ fun MediaPage(
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
+    val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
+        deviceScreenCornerRadius.toDp()
+    }
+
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
@@ -171,10 +175,10 @@ fun MediaPage(
                             animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                             clipInOverlayDuringTransition = OverlayClip(
-                                RoundedCornerShape(DEVICE_CORNER_RADIUS.dp)
+                                RoundedCornerShape(deviceScreenCornerRadiusDp)
                             ),
                         )
-                        .clip(RoundedCornerShape(DEVICE_CORNER_RADIUS.dp))
+                        .clip(RoundedCornerShape(deviceScreenCornerRadiusDp))
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                 ) {
