@@ -51,10 +51,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -300,7 +302,7 @@ private fun Dropdown(
                 text = { Text(stringResource(R.string.log_out)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_logout),
                         contentDescription = "Log out",
                     )
                 },

@@ -44,10 +44,10 @@ class HomeViewModel @Inject constructor(
         flow = refreshTrigger.onStart { emit(Unit) },
         flow2 = mediaType.filterNotNull(),
         transform = ::Pair,
-    ).flatMapLatest { mediaType ->
+    ).flatMapLatest { (_, mediaType) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.TRENDING_NOW,
-            mediaType = mediaType.second,
+            mediaType = mediaType,
             sort = listOf(MediaSort.TRENDING_DESC),
             useNetwork = useNetwork,
         )
