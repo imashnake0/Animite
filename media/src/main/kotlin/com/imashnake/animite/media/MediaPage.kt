@@ -365,6 +365,7 @@ fun MediaPage(
                 BottomSheet(
                     sheetState = detailsSheetState,
                     onDismissRequest = { showDetailsSheet = false },
+                    deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
                 ) { paddingValues, modifier ->
                     Column(modifier) {
                         Text(
@@ -393,6 +394,7 @@ fun MediaPage(
                     sheetState = characterSheetState,
                     dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     onDismissRequest = { showCharacterSheet = false },
+                    deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp
                 ) { paddingValues, modifier ->
                     HorizontalPager(state = characterPagerState) { page ->
                         Column(modifier = modifier) {
