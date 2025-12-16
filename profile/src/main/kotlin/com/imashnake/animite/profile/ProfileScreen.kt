@@ -5,13 +5,20 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
@@ -26,8 +33,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -247,71 +256,102 @@ private fun Dropdown(
         targetValue = if (expanded) 10 else 50,
         label = "corner_radius_animation",
     )
+    val infiniteTransition = rememberInfiniteTransition(label = "settings_icon")
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
 
-    Box(modifier.padding(LocalPaddings.current.large)) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(LocalPaddings.current.large)
+    ) {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainer,
-            shape = RoundedCornerShape(
-                topStartPercent = 50,
-                topEndPercent = 50,
-                bottomEndPercent = cornerRadius,
-                bottomStartPercent = 50,
-            ),
+            shape = CircleShape
         ) {
             Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "More options",
+                imageVector = Icons.Rounded.Settings,
+                contentDescription = stringResource(R.string.settings),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .clickable { setExpanded(!expanded) }
-                    .padding(LocalPaddings.current.medium)
-                    .size(LocalPaddings.current.large)
+                    .padding(LocalPaddings.current.small)
+                    .size(LocalPaddings.current.medium)
+                    .graphicsLayer { rotationZ = angle }
             )
         }
-        CascadeDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { setExpanded(false) },
-            state = cascadeState,
-            shape = RoundedCornerShape(
-                topStartPercent = 50 / DROP_DOWN_ITEMS_COUNT,
-                topEndPercent = 10 / DROP_DOWN_ITEMS_COUNT,
-                bottomEndPercent = 50 / DROP_DOWN_ITEMS_COUNT,
-                bottomStartPercent = 50 / DROP_DOWN_ITEMS_COUNT,
-            ),
-            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
-        ) {
-            // TODO: This is horrible UX, use nested scroll <-> pull to refresh.
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.refresh)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Rounded.Refresh,
-                        contentDescription = "Refresh",
-                    )
-                },
-                colors = MenuDefaults.itemColors(
-                    leadingIconColor = MaterialTheme.colorScheme.primary
-                ),
-                onClick = refresh,
-                contentPadding = PaddingValues(LocalPaddings.current.medium)
-            )
 
-            // TODO: The material3 DropdownMenuItem doesn't respect layout direction padding.
-            //  Figure out why/create an issue. saket-cascade works just fine.
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.log_out)) },
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_logout),
-                        contentDescription = "Log out",
-                    )
-                },
-                colors = MenuDefaults.itemColors(
-                    leadingIconColor = MaterialTheme.colorScheme.error
+        Box {
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = RoundedCornerShape(
+                    topStartPercent = 50,
+                    topEndPercent = 50,
+                    bottomEndPercent = cornerRadius,
+                    bottomStartPercent = 50,
                 ),
-                onClick = logOut,
-                contentPadding = PaddingValues(LocalPaddings.current.medium)
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.MoreVert,
+                    contentDescription = stringResource(R.string.more_options),
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .clickable { setExpanded(!expanded) }
+                        .padding(LocalPaddings.current.medium)
+                        .size(LocalPaddings.current.large)
+                )
+            }
+            CascadeDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { setExpanded(false) },
+                state = cascadeState,
+                shape = RoundedCornerShape(
+                    topStartPercent = 50 / DROP_DOWN_ITEMS_COUNT,
+                    topEndPercent = 10 / DROP_DOWN_ITEMS_COUNT,
+                    bottomEndPercent = 50 / DROP_DOWN_ITEMS_COUNT,
+                    bottomStartPercent = 50 / DROP_DOWN_ITEMS_COUNT,
+                ),
+                offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+            ) {
+                // TODO: This is horrible UX, use nested scroll <-> pull to refresh.
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.refresh)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Refresh,
+                            contentDescription = stringResource(R.string.refresh),
+                        )
+                    },
+                    colors = MenuDefaults.itemColors(
+                        leadingIconColor = MaterialTheme.colorScheme.primary
+                    ),
+                    onClick = refresh,
+                    contentPadding = PaddingValues(LocalPaddings.current.medium)
+                )
+
+                // TODO: The material3 DropdownMenuItem doesn't respect layout direction padding.
+                //  Figure out why/create an issue. saket-cascade works just fine.
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.log_out)) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_logout),
+                            contentDescription = stringResource(R.string.log_out),
+                        )
+                    },
+                    colors = MenuDefaults.itemColors(
+                        leadingIconColor = MaterialTheme.colorScheme.error
+                    ),
+                    onClick = logOut,
+                    contentPadding = PaddingValues(LocalPaddings.current.medium)
+                )
+            }
         }
     }
 }
