@@ -113,9 +113,9 @@ fun MountFuji(modifier: Modifier = Modifier) {
         modifier = modifier
             .background(
                 verticalGradient(
-                    0f to Color(0xFF3188D7),
+                    0f to Color(0xFF7AAEDD),
                     0.75f to Color(0xFFA1C8F5),
-                    1f to Color(0xFFDAE8F6)
+                    1f to Color(0xFFD1E4F6)
                 )
             )
             .fillMaxHeight()
