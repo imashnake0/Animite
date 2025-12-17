@@ -10,11 +10,18 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,17 +33,56 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.imashnake.animite.core.extensions.horizontalOnly
+import com.imashnake.animite.core.extensions.plus
+import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
 
 @Composable
-fun SettingsPage(modifier: Modifier = Modifier) {
+fun SettingsPage(
+    modifier: Modifier = Modifier,
+    contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
+) {
+    val insetPaddingValues = contentWindowInsets.asPaddingValues()
+    val horizontalInsets = insetPaddingValues.horizontalOnly
+
     val scrollState = rememberScrollState()
+
+    TranslucentStatusBarLayout(scrollState) {
+        Box(modifier.verticalScroll(scrollState)) {
+            BannerLayout(
+                banner = { bannerModifier ->
+                    MountFuji(bannerModifier)
+                },
+                content = {
+                    Text(
+                        text = stringResource(R.string.settings),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleLarge,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                contentPadding = PaddingValues(
+                    top = LocalPaddings.current.large / 2,
+                    bottom = LocalPaddings.current.large + insetPaddingValues.calculateBottomPadding(),
+                    start = LocalPaddings.current.large,
+                    end = LocalPaddings.current.large,
+                ) + horizontalInsets
+            )
+        }
+    }
+}
+
+@Composable
+fun MountFuji(modifier: Modifier = Modifier) {
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
 
     val infiniteTransition = rememberInfiniteTransition(label = "clouds")
@@ -60,83 +106,71 @@ fun SettingsPage(modifier: Modifier = Modifier) {
         ),
         label = "delayed_cloud_position"
     )
-
-    TranslucentStatusBarLayout(scrollState) {
-        Box(modifier.verticalScroll(scrollState)) {
-            BannerLayout(
-                banner = { bannerModifier ->
-                    Box(
-                        modifier = bannerModifier
-                            .background(Color(0xFF7AAEDD))
-                            .fillMaxHeight()
-                    ) {
-                        Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.cloud_3),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(45.dp)
-                                .offset { IntOffset(x = 300, y = 100) }
-                                .graphicsLayer {
-                                    translationX = -horizontalPosition * extendedScreenWidth * 0.4f
-                                    alpha = 0.6f
-                                },
-                        )
-
-                        Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(35.dp)
-                                .offset { IntOffset(x = 500, y = 230) }
-                                .graphicsLayer {
-                                    translationX = horizontalPosition * extendedScreenWidth * 0.6f
-                                    alpha = 0.5f
-                                },
-                        )
-
-                        Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.mount_fuji),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(dimensionResource(coreR.dimen.banner_height) / 2.5f)
-                                .align(Alignment.BottomEnd)
-                                .graphicsLayer {
-                                    // TODO: Fix miter and remove this.
-                                    translationY = 4f
-                                },
-                            alignment = Alignment.TopCenter,
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(40.dp)
-                                .offset { IntOffset(x = -110, y = 320) }
-                                .graphicsLayer {
-                                    translationX = delayedHorizontalPosition * extendedScreenWidth * 0.8f
-                                    alpha = 0.9f
-                                },
-                        )
-
-                        Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(35.dp)
-                                .offset { IntOffset(x = extendedScreenWidth, y = 350) }
-                                .graphicsLayer {
-                                    translationX = -delayedHorizontalPosition * extendedScreenWidth * 0.8f
-                                },
-                        )
-                    }
+    Box(
+        modifier = modifier
+            .background(Color(0xFF7AAEDD))
+            .fillMaxHeight()
+    ) {
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.cloud_3),
+            contentDescription = null,
+            modifier = Modifier
+                .height(45.dp)
+                .offset { IntOffset(x = 300, y = 100) }
+                .graphicsLayer {
+                    translationX = -horizontalPosition * extendedScreenWidth * 0.4f
+                    alpha = 0.6f
                 },
-                content = {
-                    Text("what")
-                }
-            )
-        }
+        )
+
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
+            contentDescription = null,
+            modifier = Modifier
+                .height(35.dp)
+                .offset { IntOffset(x = 500, y = 230) }
+                .graphicsLayer {
+                    translationX = horizontalPosition * extendedScreenWidth * 0.6f
+                    alpha = 0.5f
+                },
+        )
+
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.mount_fuji),
+            contentDescription = null,
+            modifier = Modifier
+                .height(dimensionResource(coreR.dimen.banner_height) / 2.5f)
+                .align(Alignment.BottomEnd)
+                .graphicsLayer {
+                    // TODO: Fix miter and remove this.
+                    translationY = 4f
+                },
+            alignment = Alignment.TopCenter,
+            contentScale = ContentScale.Crop
+        )
+
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
+            contentDescription = null,
+            modifier = Modifier
+                .height(40.dp)
+                .offset { IntOffset(x = -110, y = 320) }
+                .graphicsLayer {
+                    translationX = delayedHorizontalPosition * extendedScreenWidth * 0.8f
+                    alpha = 0.9f
+                },
+        )
+
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
+            contentDescription = null,
+            modifier = Modifier
+                .height(35.dp)
+                .offset { IntOffset(x = extendedScreenWidth, y = 350) }
+                .graphicsLayer {
+                    translationX = -delayedHorizontalPosition * extendedScreenWidth * 0.8f
+                },
+        )
     }
 }
 
