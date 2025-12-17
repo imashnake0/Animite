@@ -2,9 +2,6 @@ package com.imashnake.animite.settings
 
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.EaseOutSine
-import androidx.compose.animation.core.Easing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -40,17 +37,28 @@ import com.imashnake.animite.core.R as coreR
 @Composable
 fun SettingsPage(modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
-    val screenWidth = LocalWindowInfo.current.containerSize.width
+    val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
 
     val infiniteTransition = rememberInfiniteTransition(label = "clouds")
+    val durationMillis = 50000
+    val delayMillis = durationMillis / 10
     val horizontalPosition by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(120000, easing = EaseOut),
+            animation = tween(durationMillis = durationMillis, easing = EaseInOut),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "rotation"
+        label = "cloud_position"
+    )
+    val delayedHorizontalPosition by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = durationMillis, delayMillis = delayMillis, easing = EaseOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "delayed_cloud_position"
     )
 
     TranslucentStatusBarLayout(scrollState) {
@@ -63,24 +71,26 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                             .fillMaxHeight()
                     ) {
                         Image(
+                            imageVector = ImageVector.vectorResource(R.drawable.cloud_3),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .height(45.dp)
+                                .offset { IntOffset(x = 300, y = 100) }
+                                .graphicsLayer {
+                                    translationX = -horizontalPosition * extendedScreenWidth * 0.4f
+                                    alpha = 0.6f
+                                },
+                        )
+
+                        Image(
                             imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
                             contentDescription = null,
                             modifier = Modifier
                                 .height(35.dp)
                                 .offset { IntOffset(x = 500, y = 230) }
                                 .graphicsLayer {
-                                    translationX = horizontalPosition * (screenWidth + 200)
-                                },
-                        )
-
-                        Image(
-                            imageVector = ImageVector.vectorResource(R.drawable.cloud_3),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(45.dp)
-                                .offset { IntOffset(x = 300, y = 150) }
-                                .graphicsLayer {
-                                    translationX = -horizontalPosition * (screenWidth + 200) * 0.3f
+                                    translationX = horizontalPosition * extendedScreenWidth * 0.6f
+                                    alpha = 0.5f
                                 },
                         )
 
@@ -103,9 +113,21 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                             contentDescription = null,
                             modifier = Modifier
                                 .height(40.dp)
-                                .offset { IntOffset(x = 100, y = 300) }
+                                .offset { IntOffset(x = -110, y = 320) }
                                 .graphicsLayer {
-                                    translationX = horizontalPosition * (screenWidth + 200) * 0.8f
+                                    translationX = delayedHorizontalPosition * extendedScreenWidth * 0.8f
+                                    alpha = 0.9f
+                                },
+                        )
+
+                        Image(
+                            imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .height(35.dp)
+                                .offset { IntOffset(x = extendedScreenWidth, y = 350) }
+                                .graphicsLayer {
+                                    translationX = -delayedHorizontalPosition * extendedScreenWidth * 0.8f
                                 },
                         )
                     }
