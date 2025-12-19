@@ -1,7 +1,5 @@
 package com.imashnake.animite.settings
 
-import androidx.compose.animation.core.EaseInOut
-import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -95,7 +93,7 @@ fun MountFuji(modifier: Modifier = Modifier) {
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = durationMillis, easing = EaseInOut),
+            animation = tween(durationMillis = durationMillis),
             repeatMode = RepeatMode.Reverse
         ),
         label = "cloud_position"
@@ -104,7 +102,7 @@ fun MountFuji(modifier: Modifier = Modifier) {
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = durationMillis, delayMillis = delayMillis, easing = EaseOut),
+            animation = tween(durationMillis = durationMillis, delayMillis = delayMillis),
             repeatMode = RepeatMode.Reverse
         ),
         label = "delayed_cloud_position"
@@ -120,6 +118,18 @@ fun MountFuji(modifier: Modifier = Modifier) {
             )
             .fillMaxHeight()
     ) {
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
+            contentDescription = null,
+            modifier = Modifier
+                .height(40.dp)
+                .offset { IntOffset(x = extendedScreenWidth - 300, y = 25) }
+                .graphicsLayer {
+                    translationX = -horizontalPosition * extendedScreenWidth * 0.6f
+                    alpha = 0.4f
+                },
+        )
+
         Image(
             imageVector = ImageVector.vectorResource(R.drawable.cloud_3),
             contentDescription = null,
