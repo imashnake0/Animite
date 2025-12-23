@@ -15,7 +15,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -63,13 +61,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AnimiteTheme {
-                val isSystemInDarkTheme = isSystemInDarkTheme()
                 MainScreen(
                     deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
-                    updateStatusBarIconColor = {
-                        WindowCompat.getInsetsController(window, window.decorView)
-                            .isAppearanceLightStatusBars = if (isSystemInDarkTheme) it else !it
-                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
@@ -94,7 +87,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     deviceScreenCornerRadius: Int,
-    updateStatusBarIconColor: (darkIcons: Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
@@ -117,7 +109,6 @@ fun MainScreen(
             SharedTransitionLayout {
                 NavHost(navController = navController, startDestination = HomeRoute) {
                     composable<HomeRoute> {
-                        updateStatusBarIconColor(false)
                         HomeScreen(
                             onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
@@ -125,7 +116,6 @@ fun MainScreen(
                         )
                     }
                     composable<MediaPage> {
-                        updateStatusBarIconColor(false)
                         MediaPage(
                             onBack = navController::navigateUp,
                             onNavigateToMediaItem = navController::navigate,
@@ -142,7 +132,6 @@ fun MainScreen(
                             }
                         )
                     ) {
-                        updateStatusBarIconColor(false)
                         ProfileScreen(
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToSettings = navController::navigate,
@@ -151,11 +140,9 @@ fun MainScreen(
                         )
                     }
                     composable<SettingsPage> {
-                        updateStatusBarIconColor(true)
                         SettingsPage()
                     }
                     composable<SocialRoute> {
-                        updateStatusBarIconColor(false)
                         SocialScreen()
                     }
                 }
