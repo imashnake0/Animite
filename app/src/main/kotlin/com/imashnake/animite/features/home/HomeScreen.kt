@@ -1,18 +1,13 @@
 package com.imashnake.animite.features.home
 
 import android.content.res.Configuration
-import android.graphics.RuntimeShader
-import android.os.Build
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,48 +16,30 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -80,14 +57,12 @@ import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
 import com.imashnake.animite.core.ui.layouts.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.core.ui.shaders.etherealShader
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.settings.MountFuji
-import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,7 +86,7 @@ fun HomeScreen(
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
-    val homeMediaType by rememberSaveable { mutableStateOf(MediaType.ANIME) }
+    var homeMediaType by rememberSaveable { mutableStateOf(MediaType.ANIME) }
     viewModel.setMediaType(homeMediaType)
 
     val trendingList by viewModel.trendingMedia.collectAsState()
@@ -266,73 +241,6 @@ fun HomeRow(
                 ),
                 textModifier = Modifier.skipToLookaheadSize(),
             )
-        }
-    }
-}
-
-// TODO: Add this back in an intuitive way.
-@Composable
-@Suppress("CognitiveComplexMethod")
-private fun MediaTypeSelector(
-    modifier: Modifier = Modifier,
-    selectedOption: MutableState<MediaType>,
-    viewModel: HomeViewModel
-) {
-    Box(
-        modifier = modifier.background(
-            color = MaterialTheme.colorScheme.onBackground,
-            shape = CircleShape
-        )
-    ) {
-        val offset by animateDpAsState(
-            targetValue = if (selectedOption.value == MediaType.ANIME) 0.dp else 40.dp,
-            label = "media_switch"
-        )
-
-        Box(
-            modifier = Modifier
-                .padding(dimensionResource(mediaR.dimen.media_type_selector_padding))
-                .size(dimensionResource(mediaR.dimen.media_type_choice_size))
-                .offset { IntOffset(x = offset.roundToPx(), y = 0) }
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.background)
-        )
-
-        Row(
-            modifier = Modifier
-                .height(dimensionResource(mediaR.dimen.media_type_selector_height))
-                .width(dimensionResource(mediaR.dimen.media_type_selector_width))
-                .padding(dimensionResource(mediaR.dimen.media_type_selector_padding)),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            MediaType.knownEntries.forEach { mediaType ->
-                IconButton(
-                    onClick = {
-                        if (selectedOption.value != mediaType) {
-                            viewModel.setMediaType(mediaType)
-                            selectedOption.value = mediaType
-                        }
-                    },
-                    modifier = Modifier.requiredWidth(dimensionResource(mediaR.dimen.media_type_choice_size))
-                ) {
-                    Icon(
-                        imageVector = when (mediaType) {
-                            MediaType.ANIME -> Icons.Rounded.PlayArrow
-                            else -> ImageVector.vectorResource(id = R.drawable.manga)
-                        },
-                        contentDescription = mediaType.name,
-                        tint = animateColorAsState(
-                            targetValue = when(selectedOption.value) {
-                                mediaType -> MaterialTheme.colorScheme.primary
-                                else -> MaterialTheme.colorScheme.background
-                            },
-                            animationSpec = tween(400),
-                            label = "icon_color"
-                        ).value
-                    )
-                }
-            }
         }
     }
 }
