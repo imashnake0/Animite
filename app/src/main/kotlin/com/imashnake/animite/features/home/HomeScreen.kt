@@ -111,8 +111,8 @@ fun HomeScreen(
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
-    val homeMediaType = rememberSaveable { mutableStateOf(MediaType.ANIME) }
-    viewModel.setMediaType(homeMediaType.value)
+    val homeMediaType by rememberSaveable { mutableStateOf(MediaType.ANIME) }
+    viewModel.setMediaType(homeMediaType)
 
     val trendingList by viewModel.trendingMedia.collectAsState()
     val popularList by viewModel.popularMediaThisSeason.collectAsState()
@@ -186,7 +186,7 @@ fun HomeScreen(
                                                             MediaPage(
                                                                 id = media.id,
                                                                 source = mediaList.type.name,
-                                                                mediaType = homeMediaType.value.rawValue,
+                                                                mediaType = homeMediaType.rawValue,
                                                                 title = media.title,
                                                             )
                                                         )
