@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import kotlinx.serialization.Serializable
 import com.imashnake.animite.core.R as coreR
