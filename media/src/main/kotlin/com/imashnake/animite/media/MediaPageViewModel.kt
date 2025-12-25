@@ -22,7 +22,7 @@ class MediaPageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mediaRepository: AnilistMediaRepository
 ) : ViewModel() {
-    private val navArgs: MediaPage = savedStateHandle.toRoute()
+    private val navArgs = savedStateHandle.toRoute<MediaPage>()
     var uiState by mutableStateOf(MediaUiState(
             source = navArgs.source,
             id = navArgs.id,

@@ -86,11 +86,9 @@ class ProfileViewModel @Inject constructor(
         initialValue = Resource.loading(),
     )
 
-    fun logOut() {
-        viewModelScope.launch(Dispatchers.IO) {
-            preferencesRepository.setAccessToken(null)
-            preferencesRepository.setViewerId(null)
-        }
+    fun logOut() = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setAccessToken(null)
+        preferencesRepository.setViewerId(null)
     }
 
     fun refresh(onRefresh: () -> Unit) = viewModelScope.launch {
