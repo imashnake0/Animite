@@ -196,7 +196,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeRow(
+private fun HomeRow(
     items: List<Media.Small>,
     type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,

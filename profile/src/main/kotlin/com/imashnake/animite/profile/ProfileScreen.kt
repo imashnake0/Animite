@@ -172,7 +172,7 @@ fun ProfileScreen(
                             }
                         },
                         content = {
-                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.ultraTiny)) {
                                 Column(
                                     modifier = Modifier
                                         .padding(horizontal = LocalPaddings.current.large)
@@ -186,7 +186,13 @@ fun ProfileScreen(
                                     )
                                     UserDescription(
                                         description = description,
-                                        modifier = Modifier.maxHeight(dimensionResource(R.dimen.user_about_height))
+                                        modifier = Modifier.maxHeight(
+                                            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                                                dimensionResource(R.dimen.user_about_height)
+                                            } else {
+                                                dimensionResource(R.dimen.user_about_height_landscape)
+                                            }
+                                        )
                                     )
                                 }
                                 UserTabs(

@@ -51,14 +51,6 @@ fun SettingsPage(
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
-        Configuration.ORIENTATION_PORTRAIT -> PaddingValues(
-            bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
-        )
-        else -> PaddingValues(
-            start = dimensionResource(navigationR.dimen.navigation_rail_width)
-        )
-    }
     val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val scrollState = rememberScrollState()
@@ -86,9 +78,7 @@ fun SettingsPage(
                             color = Color(0xB5001626),
                             style = MaterialTheme.typography.displayMedium,
                             fontWeight = FontWeight.Medium,
-                            modifier = Modifier
-                                .weight(1f, fill = false)
-                                .padding(navigationComponentPaddingValues.horizontalOnly),
+                            modifier = Modifier.weight(1f, fill = false),
                             maxLines = 1
                         )
                     }
@@ -120,7 +110,7 @@ fun SettingsPage(
                     }
                 },
                 contentPadding = PaddingValues(
-                    top = LocalPaddings.current.large / 2,
+                    top = LocalPaddings.current.large,
                     bottom = LocalPaddings.current.large + insetPaddingValues.calculateBottomPadding(),
                     start = LocalPaddings.current.large,
                     end = LocalPaddings.current.large,
