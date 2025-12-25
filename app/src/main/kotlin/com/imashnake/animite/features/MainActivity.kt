@@ -16,6 +16,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,9 +71,16 @@ class MainActivity : ComponentActivity() {
                 .filterNotNull()
                 .collectAsState(initial = THEME.DEVICE_THEME.name)
 
-            AnimiteTheme(theme = THEME.valueOf(theme)) {
+            val useDarkTheme = when(THEME.valueOf(theme)) {
+                THEME.DARK -> true
+                THEME.LIGHT -> false
+                THEME.DEVICE_THEME -> isSystemInDarkTheme()
+            }
+
+            AnimiteTheme(useDarkTheme = useDarkTheme) {
                 MainScreen(
                     deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
+                    useDarkTheme = useDarkTheme,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
@@ -97,6 +105,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     deviceScreenCornerRadius: Int,
+    useDarkTheme: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
@@ -129,6 +138,7 @@ fun MainScreen(
                         MediaPage(
                             onBack = navController::navigateUp,
                             onNavigateToMediaItem = navController::navigate,
+                            useDarkTheme = useDarkTheme,
                             deviceScreenCornerRadius = deviceScreenCornerRadius,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,

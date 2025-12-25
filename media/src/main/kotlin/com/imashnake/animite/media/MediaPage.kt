@@ -130,6 +130,7 @@ fun MediaPage(
     onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     deviceScreenCornerRadius: Int,
+    useDarkTheme: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -156,7 +157,7 @@ fun MediaPage(
         deviceScreenCornerRadius.toDp()
     }
 
-    MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
+    MaterialTheme(colorScheme = rememberColorSchemeFor(media.color, useDarkTheme = useDarkTheme)) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
