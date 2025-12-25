@@ -15,12 +15,6 @@ class SettingsViewModel @Inject constructor(
     val theme = preferencesRepository.theme
 
     fun setTheme(theme: THEME) = viewModelScope.launch(Dispatchers.IO) {
-        preferencesRepository.setThemeToken(theme.toPreferenceKey())
+        preferencesRepository.setThemeToken(theme.name)
     }
-}
-
-private fun THEME.toPreferenceKey() = when(this) {
-    THEME.DARK -> -1
-    THEME.LIGHT -> 0
-    THEME.DEVICE_THEME -> 1
 }

@@ -17,6 +17,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.Paddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.ext.modify
+import com.imashnake.animite.settings.THEME
 import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
 
@@ -24,10 +25,15 @@ import com.materialkolor.rememberDynamicColorScheme
 @Composable
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
+    theme: THEME,
     content: @Composable () -> Unit,
 ) {
     val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val useDarkTheme = isSystemInDarkTheme()
+    val useDarkTheme = when(theme) {
+        THEME.DARK -> true
+        THEME.LIGHT -> false
+        THEME.DEVICE_THEME -> isSystemInDarkTheme()
+    }
     val animiteColorScheme = when {
         dynamicColor && useDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
         dynamicColor && !useDarkTheme -> dynamicLightColorScheme(LocalContext.current)
