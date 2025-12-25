@@ -251,7 +251,7 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
-                                    onCharacterClick = { index, character ->
+                                    onCharacterClick = { index, _ ->
                                         coroutineScope.launch {
                                             characterPagerState.scrollToPage(index)
                                         }
@@ -674,14 +674,12 @@ private fun MediaDescription(
     Text(
         text = AnnotatedString.fromHtml(
             htmlString = html,
-            linkInteractionListener = object : LinkInteractionListener {
-                override fun onClick(link: LinkAnnotation) {
-                    val url = (link as? LinkAnnotation.Url)?.url
-                    if (onLinkClick == null || onLinkClick(url) == null) {
-                        url?.let { uriHandler.openUri(it) }
-                    } else {
-                        onLinkClick(url)
-                    }
+            linkInteractionListener = LinkInteractionListener { link ->
+                val url = (link as? LinkAnnotation.Url)?.url
+                if (onLinkClick == null || onLinkClick(url) == null) {
+                    url?.let { uriHandler.openUri(it) }
+                } else {
+                    onLinkClick(url)
                 }
             }
         ),
