@@ -44,6 +44,7 @@ include(
     ":media",
     ":navigation",
     ":profile",
+    ":settings",
     ":social",
 )
 

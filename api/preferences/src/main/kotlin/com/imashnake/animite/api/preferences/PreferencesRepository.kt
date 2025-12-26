@@ -7,19 +7,30 @@ import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
 import javax.inject.Inject
 
+private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
+
 class PreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
+    // region profile
     private val accessTokenKey = stringPreferencesKey("access_token")
-    private val viewerIdKey = stringPreferencesKey("viewer_id")
     val accessToken = dataStore.getValue(accessTokenKey, null)
-    val viewerId = dataStore.getValue(viewerIdKey, null)
-
     suspend fun setAccessToken(accessToken: String?) {
         dataStore.setValue(accessTokenKey, accessToken)
     }
 
+    private val viewerIdKey = stringPreferencesKey("viewer_id")
+    val viewerId = dataStore.getValue(viewerIdKey, null)
     suspend fun setViewerId(viewerId: Int?) {
         dataStore.setValue(viewerIdKey, viewerId.toString())
     }
+    // endregion
+
+    // region settings
+    private val themeKey = stringPreferencesKey("theme")
+    val theme = dataStore.getValue(themeKey, DEFAULT_THEME_KEY)
+    suspend fun setThemeToken(theme: String) {
+        dataStore.setValue(themeKey, theme)
+    }
+    // endregion
 }

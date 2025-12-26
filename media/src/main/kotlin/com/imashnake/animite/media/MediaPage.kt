@@ -71,6 +71,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -87,7 +88,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -106,7 +107,7 @@ import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
-import com.imashnake.animite.core.ui.layouts.BannerLayout
+import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
@@ -117,8 +118,6 @@ import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
 import com.imashnake.animite.core.R as coreR
 
-// TODO: Need to use WindowInsets to get device corner radius if available.
-private const val DEVICE_CORNER_RADIUS = 30
 private const val RECOMMENDATIONS = "Recommendations"
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,6 +129,8 @@ private const val RECOMMENDATIONS = "Recommendations"
 fun MediaPage(
     onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    deviceScreenCornerRadius: Int,
+    useDarkTheme: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -152,7 +153,11 @@ fun MediaPage(
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-    MaterialTheme(colorScheme = rememberColorSchemeFor(media.color)) {
+    val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
+        deviceScreenCornerRadius.toDp()
+    }
+
+    MaterialTheme(colorScheme = rememberColorSchemeFor(media.color, useDarkTheme = useDarkTheme)) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
@@ -171,10 +176,10 @@ fun MediaPage(
                             animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                             clipInOverlayDuringTransition = OverlayClip(
-                                RoundedCornerShape(DEVICE_CORNER_RADIUS.dp)
+                                RoundedCornerShape(deviceScreenCornerRadiusDp)
                             ),
                         )
-                        .clip(RoundedCornerShape(DEVICE_CORNER_RADIUS.dp))
+                        .clip(RoundedCornerShape(deviceScreenCornerRadiusDp))
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                 ) {
@@ -246,7 +251,7 @@ fun MediaPage(
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCharacters(
                                     characters = media.characters,
-                                    onCharacterClick = { index, character ->
+                                    onCharacterClick = { index, _ ->
                                         coroutineScope.launch {
                                             characterPagerState.scrollToPage(index)
                                         }
@@ -361,6 +366,7 @@ fun MediaPage(
                 BottomSheet(
                     sheetState = detailsSheetState,
                     onDismissRequest = { showDetailsSheet = false },
+                    deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
                 ) { paddingValues, modifier ->
                     Column(modifier) {
                         Text(
@@ -389,6 +395,7 @@ fun MediaPage(
                     sheetState = characterSheetState,
                     dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     onDismissRequest = { showCharacterSheet = false },
+                    deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp
                 ) { paddingValues, modifier ->
                     HorizontalPager(state = characterPagerState) { page ->
                         Column(modifier = modifier) {
@@ -667,14 +674,12 @@ private fun MediaDescription(
     Text(
         text = AnnotatedString.fromHtml(
             htmlString = html,
-            linkInteractionListener = object : LinkInteractionListener {
-                override fun onClick(link: LinkAnnotation) {
-                    val url = (link as? LinkAnnotation.Url)?.url
-                    if (onLinkClick == null || onLinkClick(url) == null) {
-                        url?.let { uriHandler.openUri(it) }
-                    } else {
-                        onLinkClick(url)
-                    }
+            linkInteractionListener = LinkInteractionListener { link ->
+                val url = (link as? LinkAnnotation.Url)?.url
+                if (onLinkClick == null || onLinkClick(url) == null) {
+                    url?.let { uriHandler.openUri(it) }
+                } else {
+                    onLinkClick(url)
                 }
             }
         ),

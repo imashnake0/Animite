@@ -19,7 +19,7 @@ android {
 
     buildFeatures { compose = true }
 
-    namespace = "com.imashnake.animite.profile"
+    namespace = "com.imashnake.animite.settings"
 }
 
 kotlin {
@@ -32,13 +32,13 @@ tasks.withType<KotlinCompile>().configureEach {
     )
 }
 
+// TODO: Remove unused modules.
 dependencies {
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
     implementation(projects.core)
     implementation(projects.media)
     implementation(projects.navigation)
-    implementation(projects.settings)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)

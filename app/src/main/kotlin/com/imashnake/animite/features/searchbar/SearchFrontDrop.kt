@@ -6,6 +6,8 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -53,6 +55,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @Composable
 fun SearchFrontDrop(
     hasExtraPadding: Boolean,
+    isFabVisible: Boolean,
     onItemClick: (Int, MediaType, String?) -> Unit,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -106,10 +109,10 @@ fun SearchFrontDrop(
         }
     }
 
-    SearchFab(
-        isExpanded = isExpanded,
-        setExpanded = { isExpanded = it },
-        onSearched = viewModel::setQuery,
+    AnimatedVisibility(
+        visible = isFabVisible,
+        enter = fadeIn() + scaleIn(),
+        exit = fadeOut() + scaleOut(),
         modifier = modifier
             .padding(insetPaddingValues.copy(bottom = 0.dp))
             .padding(bottom = searchBarBottomPadding)
@@ -117,5 +120,11 @@ fun SearchFrontDrop(
             .consumeWindowInsets(PaddingValues(bottom = searchBarBottomPadding))
             .imePadding()
             .height(dimensionResource(R.dimen.search_bar_height))
-    )
+    ) {
+        SearchFab(
+            isExpanded = isExpanded,
+            setExpanded = { isExpanded = it },
+            onSearched = viewModel::setQuery,
+        )
+    }
 }

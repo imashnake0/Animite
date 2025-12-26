@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.layouts
+package com.imashnake.animite.core.ui.layouts.banner
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

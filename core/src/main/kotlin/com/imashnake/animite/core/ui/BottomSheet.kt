@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.thenIf
@@ -33,6 +35,7 @@ import com.imashnake.animite.core.extensions.thenIf
 fun BottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
+    deviceScreenCornerRadiusDp: Dp,
     modifier: Modifier = Modifier,
     dragHandleBackgroundColor: Color? = null,
     content: @Composable (contentPadding: PaddingValues, modifier: Modifier) -> Unit,
@@ -61,7 +64,11 @@ fun BottomSheet(
             }
         },
         onDismissRequest = onDismissRequest,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        shape = RoundedCornerShape(
+            topStart = deviceScreenCornerRadiusDp,
+            topEnd = deviceScreenCornerRadiusDp
+        )
     ) {
         content(
             PaddingValues(horizontal = LocalPaddings.current.large),
