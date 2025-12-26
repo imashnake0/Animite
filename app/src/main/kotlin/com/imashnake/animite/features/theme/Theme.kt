@@ -4,8 +4,11 @@ import android.os.Build
 import androidx.compose.animation.core.tween
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -22,7 +25,10 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.rememberDynamicColorScheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
@@ -56,9 +62,10 @@ fun AnimiteTheme(
         )
     )
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = animateColorScheme(animiteColorScheme, animationSpec = { tween(500) }),
         typography = AnimiteTypography,
+        motionScheme = MotionScheme.expressive()
     ) {
         CompositionLocalProvider(
             LocalRippleConfiguration provides animiteRippleTheme,
