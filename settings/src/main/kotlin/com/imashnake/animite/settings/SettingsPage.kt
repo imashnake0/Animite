@@ -1,7 +1,6 @@
 package com.imashnake.animite.settings
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,6 +54,7 @@ fun SettingsPage(
     val scrollState = rememberScrollState()
 
     val selectedTheme by viewModel.theme.collectAsState(initial = THEME.DEVICE_THEME.name)
+    val haptic = LocalHapticFeedback.current
 
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
@@ -93,7 +95,10 @@ fun SettingsPage(
                             THEME.entries.forEach { theme ->
                                 ToggleButton(
                                     checked = selectedTheme == theme.name,
-                                    onCheckedChange = { viewModel.setTheme(theme) },
+                                    onCheckedChange = {
+                                        viewModel.setTheme(theme)
+                                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                    },
                                     shapes = when (theme) {
                                         THEME.DARK -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                                         THEME.DEVICE_THEME -> ButtonGroupDefaults.connectedTrailingButtonShapes()
