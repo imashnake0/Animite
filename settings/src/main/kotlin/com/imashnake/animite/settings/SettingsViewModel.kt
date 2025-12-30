@@ -13,8 +13,12 @@ class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
     val theme = preferencesRepository.theme
+    val useSystemColorScheme = preferencesRepository.useSystemColorScheme
 
     fun setTheme(theme: THEME) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setThemeToken(theme.name)
+    }
+    fun setUseSystemColorScheme(useSystemColorScheme: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setUseSystemColorScheme(useSystemColorScheme)
     }
 }

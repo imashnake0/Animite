@@ -2,12 +2,14 @@ package com.imashnake.animite.api.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
 import javax.inject.Inject
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
+private const val USE_SYSTEM_COLOR_SCHEME = true
 
 class PreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
@@ -31,6 +33,12 @@ class PreferencesRepository @Inject constructor(
     val theme = dataStore.getValue(themeKey, DEFAULT_THEME_KEY)
     suspend fun setThemeToken(theme: String) {
         dataStore.setValue(themeKey, theme)
+    }
+
+    private val useSystemColorSchemeKey = booleanPreferencesKey("system_color_scheme")
+    val useSystemColorScheme = dataStore.getValue(useSystemColorSchemeKey, USE_SYSTEM_COLOR_SCHEME)
+    suspend fun setUseSystemColorScheme(useSystemColorScheme: Boolean) {
+        dataStore.setValue(useSystemColorSchemeKey, useSystemColorScheme)
     }
     // endregion
 }

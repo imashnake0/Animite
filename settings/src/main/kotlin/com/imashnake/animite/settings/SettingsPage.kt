@@ -60,6 +60,7 @@ import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.banner.MountFuji
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -74,7 +75,8 @@ fun SettingsPage(
 
     val scrollState = rememberScrollState()
 
-    val selectedTheme by viewModel.theme.collectAsState(initial = THEME.DEVICE_THEME.name)
+    val selectedTheme by viewModel.theme.filterNotNull().collectAsState(initial = THEME.DEVICE_THEME.name)
+    val useSystemColorScheme by viewModel.useSystemColorScheme.filterNotNull().collectAsState(initial = true)
     val haptic = LocalHapticFeedback.current
 
     var useColorScheme by remember { mutableStateOf(true) }
@@ -150,8 +152,8 @@ fun SettingsPage(
                                 }
                                 1 -> {
                                     Switch(
-                                        checked = useColorScheme,
-                                        onCheckedChange = { useColorScheme = it },
+                                        checked = useSystemColorScheme,
+                                        onCheckedChange = { viewModel.setUseSystemColorScheme(it) },
                                         thumbContent = {
                                             if (useColorScheme) {
                                                 Icon(

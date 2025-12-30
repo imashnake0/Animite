@@ -33,9 +33,10 @@ import com.materialkolor.rememberDynamicColorScheme
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
     useDarkTheme: Boolean,
+    useSystemColorScheme: Boolean,
     content: @Composable () -> Unit,
 ) {
-    val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && useSystemColorScheme
     val context = LocalContext.current
     val staticColorScheme = rememberDynamicColorScheme(
         seedColor = Color(0xFF2D7AB0),
@@ -44,7 +45,7 @@ fun AnimiteTheme(
         isAmoled = false,
         style = PaletteStyle.Vibrant,
     )
-    val animiteColorScheme = remember(useDarkTheme) {
+    val animiteColorScheme = remember(useDarkTheme, dynamicColor) {
         when {
             dynamicColor && useDarkTheme -> dynamicDarkColorScheme(context)
             dynamicColor && !useDarkTheme -> dynamicLightColorScheme(context)

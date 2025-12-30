@@ -71,13 +71,17 @@ class MainActivity : ComponentActivity() {
                 .filterNotNull()
                 .collectAsState(initial = THEME.DEVICE_THEME.name)
 
+            val useSystemColorScheme by settingsViewModel.useSystemColorScheme
+                .filterNotNull()
+                .collectAsState(initial = false)
+
             val useDarkTheme = when(THEME.valueOf(theme)) {
                 THEME.DARK -> true
                 THEME.LIGHT -> false
                 THEME.DEVICE_THEME -> isSystemInDarkTheme()
             }
 
-            AnimiteTheme(useDarkTheme = useDarkTheme) {
+            AnimiteTheme(useDarkTheme = useDarkTheme, useSystemColorScheme = useSystemColorScheme) {
                 MainScreen(
                     deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
                     useDarkTheme = useDarkTheme,
