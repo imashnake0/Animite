@@ -51,7 +51,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -71,7 +70,6 @@ import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.banner.MountFuji
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.materialkolor.LocalDynamicMaterialThemeSeed
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
@@ -143,7 +141,14 @@ fun SettingsPage(
                             ),
                             onItemClick = { index ->
                                 when (index) {
-                                    1 -> viewModel.setUseSystemColorScheme(!useSystemColorScheme)
+                                    1 -> {
+                                        viewModel.setUseSystemColorScheme(!useSystemColorScheme)
+                                        haptic.performHapticFeedback(
+                                            hapticFeedbackType = if (useSystemColorScheme) {
+                                                HapticFeedbackType.ToggleOff
+                                            } else HapticFeedbackType.ToggleOn
+                                        )
+                                    }
                                     else -> {}
                                 }
                             },
@@ -157,7 +162,7 @@ fun SettingsPage(
                                             checked = selectedTheme == theme.name,
                                             onCheckedChange = {
                                                 viewModel.setTheme(theme)
-                                                haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                                haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                             },
                                             shapes = when (theme) {
                                                 THEME.DARK -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -172,7 +177,14 @@ fun SettingsPage(
                                 1 -> {
                                     Switch(
                                         checked = useSystemColorScheme,
-                                        onCheckedChange = { viewModel.setUseSystemColorScheme(it) },
+                                        onCheckedChange = {
+                                            viewModel.setUseSystemColorScheme(it)
+                                            haptic.performHapticFeedback(
+                                                hapticFeedbackType = if (!it) {
+                                                    HapticFeedbackType.ToggleOff
+                                                } else HapticFeedbackType.ToggleOn
+                                            )
+                                        },
                                         thumbContent = {
                                             if (useSystemColorScheme) {
                                                 Icon(
