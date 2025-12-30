@@ -59,6 +59,8 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
+    implementation(libs.materialKolor)
+
     // Compose Markdown
     implementation(libs.boswelja.composeMarkdown.material3)
 

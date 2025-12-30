@@ -37,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.HomeScreen
@@ -164,7 +165,7 @@ fun MainScreen(
                         )
                     }
                     composable<SettingsPage> {
-                        SettingsPage()
+                        SettingsPage(versionName = BuildConfig.VERSION_NAME)
                     }
                     composable<SocialRoute> {
                         SocialScreen()

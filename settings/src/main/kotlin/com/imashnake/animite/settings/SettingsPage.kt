@@ -1,8 +1,13 @@
 package com.imashnake.animite.settings
 
+import android.graphics.Bitmap
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -42,15 +48,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.horizontalOnly
@@ -66,6 +76,7 @@ import kotlinx.serialization.Serializable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsPage(
+    versionName: String,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -78,6 +89,9 @@ fun SettingsPage(
     val selectedTheme by viewModel.theme.filterNotNull().collectAsState(initial = THEME.DEVICE_THEME.name)
     val useSystemColorScheme by viewModel.useSystemColorScheme.filterNotNull().collectAsState(initial = true)
     val haptic = LocalHapticFeedback.current
+
+    val isDarkMode = selectedTheme == THEME.DARK.name ||
+            (selectedTheme == THEME.DEVICE_THEME.name && isSystemInDarkTheme())
 
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
@@ -125,8 +139,13 @@ fun SettingsPage(
                                     label = R.string.palette
                                 )
                             ),
-                            isDarkMode = selectedTheme == THEME.DARK.name ||
-                                    (selectedTheme == THEME.DEVICE_THEME.name && isSystemInDarkTheme()),
+                            onItemClick = { index ->
+                                when (index) {
+                                    1 -> viewModel.setUseSystemColorScheme(!useSystemColorScheme)
+                                    else -> {}
+                                }
+                            },
+                            isDarkMode = isDarkMode,
                             modifier = Modifier.fillMaxWidth()
                         ) { index ->
                             when (index) {
@@ -166,6 +185,18 @@ fun SettingsPage(
                                 else -> {}
                             }
                         }
+
+                        Text(
+                            text = stringResource(R.string.about),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                        AboutItem(
+                            isDarkMode = isDarkMode,
+                            versionName = versionName,
+                        )
                     }
                 },
                 contentPadding = PaddingValues(
@@ -184,6 +215,7 @@ private fun Items(
     items: List<Item>,
     isDarkMode: Boolean,
     modifier: Modifier = Modifier,
+    onItemClick: (Int) -> Unit,
     itemContent: @Composable (Int) -> Unit,
 ) {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
@@ -209,10 +241,11 @@ private fun Items(
                         bottomEndPercent = bottomPercent,
                         bottomStartPercent = bottomPercent,
                     ),
+                    onItemClick = { onItemClick(index) },
                     background = if (isDarkMode) {
                         MaterialTheme.colorScheme.surfaceContainer
                     } else MaterialTheme.colorScheme.surface
-                ) { index ->
+                ) {
                     itemContent(index)
                 }
             }
@@ -226,8 +259,9 @@ private fun Item(
     item: Pair<Int, Item>,
     shape: Shape,
     background: Color,
+    onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable (index: Int) -> Unit,
+    content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         Row(
@@ -236,6 +270,7 @@ private fun Item(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(shape)
+                .clickable { onItemClick() }
                 .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
@@ -250,13 +285,73 @@ private fun Item(
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.weight(1f),
             )
-            content(item.first)
+            content()
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Preview
+@Composable
+private fun AboutItem(
+    isDarkMode: Boolean,
+    versionName: String,
+    modifier: Modifier = Modifier,
+) {
+    val background by animateColorAsState(
+        targetValue = if (isDarkMode) {
+            Color(0x080FFF66)
+        } else {
+            Color(0x4DFFC0CB)
+        },
+        animationSpec = tween(500)
+    )
+    val textColor by animateColorAsState(
+        targetValue = if (isDarkMode) Color(0xFF0FFF66) else Color(0xFFDA6482),
+        animationSpec = tween(500)
+    )
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(CircleShape)
+                .clickable {}
+                .background(background)
+                .padding(LocalPaddings.current.medium)
+        ) {
+            if (LocalInspectionMode.current) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f))
+                )
+            } else {
+                val drawable = LocalContext.current.packageManager
+                    .getApplicationIcon(LocalContext.current.packageName)
+                Image(
+                    bitmap = drawable.toBitmap(config = Bitmap.Config.ARGB_8888)
+                        .asImageBitmap(),
+                    contentDescription = stringResource(R.string.app_icon),
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+            Text(
+                text = "v$versionName",
+                color = textColor,
+                style = MaterialTheme.typography.titleSmallEmphasized,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFE0E4ED
+)
 @Composable
 private fun PreviewItems() {
     var selectedTheme by remember { mutableStateOf(THEME.DARK) }
@@ -272,8 +367,9 @@ private fun PreviewItems() {
                 label = R.string.palette
             )
         ),
+        onItemClick = {},
         isDarkMode = false,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(20.dp)
     ) { index ->
         when (index) {
             0 -> Row(horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
@@ -309,6 +405,32 @@ private fun PreviewItems() {
             else -> {}
         }
     }
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF0F151C
+)
+@Composable
+private fun PreviewAboutItemDark() {
+    AboutItem(
+        isDarkMode = true,
+        versionName = "0.0.0-alpha0",
+        modifier = Modifier.padding(20.dp)
+    )
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFFE0E4ED
+)
+@Composable
+private fun PreviewAboutItemLight() {
+    AboutItem(
+        isDarkMode = false,
+        versionName = "0.0.0-alpha0",
+        modifier = Modifier.padding(20.dp)
+    )
 }
 
 private data class Item(
