@@ -4,8 +4,11 @@ import android.os.Build
 import androidx.compose.animation.core.tween
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -22,14 +25,18 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.rememberDynamicColorScheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+)
 @Composable
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
     useDarkTheme: Boolean,
+    useSystemColorScheme: Boolean,
     content: @Composable () -> Unit,
 ) {
-    val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && useSystemColorScheme
     val context = LocalContext.current
     val staticColorScheme = rememberDynamicColorScheme(
         seedColor = Color(0xFF2D7AB0),
@@ -38,7 +45,7 @@ fun AnimiteTheme(
         isAmoled = false,
         style = PaletteStyle.Vibrant,
     )
-    val animiteColorScheme = remember(useDarkTheme) {
+    val animiteColorScheme = remember(useDarkTheme, dynamicColor) {
         when {
             dynamicColor && useDarkTheme -> dynamicDarkColorScheme(context)
             dynamicColor && !useDarkTheme -> dynamicLightColorScheme(context)
@@ -56,9 +63,10 @@ fun AnimiteTheme(
         )
     )
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = animateColorScheme(animiteColorScheme, animationSpec = { tween(500) }),
         typography = AnimiteTypography,
+        motionScheme = MotionScheme.expressive()
     ) {
         CompositionLocalProvider(
             LocalRippleConfiguration provides animiteRippleTheme,

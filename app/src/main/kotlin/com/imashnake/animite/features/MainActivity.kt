@@ -37,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.HomeScreen
@@ -71,13 +72,17 @@ class MainActivity : ComponentActivity() {
                 .filterNotNull()
                 .collectAsState(initial = THEME.DEVICE_THEME.name)
 
+            val useSystemColorScheme by settingsViewModel.useSystemColorScheme
+                .filterNotNull()
+                .collectAsState(initial = false)
+
             val useDarkTheme = when(THEME.valueOf(theme)) {
                 THEME.DARK -> true
                 THEME.LIGHT -> false
                 THEME.DEVICE_THEME -> isSystemInDarkTheme()
             }
 
-            AnimiteTheme(useDarkTheme = useDarkTheme) {
+            AnimiteTheme(useDarkTheme = useDarkTheme, useSystemColorScheme = useSystemColorScheme) {
                 MainScreen(
                     deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
                     useDarkTheme = useDarkTheme,
@@ -160,7 +165,7 @@ fun MainScreen(
                         )
                     }
                     composable<SettingsPage> {
-                        SettingsPage()
+                        SettingsPage(versionName = BuildConfig.VERSION_NAME)
                     }
                     composable<SocialRoute> {
                         SocialScreen()
