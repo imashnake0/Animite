@@ -3,6 +3,7 @@ package com.imashnake.animite.settings
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -113,6 +114,8 @@ fun SettingsPage(
                                     label = R.string.theme
                                 )
                             ),
+                            isDarkMode = selectedTheme == THEME.DARK.name ||
+                                    (selectedTheme == THEME.DEVICE_THEME.name && isSystemInDarkTheme()),
                             modifier = Modifier.fillMaxWidth()
                         ) { index ->
                             when (index) {
@@ -153,6 +156,7 @@ fun SettingsPage(
 @Composable
 private fun Items(
     items: List<Item>,
+    isDarkMode: Boolean,
     modifier: Modifier = Modifier,
     itemContent: @Composable (Int) -> Unit,
 ) {
@@ -178,7 +182,10 @@ private fun Items(
                         topEndPercent = topPercent,
                         bottomEndPercent = bottomPercent,
                         bottomStartPercent = bottomPercent,
-                    )
+                    ),
+                    background = if (isDarkMode) {
+                        MaterialTheme.colorScheme.surfaceContainer
+                    } else MaterialTheme.colorScheme.surface
                 ) { index ->
                     itemContent(index)
                 }
@@ -187,10 +194,12 @@ private fun Items(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun Item(
     item: Pair<Int, Item>,
     shape: Shape,
+    background: Color,
     modifier: Modifier = Modifier,
     content: @Composable (index: Int) -> Unit,
 ) {
@@ -201,11 +210,20 @@ private fun Item(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(shape)
-                .background(MaterialTheme.colorScheme.surface)
+                .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
-            Icon(ImageVector.vectorResource(item.second.icon), contentDescription = null)
-            Text(stringResource(item.second.label), modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = ImageVector.vectorResource(item.second.icon),
+                contentDescription = null,
+                modifier = Modifier.padding(start = LocalPaddings.current.small)
+            )
+            Text(
+                text = stringResource(item.second.label),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.weight(1f),
+            )
             content(item.first)
         }
     }
@@ -221,8 +239,13 @@ private fun PreviewItems() {
             Item(
                 icon = R.drawable.theme,
                 label = R.string.theme
+            ),
+            Item(
+                icon = R.drawable.palette,
+                label = R.string.palette
             )
         ),
+        isDarkMode = false,
         modifier = Modifier.fillMaxWidth()
     ) { index ->
         when (index) {

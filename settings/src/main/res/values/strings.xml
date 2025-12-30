@@ -8,4 +8,6 @@
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="device">Device</string>
+
+    <string name="palette">Use System Color Scheme</string>
 </resources>
