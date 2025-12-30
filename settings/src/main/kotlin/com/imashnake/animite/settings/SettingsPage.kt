@@ -14,15 +14,20 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.runtime.Composable
@@ -72,6 +77,8 @@ fun SettingsPage(
     val selectedTheme by viewModel.theme.collectAsState(initial = THEME.DEVICE_THEME.name)
     val haptic = LocalHapticFeedback.current
 
+    var useColorScheme by remember { mutableStateOf(true) }
+
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
             BannerLayout(
@@ -112,6 +119,10 @@ fun SettingsPage(
                                 Item(
                                     icon = R.drawable.theme,
                                     label = R.string.theme
+                                ),
+                                Item(
+                                    icon = R.drawable.palette,
+                                    label = R.string.palette
                                 )
                             ),
                             isDarkMode = selectedTheme == THEME.DARK.name ||
@@ -136,6 +147,21 @@ fun SettingsPage(
                                             Text(stringResource(theme.theme))
                                         }
                                     }
+                                }
+                                1 -> {
+                                    Switch(
+                                        checked = useColorScheme,
+                                        onCheckedChange = { useColorScheme = it },
+                                        thumbContent = {
+                                            if (useColorScheme) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Check,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                )
+                                            }
+                                        },
+                                    )
                                 }
                                 else -> {}
                             }
@@ -234,6 +260,7 @@ private fun Item(
 @Composable
 private fun PreviewItems() {
     var selectedTheme by remember { mutableStateOf(THEME.DARK) }
+    var useColorScheme by remember { mutableStateOf(true) }
     Items(
         items = listOf(
             Item(
@@ -263,6 +290,21 @@ private fun PreviewItems() {
                         Text(stringResource(theme.theme))
                     }
                 }
+            }
+            1 -> {
+                Switch(
+                    checked = useColorScheme,
+                    onCheckedChange = { useColorScheme = it },
+                    thumbContent = {
+                        if (useColorScheme) {
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        }
+                    },
+                )
             }
             else -> {}
         }
