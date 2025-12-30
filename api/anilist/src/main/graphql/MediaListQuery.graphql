@@ -19,6 +19,7 @@ query MediaListQuery(
             season: $season,
             seasonYear: $seasonYear
             # endregion
+            isAdult: false
         ) {
             ...MediaSmall
         }

@@ -11,6 +11,7 @@ query Search(
             type: $type,
             sort: [POPULARITY_DESC],
             search: $search
+            isAdult: false
         ) {
             ...MediaMedium
         }

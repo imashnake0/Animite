@@ -13,6 +13,7 @@ query MediaMediumListQuery(
             type: $type,
             sort: $sort,
             genre: $genre,
+            isAdult: false
         ) {
             ...MediaMedium
         }
