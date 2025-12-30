@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -70,6 +71,7 @@ import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.banner.MountFuji
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import com.materialkolor.LocalDynamicMaterialThemeSeed
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
@@ -325,7 +327,7 @@ private fun AboutItem(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f))
+                        .background(Color(0x4F0A1625))
                 )
             } else {
                 val drawable = LocalContext.current.packageManager
@@ -356,81 +358,66 @@ private fun AboutItem(
 private fun PreviewItems() {
     var selectedTheme by remember { mutableStateOf(THEME.DARK) }
     var useColorScheme by remember { mutableStateOf(true) }
-    Items(
-        items = listOf(
-            Item(
-                icon = R.drawable.theme,
-                label = R.string.theme
+
+    Column {
+        Items(
+            items = listOf(
+                Item(
+                    icon = R.drawable.theme,
+                    label = R.string.theme
+                ),
+                Item(
+                    icon = R.drawable.palette,
+                    label = R.string.palette
+                )
             ),
-            Item(
-                icon = R.drawable.palette,
-                label = R.string.palette
-            )
-        ),
-        onItemClick = {},
-        isDarkMode = false,
-        modifier = Modifier.fillMaxWidth().padding(20.dp)
-    ) { index ->
-        when (index) {
-            0 -> Row(horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
-                THEME.entries.forEach { theme ->
-                    ToggleButton(
-                        checked = selectedTheme.name == theme.name,
-                        onCheckedChange = { selectedTheme = theme },
-                        shapes = when (theme) {
-                            THEME.DARK -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                            THEME.DEVICE_THEME -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                        },
-                    ) {
-                        Text(stringResource(theme.theme))
+            onItemClick = {},
+            isDarkMode = false,
+            modifier = Modifier.fillMaxWidth().padding(20.dp)
+        ) { index ->
+            when (index) {
+                0 -> Row(horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
+                    THEME.entries.forEach { theme ->
+                        ToggleButton(
+                            checked = selectedTheme == theme,
+                            onCheckedChange = { selectedTheme = theme },
+                            shapes = when (theme) {
+                                THEME.DARK -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                THEME.DEVICE_THEME -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                            },
+                        ) {
+                            Text(stringResource(theme.theme))
+                        }
                     }
                 }
+
+                1 -> {
+                    Switch(
+                        checked = useColorScheme,
+                        onCheckedChange = { useColorScheme = it },
+                        thumbContent = {
+                            if (useColorScheme) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                )
+                            }
+                        },
+                    )
+                }
+
+                else -> {}
             }
-            1 -> {
-                Switch(
-                    checked = useColorScheme,
-                    onCheckedChange = { useColorScheme = it },
-                    thumbContent = {
-                        if (useColorScheme) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(SwitchDefaults.IconSize),
-                            )
-                        }
-                    },
-                )
-            }
-            else -> {}
         }
+
+        AboutItem(
+            isDarkMode = false,
+            versionName = "0.0.0-alpha0",
+            modifier = Modifier.padding(20.dp)
+        )
     }
-}
-
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF0F151C
-)
-@Composable
-private fun PreviewAboutItemDark() {
-    AboutItem(
-        isDarkMode = true,
-        versionName = "0.0.0-alpha0",
-        modifier = Modifier.padding(20.dp)
-    )
-}
-
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFFE0E4ED
-)
-@Composable
-private fun PreviewAboutItemLight() {
-    AboutItem(
-        isDarkMode = false,
-        versionName = "0.0.0-alpha0",
-        modifier = Modifier.padding(20.dp)
-    )
 }
 
 private data class Item(
