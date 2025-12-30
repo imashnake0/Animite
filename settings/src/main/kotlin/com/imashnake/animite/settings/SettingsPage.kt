@@ -440,7 +440,7 @@ private data class Item(
 enum class THEME(@param:StringRes val theme: Int) {
     DARK(R.string.dark),
     LIGHT(R.string.light),
-    DEVICE_THEME(R.string.device),
+    DEVICE_THEME(R.string.system),
 }
 
 @Serializable
