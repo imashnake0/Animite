@@ -79,8 +79,6 @@ fun SettingsPage(
     val useSystemColorScheme by viewModel.useSystemColorScheme.filterNotNull().collectAsState(initial = true)
     val haptic = LocalHapticFeedback.current
 
-    var useColorScheme by remember { mutableStateOf(true) }
-
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
             BannerLayout(
@@ -155,7 +153,7 @@ fun SettingsPage(
                                         checked = useSystemColorScheme,
                                         onCheckedChange = { viewModel.setUseSystemColorScheme(it) },
                                         thumbContent = {
-                                            if (useColorScheme) {
+                                            if (useSystemColorScheme) {
                                                 Icon(
                                                     imageVector = Icons.Filled.Check,
                                                     contentDescription = null,
