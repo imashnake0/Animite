@@ -56,13 +56,11 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -97,27 +95,11 @@ fun SettingsPage(
         Box(modifier.verticalScroll(scrollState)) {
             BannerLayout(
                 banner = { bannerModifier ->
-                    MountFuji(bannerModifier)
-
-                    Row(
-                        modifier = bannerModifier
-                            .padding(
-                                horizontal = LocalPaddings.current.large,
-                                vertical = LocalPaddings.current.medium
-                            )
-                            .padding(insetPaddingValues.copy(bottom = 0.dp)),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Bottom,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.settings),
-                            color = Color(0xB5001626),
-                            style = MaterialTheme.typography.displayMedium,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.weight(1f, fill = false),
-                            maxLines = 1
-                        )
-                    }
+                    MountFuji(
+                        header = stringResource(R.string.settings),
+                        insetPaddingValues = insetPaddingValues,
+                        modifier = bannerModifier,
+                    )
                 },
                 content = {
                     Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {

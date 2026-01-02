@@ -42,8 +42,9 @@ dependencies {
     implementation(libs.bundles.coil)
 
     // Kotlin
-    implementation(libs.kotlin.coroutines.android)
-    implementation(libs.kotlin.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.test.junit)
 
