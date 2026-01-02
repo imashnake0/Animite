@@ -193,14 +193,14 @@ private fun HomeRow(
                 label = media.title,
                 onClick = { onItemClicked(media) },
                 modifier = Modifier.sharedBounds(
-                    rememberSharedContentState(
+                    sharedContentState = rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
                             source = type.name,
                             sharedComponents = Card to Page,
                         )
                     ),
-                    animatedVisibilityScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
                     enter = fadeIn(tween(500)),
                     exit = fadeOut(tween(500)),
                     resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,

@@ -100,7 +100,8 @@ class MainActivity : ComponentActivity() {
                 .currentWindowMetrics
                 .windowInsets
                 .getRoundedCorner(RoundedCorner.POSITION_TOP_RIGHT)
-                ?.radius ?: 0
+                ?.radius
+                ?: 0
         }
         return 0
     }
