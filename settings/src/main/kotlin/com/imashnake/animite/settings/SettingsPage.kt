@@ -97,7 +97,7 @@ fun SettingsPage(
         Box(modifier.verticalScroll(scrollState)) {
             BannerLayout(
                 banner = { bannerModifier ->
-                    MountFuji(bannerModifier)
+                    MountFuji(modifier = bannerModifier)
 
                     Row(
                         modifier = bannerModifier

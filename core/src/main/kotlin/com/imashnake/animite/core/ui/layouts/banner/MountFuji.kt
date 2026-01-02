@@ -28,9 +28,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.core.R
+import com.imashnake.animite.core.extensions.DayPart
+import com.imashnake.animite.core.extensions.DayPart.*
+import com.imashnake.animite.core.extensions.toDayPart
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Composable
-fun MountFuji(modifier: Modifier = Modifier) {
+fun MountFuji(
+    currentDayPart: DayPart = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+        .toDayPart(),
+    modifier: Modifier = Modifier
+) {
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
 
     val infiniteTransition = rememberInfiniteTransition(label = "clouds")
@@ -54,13 +67,28 @@ fun MountFuji(modifier: Modifier = Modifier) {
         ),
         label = "delayed_cloud_position"
     )
+
+    val stops = when (currentDayPart) {
+        MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
+        AFTERNOON -> Triple(0xFF7AAEDD, 0xFFA1C8F5, 0xFFD1E4F6)
+        EVENING -> Triple(0xFF5F81E2, 0xFFBF98B7, 0xFFCDACC2)
+        NIGHT -> Triple(0xFF001020, 0xFF112B3A, 0xFF32434B)
+    }
+
+    val mountFujiDrawable = when (currentDayPart) {
+        MORNING -> R.drawable.mount_fuji_morning
+        AFTERNOON -> R.drawable.mount_fuji_afternoon
+        EVENING -> R.drawable.mount_fuji_evening
+        NIGHT -> R.drawable.mount_fuji_night
+    }
+
     Box(
         modifier = modifier
             .background(
                 verticalGradient(
-                    0f to Color(0xFF7AAEDD),
-                    0.75f to Color(0xFFA1C8F5),
-                    1f to Color(0xFFD1E4F6)
+                    0f to Color(stops.first),
+                    0.75f to Color(stops.second),
+                    1f to Color(stops.third)
                 )
             )
             .fillMaxHeight()
@@ -102,7 +130,7 @@ fun MountFuji(modifier: Modifier = Modifier) {
         )
 
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.mount_fuji),
+            imageVector = ImageVector.vectorResource(mountFujiDrawable),
             contentDescription = null,
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height) / 2.5f)
@@ -143,8 +171,42 @@ fun MountFuji(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun PreviewMountFuji() {
+fun PreviewMountFujiMorning() {
     MountFuji(
+        currentDayPart = MORNING,
+        modifier = Modifier
+            .height(dimensionResource(R.dimen.banner_height))
+            .fillMaxWidth()
+    )
+}
+
+@Preview
+@Composable
+fun PreviewMountFujiAfternoon() {
+    MountFuji(
+        currentDayPart = AFTERNOON,
+        modifier = Modifier
+            .height(dimensionResource(R.dimen.banner_height))
+            .fillMaxWidth()
+    )
+}
+
+@Preview
+@Composable
+fun PreviewMountFujiEvening() {
+    MountFuji(
+        currentDayPart = EVENING,
+        modifier = Modifier
+            .height(dimensionResource(R.dimen.banner_height))
+            .fillMaxWidth()
+    )
+}
+
+@Preview
+@Composable
+fun PreviewMountFujiNight() {
+    MountFuji(
+        currentDayPart = NIGHT,
         modifier = Modifier
             .height(dimensionResource(R.dimen.banner_height))
             .fillMaxWidth()

@@ -117,7 +117,7 @@ fun HomeScreen(
                         BannerLayout(
                             banner = { bannerModifier ->
                                 Box {
-                                    MountFuji(bannerModifier)
+                                    MountFuji(modifier = bannerModifier)
 
                                     Row(
                                         modifier = bannerModifier
