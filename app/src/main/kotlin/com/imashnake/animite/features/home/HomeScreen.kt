@@ -11,7 +11,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
@@ -22,8 +21,6 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -33,13 +30,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -48,15 +42,14 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
-import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.banner.MountFuji
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
@@ -117,29 +110,12 @@ fun HomeScreen(
                         BannerLayout(
                             banner = { bannerModifier ->
                                 Box {
-                                    MountFuji(modifier = bannerModifier)
-
-                                    Row(
-                                        modifier = bannerModifier
-                                            .padding(
-                                                horizontal = LocalPaddings.current.large,
-                                                vertical = LocalPaddings.current.medium
-                                            )
-                                            .padding(insetPaddingValues.copy(bottom = 0.dp)),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.Bottom,
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.okaeri),
-                                            color = Color(0xB5001626),
-                                            style = MaterialTheme.typography.displayMedium,
-                                            fontWeight = FontWeight.Medium,
-                                            modifier = Modifier
-                                                .weight(1f, fill = false)
-                                                .padding(navigationComponentPaddingValues.horizontalOnly),
-                                            maxLines = 1
-                                        )
-                                    }
+                                    MountFuji(
+                                        header = stringResource(R.string.okaeri),
+                                        insetPaddingValues = insetPaddingValues,
+                                        navigationComponentPaddingValues = navigationComponentPaddingValues,
+                                        modifier = bannerModifier,
+                                    )
                                 }
                             },
                             content = {

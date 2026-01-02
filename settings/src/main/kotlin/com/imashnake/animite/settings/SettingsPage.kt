@@ -97,27 +97,11 @@ fun SettingsPage(
         Box(modifier.verticalScroll(scrollState)) {
             BannerLayout(
                 banner = { bannerModifier ->
-                    MountFuji(modifier = bannerModifier)
-
-                    Row(
-                        modifier = bannerModifier
-                            .padding(
-                                horizontal = LocalPaddings.current.large,
-                                vertical = LocalPaddings.current.medium
-                            )
-                            .padding(insetPaddingValues.copy(bottom = 0.dp)),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Bottom,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.settings),
-                            color = Color(0xB5001626),
-                            style = MaterialTheme.typography.displayMedium,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.weight(1f, fill = false),
-                            maxLines = 1
-                        )
-                    }
+                    MountFuji(
+                        header = stringResource(R.string.settings),
+                        insetPaddingValues = insetPaddingValues,
+                        modifier = bannerModifier,
+                    )
                 },
                 content = {
                     Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {

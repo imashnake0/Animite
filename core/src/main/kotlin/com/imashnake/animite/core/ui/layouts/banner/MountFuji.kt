@@ -7,12 +7,19 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,13 +31,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.DayPart
 import com.imashnake.animite.core.extensions.DayPart.*
+import com.imashnake.animite.core.extensions.copy
+import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.toDayPart
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -42,7 +54,10 @@ fun MountFuji(
     currentDayPart: DayPart = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
         .toDayPart(),
-    modifier: Modifier = Modifier
+    header: String? = null,
+    insetPaddingValues: PaddingValues = PaddingValues(),
+    navigationComponentPaddingValues: PaddingValues = PaddingValues(),
+    modifier: Modifier = Modifier,
 ) {
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
 
@@ -82,6 +97,13 @@ fun MountFuji(
         NIGHT -> R.drawable.mount_fuji_night
     }
 
+    val headerColor = when (currentDayPart) {
+        MORNING -> 0xFFFFFAE2
+        AFTERNOON -> 0xFFFAFAFA
+        EVENING -> 0xFFE0E0FF
+        NIGHT -> 0xFFAEACA7
+    }
+
     Box(
         modifier = modifier
             .background(
@@ -105,6 +127,7 @@ fun MountFuji(
                 },
         )
 
+
         Image(
             imageVector = ImageVector.vectorResource(R.drawable.cloud_3),
             contentDescription = null,
@@ -117,17 +140,19 @@ fun MountFuji(
                 },
         )
 
-        Image(
-            imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
-            contentDescription = null,
-            modifier = Modifier
-                .height(35.dp)
-                .offset { IntOffset(x = 500, y = 230) }
-                .graphicsLayer {
-                    translationX = horizontalPosition * extendedScreenWidth * 0.6f
-                    alpha = 0.5f
-                },
-        )
+        if (currentDayPart == AFTERNOON) {
+            Image(
+                imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(35.dp)
+                    .offset { IntOffset(x = 500, y = 230) }
+                    .graphicsLayer {
+                        translationX = horizontalPosition * extendedScreenWidth * 0.6f
+                        alpha = 0.5f
+                    },
+            )
+        }
 
         Image(
             imageVector = ImageVector.vectorResource(mountFujiDrawable),
@@ -143,28 +168,56 @@ fun MountFuji(
             contentScale = ContentScale.Crop
         )
 
-        Image(
-            imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
-            contentDescription = null,
-            modifier = Modifier
-                .height(40.dp)
-                .offset { IntOffset(x = -110, y = 320) }
-                .graphicsLayer {
-                    translationX = delayedHorizontalPosition * extendedScreenWidth * 0.8f
-                    alpha = 0.9f
-                },
-        )
+        header?.let {
+            Row(
+                modifier = modifier
+                    .padding(
+                        horizontal = LocalPaddings.current.large,
+                        vertical = LocalPaddings.current.medium
+                    )
+                    .padding(insetPaddingValues.copy(bottom = 0.dp)),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Text(
+                    text = it,
+                    color = Color(headerColor),
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .padding(navigationComponentPaddingValues.horizontalOnly),
+                    maxLines = 1
+                )
+            }
+        }
 
-        Image(
-            imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
-            contentDescription = null,
-            modifier = Modifier
-                .height(35.dp)
-                .offset { IntOffset(x = extendedScreenWidth, y = 350) }
-                .graphicsLayer {
-                    translationX = -delayedHorizontalPosition * extendedScreenWidth * 0.8f
-                },
-        )
+        if (currentDayPart == AFTERNOON || currentDayPart == MORNING) {
+            Image(
+                imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(40.dp)
+                    .offset { IntOffset(x = -110, y = 320) }
+                    .graphicsLayer {
+                        translationX = delayedHorizontalPosition * extendedScreenWidth * 0.8f
+                        alpha = 0.9f
+                    },
+            )
+        }
+
+        if (currentDayPart == AFTERNOON) {
+            Image(
+                imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(35.dp)
+                    .offset { IntOffset(x = extendedScreenWidth, y = 350) }
+                    .graphicsLayer {
+                        translationX = -delayedHorizontalPosition * extendedScreenWidth * 0.8f
+                    },
+            )
+        }
     }
 }
 
@@ -172,43 +225,55 @@ fun MountFuji(
 @Preview
 @Composable
 fun PreviewMountFujiMorning() {
-    MountFuji(
-        currentDayPart = MORNING,
-        modifier = Modifier
-            .height(dimensionResource(R.dimen.banner_height))
-            .fillMaxWidth()
-    )
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        MountFuji(
+            currentDayPart = MORNING,
+            header = "Settings",
+            modifier = Modifier
+                .height(dimensionResource(R.dimen.banner_height))
+                .fillMaxWidth()
+        )
+    }
 }
 
 @Preview
 @Composable
 fun PreviewMountFujiAfternoon() {
-    MountFuji(
-        currentDayPart = AFTERNOON,
-        modifier = Modifier
-            .height(dimensionResource(R.dimen.banner_height))
-            .fillMaxWidth()
-    )
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        MountFuji(
+            currentDayPart = AFTERNOON,
+            header = "Settings",
+            modifier = Modifier
+                .height(dimensionResource(R.dimen.banner_height))
+                .fillMaxWidth()
+        )
+    }
 }
 
 @Preview
 @Composable
 fun PreviewMountFujiEvening() {
-    MountFuji(
-        currentDayPart = EVENING,
-        modifier = Modifier
-            .height(dimensionResource(R.dimen.banner_height))
-            .fillMaxWidth()
-    )
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        MountFuji(
+            currentDayPart = EVENING,
+            header = "Settings",
+            modifier = Modifier
+                .height(dimensionResource(R.dimen.banner_height))
+                .fillMaxWidth()
+        )
+    }
 }
 
 @Preview
 @Composable
 fun PreviewMountFujiNight() {
-    MountFuji(
-        currentDayPart = NIGHT,
-        modifier = Modifier
-            .height(dimensionResource(R.dimen.banner_height))
-            .fillMaxWidth()
-    )
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        MountFuji(
+            currentDayPart = NIGHT,
+            header = "Settings",
+            modifier = Modifier
+                .height(dimensionResource(R.dimen.banner_height))
+                .fillMaxWidth()
+        )
+    }
 }
