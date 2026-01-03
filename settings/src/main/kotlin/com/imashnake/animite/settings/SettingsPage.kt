@@ -29,13 +29,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonColors
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -84,12 +89,12 @@ fun SettingsPage(
 
     val scrollState = rememberScrollState()
 
-    val selectedTheme by viewModel.theme.filterNotNull().collectAsState(initial = THEME.DEVICE_THEME.name)
+    val selectedTheme by viewModel.theme.filterNotNull().collectAsState(initial = Theme.DEVICE_THEME.name)
     val useSystemColorScheme by viewModel.useSystemColorScheme.filterNotNull().collectAsState(initial = true)
     val haptic = LocalHapticFeedback.current
 
-    val isDarkMode = selectedTheme == THEME.DARK.name ||
-            (selectedTheme == THEME.DEVICE_THEME.name && isSystemInDarkTheme())
+    val isDarkMode = selectedTheme == Theme.DARK.name ||
+            (selectedTheme == Theme.DEVICE_THEME.name && isSystemInDarkTheme())
 
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
@@ -114,11 +119,13 @@ fun SettingsPage(
                             items = listOf(
                                 Item(
                                     icon = R.drawable.theme,
-                                    label = R.string.theme
+                                    label = R.string.theme,
+                                    orientation = Item.Orientation.VERTICAL
                                 ),
                                 Item(
                                     icon = R.drawable.palette,
-                                    label = R.string.palette
+                                    label = R.string.palette,
+                                    orientation = Item.Orientation.HORIZONTAL
                                 )
                             ),
                             onItemClick = { index ->
@@ -138,8 +145,12 @@ fun SettingsPage(
                             modifier = Modifier.fillMaxWidth()
                         ) { index ->
                             when (index) {
-                                0 -> Row(horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
-                                    THEME.entries.forEach { theme ->
+                                0 -> Row(
+                                    horizontalArrangement = Arrangement.spacedBy(
+                                        ButtonGroupDefaults.ConnectedSpaceBetween
+                                    )
+                                ) {
+                                    Theme.entries.forEach { theme ->
                                         ToggleButton(
                                             checked = selectedTheme == theme.name,
                                             onCheckedChange = {
@@ -147,10 +158,14 @@ fun SettingsPage(
                                                 haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                             },
                                             shapes = when (theme) {
-                                                THEME.DARK -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                                THEME.DEVICE_THEME -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                Theme.DARK -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                Theme.DEVICE_THEME -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                                 else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                             },
+                                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                                containerColor = MaterialTheme.colorScheme.background
+                                            ),
+                                            modifier = Modifier.weight(1f)
                                         ) {
                                             Text(stringResource(theme.theme))
                                         }
@@ -221,37 +236,54 @@ private fun Items(
         ) {
             items.forEachIndexed { index, item ->
                 val topPercent = when (index) {
-                    0 -> 50
-                    else -> 10
+                    0 -> LocalPaddings.current.large
+                    else -> LocalPaddings.current.tiny
                 }
                 val bottomPercent = when (index) {
-                    items.lastIndex -> 50
-                    else -> 10
+                    items.lastIndex -> LocalPaddings.current.large
+                    else -> LocalPaddings.current.tiny
                 }
 
-                Item(
-                    item = index to item,
-                    shape = RoundedCornerShape(
-                        topStartPercent = topPercent,
-                        topEndPercent = topPercent,
-                        bottomEndPercent = bottomPercent,
-                        bottomStartPercent = bottomPercent,
-                    ),
-                    onItemClick = { onItemClick(index) },
-                    background = if (isDarkMode) {
-                        MaterialTheme.colorScheme.surfaceContainer
-                    } else MaterialTheme.colorScheme.surface
-                ) {
-                    itemContent(index)
+                when (item.orientation) {
+                    Item.Orientation.HORIZONTAL -> HorizontalItem(
+                        item = index to item,
+                        shape = RoundedCornerShape(
+                            topStart = topPercent,
+                            topEnd = topPercent,
+                            bottomEnd = bottomPercent,
+                            bottomStart = bottomPercent,
+                        ),
+                        onItemClick = { onItemClick(index) },
+                        background = if (isDarkMode) {
+                            MaterialTheme.colorScheme.surfaceContainer
+                        } else MaterialTheme.colorScheme.surface
+                    ) {
+                        itemContent(index)
+                    }
+                    Item.Orientation.VERTICAL -> VerticalItem(
+                        item = index to item,
+                        shape = RoundedCornerShape(
+                            topStart = topPercent,
+                            topEnd = topPercent,
+                            bottomEnd = bottomPercent,
+                            bottomStart = bottomPercent,
+                        ),
+                        onItemClick = { onItemClick(index) },
+                        background = if (isDarkMode) {
+                            MaterialTheme.colorScheme.surfaceContainer
+                        } else MaterialTheme.colorScheme.surface
+                    ) {
+                        itemContent(index)
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun Item(
+private fun HorizontalItem(
     item: Pair<Int, Item>,
     shape: Shape,
     background: Color,
@@ -259,7 +291,11 @@ private fun Item(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+    CompositionLocalProvider(
+        LocalPaddings provides rememberDefaultPaddings(),
+        // Remove default M3 padding
+        LocalMinimumInteractiveComponentSize provides 0.dp,
+    ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
             verticalAlignment = Alignment.CenterVertically,
@@ -273,7 +309,6 @@ private fun Item(
             Icon(
                 imageVector = ImageVector.vectorResource(item.second.icon),
                 contentDescription = null,
-                modifier = Modifier.padding(start = LocalPaddings.current.small)
             )
             Text(
                 text = stringResource(item.second.label),
@@ -281,6 +316,50 @@ private fun Item(
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.weight(1f),
             )
+            content()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun VerticalItem(
+    item: Pair<Int, Item>,
+    shape: Shape,
+    background: Color,
+    onItemClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(
+        LocalPaddings provides rememberDefaultPaddings(),
+        // Remove default M3 padding
+        LocalMinimumInteractiveComponentSize provides 0.dp,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .clickable { onItemClick() }
+                .background(background)
+                .padding(LocalPaddings.current.medium)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(item.second.icon),
+                    contentDescription = null,
+                )
+                Text(
+                    text = stringResource(item.second.label),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.weight(1f),
+                )
+            }
             content()
         }
     }
@@ -350,7 +429,7 @@ private fun AboutItem(
 )
 @Composable
 private fun PreviewItems() {
-    var selectedTheme by remember { mutableStateOf(THEME.DARK) }
+    var selectedTheme by remember { mutableStateOf(Theme.DARK) }
     var useColorScheme by remember { mutableStateOf(true) }
 
     Column {
@@ -358,11 +437,13 @@ private fun PreviewItems() {
             items = listOf(
                 Item(
                     icon = R.drawable.theme,
-                    label = R.string.theme
+                    label = R.string.theme,
+                    orientation = Item.Orientation.VERTICAL
                 ),
                 Item(
                     icon = R.drawable.palette,
-                    label = R.string.palette
+                    label = R.string.palette,
+                    orientation = Item.Orientation.HORIZONTAL
                 )
             ),
             onItemClick = {},
@@ -370,16 +451,19 @@ private fun PreviewItems() {
             modifier = Modifier.fillMaxWidth().padding(20.dp)
         ) { index ->
             when (index) {
-                0 -> Row(horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)) {
-                    THEME.entries.forEach { theme ->
+                0 -> Row(
+                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+                ) {
+                    Theme.entries.forEach { theme ->
                         ToggleButton(
                             checked = selectedTheme == theme,
                             onCheckedChange = { selectedTheme = theme },
                             shapes = when (theme) {
-                                THEME.DARK -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                THEME.DEVICE_THEME -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                Theme.DARK -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                Theme.DEVICE_THEME -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                 else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                             },
+                            modifier = Modifier.weight(1f)
                         ) {
                             Text(stringResource(theme.theme))
                         }
@@ -417,9 +501,15 @@ private fun PreviewItems() {
 private data class Item(
     @param:DrawableRes val icon: Int,
     @param:StringRes val label: Int,
-)
+    val orientation: Orientation,
+) {
+    enum class Orientation {
+        HORIZONTAL, VERTICAL
+    }
+}
 
-enum class THEME(@param:StringRes val theme: Int) {
+
+enum class Theme(@param:StringRes val theme: Int) {
     DARK(R.string.dark),
     LIGHT(R.string.light),
     DEVICE_THEME(R.string.system),

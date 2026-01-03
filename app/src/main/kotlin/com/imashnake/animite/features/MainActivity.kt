@@ -54,7 +54,7 @@ import com.imashnake.animite.profile.ProfileScreen
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
-import com.imashnake.animite.settings.THEME
+import com.imashnake.animite.settings.Theme
 import com.imashnake.animite.social.SocialScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
@@ -70,16 +70,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             val theme by settingsViewModel.theme
                 .filterNotNull()
-                .collectAsState(initial = THEME.DEVICE_THEME.name)
+                .collectAsState(initial = Theme.DEVICE_THEME.name)
 
             val useSystemColorScheme by settingsViewModel.useSystemColorScheme
                 .filterNotNull()
                 .collectAsState(initial = false)
 
-            val useDarkTheme = when(THEME.valueOf(theme)) {
-                THEME.DARK -> true
-                THEME.LIGHT -> false
-                THEME.DEVICE_THEME -> isSystemInDarkTheme()
+            val useDarkTheme = when(Theme.valueOf(theme)) {
+                Theme.DARK -> true
+                Theme.LIGHT -> false
+                Theme.DEVICE_THEME -> isSystemInDarkTheme()
             }
 
             AnimiteTheme(useDarkTheme = useDarkTheme, useSystemColorScheme = useSystemColorScheme) {
