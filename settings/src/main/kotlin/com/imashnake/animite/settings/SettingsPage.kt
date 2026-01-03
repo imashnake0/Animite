@@ -12,12 +12,15 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
@@ -32,14 +35,12 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonColors
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -373,15 +374,11 @@ private fun AboutItem(
     modifier: Modifier = Modifier,
 ) {
     val background by animateColorAsState(
-        targetValue = if (isDarkMode) {
-            Color(0x080FFF66)
-        } else {
-            Color(0x4DFFC0CB)
-        },
+        targetValue = if (isDarkMode) Color(0x080FFF66) else Color(0x4DFFC0CB),
         animationSpec = tween(500)
     )
     val textColor by animateColorAsState(
-        targetValue = if (isDarkMode) Color(0xFF0FFF66) else Color(0xFFDA6482),
+        targetValue = if (isDarkMode) Color(0xFF3BFF84) else Color(0xFFDA6482),
         animationSpec = tween(500)
     )
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
@@ -394,6 +391,7 @@ private fun AboutItem(
                 .clickable {}
                 .background(background)
                 .padding(LocalPaddings.current.medium)
+                .height(IntrinsicSize.Min)
         ) {
             if (LocalInspectionMode.current) {
                 Box(
@@ -412,12 +410,21 @@ private fun AboutItem(
                     modifier = Modifier.size(40.dp)
                 )
             }
-            Text(
-                text = "v$versionName",
-                color = textColor,
-                style = MaterialTheme.typography.titleSmallEmphasized,
-                modifier = Modifier.weight(1f),
-            )
+            Column(
+                verticalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                Text(
+                    text = "Animite",
+                    color = textColor,
+                    style = MaterialTheme.typography.titleSmallEmphasized,
+                )
+                Text(
+                    text = "v$versionName",
+                    color = textColor.copy(alpha = 0.75f),
+                    style = MaterialTheme.typography.labelSmallEmphasized,
+                )
+            }
         }
     }
 }
