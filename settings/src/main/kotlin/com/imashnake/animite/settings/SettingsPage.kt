@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -60,6 +61,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -76,6 +79,8 @@ import com.imashnake.animite.core.ui.layouts.banner.MountFuji
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
+
+private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -381,6 +386,8 @@ private fun AboutItem(
         targetValue = if (isDarkMode) Color(0xFF3BFF84) else Color(0xFFDA6482),
         animationSpec = tween(500)
     )
+    val uriHandler = LocalUriHandler.current
+
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
@@ -410,9 +417,10 @@ private fun AboutItem(
                     modifier = Modifier.size(40.dp)
                 )
             }
+
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier.fillMaxHeight().weight(1f)
             ) {
                 Text(
                     text = "Animite",
@@ -425,6 +433,16 @@ private fun AboutItem(
                     style = MaterialTheme.typography.labelSmallEmphasized,
                 )
             }
+
+            Image(
+                bitmap = ImageBitmap.imageResource(R.drawable.github),
+                contentDescription = stringResource(R.string.app_icon),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { uriHandler.openUri(GITHUB_URL) }
+                    .padding(5.dp)
+                    .size(30.dp)
+            )
         }
     }
 }
@@ -439,7 +457,12 @@ private fun PreviewItems() {
     var selectedTheme by remember { mutableStateOf(Theme.DARK) }
     var useColorScheme by remember { mutableStateOf(true) }
 
-    Column {
+    val padding = 10.dp
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(padding),
+        modifier = Modifier.padding(vertical = padding)
+    ) {
         Items(
             items = listOf(
                 Item(
@@ -455,7 +478,7 @@ private fun PreviewItems() {
             ),
             onItemClick = {},
             isDarkMode = false,
-            modifier = Modifier.fillMaxWidth().padding(20.dp)
+            modifier = Modifier.fillMaxWidth().padding(horizontal = padding)
         ) { index ->
             when (index) {
                 0 -> Row(
@@ -500,7 +523,7 @@ private fun PreviewItems() {
         AboutItem(
             isDarkMode = false,
             versionName = "0.0.0-alpha0",
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(horizontal = 10.dp)
         )
     }
 }
