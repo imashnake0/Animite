@@ -12,6 +12,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -464,6 +465,8 @@ private fun AboutItem(
     val context = LocalContext.current
     var toast: Toast? by remember { mutableStateOf(null) }
 
+    val haptic = LocalHapticFeedback.current
+
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
@@ -471,37 +474,41 @@ private fun AboutItem(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(CircleShape)
-                .clickable {
-                    if (toast != null) {
-                        toast?.cancel()
-                    }
-                    if (isDevOptionsEnabled) {
-                        toast = Toast.makeText(
-                            context,
-                            "You are already a developer!",
-                            Toast.LENGTH_SHORT
-                        )
+                .combinedClickable(
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                        if (toast != null) {
+                            toast?.cancel()
+                        }
+                        if (isDevOptionsEnabled) {
+                            toast = Toast.makeText(
+                                context,
+                                "You are already a developer!",
+                                Toast.LENGTH_SHORT
+                            )
+                            toast?.show()
+                            return@combinedClickable
+                        }
+                        if (devOptionsCount < 10) {
+                            onClick()
+                            toast = Toast.makeText(
+                                context,
+                                "You are ${10 - devOptionsCount} steps away from being a developer!",
+                                Toast.LENGTH_SHORT
+                            )
+                        } else if (devOptionsCount == 10) {
+                            enableDevOptions.invoke()
+                            onClick()
+                            toast = Toast.makeText(
+                                context,
+                                "You are now a developer!",
+                                Toast.LENGTH_SHORT
+                            )
+                        }
                         toast?.show()
-                        return@clickable
-                    }
-                    if (devOptionsCount < 10) {
-                        onClick()
-                        toast = Toast.makeText(
-                            context,
-                            "You are ${10 - devOptionsCount} steps away from being a developer!",
-                            Toast.LENGTH_SHORT
-                        )
-                    } else if (devOptionsCount == 10) {
-                        enableDevOptions.invoke()
-                        onClick()
-                        toast = Toast.makeText(
-                            context,
-                            "You are now a developer!",
-                            Toast.LENGTH_SHORT
-                        )
-                    }
-                    toast?.show()
-                }
+                    },
+                    onLongClick = {}
+                )
                 .background(background)
                 .padding(LocalPaddings.current.medium)
                 .height(IntrinsicSize.Min)
