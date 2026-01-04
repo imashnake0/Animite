@@ -1,6 +1,7 @@
 package com.imashnake.animite.settings
 
 import android.graphics.Bitmap
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
@@ -46,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -99,8 +101,12 @@ fun SettingsPage(
     val useSystemColorScheme by viewModel.useSystemColorScheme.filterNotNull().collectAsState(initial = true)
     val haptic = LocalHapticFeedback.current
 
+    val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.filterNotNull().collectAsState(initial = false)
+
     val isDarkMode = selectedTheme == Theme.DARK.name ||
             (selectedTheme == Theme.DEVICE_THEME.name && isSystemInDarkTheme())
+
+    var devOptionsCount by remember { mutableIntStateOf(0) }
 
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
@@ -213,6 +219,10 @@ fun SettingsPage(
                         AboutItem(
                             isDarkMode = isDarkMode,
                             versionName = versionName,
+                            isDevOptionsEnabled = isDevOptionsEnabled,
+                            devOptionsCount = devOptionsCount,
+                            onClick = { devOptionsCount++ },
+                            enableDevOptions = viewModel::enableDevOptions
                         )
                     }
                 },
@@ -376,6 +386,10 @@ private fun VerticalItem(
 private fun AboutItem(
     isDarkMode: Boolean,
     versionName: String,
+    isDevOptionsEnabled: Boolean,
+    devOptionsCount: Int,
+    onClick: () -> Unit,
+    enableDevOptions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val background by animateColorAsState(
@@ -387,6 +401,8 @@ private fun AboutItem(
         animationSpec = tween(500)
     )
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+    var toast: Toast? by remember { mutableStateOf(null) }
 
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         Row(
@@ -395,7 +411,37 @@ private fun AboutItem(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(CircleShape)
-                .clickable {}
+                .clickable {
+                    if (toast != null) {
+                        toast?.cancel()
+                    }
+                    if (isDevOptionsEnabled) {
+                        toast = Toast.makeText(
+                            context,
+                            "You are already a developer!",
+                            Toast.LENGTH_SHORT
+                        )
+                        toast?.show()
+                        return@clickable
+                    }
+                    if (devOptionsCount < 10) {
+                        onClick()
+                        toast = Toast.makeText(
+                            context,
+                            "You are ${10 - devOptionsCount} steps away from being a developer!",
+                            Toast.LENGTH_SHORT
+                        )
+                    } else if (devOptionsCount == 10) {
+                        enableDevOptions.invoke()
+                        onClick()
+                        toast = Toast.makeText(
+                            context,
+                            "You are now a developer!",
+                            Toast.LENGTH_SHORT
+                        )
+                    }
+                    toast?.show()
+                }
                 .background(background)
                 .padding(LocalPaddings.current.medium)
                 .height(IntrinsicSize.Min)
@@ -523,6 +569,10 @@ private fun PreviewItems() {
         AboutItem(
             isDarkMode = false,
             versionName = "0.0.0-alpha0",
+            isDevOptionsEnabled = false,
+            devOptionsCount = 0,
+            onClick = {},
+            enableDevOptions = {},
             modifier = Modifier.padding(horizontal = 10.dp)
         )
     }

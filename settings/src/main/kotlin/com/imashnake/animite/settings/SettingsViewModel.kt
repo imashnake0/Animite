@@ -14,11 +14,16 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
     val theme = preferencesRepository.theme
     val useSystemColorScheme = preferencesRepository.useSystemColorScheme
+    val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled
 
     fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setThemeToken(theme.name)
     }
     fun setUseSystemColorScheme(useSystemColorScheme: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setUseSystemColorScheme(useSystemColorScheme)
+    }
+
+    fun enableDevOptions() = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setDevOptionsEnabled(true)
     }
 }
