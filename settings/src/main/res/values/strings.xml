@@ -8,8 +8,12 @@
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="system">Device</string>
-    <string name="palette">Use System Color Scheme</string>
+    <string name="palette">Use system color scheme</string>
 
     <string name="about">About</string>
     <string name="app_icon">App Icon</string>
+
+    <string name="dev_options">Developer Options</string>
+
+    <string name="day_part">Set day part</string>
 </resources>

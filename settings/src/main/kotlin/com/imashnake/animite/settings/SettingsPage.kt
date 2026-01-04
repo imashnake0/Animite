@@ -4,8 +4,11 @@ import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,6 +41,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -72,6 +76,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.imashnake.animite.core.extensions.DayPart
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -119,7 +124,7 @@ fun SettingsPage(
                     )
                 },
                 content = {
-                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
                         Text(
                             text = stringResource(R.string.appearance),
                             color = MaterialTheme.colorScheme.onBackground,
@@ -150,6 +155,7 @@ fun SettingsPage(
                                             } else HapticFeedbackType.ToggleOn
                                         )
                                     }
+
                                     else -> {}
                                 }
                             },
@@ -183,6 +189,7 @@ fun SettingsPage(
                                         }
                                     }
                                 }
+
                                 1 -> {
                                     Switch(
                                         checked = useSystemColorScheme,
@@ -205,10 +212,13 @@ fun SettingsPage(
                                         },
                                     )
                                 }
+
                                 else -> {}
                             }
                         }
+                    }
 
+                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
                         Text(
                             text = stringResource(R.string.about),
                             color = MaterialTheme.colorScheme.onBackground,
@@ -224,6 +234,56 @@ fun SettingsPage(
                             onClick = { devOptionsCount++ },
                             enableDevOptions = viewModel::enableDevOptions
                         )
+                    }
+
+                    AnimatedVisibility(
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        visible = isDevOptionsEnabled
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                            Text(
+                                text = stringResource(R.string.dev_options),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleLarge,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+
+                            Items(
+                                items = listOf(
+                                    Item(
+                                        icon = R.drawable.day_part,
+                                        label = R.string.day_part,
+                                        orientation = Item.Orientation.VERTICAL
+                                    ),
+                                ),
+                                onItemClick = {},
+                                isDarkMode = isDarkMode,
+                            ) { index ->
+                                when (index) {
+                                    0 -> {
+                                        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                                            DayPart.entries.map { it.name }.plus("SYSTEM").forEach {
+                                                Row(
+                                                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    RadioButton(
+                                                        selected = false,
+                                                        onClick = {},
+                                                    )
+                                                    Text(
+                                                        text = it,
+                                                        style = MaterialTheme.typography.labelSmallEmphasized,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 contentPadding = PaddingValues(
