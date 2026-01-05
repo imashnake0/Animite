@@ -286,7 +286,7 @@ fun SettingsPage(
                                                             top = LocalPaddings.current.tiny,
                                                             bottom = LocalPaddings.current.tiny,
                                                             start = LocalPaddings.current.tiny,
-                                                            end = LocalPaddings.current.small
+                                                            end = LocalPaddings.current.medium
                                                         )
                                                 ) {
                                                     RadioButton(
