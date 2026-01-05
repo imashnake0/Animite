@@ -17,8 +17,8 @@
 
     <string name="already_developer">You are already a developer!</string>
     <plurals name="almost_developer">
-        <item quantity="one">You are %1$d step away from being a developer!</item>
-        <item quantity="other">You are %1$d steps away from being a developer!</item>
+        <item quantity="one">%1$d step from being a developer!</item>
+        <item quantity="other">%1$d steps from being a developer!</item>
     </plurals>
     <string name="now_developer">You are now a developer!</string>
     <string name="disabled_dev_options">"Developer Options disabled!"</string>
