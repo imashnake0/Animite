@@ -475,7 +475,7 @@ private fun AboutItem(
     modifier: Modifier = Modifier,
 ) {
     val background by animateColorAsState(
-        targetValue = if (isDarkMode) Color(0x080FFF66) else Color(0x4DFFC0CB),
+        targetValue = if (isDarkMode) Color(0x190FFF66) else Color(0x59FFC0CB),
         animationSpec = tween(500)
     )
     val textColor by animateColorAsState(
