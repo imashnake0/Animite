@@ -68,8 +68,10 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -443,7 +445,6 @@ private fun VerticalItem(
     }
 }
 
-// TODO: Combine state of dev options count and dev options enabled.
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AboutItem(
@@ -466,6 +467,11 @@ private fun AboutItem(
     )
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
+    val stepsFromDeveloper = pluralStringResource(
+        id = R.plurals.almost_developer,
+        count = 10 - devOptionsCount,
+        10 - devOptionsCount
+    )
     var toast: Toast? by remember { mutableStateOf(null) }
 
     val haptic = LocalHapticFeedback.current
@@ -484,30 +490,21 @@ private fun AboutItem(
                             toast?.cancel()
                         }
                         if (isDevOptionsEnabled) {
-                            toast = Toast.makeText(
-                                context,
-                                "You are already a developer!",
-                                Toast.LENGTH_SHORT
-                            )
+                            toast = Toast.makeText(context, R.string.already_developer, Toast.LENGTH_SHORT)
                             toast?.show()
                             return@combinedClickable
                         }
                         if (devOptionsCount < 10) {
                             onClick()
-                            // TODO: Use string resources.
                             toast = Toast.makeText(
                                 context,
-                                "You are ${10 - devOptionsCount} steps away from being a developer!",
+                                stepsFromDeveloper,
                                 Toast.LENGTH_SHORT
                             )
                         } else if (devOptionsCount == 10) {
                             enableDevOptions()
                             onClick()
-                            toast = Toast.makeText(
-                                context,
-                                "You are now a developer!",
-                                Toast.LENGTH_SHORT
-                            )
+                            toast = Toast.makeText(context, R.string.now_developer, Toast.LENGTH_SHORT)
                         }
                         toast?.show()
                     },
@@ -517,11 +514,7 @@ private fun AboutItem(
                                 toast?.cancel()
                             }
                             disableDevOptions()
-                            toast = Toast.makeText(
-                                context,
-                                "Dev Options disabled!",
-                                Toast.LENGTH_SHORT
-                            )
+                            toast = Toast.makeText(context, R.string.disabled_dev_options, Toast.LENGTH_SHORT)
                             toast?.show()
                         }
                     }
