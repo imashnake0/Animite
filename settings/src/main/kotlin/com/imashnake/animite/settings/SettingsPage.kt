@@ -233,7 +233,8 @@ fun SettingsPage(
                             isDevOptionsEnabled = isDevOptionsEnabled,
                             devOptionsCount = devOptionsCount,
                             onClick = { devOptionsCount++ },
-                            enableDevOptions = viewModel::enableDevOptions
+                            enableDevOptions = { viewModel.setDevOptions(true) },
+                            disableDevOptions = { devOptionsCount = 0; viewModel.setDevOptions(false) }
                         )
                     }
 
@@ -442,6 +443,7 @@ private fun VerticalItem(
     }
 }
 
+// TODO: Combine state of dev options count and dev options enabled.
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AboutItem(
@@ -451,6 +453,7 @@ private fun AboutItem(
     devOptionsCount: Int,
     onClick: () -> Unit,
     enableDevOptions: () -> Unit,
+    disableDevOptions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val background by animateColorAsState(
@@ -491,13 +494,14 @@ private fun AboutItem(
                         }
                         if (devOptionsCount < 10) {
                             onClick()
+                            // TODO: Use string resources.
                             toast = Toast.makeText(
                                 context,
                                 "You are ${10 - devOptionsCount} steps away from being a developer!",
                                 Toast.LENGTH_SHORT
                             )
                         } else if (devOptionsCount == 10) {
-                            enableDevOptions.invoke()
+                            enableDevOptions()
                             onClick()
                             toast = Toast.makeText(
                                 context,
@@ -507,7 +511,20 @@ private fun AboutItem(
                         }
                         toast?.show()
                     },
-                    onLongClick = {}
+                    onLongClick = {
+                        if (isDevOptionsEnabled) {
+                            if (toast != null) {
+                                toast?.cancel()
+                            }
+                            disableDevOptions()
+                            toast = Toast.makeText(
+                                context,
+                                "Dev Options disabled!",
+                                Toast.LENGTH_SHORT
+                            )
+                            toast?.show()
+                        }
+                    }
                 )
                 .background(background)
                 .padding(LocalPaddings.current.medium)
@@ -640,6 +657,7 @@ private fun PreviewItems() {
             devOptionsCount = 0,
             onClick = {},
             enableDevOptions = {},
+            disableDevOptions = {},
             modifier = Modifier.padding(horizontal = 10.dp)
         )
     }

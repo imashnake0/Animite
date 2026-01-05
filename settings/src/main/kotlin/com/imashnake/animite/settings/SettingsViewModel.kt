@@ -23,7 +23,7 @@ class SettingsViewModel @Inject constructor(
         preferencesRepository.setUseSystemColorScheme(useSystemColorScheme)
     }
 
-    fun enableDevOptions() = viewModelScope.launch(Dispatchers.IO) {
-        preferencesRepository.setDevOptionsEnabled(true)
+    fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setDevOptionsEnabled(enabled)
     }
 }
