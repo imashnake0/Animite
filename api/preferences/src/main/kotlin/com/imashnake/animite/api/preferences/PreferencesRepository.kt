@@ -3,7 +3,6 @@ package com.imashnake.animite.api.preferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
@@ -46,7 +45,19 @@ class PreferencesRepository @Inject constructor(
     private val isDevOptionsEnabledKey = booleanPreferencesKey("dev_options_enabled")
     val isDevOptionsEnabled = dataStore.getValue(isDevOptionsEnabledKey, IS_DEV_OPTIONS_ENABLED)
     suspend fun setDevOptionsEnabled(isEnabled: Boolean) {
+        if (!isEnabled) {
+            dataStore.setValue(dayPartKey, null)
+        }
         dataStore.setValue(isDevOptionsEnabledKey, isEnabled)
     }
+
+    // region developer options
+    private val dayPartKey = stringPreferencesKey("day_part")
+    val dayPart = dataStore.getValue(dayPartKey, null)
+    suspend fun setDayPart(dayPart: String?) {
+        dataStore.setValue(dayPartKey, dayPart)
+    }
+    // endregion
+
     // endregion
 }

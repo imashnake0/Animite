@@ -68,7 +68,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.pluralStringResource
@@ -91,6 +90,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
+private const val SYSTEM_DAY_PART = "SYSTEM"
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -116,11 +116,14 @@ fun SettingsPage(
 
     var devOptionsCount by remember { mutableIntStateOf(0) }
 
+    val dayPart by viewModel.dayPart.collectAsState(initial = null)
+
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
             BannerLayout(
                 banner = { bannerModifier ->
                     MountFuji(
+                        dayPart = dayPart?.let { DayPart.valueOf(it) },
                         header = stringResource(R.string.settings),
                         insetPaddingValues = insetPaddingValues,
                         modifier = bannerModifier,
@@ -266,15 +269,29 @@ fun SettingsPage(
                             ) { index ->
                                 when (index) {
                                     0 -> {
-                                        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
-                                            DayPart.entries.map { it.name }.plus("SYSTEM").forEach {
+                                        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+                                            DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART).forEach {
                                                 Row(
                                                     horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                                    verticalAlignment = Alignment.CenterVertically
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    modifier = Modifier
+                                                        .padding(start = LocalPaddings.current.large)
+                                                        .clip(CircleShape)
+                                                        .clickable {
+                                                            if (it != SYSTEM_DAY_PART) {
+                                                                viewModel.setDayPart(DayPart.valueOf(it))
+                                                            } else viewModel.setDayPart(null)
+                                                        }
+                                                        .padding(
+                                                            top = LocalPaddings.current.tiny,
+                                                            bottom = LocalPaddings.current.tiny,
+                                                            start = LocalPaddings.current.tiny,
+                                                            end = LocalPaddings.current.small
+                                                        )
                                                 ) {
                                                     RadioButton(
-                                                        selected = false,
-                                                        onClick = {},
+                                                        selected = if (dayPart == null) it == SYSTEM_DAY_PART else it == dayPart,
+                                                        onClick = null,
                                                     )
                                                     Text(
                                                         text = it,

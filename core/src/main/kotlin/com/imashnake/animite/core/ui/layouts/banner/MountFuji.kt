@@ -51,14 +51,16 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
 @Composable
 fun MountFuji(
-    currentDayPart: DayPart = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-        .toDayPart(),
+    dayPart: DayPart?,
     header: String? = null,
     insetPaddingValues: PaddingValues = PaddingValues(),
     navigationComponentPaddingValues: PaddingValues = PaddingValues(),
     modifier: Modifier = Modifier,
 ) {
+    val currentDayPart = dayPart ?: Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+        .toDayPart()
+
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
 
     val infiniteTransition = rememberInfiniteTransition(label = "clouds")
@@ -227,7 +229,7 @@ fun MountFuji(
 fun PreviewMountFujiMorning() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            currentDayPart = MORNING,
+            dayPart = MORNING,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
@@ -241,7 +243,7 @@ fun PreviewMountFujiMorning() {
 fun PreviewMountFujiAfternoon() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            currentDayPart = AFTERNOON,
+            dayPart = AFTERNOON,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
@@ -255,7 +257,7 @@ fun PreviewMountFujiAfternoon() {
 fun PreviewMountFujiEvening() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            currentDayPart = EVENING,
+            dayPart = EVENING,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
@@ -269,7 +271,7 @@ fun PreviewMountFujiEvening() {
 fun PreviewMountFujiNight() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            currentDayPart = NIGHT,
+            dayPart = NIGHT,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
