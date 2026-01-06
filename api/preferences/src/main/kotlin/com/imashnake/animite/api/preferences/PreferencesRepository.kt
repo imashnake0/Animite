@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
 private const val USE_SYSTEM_COLOR_SCHEME = true
+private const val IS_DEV_OPTIONS_ENABLED = false
 
 class PreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
@@ -40,5 +41,23 @@ class PreferencesRepository @Inject constructor(
     suspend fun setUseSystemColorScheme(useSystemColorScheme: Boolean) {
         dataStore.setValue(useSystemColorSchemeKey, useSystemColorScheme)
     }
+
+    private val isDevOptionsEnabledKey = booleanPreferencesKey("dev_options_enabled")
+    val isDevOptionsEnabled = dataStore.getValue(isDevOptionsEnabledKey, IS_DEV_OPTIONS_ENABLED)
+    suspend fun setDevOptionsEnabled(isEnabled: Boolean) {
+        if (!isEnabled) {
+            dataStore.setValue(dayPartKey, null)
+        }
+        dataStore.setValue(isDevOptionsEnabledKey, isEnabled)
+    }
+
+    // region developer options
+    private val dayPartKey = stringPreferencesKey("day_part")
+    val dayPart = dataStore.getValue(dayPartKey, null)
+    suspend fun setDayPart(dayPart: String?) {
+        dataStore.setValue(dayPartKey, dayPart)
+    }
+    // endregion
+
     // endregion
 }

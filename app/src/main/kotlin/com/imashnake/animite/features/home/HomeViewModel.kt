@@ -7,6 +7,7 @@ import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
@@ -31,12 +32,14 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel @Inject constructor(
     private val mediaListRepository: AnilistMediaRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val now = savedStateHandle.getStateFlow(NOW, LocalDate.now())
     private val refreshTrigger = MutableSharedFlow<Unit>()
+    val dayPart = preferencesRepository.dayPart
 
     var useNetwork = false
 

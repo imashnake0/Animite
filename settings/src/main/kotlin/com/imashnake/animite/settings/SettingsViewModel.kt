@@ -3,6 +3,7 @@ package com.imashnake.animite.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.preferences.PreferencesRepository
+import com.imashnake.animite.core.extensions.DayPart
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,11 +15,21 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
     val theme = preferencesRepository.theme
     val useSystemColorScheme = preferencesRepository.useSystemColorScheme
+    val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled
+    val dayPart = preferencesRepository.dayPart
 
-    fun setTheme(theme: THEME) = viewModelScope.launch(Dispatchers.IO) {
+    fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setThemeToken(theme.name)
     }
     fun setUseSystemColorScheme(useSystemColorScheme: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setUseSystemColorScheme(useSystemColorScheme)
+    }
+
+    fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setDevOptionsEnabled(enabled)
+    }
+
+    fun setDayPart(dayPart: DayPart?) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setDayPart(dayPart?.name)
     }
 }
