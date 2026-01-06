@@ -91,6 +91,7 @@ import kotlinx.serialization.Serializable
 
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
 private const val SYSTEM_DAY_PART = "SYSTEM"
+private const val ANIMITE = "Animite"
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -332,11 +333,11 @@ private fun Items(
             modifier = modifier
         ) {
             items.forEachIndexed { index, item ->
-                val topPercent = when (index) {
+                val top = when (index) {
                     0 -> LocalPaddings.current.large
                     else -> LocalPaddings.current.tiny
                 }
-                val bottomPercent = when (index) {
+                val bottom = when (index) {
                     items.lastIndex -> LocalPaddings.current.large
                     else -> LocalPaddings.current.tiny
                 }
@@ -345,10 +346,10 @@ private fun Items(
                     Item.Orientation.HORIZONTAL -> HorizontalItem(
                         item = index to item,
                         shape = RoundedCornerShape(
-                            topStart = topPercent,
-                            topEnd = topPercent,
-                            bottomEnd = bottomPercent,
-                            bottomStart = bottomPercent,
+                            topStart = top,
+                            topEnd = top,
+                            bottomEnd = bottom,
+                            bottomStart = bottom,
                         ),
                         onItemClick = { onItemClick(index) },
                         background = if (isDarkMode) {
@@ -360,10 +361,10 @@ private fun Items(
                     Item.Orientation.VERTICAL -> VerticalItem(
                         item = index to item,
                         shape = RoundedCornerShape(
-                            topStart = topPercent,
-                            topEnd = topPercent,
-                            bottomEnd = bottomPercent,
-                            bottomStart = bottomPercent,
+                            topStart = top,
+                            topEnd = top,
+                            bottomEnd = bottom,
+                            bottomStart = bottom,
                         ),
                         onItemClick = { onItemClick(index) },
                         background = if (isDarkMode) {
@@ -378,7 +379,10 @@ private fun Items(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+@OptIn(
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 private fun HorizontalItem(
     item: Pair<Int, Item>,
@@ -563,7 +567,7 @@ private fun AboutItem(
                 modifier = Modifier.fillMaxHeight().weight(1f)
             ) {
                 Text(
-                    text = "Animite",
+                    text = ANIMITE,
                     color = textColor,
                     style = MaterialTheme.typography.titleSmallEmphasized,
                 )
