@@ -17,6 +17,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.imashnake.animite.core.extensions.DayPart
+import com.imashnake.animite.core.extensions.DayPart.AFTERNOON
+import com.imashnake.animite.core.extensions.DayPart.EVENING
+import com.imashnake.animite.core.extensions.DayPart.MORNING
+import com.imashnake.animite.core.extensions.DayPart.NIGHT
+import com.imashnake.animite.core.extensions.toDayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.Paddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
@@ -24,28 +30,47 @@ import com.imashnake.animite.media.ext.modify
 import com.materialkolor.PaletteStyle
 import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.rememberDynamicColorScheme
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @OptIn(
     ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3ExpressiveApi::class, ExperimentalTime::class,
 )
 @Composable
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
     useDarkTheme: Boolean,
     useSystemColorScheme: Boolean,
+    dayPart: DayPart?,
     content: @Composable () -> Unit,
 ) {
     val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && useSystemColorScheme
     val context = LocalContext.current
+
+    // TODO: Make a top level function.
+    val currentDayPart = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault())
+        .toDayPart()
+
+    val stops = when (dayPart ?: currentDayPart) {
+        MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
+        AFTERNOON -> Triple(0xFF7AAEDD, 0xFFA1C8F5, 0xFFD1E4F6)
+        EVENING -> Triple(0xFF5F81E2, 0xFFBF98B7, 0xFFCDACC2)
+        NIGHT -> Triple(0xFF001020, 0xFF112B3A, 0xFF112B3A)
+    }
+
     val staticColorScheme = rememberDynamicColorScheme(
-        seedColor = Color(0xFF2D7AB0),
-        secondary = Color(0xFF687797),
+        seedColor = Color(stops.first),
+        primary = Color(stops.second),
+        secondary = Color(stops.third),
         isDark = useDarkTheme,
         isAmoled = false,
         style = PaletteStyle.Vibrant,
     )
-    val animiteColorScheme = remember(useDarkTheme, dynamicColor) {
+    val animiteColorScheme = remember(useDarkTheme, dynamicColor, stops) {
         when {
             dynamicColor && useDarkTheme -> dynamicDarkColorScheme(context)
             dynamicColor && !useDarkTheme -> dynamicLightColorScheme(context)

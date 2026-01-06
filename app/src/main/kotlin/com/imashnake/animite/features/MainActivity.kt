@@ -39,6 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.core.extensions.DayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.home.HomeScreen
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
@@ -82,7 +83,13 @@ class MainActivity : ComponentActivity() {
                 Theme.DEVICE_THEME -> isSystemInDarkTheme()
             }
 
-            AnimiteTheme(useDarkTheme = useDarkTheme, useSystemColorScheme = useSystemColorScheme) {
+            val dayPart by settingsViewModel.dayPart.collectAsState(initial = null)
+
+            AnimiteTheme(
+                useDarkTheme = useDarkTheme,
+                useSystemColorScheme = useSystemColorScheme,
+                dayPart = dayPart?.let { DayPart.valueOf(it) }
+            ) {
                 MainScreen(
                     deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
                     useDarkTheme = useDarkTheme,
