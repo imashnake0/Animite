@@ -43,8 +43,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.List
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -542,6 +544,7 @@ fun MediaPage(
                     .drawBehind { drawRect(frontDropColor) }
             )
 
+            var isGridLayoutSelected by remember { mutableStateOf(true) }
             // TODO: Add progress indicator.
             AnimatedVisibility(
                 visible = media.genreTitleList?.second?.isNotEmpty() ?: false,
@@ -559,12 +562,29 @@ fun MediaPage(
                             .padding(horizontal = LocalPaddings.current.large)
                             .padding(top = LocalPaddings.current.large)
                     ) {
-                        Text(
-                            text = media.genreTitleList?.first.orEmpty(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier
-                        )
+                        Column {
+                            Text(
+                                text = media.genreTitleList?.first.orEmpty(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier
+                            )
+
+                            Icon(
+                                imageVector = if (isGridLayoutSelected) Icons.AutoMirrored.Rounded.List else Icons.Rounded.Menu,
+                                contentDescription = stringResource(
+                                    id = if (isGridLayoutSelected) R.string.layout_column
+                                    else R.string.layout_grid
+                                ),
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .clickable{
+                                        isGridLayoutSelected = !isGridLayoutSelected
+                                    }
+                                    .padding(LocalPaddings.current.small)
+                                    .zIndex(2f)
+                            )
+                        }
 
                         Icon(
                             imageVector = Icons.Rounded.Close,
@@ -579,20 +599,36 @@ fun MediaPage(
                                 .zIndex(2f)
                         )
                     }
-                    // TODO: Create and use a grid layout.
-                    MediaMediumList(
-                        mediaMediumList = media.genreTitleList?.second.orEmpty(),
-                        onItemClick = { id, title ->
-                            onNavigateToMediaItem(
-                                MediaPage(
-                                    id = id,
-                                    source = MediaList.Type.GENRE_LIST.name,
-                                    mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
-                                    title = title
+                    // TODO: Create and use a grid layout. (Done)
+                    if (isGridLayoutSelected){
+                        MediaMediumGrid(
+                            mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                            onItemClick = { id, title ->
+                                onNavigateToMediaItem(
+                                    MediaPage(
+                                        id = id,
+                                        source = MediaList.Type.GENRE_LIST.name,
+                                        mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
+                                        title = title
+                                    )
                                 )
-                            )
-                        }
-                    )
+                            }
+                        )
+                    } else {
+                        MediaMediumList(
+                            mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                            onItemClick = { id, title ->
+                                onNavigateToMediaItem(
+                                    MediaPage(
+                                        id = id,
+                                        source = MediaList.Type.GENRE_LIST.name,
+                                        mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
+                                        title = title
+                                    )
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
