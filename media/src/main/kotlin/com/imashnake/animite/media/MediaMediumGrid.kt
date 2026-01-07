@@ -18,9 +18,9 @@ import com.imashnake.animite.core.ui.MediaCard
 
 @Composable
 fun MediaMediumGrid(
-    modifier: Modifier = Modifier,
     mediaMediumList: List<Media.Medium>,
     onItemClick: (Int, String?) -> Unit,
+    modifier: Modifier = Modifier,
     searchBarHeight: Dp = 0.dp,
     searchBarBottomPadding: Dp = 0.dp,
     contentPadding: PaddingValues = PaddingValues(),

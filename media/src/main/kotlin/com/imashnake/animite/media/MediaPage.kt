@@ -578,7 +578,7 @@ fun MediaPage(
                                 ),
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .clickable{
+                                    .clickable {
                                         isGridLayoutSelected = !isGridLayoutSelected
                                     }
                                     .padding(LocalPaddings.current.small)
@@ -599,8 +599,7 @@ fun MediaPage(
                                 .zIndex(2f)
                         )
                     }
-                    // TODO: Create and use a grid layout. (Done)
-                    if (isGridLayoutSelected){
+                    if (isGridLayoutSelected) {
                         MediaMediumGrid(
                             mediaMediumList = media.genreTitleList?.second.orEmpty(),
                             onItemClick = { id, title ->
