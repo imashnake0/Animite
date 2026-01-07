@@ -21,28 +21,14 @@ fun MediaMediumGrid(
     mediaMediumList: List<Media.Medium>,
     onItemClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier,
-    searchBarHeight: Dp = 0.dp,
-    searchBarBottomPadding: Dp = 0.dp,
-    contentPadding: PaddingValues = PaddingValues(),
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = modifier
-            .consumeWindowInsets(
-                PaddingValues(
-                    bottom = searchBarBottomPadding + contentPadding.calculateBottomPadding()
-                )
-            )
-            .imePadding(),
-        contentPadding = PaddingValues(
-            LocalPaddings.current.medium
-        ) + PaddingValues(
-            bottom = LocalPaddings.current.medium +
-                    searchBarHeight +
-                    searchBarBottomPadding
-        ) + contentPadding,
+        columns = GridCells.FixedSize(140.dp),
+        modifier = modifier.imePadding(),
+        contentPadding = PaddingValues(LocalPaddings.current.large) +
+                PaddingValues(bottom = LocalPaddings.current.large),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+        horizontalArrangement = Arrangement.Absolute.SpaceAround
     ) {
         items(
             items = mediaMediumList,
