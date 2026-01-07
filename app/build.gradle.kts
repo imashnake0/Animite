@@ -13,8 +13,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "com.imashnake.animite"
-        versionCode = 17
-        versionName = "0.2.1-alpha01"
+        versionCode = 18
+        versionName = "0.3.0-alpha01"
     }
 
     signingConfigs {
@@ -96,6 +96,7 @@ dependencies {
     // Kotlin
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.core)
 
     // Hilt

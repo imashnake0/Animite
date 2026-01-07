@@ -8,8 +8,20 @@
     <string name="dark">Dark</string>
     <string name="light">Light</string>
     <string name="system">Device</string>
-    <string name="palette">Use System Color Scheme</string>
+    <string name="palette">Use system color scheme</string>
 
     <string name="about">About</string>
     <string name="app_icon">App Icon</string>
+
+    <string name="dev_options">Developer Options</string>
+
+    <string name="already_developer">You are already a developer!</string>
+    <plurals name="almost_developer">
+        <item quantity="one">%1$d step from being a developer!</item>
+        <item quantity="other">%1$d steps from being a developer!</item>
+    </plurals>
+    <string name="now_developer">You are now a developer!</string>
+    <string name="disabled_dev_options">"Disabled developer options!"</string>
+
+    <string name="day_part">Set day part</string>
 </resources>
