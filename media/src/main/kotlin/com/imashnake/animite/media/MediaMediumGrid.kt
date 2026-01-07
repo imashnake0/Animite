@@ -24,7 +24,7 @@ fun MediaMediumGrid(
     searchBarHeight: Dp = 0.dp,
     searchBarBottomPadding: Dp = 0.dp,
     contentPadding: PaddingValues = PaddingValues(),
-){
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = modifier
@@ -38,7 +38,8 @@ fun MediaMediumGrid(
             LocalPaddings.current.medium
         ) + PaddingValues(
             bottom = LocalPaddings.current.medium +
-            searchBarHeight + searchBarBottomPadding
+                    searchBarHeight +
+                    searchBarBottomPadding
         ) + contentPadding,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
@@ -46,11 +47,11 @@ fun MediaMediumGrid(
         items(
             items = mediaMediumList,
             key = { it.id }
-        ){ mediaMedium ->
+        ) { media ->
             MediaCard(
-                image = mediaMedium.coverImage,
-                label = mediaMedium.title,
-                onClick = { onItemClick(mediaMedium.id, mediaMedium.title) }
+                image = media.coverImage,
+                label = media.title,
+                onClick = { onItemClick(media.id, media.title) }
             )
         }
     }
