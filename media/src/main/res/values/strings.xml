@@ -5,6 +5,5 @@
     <string name="characters">Characters</string>
     <string name="trailer">Trailer</string>
     <string name="recommendations">Recommendations</string>
-    <string name="layout_grid">Grid layout</string>
-    <string name="layout_column">Column layout</string>
+    <string name="list_to_grid">List to grid</string>
 </resources>

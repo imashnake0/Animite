@@ -11,7 +11,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -46,10 +48,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.List
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -112,8 +112,8 @@ import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
-import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -161,6 +161,8 @@ fun MediaPage(
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
         deviceScreenCornerRadius.toDp()
     }
+
+    var isList by remember { mutableStateOf(true) }
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color, useDarkTheme = useDarkTheme)) {
         TranslucentStatusBarLayout(
@@ -547,7 +549,6 @@ fun MediaPage(
                     .drawBehind { drawRect(frontDropColor) }
             )
 
-            var isGridLayoutSelected by remember { mutableStateOf(true) }
             // TODO: Add progress indicator.
             AnimatedVisibility(
                 visible = media.genreTitleList?.second?.isNotEmpty() ?: false,
@@ -572,16 +573,15 @@ fun MediaPage(
                             modifier = Modifier.weight(1f)
                         )
 
+                        val listToGrid = AnimatedImageVector.animatedVectorResource(R.drawable.grid_list_anim)
                         Icon(
-                            imageVector = if (isGridLayoutSelected) Icons.AutoMirrored.Rounded.List else Icons.Rounded.Menu,
-                            contentDescription = stringResource(
-                                id = if (isGridLayoutSelected) R.string.layout_column else R.string.layout_grid
-                            ),
+                            painter = rememberAnimatedVectorPainter(listToGrid, isList),
+                            contentDescription = stringResource(R.string.list_to_grid),
                             modifier = Modifier
+                                .padding(end = LocalPaddings.current.small)
                                 .clip(CircleShape)
-                                .clickable {
-                                    isGridLayoutSelected = !isGridLayoutSelected
-                                }
+                                .clickable { isList = !isList }
+                                .size(40.dp)
                                 .padding(LocalPaddings.current.small)
                                 .zIndex(2f)
                         )
@@ -595,14 +595,16 @@ fun MediaPage(
                                     viewModel.getGenreMediaMediums(null)
                                     isExpanded = false
                                 }
+                                .background(MaterialTheme.colorScheme.surface)
                                 .padding(LocalPaddings.current.small)
                                 .zIndex(2f)
                         )
                     }
+
                     // TODO: This list <-> grid pattern can probably be added to all the other
-                    //  instances in a better way.
+                    //  instances of media lists in a better way.
                     AnimatedContent(
-                        targetState = isGridLayoutSelected,
+                        targetState = isList,
                         transitionSpec = {
                             fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
                         },
