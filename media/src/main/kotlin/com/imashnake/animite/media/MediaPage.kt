@@ -2,6 +2,7 @@ package com.imashnake.animite.media
 
 import android.content.Intent
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -10,6 +11,10 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -82,6 +87,7 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -107,8 +113,8 @@ import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
-import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -156,6 +162,8 @@ fun MediaPage(
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
         deviceScreenCornerRadius.toDp()
     }
+
+    var isList by remember { mutableStateOf(true) }
 
     MaterialTheme(colorScheme = rememberColorSchemeFor(media.color, useDarkTheme = useDarkTheme)) {
         TranslucentStatusBarLayout(
@@ -549,9 +557,8 @@ fun MediaPage(
                 exit = fadeOut(tween(750)),
             ) {
                 Column {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surfaceContainerHighest)
@@ -563,36 +570,83 @@ fun MediaPage(
                             text = media.genreTitleList?.first.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            val listToGrid =
+                                AnimatedImageVector.animatedVectorResource(R.drawable.grid_list_anim)
+                            Icon(
+                                painter = rememberAnimatedVectorPainter(listToGrid, isList),
+                                contentDescription = stringResource(R.string.list_to_grid),
+                                modifier = Modifier
+                                    .padding(end = LocalPaddings.current.small)
+                                    .clip(CircleShape)
+                                    .clickable { isList = !isList }
+                                    .size(40.dp)
+                                    .padding(LocalPaddings.current.small)
+                                    .zIndex(2f)
+                            )
 
-                        Icon(
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = stringResource(R.string.back),
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .clickable {
-                                    viewModel.getGenreMediaMediums(null)
-                                    isExpanded = false
-                                }
-                                .padding(LocalPaddings.current.small)
-                                .zIndex(2f)
-                        )
-                    }
-                    // TODO: Create and use a grid layout.
-                    MediaMediumList(
-                        mediaMediumList = media.genreTitleList?.second.orEmpty(),
-                        onItemClick = { id, title ->
-                            onNavigateToMediaItem(
-                                MediaPage(
-                                    id = id,
-                                    source = MediaList.Type.GENRE_LIST.name,
-                                    mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
-                                    title = title
-                                )
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = stringResource(R.string.back),
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        viewModel.getGenreMediaMediums(null)
+                                        isExpanded = false
+                                    }
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .padding(LocalPaddings.current.small)
+                                    .zIndex(2f)
                             )
                         }
-                    )
+                    }
+
+                    // TODO: This list <-> grid pattern can probably be added to all the other
+                    //  instances of media lists in a better way.
+                    AnimatedContent(
+                        targetState = isList,
+                        transitionSpec = {
+                            fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
+                        },
+                        modifier = Modifier.padding(horizontalInsets)
+                    ) {
+                        if (it) {
+                            MediaMediumGrid(
+                                mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                                onItemClick = { id, title ->
+                                    onNavigateToMediaItem(
+                                        MediaPage(
+                                            id = id,
+                                            source = MediaList.Type.GENRE_LIST.name,
+                                            mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
+                                            title = title
+                                        )
+                                    )
+                                }
+                            )
+                        } else {
+                            MediaMediumList(
+                                mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                                onItemClick = { id, title ->
+                                    onNavigateToMediaItem(
+                                        MediaPage(
+                                            id = id,
+                                            source = MediaList.Type.GENRE_LIST.name,
+                                            mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
+                                            title = title
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }

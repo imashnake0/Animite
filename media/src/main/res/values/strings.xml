@@ -5,4 +5,5 @@
     <string name="characters">Characters</string>
     <string name="trailer">Trailer</string>
     <string name="recommendations">Recommendations</string>
+    <string name="list_to_grid">List to grid</string>
 </resources>
