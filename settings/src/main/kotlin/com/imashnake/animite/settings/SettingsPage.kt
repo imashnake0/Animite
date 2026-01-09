@@ -60,7 +60,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -69,7 +68,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -596,7 +594,7 @@ private fun AboutItem(
             }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
@@ -618,13 +616,13 @@ private fun AboutItem(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .clip(CircleShape)
-                        .clickable { uriHandler.openUri(DISCORD_URL) }
+                        .clickable { uriHandler.openUri(GITHUB_URL) }
                         .background(Color.White)
                         .size(28.dp)
                 ) {
                     Image(
                         imageVector = ImageVector.vectorResource(R.drawable.github),
-                        contentDescription = stringResource(R.string.discord),
+                        contentDescription = stringResource(R.string.github),
                         modifier = Modifier.size(24.dp)
                     )
                 }
