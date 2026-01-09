@@ -89,6 +89,7 @@ import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
+private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
 private const val PRIVACY_POLICY = "https://imashnake.deno.dev/animite.html"
 private const val SYSTEM_DAY_PART = "SYSTEM"
@@ -594,14 +595,40 @@ private fun AboutItem(
                 )
             }
 
-            Image(
-                bitmap = ImageBitmap.imageResource(R.drawable.github),
-                contentDescription = stringResource(R.string.github),
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable { uriHandler.openUri(GITHUB_URL) }
-                    .size(30.dp)
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { uriHandler.openUri(DISCORD_URL) }
+                        .background(Color(0xFF5865f2))
+                        .size(28.dp)
+                ) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.discord),
+                        contentDescription = stringResource(R.string.discord),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { uriHandler.openUri(DISCORD_URL) }
+                        .background(Color.White)
+                        .size(28.dp)
+                ) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.github),
+                        contentDescription = stringResource(R.string.discord),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
         }
     }
 }
