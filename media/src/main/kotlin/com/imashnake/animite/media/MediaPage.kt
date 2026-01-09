@@ -87,6 +87,7 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -556,9 +557,8 @@ fun MediaPage(
                 exit = fadeOut(tween(750)),
             ) {
                 Column {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surfaceContainerHighest)
@@ -570,35 +570,42 @@ fun MediaPage(
                             text = media.genreTitleList?.first.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.weight(1f)
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            val listToGrid =
+                                AnimatedImageVector.animatedVectorResource(R.drawable.grid_list_anim)
+                            Icon(
+                                painter = rememberAnimatedVectorPainter(listToGrid, isList),
+                                contentDescription = stringResource(R.string.list_to_grid),
+                                modifier = Modifier
+                                    .padding(end = LocalPaddings.current.small)
+                                    .clip(CircleShape)
+                                    .clickable { isList = !isList }
+                                    .size(40.dp)
+                                    .padding(LocalPaddings.current.small)
+                                    .zIndex(2f)
+                            )
 
-                        val listToGrid = AnimatedImageVector.animatedVectorResource(R.drawable.grid_list_anim)
-                        Icon(
-                            painter = rememberAnimatedVectorPainter(listToGrid, isList),
-                            contentDescription = stringResource(R.string.list_to_grid),
-                            modifier = Modifier
-                                .padding(end = LocalPaddings.current.small)
-                                .clip(CircleShape)
-                                .clickable { isList = !isList }
-                                .size(40.dp)
-                                .padding(LocalPaddings.current.small)
-                                .zIndex(2f)
-                        )
-
-                        Icon(
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = stringResource(R.string.back),
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .clickable {
-                                    viewModel.getGenreMediaMediums(null)
-                                    isExpanded = false
-                                }
-                                .background(MaterialTheme.colorScheme.surface)
-                                .padding(LocalPaddings.current.small)
-                                .zIndex(2f)
-                        )
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = stringResource(R.string.back),
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        viewModel.getGenreMediaMediums(null)
+                                        isExpanded = false
+                                    }
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .padding(LocalPaddings.current.small)
+                                    .zIndex(2f)
+                            )
+                        }
                     }
 
                     // TODO: This list <-> grid pattern can probably be added to all the other
