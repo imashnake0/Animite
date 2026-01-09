@@ -594,7 +594,7 @@ private fun AboutItem(
             }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
