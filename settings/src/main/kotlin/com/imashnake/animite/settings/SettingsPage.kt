@@ -90,6 +90,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
+private const val PRIVACY_POLICY = "https://imashnake.deno.dev/animite.html"
 private const val SYSTEM_DAY_PART = "SYSTEM"
 private const val ANIMITE = "Animite"
 
@@ -214,6 +215,7 @@ fun SettingsPage(
                                                     imageVector = Icons.Filled.Check,
                                                     contentDescription = null,
                                                     modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                    tint = MaterialTheme.colorScheme.primary
                                                 )
                                             }
                                         },
@@ -233,15 +235,21 @@ fun SettingsPage(
                             overflow = TextOverflow.Ellipsis,
                         )
 
-                        AboutItem(
-                            isDarkMode = isDarkMode,
-                            versionName = versionName,
-                            isDevOptionsEnabled = isDevOptionsEnabled,
-                            devOptionsCount = devOptionsCount,
-                            onClick = { devOptionsCount++ },
-                            enableDevOptions = { viewModel.setDevOptions(true) },
-                            disableDevOptions = { devOptionsCount = 0; viewModel.setDevOptions(false) }
-                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                            AboutItem(
+                                isDarkMode = isDarkMode,
+                                versionName = versionName,
+                                isDevOptionsEnabled = isDevOptionsEnabled,
+                                devOptionsCount = devOptionsCount,
+                                onClick = { devOptionsCount++ },
+                                enableDevOptions = { viewModel.setDevOptions(true) },
+                                disableDevOptions = {
+                                    devOptionsCount = 0; viewModel.setDevOptions(false)
+                                }
+                            )
+
+                            PrivacyPolicyItem(isDarkMode = isDarkMode)
+                        }
                     }
 
                     AnimatedVisibility(
@@ -503,7 +511,14 @@ private fun AboutItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()
-                .clip(CircleShape)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = LocalPaddings.current.large,
+                        topEnd = LocalPaddings.current.large,
+                        bottomStart = LocalPaddings.current.small,
+                        bottomEnd = LocalPaddings.current.small
+                    )
+                )
                 .combinedClickable(
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
@@ -555,7 +570,8 @@ private fun AboutItem(
                 val drawable = LocalContext.current.packageManager
                     .getApplicationIcon(LocalContext.current.packageName)
                 Image(
-                    bitmap = drawable.toBitmap(config = Bitmap.Config.ARGB_8888)
+                    bitmap = drawable
+                        .toBitmap(config = Bitmap.Config.ARGB_8888)
                         .asImageBitmap(),
                     contentDescription = stringResource(R.string.app_icon),
                     modifier = Modifier.size(40.dp)
@@ -580,12 +596,66 @@ private fun AboutItem(
 
             Image(
                 bitmap = ImageBitmap.imageResource(R.drawable.github),
-                contentDescription = stringResource(R.string.app_icon),
+                contentDescription = stringResource(R.string.github),
                 modifier = Modifier
                     .clip(CircleShape)
                     .clickable { uriHandler.openUri(GITHUB_URL) }
-                    .padding(5.dp)
                     .size(30.dp)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun PrivacyPolicyItem(
+    isDarkMode: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val background by animateColorAsState(
+        targetValue = if (isDarkMode) Color(0x190FFF66) else Color(0x59FFC0CB),
+        animationSpec = tween(500)
+    )
+    val uriHandler = LocalUriHandler.current
+
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(
+                    RoundedCornerShape(
+                        topStart = LocalPaddings.current.small,
+                        topEnd = LocalPaddings.current.small,
+                        bottomStart = LocalPaddings.current.large,
+                        bottomEnd = LocalPaddings.current.large
+                    )
+                )
+                .clickable {}
+                .background(background)
+                .padding(LocalPaddings.current.medium)
+                .height(IntrinsicSize.Min)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.privacy_policy),
+                contentDescription = stringResource(R.string.privacy_policy),
+                modifier = Modifier.size(28.dp)
+            )
+            Text(
+                text = stringResource(R.string.privacy_policy),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.open_link),
+                contentDescription = stringResource(R.string.privacy_policy),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { uriHandler.openUri(PRIVACY_POLICY) }
+                    .padding(LocalPaddings.current.small)
+                    .size(20.dp)
             )
         }
     }
