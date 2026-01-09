@@ -608,6 +608,7 @@ fun MediaPage(
                         transitionSpec = {
                             fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
                         },
+                        modifier = Modifier.padding(horizontalInsets)
                     ) {
                         if (it) {
                             MediaMediumGrid(
