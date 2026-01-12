@@ -128,7 +128,8 @@ fun HomeScreen(
                                         AnimatedContent(
                                             targetState = it,
                                             transitionSpec = {
-                                                fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
+                                                fadeIn(tween(750))
+                                                    .togetherWith(fadeOut(tween(750)))
                                             },
                                             label = "animate_home_row"
                                         ) { mediaList ->
