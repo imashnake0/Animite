@@ -73,7 +73,7 @@ serialization = "1.9.0"
 
 # Compose Multiplatform
 # https://github.com/JetBrains/compose-multiplatform
-composeMultiplatform = "1.9.3"
+composeMultiplatform = "1.10.0"
 
 # KSP
 # https://github.com/google/ksp/releases.
