@@ -97,7 +97,7 @@ composeMarkdown = "1.1.5"
 
 # MaterialKolor
 # https://github.com/jordond/MaterialKolor.
-materialKolor = "4.0.5"
+materialKolor = "4.1.0"
 
 # Cascade
 # https://github.com/saket/cascade/releases
