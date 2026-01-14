@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -42,6 +43,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -82,7 +84,6 @@ import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.maxHeight
 import com.imashnake.animite.core.extensions.plus
-import com.imashnake.animite.core.ui.FallbackMessage
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
@@ -96,7 +97,6 @@ import com.imashnake.animite.settings.SettingsPage
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
-import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.navigation.R as navigationR
 
 private const val DROP_DOWN_ITEMS_COUNT = 2
@@ -155,9 +155,16 @@ fun ProfileScreen(
                                     contentDescription = "Avatar",
                                     modifier = Modifier
                                         .align(Alignment.BottomStart)
-                                        .padding(start = LocalPaddings.current.medium)
+                                        .padding(start = LocalPaddings.current.large)
                                         .padding(allPaddingValues.horizontalOnly)
-                                        .size(100.dp),
+                                        .wrapContentSize()
+                                        .maxHeight(100.dp)
+                                        .clip(
+                                            RoundedCornerShape(
+                                                topStart = LocalPaddings.current.small,
+                                                topEnd = LocalPaddings.current.small,
+                                            )
+                                        ),
                                 )
                                 SettingsAndMore(
                                     onNavigateToSettings = onNavigateToSettings,
@@ -184,16 +191,6 @@ fun ProfileScreen(
                                         style = MaterialTheme.typography.titleLarge,
                                         overflow = TextOverflow.Ellipsis,
                                     )
-                                    UserDescription(
-                                        description = description,
-                                        modifier = Modifier.maxHeight(
-                                            if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                                                dimensionResource(R.dimen.user_about_height)
-                                            } else {
-                                                dimensionResource(R.dimen.user_about_height_landscape)
-                                            }
-                                        )
-                                    )
                                 }
                                 UserTabs(
                                     user = this@run,
@@ -211,7 +208,16 @@ fun ProfileScreen(
                 }
                 else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
             }
-            else -> Login(Modifier.padding(allPaddingValues))
+            else -> {
+                SettingsIcon(
+                    onNavigateToSettings = onNavigateToSettings,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(LocalPaddings.current.large)
+                        .padding(allPaddingValues.copy(bottom = 0.dp)),
+                )
+                Login(Modifier.padding(allPaddingValues))
+            }
         }
 
         if (isLogOutDialogShown)
@@ -228,6 +234,7 @@ fun ProfileScreen(
     }
 }
 
+// TODO: Properly parse the user description and add this back.
 @Composable
 private fun UserDescription(description: String?, modifier: Modifier = Modifier) {
     description?.let {
@@ -266,37 +273,13 @@ private fun SettingsAndMore(
         targetValue = if (expanded) 10 else 50,
         label = "corner_radius_animation",
     )
-    val infiniteTransition = rememberInfiniteTransition(label = "settings_icon")
-    val angle by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotation"
-    )
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.padding(LocalPaddings.current.large)
     ) {
-        Surface(
-            color = MaterialTheme.colorScheme.surfaceContainer,
-            shape = CircleShape
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Settings,
-                contentDescription = stringResource(R.string.settings),
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .clickable { onNavigateToSettings(SettingsPage) }
-                    .padding(LocalPaddings.current.small)
-                    .size(LocalPaddings.current.medium)
-                    .graphicsLayer { rotationZ = angle }
-            )
-        }
+        SettingsIcon(onNavigateToSettings = onNavigateToSettings)
 
         Box {
             Surface(
@@ -368,6 +351,40 @@ private fun SettingsAndMore(
 }
 
 @Composable
+fun SettingsIcon(
+    onNavigateToSettings: (SettingsPage) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "settings_icon")
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = CircleShape,
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Settings,
+            contentDescription = stringResource(R.string.settings),
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .clickable { onNavigateToSettings(SettingsPage) }
+                .padding(LocalPaddings.current.small)
+                .size(LocalPaddings.current.medium)
+                .graphicsLayer { rotationZ = angle }
+        )
+    }
+}
+
+@Composable
 fun LogOutDialog(
     logOut: () -> Unit,
     dismiss: () -> Unit,
@@ -414,37 +431,80 @@ private fun UserTabs(
     val onBackground = MaterialTheme.colorScheme.onBackground
     val horizontalContentPadding = contentPadding.horizontalOnly
 
+    var scrollableTabs by remember { mutableStateOf(false) }
+
     Column(modifier) {
-        PrimaryTabRow(
-            selectedTabIndex = pagerState.currentPage,
-            containerColor = MaterialTheme.colorScheme.background,
-            divider = {},
-            modifier = Modifier.padding(horizontalContentPadding)
-        ) {
-            titles.forEachIndexed { index, tab ->
-                Tab(
-                    selected = pagerState.currentPage == index,
-                    onClick = {
-                        coroutineScope.launch { pagerState.animateScrollToPage(index) }
-                    },
-                    text = {
-                        Text(
-                            text = stringResource(tab.titleRes),
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = onBackground.copy(
-                                alpha = if (pagerState.currentPage == index) 1f else 0.5f
-                            ),
-                            maxLines = 1
-                        )
-                    },
-                    modifier = Modifier
-                        .padding(
-                            horizontal = LocalPaddings.current.ultraTiny,
-                            vertical = LocalPaddings.current.small
-                        )
-                        .clip(CircleShape)
-                )
+        if (!scrollableTabs) {
+            PrimaryTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                containerColor = MaterialTheme.colorScheme.background,
+                divider = {},
+                modifier = Modifier.padding(horizontalContentPadding)
+            ) {
+                titles.forEachIndexed { index, tab ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch { pagerState.animateScrollToPage(index) }
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(tab.titleRes),
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = onBackground.copy(
+                                    alpha = if (pagerState.currentPage == index) 1f else 0.5f
+                                ),
+                                maxLines = 1,
+                                onTextLayout = { result ->
+                                    if (result.hasVisualOverflow) {
+                                        scrollableTabs = true
+                                    }
+                                }
+                            )
+                        },
+                        modifier = Modifier
+                            .padding(
+                                horizontal = LocalPaddings.current.ultraTiny,
+                                vertical = LocalPaddings.current.small
+                            )
+                            .clip(CircleShape)
+                    )
+                }
+            }
+        } else {
+            PrimaryScrollableTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                containerColor = MaterialTheme.colorScheme.background,
+                edgePadding = LocalPaddings.current.small,
+                divider = {},
+                modifier = Modifier.padding(horizontalContentPadding)
+            ) {
+                titles.forEachIndexed { index, tab ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch { pagerState.animateScrollToPage(index) }
+                        },
+                        text = {
+                            Text(
+                                text = stringResource(tab.titleRes),
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = onBackground.copy(
+                                    alpha = if (pagerState.currentPage == index) 1f else 0.5f
+                                ),
+                                maxLines = 1,
+                            )
+                        },
+                        modifier = Modifier
+                            .padding(
+                                horizontal = LocalPaddings.current.ultraTiny,
+                                vertical = LocalPaddings.current.small
+                            )
+                            .clip(CircleShape)
+                    )
+                }
             }
         }
         HorizontalPager(
@@ -491,12 +551,6 @@ private fun UserTabs(
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
                         contentPadding = tabContentPadding,
-                    )
-                    else -> FallbackMessage(
-                        message = stringResource(coreR.string.coming_soon),
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(tabContentPadding)
                     )
                 }
             }
