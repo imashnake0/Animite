@@ -1,8 +1,12 @@
 package com.imashnake.animite.core.ui.layouts.banner
 
+import android.annotation.SuppressLint
+import android.graphics.RuntimeShader
+import android.os.Build
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -25,10 +29,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -41,14 +48,20 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.DayPart
-import com.imashnake.animite.core.extensions.DayPart.*
+import com.imashnake.animite.core.extensions.DayPart.AFTERNOON
+import com.imashnake.animite.core.extensions.DayPart.EVENING
+import com.imashnake.animite.core.extensions.DayPart.MORNING
+import com.imashnake.animite.core.extensions.DayPart.NIGHT
 import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.horizontalOnly
+import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.extensions.toDayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import com.imashnake.animite.core.ui.shaders.sun
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.math.PI
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -61,9 +74,24 @@ fun MountFuji(
     navigationComponentPaddingValues: PaddingValues = PaddingValues(),
     modifier: Modifier = Modifier,
 ) {
-    val currentDayPart = dayPart ?: Clock.System.now()
+    val shader = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            RuntimeShader(sun) else null
+    }
+
+    val localDateTime = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
-        .toDayPart()
+    val currentDayPart = dayPart ?: localDateTime.toDayPart()
+    val time by animateFloatAsState(
+        targetValue = when(dayPart) {
+            MORNING -> 6f
+            AFTERNOON -> 12f
+            else -> {
+                // localDateTime.hour must be in 6..17!
+                localDateTime.hour.toFloat()
+            }
+        } * 2f * PI.toFloat() / 24
+    )
 
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
 
@@ -96,6 +124,7 @@ fun MountFuji(
                 fadeOut(animationSpec = tween(1000))
             )
         },
+        modifier = Modifier
     ) {
         val stops = when (it) {
             MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
@@ -128,6 +157,29 @@ fun MountFuji(
                     )
                 )
                 .fillMaxHeight()
+                .thenIf(
+                    shader != null &&
+                            dayPart == MORNING ||
+                            dayPart == AFTERNOON
+                ) {
+                    drawWithCache @SuppressLint("NewApi") {
+                        shader!!.run {
+                            setFloatUniform(
+                                "resolution",
+                                size.width,
+                                size.height
+                            )
+                            setFloatUniform(
+                                "radius",
+                                size.width / (2f * PI.toFloat()),
+                            )
+                            setFloatUniform("time", time)
+                            onDrawBehind {
+                                drawRect(ShaderBrush(this@run))
+                            }
+                        }
+                    }
+                }
         ) {
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
