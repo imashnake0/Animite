@@ -48,17 +48,17 @@ coil = "3.3.0"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
-composeAnimation = "1.10.0"
-composeFoundation = "1.10.0"
-composeMaterial = "1.10.0"
-composeMaterial3 = "1.5.0-alpha11"
+composeAnimation = "1.10.1"
+composeFoundation = "1.10.1"
+composeMaterial = "1.10.1"
+composeMaterial3 = "1.5.0-alpha12"
 composeRuntime = "1.10.0"
-composeUi = "1.10.0"
+composeUi = "1.10.1"
 composeIcons = "1.7.8"
 
 # Dagger
 # https://github.com/google/dagger/releases.
-dagger = "2.57.2"
+dagger = "2.58"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
@@ -73,7 +73,7 @@ serialization = "1.9.0"
 
 # Compose Multiplatform
 # https://github.com/JetBrains/compose-multiplatform
-composeMultiplatform = "1.9.3"
+composeMultiplatform = "1.10.0"
 
 # KSP
 # https://github.com/google/ksp/releases.
@@ -97,7 +97,7 @@ composeMarkdown = "1.1.5"
 
 # MaterialKolor
 # https://github.com/jordond/MaterialKolor.
-materialKolor = "4.0.5"
+materialKolor = "4.1.0"
 
 # Cascade
 # https://github.com/saket/cascade/releases

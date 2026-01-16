@@ -8,5 +8,6 @@ enum class ProfileTab(@param:StringRes val titleRes: Int) {
     ANIME(R.string.anime),
     MANGA(R.string.manga),
     FAVOURITES(R.string.favourites),
-    STATISTICS(R.string.statistics)
+    // TODO: Add this back!
+    // STATISTICS(R.string.statistics)
 }
