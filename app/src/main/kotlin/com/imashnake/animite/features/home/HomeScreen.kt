@@ -112,15 +112,13 @@ fun HomeScreen(
                     Box(Modifier.verticalScroll(scrollState)) {
                         BannerLayout(
                             banner = { bannerModifier ->
-                                Box {
-                                    MountFuji(
-                                        dayPart = dayPart?.let { DayPart.valueOf(it) },
-                                        header = stringResource(R.string.okaeri),
-                                        insetPaddingValues = insetPaddingValues,
-                                        navigationComponentPaddingValues = navigationComponentPaddingValues,
-                                        modifier = bannerModifier,
-                                    )
-                                }
+                                MountFuji(
+                                    dayPart = dayPart?.let { DayPart.valueOf(it) },
+                                    header = stringResource(R.string.okaeri),
+                                    insetPaddingValues = insetPaddingValues,
+                                    navigationComponentPaddingValues = navigationComponentPaddingValues,
+                                    modifier = bannerModifier,
+                                )
                             },
                             content = {
                                 rows.fastForEach { row ->

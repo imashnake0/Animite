@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -54,7 +55,6 @@ import com.imashnake.animite.core.extensions.DayPart.MORNING
 import com.imashnake.animite.core.extensions.DayPart.NIGHT
 import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.horizontalOnly
-import com.imashnake.animite.core.extensions.thenIf
 import com.imashnake.animite.core.extensions.toDayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
@@ -76,12 +76,10 @@ fun MountFuji(
 ) {
     val localDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     val currentDayPart = dayPart ?: localDateTime.toDayPart()
-    val sunShader = remember {
+    val sunShader = remember(currentDayPart) {
         RuntimeShader(sun).takeIf {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    currentDayPart == MORNING ||
-                    currentDayPart == AFTERNOON ||
-                    currentDayPart == EVENING
+                    currentDayPart != NIGHT
         }
     }
     val time by animateFloatAsState(
@@ -159,9 +157,13 @@ fun MountFuji(
                     )
                 )
                 .fillMaxHeight()
-                .thenIf(sunShader != null) {
-                    drawWithCache @SuppressLint("NewApi") {
-                        sunShader!!.run {
+        ) {
+            if (sunShader != null) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .drawWithCache @SuppressLint("NewApi") {
+                        sunShader.run {
                             setFloatUniform(
                                 "resolution",
                                 size.width,
@@ -178,8 +180,9 @@ fun MountFuji(
                             }
                         }
                     }
-                }
-        ) {
+                )
+            }
+
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
                 contentDescription = null,
