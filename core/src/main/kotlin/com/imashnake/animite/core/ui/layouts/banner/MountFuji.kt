@@ -74,27 +74,29 @@ fun MountFuji(
     navigationComponentPaddingValues: PaddingValues = PaddingValues(),
     modifier: Modifier = Modifier,
 ) {
-    val shader = remember {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            RuntimeShader(sun) else null
-    }
-
-    val localDateTime = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault())
+    val localDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     val currentDayPart = dayPart ?: localDateTime.toDayPart()
+    val sunShader = remember {
+        RuntimeShader(sun).takeIf {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    currentDayPart == MORNING ||
+                    currentDayPart == AFTERNOON ||
+                    currentDayPart == EVENING
+        }
+    }
     val time by animateFloatAsState(
         targetValue = when(dayPart) {
             MORNING -> 6f
             AFTERNOON -> 12f
+            EVENING -> 17f
             else -> {
-                // localDateTime.hour must be in 6..17!
+                // localDateTime.hour must be in 6..21!
                 localDateTime.hour.toFloat()
             }
         } * 2f * PI.toFloat() / 24
     )
 
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
-
     val infiniteTransition = rememberInfiniteTransition(label = "clouds")
     val durationMillis = 50000
     val delayMillis = durationMillis / 10
@@ -157,13 +159,9 @@ fun MountFuji(
                     )
                 )
                 .fillMaxHeight()
-                .thenIf(
-                    shader != null &&
-                            dayPart == MORNING ||
-                            dayPart == AFTERNOON
-                ) {
+                .thenIf(sunShader != null) {
                     drawWithCache @SuppressLint("NewApi") {
-                        shader!!.run {
+                        sunShader!!.run {
                             setFloatUniform(
                                 "resolution",
                                 size.width,
@@ -174,6 +172,7 @@ fun MountFuji(
                                 size.width / (2f * PI.toFloat()),
                             )
                             setFloatUniform("time", time)
+                            setFloatUniform("PI", PI.toFloat())
                             onDrawBehind {
                                 drawRect(ShaderBrush(this@run))
                             }
@@ -337,6 +336,20 @@ fun PreviewMountFujiNight() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
             dayPart = NIGHT,
+            header = "Settings",
+            modifier = Modifier
+                .height(dimensionResource(R.dimen.banner_height))
+                .fillMaxWidth()
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewMountFuji() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        MountFuji(
+            dayPart = null,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
