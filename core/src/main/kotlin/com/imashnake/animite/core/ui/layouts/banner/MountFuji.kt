@@ -171,7 +171,7 @@ fun MountFuji(
                             )
                             setFloatUniform(
                                 "radius",
-                                size.width / (2f * PI.toFloat()),
+                                size.height / 2.7f,
                             )
                             setFloatUniform("time", time)
                             setFloatUniform("PI", PI.toFloat())
