@@ -39,7 +39,7 @@ val sun = """
       float2 center = float2(x, y);
       
       float d = distance(center, coord) / resolution.y;
-
+      
       // rgba
       return half4(sunColor,  (0.05 / d) - 0.1);
   }
