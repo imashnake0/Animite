@@ -5,9 +5,9 @@ import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 fun LocalDateTime.toDayPart() = when (hour) {
-    in 6..12 -> DayPart.MORNING
+    in 6..11 -> DayPart.MORNING
     in 12..17 -> DayPart.AFTERNOON
-    in 17..21 -> DayPart.EVENING
+    in 18..20 -> DayPart.EVENING
     else -> DayPart.NIGHT
 }
 
