@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -53,7 +54,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -121,7 +121,6 @@ fun SettingsPage(
     var devOptionsCount by remember { mutableIntStateOf(0) }
 
     val dayHour by viewModel.dayHour.collectAsState(initial = null)
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
 
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
@@ -287,11 +286,8 @@ fun SettingsPage(
                                 when (index) {
                                     0 -> {
                                         Slider(
-                                            value = sliderPosition,
-                                            onValueChange = {
-                                                sliderPosition = it
-                                                viewModel.setDayHour(sliderPosition)
-                                            },
+                                            value = animateFloatAsState(dayHour ?: 0f).value,
+                                            onValueChange = { viewModel.setDayHour(it) },
                                             valueRange = 0f..24f,
                                         )
                                     }
