@@ -68,6 +68,7 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
 @Composable
 fun MountFuji(
+    // TODO: This can be determined from the day hour.
     dayPart: DayPart?,
     header: String? = null,
     insetPaddingValues: PaddingValues = PaddingValues(),
@@ -88,7 +89,7 @@ fun MountFuji(
             AFTERNOON -> 12f
             EVENING -> 17f
             else -> {
-                // localDateTime.hour must be in 6..21!
+                // localDateTime.hour must be in 6..20!
                 localDateTime.hour.toFloat()
             }
         } * 2f * PI.toFloat() / 24
@@ -161,7 +162,6 @@ fun MountFuji(
             if (sunShader != null) {
                 Box(
                     Modifier
-                        .align(Alignment.Center)
                         .fillMaxSize()
                         .padding(navigationComponentPaddingValues.horizontalOnly)
                         .drawWithCache @SuppressLint("NewApi") {
@@ -350,7 +350,7 @@ fun PreviewMountFujiNight() {
     }
 }
 
-@Preview
+@Preview(device = "spec:width=800dp,height=200dp,dpi=240")
 @Composable
 fun PreviewMountFuji() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
