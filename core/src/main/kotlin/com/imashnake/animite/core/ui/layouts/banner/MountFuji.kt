@@ -169,7 +169,7 @@ fun MountFuji(
                                 setFloatUniform(
                                     "resolution",
                                     size.width,
-                                    size.height
+                                    size.height,
                                 )
                                 setFloatUniform(
                                     "radius",
