@@ -119,7 +119,7 @@ fun MountFuji(
     )
 
     AnimatedContent(
-        currentDayPart,
+        targetState = currentDayPart,
         transitionSpec = {
             fadeIn(animationSpec = tween(1000)).togetherWith(
                 fadeOut(animationSpec = tween(1000))
@@ -278,6 +278,7 @@ fun MountFuji(
             }
 
             if (it == AFTERNOON) {
+                // TODO: This doesn't show for landscape.
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
                     contentDescription = null,

@@ -37,8 +37,8 @@ val sun = """
       float r = radius;
       float x = r * (t - sin(t));
       float y = resolution.y - (r * (1 - cos(t)));
-      float2 center = float2(x, y);
-      float d = distance(center, coord) / resolution.y;
+      float2 at = float2(x, y);
+      float d = distance(at, coord) / resolution.y;
       
       // rgba
       return half4(sunColor,  (0.05 / d) - 0.1);
@@ -53,7 +53,7 @@ fun PreviewSunShader() {
     LaunchedEffect(Unit) {
         do {
             withFrameMillis {
-                time.floatValue += 0.01f
+                time.floatValue += 0.05f
             }
         } while (true)
     }
