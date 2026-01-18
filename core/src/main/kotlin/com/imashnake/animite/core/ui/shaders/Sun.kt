@@ -32,12 +32,12 @@ val sun = """
       half3 sunColor = half3(1.0, 1.0, 0.8);
       
       // calculate cycloid's x and y based on angle and radius
+      // todo: make it an ellipse???
       float t = mod(time, 2.0 * PI);
       float r = radius;
       float x = r * (t - sin(t));
       float y = resolution.y - (r * (1 - cos(t)));
       float2 center = float2(x, y);
-      
       float d = distance(center, coord) / resolution.y;
       
       // rgba
