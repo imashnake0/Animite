@@ -42,7 +42,6 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.extensions.DayPart
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -83,7 +82,7 @@ fun HomeScreen(
     var homeMediaType by rememberSaveable { mutableStateOf(MediaType.ANIME) }
     viewModel.setMediaType(homeMediaType)
 
-    val dayPart by viewModel.dayPart.collectAsState(initial = null)
+    val dayHour by viewModel.dayHour.collectAsState(initial = null)
 
     val trendingList by viewModel.trendingMedia.collectAsState()
     val popularList by viewModel.popularMediaThisSeason.collectAsState()
@@ -113,7 +112,7 @@ fun HomeScreen(
                         BannerLayout(
                             banner = { bannerModifier ->
                                 MountFuji(
-                                    dayPart = dayPart?.let { DayPart.valueOf(it) },
+                                    setDayHour = dayHour,
                                     header = stringResource(R.string.okaeri),
                                     insetPaddingValues = insetPaddingValues,
                                     navigationComponentPaddingValues = navigationComponentPaddingValues,

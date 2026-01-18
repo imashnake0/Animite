@@ -27,4 +27,5 @@
     <string name="disabled_dev_options">"Disabled developer options!"</string>
 
     <string name="day_part">Set day part</string>
+    <string name="day_hour">Set day hour</string>
 </resources>

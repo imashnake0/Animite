@@ -3,7 +3,7 @@ package com.imashnake.animite.api.preferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
@@ -53,9 +53,9 @@ class PreferencesRepository @Inject constructor(
     }
 
     // region developer options
-    private val dayHourKey = intPreferencesKey("day_hour")
+    private val dayHourKey = floatPreferencesKey("day_hour")
     val dayHour = dataStore.getValue(dayHourKey, null)
-    suspend fun setDayHour(dayHour: Int?) {
+    suspend fun setDayHour(dayHour: Float?) {
         dataStore.setValue(dayHourKey, dayHour)
     }
     // endregion

@@ -1,10 +1,10 @@
 package com.imashnake.animite.core.extensions
 
-import kotlinx.datetime.LocalDateTime
+import androidx.compose.ui.util.fastRoundToInt
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
-fun Int.toDayPart() = when (this) {
+fun Float.toDayPart() = when (this.fastRoundToInt()) {
     in 6..11 -> DayPart.MORNING
     in 12..17 -> DayPart.AFTERNOON
     in 18..20 -> DayPart.EVENING
