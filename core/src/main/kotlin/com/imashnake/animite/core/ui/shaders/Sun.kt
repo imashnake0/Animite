@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameMillis
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.ShaderBrush
@@ -29,7 +30,6 @@ val sun = """
   uniform float PI;
   
   half4 main(float2 coord) {
-      float sunRadius = resolution.y / 25;
       half3 sunColor = half3(1.0, 1.0, 0.8);
       
       // calculate cycloid's x and y based on angle and radius
@@ -39,13 +39,10 @@ val sun = """
       float y = resolution.y - (r * (1 - cos(t)));
       float2 center = float2(x, y);
       
-      float d = distance(center, coord);
-      float d2 = distance(center, coord) / (resolution.x / 2);
-      
-      if (d < sunRadius) return half4(sunColor, 1.0);
-          
+      float d = distance(center, coord) / resolution.y;
+
       // rgba
-      return half4(sunColor,  (0.05 / d2) - 0.1);
+      return half4(sunColor,  (0.05 / d) - 0.1);
   }
 """.trimIndent()
 

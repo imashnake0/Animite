@@ -161,25 +161,28 @@ fun MountFuji(
             if (sunShader != null) {
                 Box(
                     Modifier
+                        .align(Alignment.Center)
                         .fillMaxSize()
+                        .padding(navigationComponentPaddingValues.horizontalOnly)
                         .drawWithCache @SuppressLint("NewApi") {
-                        sunShader.run {
-                            setFloatUniform(
-                                "resolution",
-                                size.width,
-                                size.height
-                            )
-                            setFloatUniform(
-                                "radius",
-                                size.height / 2.7f,
-                            )
-                            setFloatUniform("time", time)
-                            setFloatUniform("PI", PI.toFloat())
-                            onDrawBehind {
-                                drawRect(ShaderBrush(this@run))
+                            sunShader.run {
+                                setFloatUniform(
+                                    "resolution",
+                                    size.width,
+                                    size.height
+                                )
+                                setFloatUniform(
+                                    "radius",
+                                    size.height / 2.7f,
+                                )
+                                setFloatUniform("time", time)
+                                setFloatUniform("PI", PI.toFloat())
+                                onDrawBehind {
+                                    drawRect(ShaderBrush(this@run))
+                                }
                             }
                         }
-                    }
+
                 )
             }
 
