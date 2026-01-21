@@ -48,7 +48,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.core.R
-import com.imashnake.animite.core.extensions.DayPart
 import com.imashnake.animite.core.extensions.DayPart.AFTERNOON
 import com.imashnake.animite.core.extensions.DayPart.EVENING
 import com.imashnake.animite.core.extensions.DayPart.MORNING
@@ -68,32 +67,23 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
 @Composable
 fun MountFuji(
-    // TODO: This can be determined from the day hour.
-    dayPart: DayPart?,
+    setDayHour: Float?,
     header: String? = null,
     insetPaddingValues: PaddingValues = PaddingValues(),
     navigationComponentPaddingValues: PaddingValues = PaddingValues(),
     modifier: Modifier = Modifier,
 ) {
     val localDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-    val currentDayPart = dayPart ?: localDateTime.toDayPart()
-    val sunShader = remember(currentDayPart) {
+    val currentDayHour = localDateTime.hour + (localDateTime.minute / 60f)
+
+    val dayHour = setDayHour ?: currentDayHour
+    val sunShader = remember(dayHour) {
         RuntimeShader(sun).takeIf {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    currentDayPart != NIGHT
+                    dayHour.toDayPart() != NIGHT
         }
     }
-    val time by animateFloatAsState(
-        targetValue = when(dayPart) {
-            MORNING -> 6f
-            AFTERNOON -> 12f
-            EVENING -> 17f
-            else -> {
-                // localDateTime.hour must be in 6..20!
-                localDateTime.hour.toFloat()
-            }
-        } * 2f * PI.toFloat() / 24
-    )
+    val time by animateFloatAsState(dayHour * 2f * PI.toFloat() / 24)
 
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
     val infiniteTransition = rememberInfiniteTransition(label = "clouds")
@@ -119,10 +109,10 @@ fun MountFuji(
     )
 
     AnimatedContent(
-        currentDayPart,
+        targetState = dayHour.toDayPart(),
         transitionSpec = {
-            fadeIn(animationSpec = tween(1000)).togetherWith(
-                fadeOut(animationSpec = tween(1000))
+            fadeIn(animationSpec = tween(700)).togetherWith(
+                fadeOut(animationSpec = tween(700))
             )
         },
         modifier = Modifier
@@ -278,6 +268,7 @@ fun MountFuji(
             }
 
             if (it == AFTERNOON) {
+                // TODO: This doesn't show for landscape.
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
                     contentDescription = null,
@@ -299,7 +290,7 @@ fun MountFuji(
 fun PreviewMountFujiMorning() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            dayPart = MORNING,
+            setDayHour = 6f,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
@@ -313,7 +304,7 @@ fun PreviewMountFujiMorning() {
 fun PreviewMountFujiAfternoon() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            dayPart = AFTERNOON,
+            setDayHour = 12f,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
@@ -327,7 +318,7 @@ fun PreviewMountFujiAfternoon() {
 fun PreviewMountFujiEvening() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            dayPart = EVENING,
+            setDayHour = 18f,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
@@ -341,7 +332,7 @@ fun PreviewMountFujiEvening() {
 fun PreviewMountFujiNight() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            dayPart = NIGHT,
+            setDayHour = 21f,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
@@ -355,7 +346,7 @@ fun PreviewMountFujiNight() {
 fun PreviewMountFuji() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            dayPart = null,
+            setDayHour = null,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))

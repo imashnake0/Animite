@@ -39,7 +39,7 @@ class HomeViewModel @Inject constructor(
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val now = savedStateHandle.getStateFlow(NOW, LocalDate.now())
     private val refreshTrigger = MutableSharedFlow<Unit>()
-    val dayPart = preferencesRepository.dayPart
+    val dayHour = preferencesRepository.dayHour
 
     var useNetwork = false
 
