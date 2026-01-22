@@ -28,6 +28,8 @@ data class Media(
     val title: String?,
     /** @see MediaQuery.Media.description */
     val description: String,
+    /** @see MediaQuery.Media */
+    val info: List<Info>,
     /** @see MediaQuery.Media.rankings */
     val rankings: List<Ranking>,
     /** @see MediaQuery.Media.genres */
@@ -39,6 +41,41 @@ data class Media(
     /** @see MediaQuery.Media.recommendations */
     val recommendations: List<Small>
 ) {
+    companion object {
+        fun getFormattedDate(
+            year: Int?,
+            month: Int?,
+            day: Int?,
+        ): String? {
+            if (year == null && month == null) return null
+            if (year != null && month == null && day != null) return year.toString()
+            val formattedDayYear = listOfNotNull(day, year).joinToString().ifEmpty { null }
+            val formattedMonth = month?.let {
+                Month.of(it)
+            }?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+            return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
+        }
+    }
+
+    data class Info(
+        val item: InfoItem,
+        val value: String? = null,
+    )
+
+    enum class InfoItem {
+        FORMAT,
+        EPISODES,
+        DURATION,
+        STATUS,
+        START_DATE,
+        END_DATE,
+        SEASON,
+        SEASON_YEAR,
+        STUDIO,
+        SOURCE,
+        DIVIDER,
+    }
+
     data class Ranking(
         /** @see MediaQuery.Ranking.rank */
         val rank: Int,
@@ -75,20 +112,6 @@ data class Media(
         val description: String?,
     ) {
         companion object {
-            fun getFormattedDob(
-                year: Int?,
-                month: Int?,
-                day: Int?,
-            ): String? {
-                if (year == null && month == null) return null
-                if (year != null && month == null && day != null) return year.toString()
-                val formattedDayYear = listOfNotNull(day, year).joinToString().ifEmpty { null }
-                val formattedMonth = month?.let {
-                    Month.of(it)
-                }?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
-            }
-
             fun getFormattedFavourites(favouritesCount: Int?): String? {
                 if (favouritesCount == null) return null
                 return if (favouritesCount >= 1000) {
@@ -120,7 +143,7 @@ data class Media(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
-            dob = getFormattedDob(
+            dob = getFormattedDate(
                 year = query.dateOfBirth?.year,
                 month = query.dateOfBirth?.month,
                 day = query.dateOfBirth?.day
@@ -163,6 +186,26 @@ data class Media(
         color = query.coverImage?.color?.toColorInt() ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
+        info = listOfNotNull(
+            // TODO: Properly transform this enum.
+            query.format?.name?.let { Info(InfoItem.FORMAT, it) },
+            query.episodes?.toString()?.let { Info(InfoItem.EPISODES, it) },
+            query.duration?.toString()?.let { Info(InfoItem.DURATION, it) },
+            Info(InfoItem.DIVIDER),
+            // TODO: Properly transform this enum.
+            query.status?.name?.let { Info(InfoItem.STATUS, it) },
+            query.startDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info(InfoItem.START_DATE, it) },
+            query.endDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info(InfoItem.END_DATE, it) },
+            // TODO: Properly transform this enum.
+            query.season?.name?.let { Info(InfoItem.SEASON, it) },
+            query.seasonYear?.toString()?.let { Info(InfoItem.SEASON_YEAR, it) },
+            Info(InfoItem.DIVIDER),
+            // TODO: These can be moved out of the list:
+            //  - We can use studio logos to properly show them.
+            //  - Source can also use an icon and be placed with this.
+            query.studios?.nodes?.first()?.name?.let { Info(InfoItem.STUDIO, it) },
+            query.source?.name?.let { Info(InfoItem.SOURCE, it) },
+        ),
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.rankings.filter {

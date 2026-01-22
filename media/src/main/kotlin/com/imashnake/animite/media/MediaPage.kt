@@ -7,7 +7,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -19,6 +24,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,12 +57,15 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -91,6 +100,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
@@ -213,6 +223,13 @@ fun MediaPage(
                                     ),
                                 textModifier = Modifier.skipToLookaheadSize(),
                                 onClick = { showDetailsSheet = true },
+                            )
+                            
+                            MediaInfo(
+                                info = media.info,
+                                contentPadding = PaddingValues(
+                                    horizontal = LocalPaddings.current.large
+                                ) + horizontalInsets,
                             )
 
                             if (!media.ranks.isNullOrEmpty()) {
@@ -744,6 +761,73 @@ private fun MediaDescription(
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun MediaInfo(
+    info: List<Media.Info>?,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "divider")
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(7500, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .horizontalScroll(rememberScrollState())
+            .padding(contentPadding)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                shape = RoundedCornerShape(LocalPaddings.current.large),
+            )
+            .padding(horizontal = LocalPaddings.current.medium)
+    ) {
+        info?.fastForEach {
+            if (it.item != Media.InfoItem.DIVIDER) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(LocalPaddings.current.large))
+                        .clickable {}
+                        .padding(
+                            vertical = LocalPaddings.current.medium,
+                            horizontal = LocalPaddings.current.large / 2,
+                        )
+                ) {
+                    Text(
+                        text = stringResource(it.item.title!!),
+                        style = MaterialTheme.typography.labelSmallEmphasized
+                    )
+                    Text(
+                        text = it.value.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                        style = MaterialTheme.typography.labelSmallEmphasized
+                    )
+                }
+            } else {
+                Box(
+                    modifier = Modifier
+                        .graphicsLayer { rotationZ = angle }
+                        .padding(LocalPaddings.current.small)
+                        .size(6.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                            shape = MaterialShapes.Arrow.toShape()
+                        )
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun MediaGenres(
     genres: List<String>,
@@ -942,6 +1026,20 @@ fun MediaRecommendations(
             )
         }
     }
+}
+
+private val Media.InfoItem.title get() = when(this) {
+    Media.InfoItem.FORMAT -> R.string.format
+    Media.InfoItem.EPISODES -> R.string.episodes
+    Media.InfoItem.DURATION -> R.string.duration
+    Media.InfoItem.STATUS -> R.string.status
+    Media.InfoItem.START_DATE -> R.string.start_date
+    Media.InfoItem.END_DATE -> R.string.end_date
+    Media.InfoItem.SEASON -> R.string.season
+    Media.InfoItem.SEASON_YEAR -> R.string.season_year
+    Media.InfoItem.STUDIO -> R.string.studios
+    Media.InfoItem.SOURCE -> R.string.source
+    Media.InfoItem.DIVIDER -> null
 }
 
 @Serializable
