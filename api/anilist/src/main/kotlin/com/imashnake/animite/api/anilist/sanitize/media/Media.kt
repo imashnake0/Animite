@@ -174,7 +174,7 @@ data class Media(
 
         data class Source(
             val source: Media.Source,
-        ) : Info(InfoItem.SEASON)
+        ) : Info(InfoItem.SOURCE)
 
         data class Item(
             override val item: InfoItem,

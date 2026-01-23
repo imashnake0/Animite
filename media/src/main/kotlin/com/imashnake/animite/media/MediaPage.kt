@@ -824,11 +824,13 @@ private fun MediaInfo(
                         Text(
                             text = when(it) {
                                 is Media.Info.Item -> it.value
+                                is Media.Info.Season -> listOfNotNull(
+                                    stringResource(it.season.res), it.year
+                                ).joinToString(" ")
                                 else -> stringResource(
                                     when(it) {
                                         is Media.Info.Format -> it.format.res
                                         is Media.Info.Status -> it.status.res
-                                        is Media.Info.Season -> it.season.res
                                         is Media.Info.Source -> it.source.res
                                     }
                                 )
