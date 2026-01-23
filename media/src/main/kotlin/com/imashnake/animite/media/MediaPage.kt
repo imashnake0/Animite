@@ -125,6 +125,8 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
+import com.imashnake.animite.media.ext.res
+import com.imashnake.animite.media.ext.title
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -773,7 +775,7 @@ private fun MediaInfo(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(7500, easing = LinearEasing),
+            animation = tween(6000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "rotation"
@@ -790,39 +792,52 @@ private fun MediaInfo(
             .padding(horizontal = LocalPaddings.current.medium)
     ) {
         info?.fastForEach {
-            if (it.item != Media.InfoItem.DIVIDER) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(LocalPaddings.current.large))
-                        .clickable {}
-                        .padding(
-                            vertical = LocalPaddings.current.medium,
-                            horizontal = LocalPaddings.current.large / 2,
-                        )
-                ) {
-                    Text(
-                        text = stringResource(it.item.title!!),
-                        style = MaterialTheme.typography.labelSmallEmphasized
-                    )
-                    Text(
-                        text = it.value.orEmpty(),
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                        style = MaterialTheme.typography.labelSmallEmphasized
+            when (it) {
+                is Media.Info.Divider -> {
+                    Box(
+                        modifier = Modifier
+                            .graphicsLayer { rotationZ = angle }
+                            .padding(LocalPaddings.current.small)
+                            .size(6.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                                shape = MaterialShapes.Cookie4Sided.toShape()
+                            )
                     )
                 }
-            } else {
-                Box(
-                    modifier = Modifier
-                        .graphicsLayer { rotationZ = angle }
-                        .padding(LocalPaddings.current.small)
-                        .size(6.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                            shape = MaterialShapes.Arrow.toShape()
+                else -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(LocalPaddings.current.large))
+                            .clickable {}
+                            .padding(
+                                vertical = LocalPaddings.current.medium,
+                                horizontal = LocalPaddings.current.large / 2,
+                            )
+                    ) {
+                        Text(
+                            text = stringResource(it.item.title!!),
+                            style = MaterialTheme.typography.labelSmallEmphasized
                         )
-                )
+                        Text(
+                            text = when(it) {
+                                is Media.Info.Item -> it.value
+                                else -> stringResource(
+                                    when(it) {
+                                        is Media.Info.Format -> it.format.res
+                                        is Media.Info.Status -> it.status.res
+                                        is Media.Info.Season -> it.season.res
+                                        is Media.Info.Source -> it.source.res
+                                    }
+                                )
+                            },
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                            style = MaterialTheme.typography.labelSmallEmphasized
+                        )
+                    }
+                }
             }
         }
     }
@@ -1026,20 +1041,6 @@ fun MediaRecommendations(
             )
         }
     }
-}
-
-private val Media.InfoItem.title get() = when(this) {
-    Media.InfoItem.FORMAT -> R.string.format
-    Media.InfoItem.EPISODES -> R.string.episodes
-    Media.InfoItem.DURATION -> R.string.duration
-    Media.InfoItem.STATUS -> R.string.status
-    Media.InfoItem.START_DATE -> R.string.start_date
-    Media.InfoItem.END_DATE -> R.string.end_date
-    Media.InfoItem.SEASON -> R.string.season
-    Media.InfoItem.SEASON_YEAR -> R.string.season_year
-    Media.InfoItem.STUDIO -> R.string.studios
-    Media.InfoItem.SOURCE -> R.string.source
-    Media.InfoItem.DIVIDER -> null
 }
 
 @Serializable
