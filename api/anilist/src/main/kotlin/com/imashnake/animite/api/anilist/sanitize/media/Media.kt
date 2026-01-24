@@ -19,6 +19,9 @@ import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Instant
 
 private const val HQ_DEFAULT = "hqdefault"
 private const val MAX_RES_DEFAULT = "maxresdefault"
@@ -39,6 +42,11 @@ data class Media(
     val title: String?,
     /** @see MediaQuery.Media.description */
     val description: String,
+    /**
+     *  For example: "5d 19h" to 2
+     *  @see MediaQuery.NextAiringEpisode
+     * */
+    val timeToEpisode: Pair<String, Int>?,
     /** @see MediaQuery.Media */
     val info: List<Info>,
     /** @see MediaQuery.Media.rankings */
@@ -307,6 +315,19 @@ data class Media(
         color = query.coverImage?.color?.toColorInt() ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
+        // TODO: Make this a proper countdown.
+        timeToEpisode = query.nextAiringEpisode?.let nextEp@{ nextEp ->
+            nextEp.airingAt.let {
+                val difference = Instant.fromEpochSeconds(it.toLong()) - Clock.System.now()
+                if (difference < Duration.ZERO) return@nextEp null
+                difference
+            }.let {
+                it.toComponents { days, hours, _, _, _ ->
+                    if (days == 0L && hours == 0) return@nextEp null
+                    if (days == 0L && hours != 0) "${hours}h" else "${days}d ${hours}h"
+                }
+            } to nextEp.episode
+        },
         info = listOfNotNull(
             query.format?.sanitize()?.let  { Info.Format(it) },
             query.episodes?.let { Info.Item(InfoItem.EPISODES, it.toString()) },
@@ -317,7 +338,6 @@ data class Media(
             query.status?.sanitize()?.let { Info.Status(it) },
             query.startDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.START_DATE, it) },
             query.endDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.END_DATE, it) },
-
             query.season?.sanitize()?.let { Info.Season(it, query.seasonYear) },
 
             Info.Divider,

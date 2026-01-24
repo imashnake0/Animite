@@ -20,6 +20,11 @@ query MediaQuery(
         }
         description
 
+        nextAiringEpisode {
+            airingAt
+            episode
+        }
+
         format
         episodes
         duration

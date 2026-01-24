@@ -226,7 +226,21 @@ fun MediaPage(
                                 textModifier = Modifier.skipToLookaheadSize(),
                                 onClick = { showDetailsSheet = true },
                             )
-                            
+
+                            if (media.nextEpisode != null && media.dayHoursToNextEpisode != null) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Chip(
+                                        color = Color(0xFF80DF87),
+                                        icon = ImageVector.vectorResource(R.drawable.hourglass),
+                                        // TODO: Use string resources.
+                                        text = "Episode ${media.nextEpisode} in ${media.dayHoursToNextEpisode}",
+                                    )
+                                }
+                            }
+
                             MediaInfo(
                                 info = media.info,
                                 contentPadding = PaddingValues(
@@ -483,7 +497,7 @@ fun MediaPage(
                                                     color = Color(0xFF80DF87),
                                                     text = dob,
                                                     iconPadding = PaddingValues(bottom = 2.dp),
-                                                    icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
+                                                    icon = ImageVector.vectorResource(R.drawable.cake),
                                                 )
                                             }
 

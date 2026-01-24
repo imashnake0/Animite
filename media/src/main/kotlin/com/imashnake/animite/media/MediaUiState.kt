@@ -11,6 +11,8 @@ data class MediaUiState(
     val color: Int? = null,
     val title: String? = null,
     val description: String? = null,
+    val dayHoursToNextEpisode: String? = null,
+    val nextEpisode: Int? = null,
     val info: List<Media.Info>? = null,
     val ranks: List<Media.Ranking>? = null,
     val genres: List<String>? = null,
