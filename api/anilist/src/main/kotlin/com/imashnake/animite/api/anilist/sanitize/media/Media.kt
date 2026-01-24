@@ -1,19 +1,33 @@
 package com.imashnake.animite.api.anilist.sanitize.media
 
 import android.graphics.Color
+import android.util.Log
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import androidx.core.graphics.toColorInt
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Status.Companion.sanitize
+import com.imashnake.animite.api.anilist.type.MediaFormat
+import com.imashnake.animite.api.anilist.type.MediaSeason
+import com.imashnake.animite.api.anilist.type.MediaSource
+import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Instant
 
 private const val HQ_DEFAULT = "hqdefault"
 private const val MAX_RES_DEFAULT = "maxresdefault"
 private const val SD_DEFAULT = "sddefault"
+
+private const val EXCEPTION_TAG = "exception"
 
 data class Media(
     /** @see MediaQuery.Media.id */
@@ -28,6 +42,13 @@ data class Media(
     val title: String?,
     /** @see MediaQuery.Media.description */
     val description: String,
+    /**
+     *  For example: "5d 19h" to 2
+     *  @see MediaQuery.NextAiringEpisode
+     * */
+    val timeToEpisode: Pair<String, Int>?,
+    /** @see MediaQuery.Media */
+    val info: List<Info>,
     /** @see MediaQuery.Media.rankings */
     val rankings: List<Ranking>,
     /** @see MediaQuery.Media.genres */
@@ -39,6 +60,151 @@ data class Media(
     /** @see MediaQuery.Media.recommendations */
     val recommendations: List<Small>
 ) {
+    companion object {
+        fun getFormattedDate(
+            year: Int?,
+            month: Int?,
+            day: Int?,
+        ): String? {
+            if (year == null && month == null) return null
+            if (year != null && month == null && day != null) return year.toString()
+            val formattedDayYear = listOfNotNull(day, year).joinToString().ifEmpty { null }
+            val formattedMonth = month?.let {
+                Month.of(it)
+            }?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+            return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
+        }
+    }
+
+    enum class Format {
+        TV,
+        TV_SHORT,
+        MOVIE,
+        SPECIAL,
+        OVA,
+        ONA,
+        MUSIC,
+        MANGA,
+        NOVEL,
+        ONE_SHOT;
+
+        companion object {
+            fun safeValueOf(rawValue: String): Format? = try {
+                valueOf(rawValue)
+            } catch (e: IllegalArgumentException) {
+                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Format $rawValue not found.")
+                null
+            }
+
+            fun MediaFormat.sanitize() = safeValueOf(this.name)
+        }
+    }
+
+    enum class Status {
+        FINISHED,
+        RELEASING,
+        NOT_YET_RELEASED,
+        CANCELLED,
+        HIATUS;
+
+        companion object {
+            fun safeValueOf(rawValue: String): Status? = try {
+                Status.valueOf(rawValue)
+            } catch (e: IllegalArgumentException) {
+                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Status $rawValue not found.")
+                null
+            }
+
+            fun MediaStatus.sanitize() = safeValueOf(this.name)
+        }
+    }
+
+    enum class Season {
+        WINTER,
+        SPRING,
+        SUMMER,
+        FALL;
+
+        companion object {
+            fun safeValueOf(rawValue: String): Season? = try {
+                Season.valueOf(rawValue)
+            } catch (e: IllegalArgumentException) {
+                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Season $rawValue not found.")
+                null
+            }
+
+            fun MediaSeason.sanitize() = safeValueOf(this.name)
+        }
+    }
+
+    enum class Source {
+        ORIGINAL,
+        MANGA,
+        LIGHT_NOVEL,
+        VISUAL_NOVEL,
+        VIDEO_GAME,
+        OTHER,
+        NOVEL,
+        DOUJINSHI,
+        ANIME,
+        WEB_NOVEL,
+        LIVE_ACTION,
+        GAME,
+        COMIC,
+        MULTIMEDIA_PROJECT,
+        PICTURE_BOOK;
+
+        companion object {
+            fun safeValueOf(rawValue: String): Source? = try {
+                Source.valueOf(rawValue)
+            } catch (e: IllegalArgumentException) {
+                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Source $rawValue not found.")
+                null
+            }
+
+            fun MediaSource.sanitize() = safeValueOf(this.name)
+        }
+    }
+
+    sealed class Info(open val item: InfoItem) {
+        data class Format(
+            val format: Media.Format,
+        ) : Info(InfoItem.FORMAT)
+
+        data class Status(
+            val status: Media.Status,
+        ) : Info(InfoItem.STATUS)
+
+        data class Season(
+            val season: Media.Season,
+            val year: Int? = null,
+        ) : Info(InfoItem.SEASON)
+
+        data class Source(
+            val source: Media.Source,
+        ) : Info(InfoItem.SOURCE)
+
+        data class Item(
+            override val item: InfoItem,
+            val value: String,
+        ) : Info(item)
+
+        data object Divider : Info(InfoItem.DIVIDER)
+    }
+
+    enum class InfoItem {
+        FORMAT,
+        EPISODES,
+        DURATION,
+        STATUS,
+        START_DATE,
+        END_DATE,
+        SEASON,
+        STUDIO,
+        SOURCE,
+        DIVIDER,
+    }
+
     data class Ranking(
         /** @see MediaQuery.Ranking.rank */
         val rank: Int,
@@ -75,20 +241,6 @@ data class Media(
         val description: String?,
     ) {
         companion object {
-            fun getFormattedDob(
-                year: Int?,
-                month: Int?,
-                day: Int?,
-            ): String? {
-                if (year == null && month == null) return null
-                if (year != null && month == null && day != null) return year.toString()
-                val formattedDayYear = listOfNotNull(day, year).joinToString().ifEmpty { null }
-                val formattedMonth = month?.let {
-                    Month.of(it)
-                }?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
-            }
-
             fun getFormattedFavourites(favouritesCount: Int?): String? {
                 if (favouritesCount == null) return null
                 return if (favouritesCount >= 1000) {
@@ -120,7 +272,7 @@ data class Media(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
-            dob = getFormattedDob(
+            dob = getFormattedDate(
                 year = query.dateOfBirth?.year,
                 month = query.dateOfBirth?.month,
                 day = query.dateOfBirth?.day
@@ -163,6 +315,39 @@ data class Media(
         color = query.coverImage?.color?.toColorInt() ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
+        // TODO: Make this a proper countdown.
+        timeToEpisode = query.nextAiringEpisode?.let nextEp@{ nextEp ->
+            nextEp.airingAt.let {
+                val difference = Instant.fromEpochSeconds(it.toLong()) - Clock.System.now()
+                if (difference < Duration.ZERO) return@nextEp null
+                difference
+            }.let {
+                it.toComponents { days, hours, _, _, _ ->
+                    if (days == 0L && hours == 0) return@nextEp null
+                    if (days == 0L && hours != 0) "${hours}h" else "${days}d ${hours}h"
+                }
+            } to nextEp.episode
+        },
+        info = listOfNotNull(
+            query.format?.sanitize()?.let  { Info.Format(it) },
+            query.episodes?.let { Info.Item(InfoItem.EPISODES, it.toString()) },
+            query.duration?.let { Info.Item(InfoItem.DURATION, it.toString()) },
+
+            Info.Divider,
+
+            query.status?.sanitize()?.let { Info.Status(it) },
+            query.startDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.START_DATE, it) },
+            query.endDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.END_DATE, it) },
+            query.season?.sanitize()?.let { Info.Season(it, query.seasonYear) },
+
+            Info.Divider,
+
+            // TODO: These can be moved out of the list:
+            //  - We can use studio logos to properly show them.
+            //  - Source can also use an icon and be placed with this.
+            query.studios?.nodes?.first()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
+            query.source?.sanitize()?.let { Info.Source(it) },
+        ),
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.rankings.filter {
@@ -239,50 +424,26 @@ data class Media(
         /** @see title */
         val title: String?,
         /** @see season */
-        val season: Season,
+        val season: Season?,
         /** @see seasonYear */
         val seasonYear: Int?,
         /** @see studios */
         val studios: List<String>,
         /** @see format */
-        val format: Format,
+        val format: Format?,
         /** @see episodes */
         val episodes: Int?,
     ) {
-        /** @see season */
-        enum class Season(val season: String) {
-            WINTER("Winter"),
-            SPRING("Spring"),
-            SUMMER("Summer"),
-            FALL("Fall"),
-            UNKNOWN("")
-        }
-
-        /** @see format */
-        enum class Format(val string: String) {
-            TV("TV"),
-            TV_SHORT("TV SHORT"),
-            MOVIE("MOVIE"),
-            SPECIAL("SPECIAL"),
-            OVA("OVA"),
-            ONA("ONA"),
-            MUSIC("MUSIC"),
-            MANGA("MANGA"),
-            NOVEL("NOVEL"),
-            ONE_SHOT("ONE SHOT"),
-            UNKNOWN("")
-        }
-
         internal constructor(query: com.imashnake.animite.api.anilist.fragment.MediaMedium) : this(
             id = query.id,
             coverImage = query.coverImage?.extraLarge,
             title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
-            season = query.season?.let { Season.valueOf(it.name) } ?: Season.UNKNOWN,
+            season = query.season?.sanitize(),
             seasonYear = query.seasonYear,
             studios = if (query.studios?.nodes == null) { emptyList() } else {
                 query.studios.nodes.filter { it?.name != null }.map { it!!.name }
             },
-            format = query.format?.let { Format.valueOf(it.name) } ?: Format.UNKNOWN,
+            format = query.format?.sanitize(),
             episodes = query.episodes
         )
     }

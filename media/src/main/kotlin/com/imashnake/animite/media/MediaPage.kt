@@ -7,7 +7,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -19,6 +24,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,12 +57,15 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -91,6 +100,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
@@ -115,6 +125,8 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
+import com.imashnake.animite.media.ext.res
+import com.imashnake.animite.media.ext.title
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -202,6 +214,9 @@ fun MediaPage(
                         content = {
                             MediaDetails(
                                 title = media.title,
+                                nextEpisodeIn = if (media.nextEpisode != null && media.dayHoursToNextEpisode != null) {
+                                    "Ep ${media.nextEpisode} in ${media.dayHoursToNextEpisode}"
+                                } else null,
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
                                     .skipToLookaheadSize()
@@ -213,6 +228,13 @@ fun MediaPage(
                                     ),
                                 textModifier = Modifier.skipToLookaheadSize(),
                                 onClick = { showDetailsSheet = true },
+                            )
+
+                            MediaInfo(
+                                info = media.info,
+                                contentPadding = PaddingValues(
+                                    horizontal = LocalPaddings.current.large
+                                ) + horizontalInsets,
                             )
 
                             if (!media.ranks.isNullOrEmpty()) {
@@ -348,6 +370,7 @@ fun MediaPage(
                                     )
                                 ),
                                 animatedVisibilityScope,
+                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
                             )
                         )
                     }
@@ -464,7 +487,7 @@ fun MediaPage(
                                                     color = Color(0xFF80DF87),
                                                     text = dob,
                                                     iconPadding = PaddingValues(bottom = 2.dp),
-                                                    icon = ImageVector.vectorResource(R.drawable.rounded_cake_24),
+                                                    icon = ImageVector.vectorResource(R.drawable.cake),
                                                 )
                                             }
 
@@ -683,6 +706,7 @@ private fun MediaBanner(
 @Composable
 private fun MediaDetails(
     title: String?,
+    nextEpisodeIn: String?,
     description: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -708,6 +732,21 @@ private fun MediaDetails(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = textModifier.align(Alignment.CenterStart),
+                )
+            }
+        }
+
+        if (nextEpisodeIn != null) {
+            Box(contentAlignment = Alignment.Center) {
+                Chip(
+                    color = Color(0xFF80DF87),
+                    icon = ImageVector.vectorResource(R.drawable.hourglass),
+                    // TODO: Use string resources.
+                    text = nextEpisodeIn,
+                    modifier = Modifier.padding(
+                        top = LocalPaddings.current.small,
+                        bottom = LocalPaddings.current.tiny,
+                    )
                 )
             }
         }
@@ -742,6 +781,88 @@ private fun MediaDescription(
         modifier = modifier,
         overflow = TextOverflow.Ellipsis
     )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun MediaInfo(
+    info: List<Media.Info>?,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "divider")
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(6000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .horizontalScroll(rememberScrollState())
+            .padding(contentPadding)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                shape = RoundedCornerShape(LocalPaddings.current.large),
+            )
+            .padding(horizontal = LocalPaddings.current.medium)
+    ) {
+        info?.fastForEach {
+            when (it) {
+                is Media.Info.Divider -> {
+                    Box(
+                        modifier = Modifier
+                            .graphicsLayer { rotationZ = angle }
+                            .padding(LocalPaddings.current.small)
+                            .size(6.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                                shape = MaterialShapes.Cookie4Sided.toShape()
+                            )
+                    )
+                }
+                else -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(LocalPaddings.current.large))
+                            .clickable {}
+                            .padding(
+                                vertical = LocalPaddings.current.medium,
+                                horizontal = LocalPaddings.current.large / 2,
+                            )
+                    ) {
+                        Text(
+                            text = stringResource(it.item.title!!),
+                            style = MaterialTheme.typography.labelSmallEmphasized
+                        )
+                        Text(
+                            text = when(it) {
+                                is Media.Info.Item -> it.value
+                                is Media.Info.Season -> listOfNotNull(
+                                    stringResource(it.season.res), it.year
+                                ).joinToString(" ")
+                                else -> stringResource(
+                                    when(it) {
+                                        is Media.Info.Format -> it.format.res
+                                        is Media.Info.Status -> it.status.res
+                                        is Media.Info.Source -> it.source.res
+                                    }
+                                )
+                            },
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                            style = MaterialTheme.typography.labelSmallEmphasized
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -801,6 +922,7 @@ private fun MediaCharacters(
     }
 }
 
+// TODO: Move this to core and make the color work for light mode.
 @Composable
 private fun Chip(
     color: Color,
@@ -829,7 +951,8 @@ private fun Chip(
             text = text,
             color = color,
             fontSize = 11.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
         )
     }
 }
@@ -939,6 +1062,7 @@ fun MediaRecommendations(
                     ),
                     animatedVisibilityScope,
                 ),
+                textModifier = Modifier.skipToLookaheadSize(),
             )
         }
     }
