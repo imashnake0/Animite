@@ -214,6 +214,9 @@ fun MediaPage(
                         content = {
                             MediaDetails(
                                 title = media.title,
+                                nextEpisodeIn = if (media.nextEpisode != null && media.dayHoursToNextEpisode != null) {
+                                    "Episode ${media.nextEpisode} in ${media.dayHoursToNextEpisode}"
+                                } else null,
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
                                     .skipToLookaheadSize()
@@ -226,20 +229,6 @@ fun MediaPage(
                                 textModifier = Modifier.skipToLookaheadSize(),
                                 onClick = { showDetailsSheet = true },
                             )
-
-                            if (media.nextEpisode != null && media.dayHoursToNextEpisode != null) {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Chip(
-                                        color = Color(0xFF80DF87),
-                                        icon = ImageVector.vectorResource(R.drawable.hourglass),
-                                        // TODO: Use string resources.
-                                        text = "Episode ${media.nextEpisode} in ${media.dayHoursToNextEpisode}",
-                                    )
-                                }
-                            }
 
                             MediaInfo(
                                 info = media.info,
@@ -381,6 +370,7 @@ fun MediaPage(
                                     )
                                 ),
                                 animatedVisibilityScope,
+                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
                             )
                         )
                     }
@@ -716,6 +706,7 @@ private fun MediaBanner(
 @Composable
 private fun MediaDetails(
     title: String?,
+    nextEpisodeIn: String?,
     description: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -741,6 +732,21 @@ private fun MediaDetails(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = textModifier.align(Alignment.CenterStart),
+                )
+            }
+        }
+
+        if (nextEpisodeIn != null) {
+            Box(contentAlignment = Alignment.Center) {
+                Chip(
+                    color = Color(0xFF80DF87),
+                    icon = ImageVector.vectorResource(R.drawable.hourglass),
+                    // TODO: Use string resources.
+                    text = nextEpisodeIn,
+                    modifier = Modifier.padding(
+                        top = LocalPaddings.current.small,
+                        bottom = LocalPaddings.current.tiny,
+                    )
                 )
             }
         }
@@ -1054,6 +1060,7 @@ fun MediaRecommendations(
                     ),
                     animatedVisibilityScope,
                 ),
+                textModifier = Modifier.skipToLookaheadSize(),
             )
         }
     }
