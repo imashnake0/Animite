@@ -922,6 +922,7 @@ private fun MediaCharacters(
     }
 }
 
+// TODO: Move this to core and make the color work for light mode.
 @Composable
 private fun Chip(
     color: Color,
