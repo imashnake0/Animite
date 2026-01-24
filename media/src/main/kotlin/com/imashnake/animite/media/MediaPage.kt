@@ -215,7 +215,7 @@ fun MediaPage(
                             MediaDetails(
                                 title = media.title,
                                 nextEpisodeIn = if (media.nextEpisode != null && media.dayHoursToNextEpisode != null) {
-                                    "Episode ${media.nextEpisode} in ${media.dayHoursToNextEpisode}"
+                                    "Ep ${media.nextEpisode} in ${media.dayHoursToNextEpisode}"
                                 } else null,
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
@@ -951,7 +951,8 @@ private fun Chip(
             text = text,
             color = color,
             fontSize = 11.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
         )
     }
 }
