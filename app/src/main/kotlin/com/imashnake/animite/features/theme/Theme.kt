@@ -17,7 +17,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.imashnake.animite.core.extensions.DayPart
 import com.imashnake.animite.core.extensions.DayPart.AFTERNOON
 import com.imashnake.animite.core.extensions.DayPart.EVENING
 import com.imashnake.animite.core.extensions.DayPart.MORNING
@@ -44,18 +43,16 @@ fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
     useDarkTheme: Boolean,
     useSystemColorScheme: Boolean,
-    dayPart: DayPart?,
+    dayHour: Float?,
     content: @Composable () -> Unit,
 ) {
     val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && useSystemColorScheme
     val context = LocalContext.current
 
     // TODO: Make a top level function.
-    val currentDayPart = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-        .toDayPart()
+    val currentDayHour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour.toFloat()
 
-    val stops = when (dayPart ?: currentDayPart) {
+    val stops = when ((dayHour ?: currentDayHour).toDayPart()) {
         MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
         AFTERNOON -> Triple(0xFF7AAEDD, 0xFFA1C8F5, 0xFFD1E4F6)
         EVENING -> Triple(0xFF5F81E2, 0xFFBF98B7, 0xFFCDACC2)

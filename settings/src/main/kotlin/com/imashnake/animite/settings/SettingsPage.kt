@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,6 +44,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -79,6 +81,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.core.extensions.DayPart
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
+import com.imashnake.animite.core.extensions.toDayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
@@ -93,7 +96,7 @@ private const val PRIVACY_POLICY = "https://imashnake.deno.dev/animite.html"
 private const val SYSTEM_DAY_PART = "SYSTEM"
 private const val ANIMITE = "Animite"
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPage(
     versionName: String,
@@ -117,14 +120,14 @@ fun SettingsPage(
 
     var devOptionsCount by remember { mutableIntStateOf(0) }
 
-    val dayPart by viewModel.dayPart.collectAsState(initial = null)
+    val dayHour by viewModel.dayHour.collectAsState(initial = null)
 
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
             BannerLayout(
                 banner = { bannerModifier ->
                     MountFuji(
-                        dayPart = dayPart?.let { DayPart.valueOf(it) },
+                        setDayHour = dayHour,
                         header = stringResource(R.string.settings),
                         insetPaddingValues = insetPaddingValues,
                         modifier = bannerModifier,
@@ -267,6 +270,11 @@ fun SettingsPage(
                             Items(
                                 items = listOf(
                                     Item(
+                                        icon = R.drawable.day_hour,
+                                        label = R.string.day_hour,
+                                        orientation = Item.Orientation.VERTICAL
+                                    ),
+                                    Item(
                                         icon = R.drawable.day_part,
                                         label = R.string.day_part,
                                         orientation = Item.Orientation.VERTICAL
@@ -277,6 +285,13 @@ fun SettingsPage(
                             ) { index ->
                                 when (index) {
                                     0 -> {
+                                        Slider(
+                                            value = animateFloatAsState(dayHour ?: 0f).value,
+                                            onValueChange = { viewModel.setDayHour(it) },
+                                            valueRange = 0f..24f,
+                                        )
+                                    }
+                                    1 -> {
                                         Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
                                             DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART).forEach {
                                                 Row(
@@ -287,8 +302,15 @@ fun SettingsPage(
                                                         .clip(CircleShape)
                                                         .clickable {
                                                             if (it != SYSTEM_DAY_PART) {
-                                                                viewModel.setDayPart(DayPart.valueOf(it))
-                                                            } else viewModel.setDayPart(null)
+                                                                viewModel.setDayHour(
+                                                                    when(DayPart.valueOf(it)) {
+                                                                        DayPart.MORNING -> 6f
+                                                                        DayPart.AFTERNOON -> 12f
+                                                                        DayPart.EVENING -> 18f
+                                                                        DayPart.NIGHT -> 21f
+                                                                    }
+                                                                )
+                                                            } else viewModel.setDayHour(null)
                                                         }
                                                         .padding(
                                                             top = LocalPaddings.current.tiny,
@@ -298,7 +320,7 @@ fun SettingsPage(
                                                         )
                                                 ) {
                                                     RadioButton(
-                                                        selected = if (dayPart == null) it == SYSTEM_DAY_PART else it == dayPart,
+                                                        selected = if (dayHour == null) it == SYSTEM_DAY_PART else it == dayHour?.toDayPart()?.name,
                                                         onClick = null,
                                                     )
                                                     Text(

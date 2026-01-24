@@ -36,7 +36,7 @@ navigation = "2.9.6"
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
-apollo = "4.3.3"
+apollo = "4.4.0"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore.
@@ -69,7 +69,7 @@ hilt = "1.3.0"
 kotlin = "2.3.0"
 kotlinxTime = "0.7.1"
 coroutines = "1.10.2"
-serialization = "1.9.0"
+serialization = "1.10.0"
 
 # Compose Multiplatform
 # https://github.com/JetBrains/compose-multiplatform
@@ -81,7 +81,7 @@ ksp = "2.3.4"
 
 # Ktor
 # https://ktor.io/docs/releases.html#release-details.
-ktor = "3.3.3"
+ktor = "3.4.0"
 
 # Test
 # https://github.com/junit-team/junit4/releases.
