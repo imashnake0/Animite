@@ -59,6 +59,7 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -67,6 +68,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -137,6 +139,7 @@ import kotlin.math.absoluteValue
 import com.imashnake.animite.core.R as coreR
 
 private const val RECOMMENDATIONS = "Recommendations"
+private const val RELATIONS = "Relations"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -230,12 +233,13 @@ fun MediaPage(
                                 onClick = { showDetailsSheet = true },
                             )
 
-                            MediaInfo(
-                                info = media.info,
-                                contentPadding = PaddingValues(
-                                    horizontal = LocalPaddings.current.large
-                                ) + horizontalInsets,
-                            )
+                            if (media.type == MediaType.ANIME.name)
+                                AnimeInfo(
+                                    info = media.info,
+                                    contentPadding = PaddingValues(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + horizontalInsets,
+                                )
 
                             if (!media.ranks.isNullOrEmpty()) {
                                 StatsRow(
@@ -303,6 +307,25 @@ fun MediaPage(
                                 )
                             }
 
+                            if (!media.relations.isNullOrEmpty()) {
+                                MediaRelations(
+                                    relations = media.relations,
+                                    onItemClicked = {
+                                        onNavigateToMediaItem(
+                                            MediaPage(
+                                                id = it.id,
+                                                source = RELATIONS,
+                                                mediaType = it.type.name,
+                                                title = it.title,
+                                            )
+                                        )
+                                    },
+                                    contentPadding = PaddingValues(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + horizontalInsets,
+                                )
+                            }
+
                             if (!media.recommendations.isNullOrEmpty()) {
                                 MediaRecommendations(
                                     recommendations = media.recommendations,
@@ -316,8 +339,6 @@ fun MediaPage(
                                             )
                                         )
                                     },
-                                    sharedTransitionScope = sharedTransitionScope,
-                                    animatedVisibilityScope = animatedVisibilityScope,
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
@@ -785,7 +806,7 @@ private fun MediaDescription(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun MediaInfo(
+private fun AnimeInfo(
     info: List<Media.Info>?,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
@@ -879,24 +900,29 @@ private fun MediaGenres(
         modifier = modifier
     ) {
         items(genres) { genre ->
-            SuggestionChip(
-                label = {
-                    Text(
-                        text = genre.lowercase(),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(
-                            vertical = LocalPaddings.current.small
+            CompositionLocalProvider(
+                // Remove default M3 padding
+                LocalMinimumInteractiveComponentSize provides 0.dp,
+            ) {
+                SuggestionChip(
+                    label = {
+                        Text(
+                            text = genre.lowercase(),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.labelMedium,
+                            modifier = Modifier.padding(
+                                vertical = LocalPaddings.current.small
+                            )
                         )
-                    )
-                },
-                onClick = { onGenreClick(genre) },
-                shape = CircleShape,
-                colors = SuggestionChipDefaults.suggestionChipColors(
-                    containerColor = color.copy(alpha = 0.25f)
-                ),
-                border = BorderStroke(width = 0.dp, color = Color.Transparent)
-            )
+                    },
+                    onClick = { onGenreClick(genre) },
+                    shape = CircleShape,
+                    colors = SuggestionChipDefaults.suggestionChipColors(
+                        containerColor = color.copy(alpha = 0.25f)
+                    ),
+                    border = BorderStroke(width = 0.dp, color = Color.Transparent)
+                )
+            }
         }
     }
 }
@@ -1022,11 +1048,31 @@ private fun MediaTrailer(
 }
 
 @Composable
+fun MediaRelations(
+    relations: List<Pair<Media.Relation?, Media.Small>>,
+    onItemClicked: (Media.Small) -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+) {
+    MediaSmallRow(
+        title = stringResource(R.string.relations),
+        mediaList = relations,
+        modifier = modifier,
+        contentPadding = contentPadding,
+    ) { _, media ->
+        MediaCard(
+            image = media.second.coverImage,
+            tag = media.first?.let { stringResource(it.res) },
+            label = media.second.title,
+            onClick = { onItemClicked(media.second) },
+        )
+    }
+}
+
+@Composable
 fun MediaRecommendations(
     recommendations: List<Media.Small>,
     onItemClicked: (Media.Small) -> Unit,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -1036,35 +1082,11 @@ fun MediaRecommendations(
         modifier = modifier,
         contentPadding = contentPadding,
     ) { _, media ->
-        with(sharedTransitionScope) {
-            MediaCard(
-                image = media.coverImage,
-                label = media.title,
-                onClick = { onItemClicked(media) },
-                modifier = Modifier.sharedBounds(
-                    rememberSharedContentState(
-                        SharedContentKey(
-                            id = media.id,
-                            source = stringResource(R.string.recommendations),
-                            sharedComponents = Card to Page,
-                        )
-                    ),
-                    animatedVisibilityScope,
-                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                ),
-                imageModifier = Modifier.sharedBounds(
-                    rememberSharedContentState(
-                        SharedContentKey(
-                            id = media.id,
-                            source = stringResource(R.string.recommendations),
-                            sharedComponents = Image to Image,
-                        )
-                    ),
-                    animatedVisibilityScope,
-                ),
-                textModifier = Modifier.skipToLookaheadSize(),
-            )
-        }
+        MediaCard(
+            image = media.coverImage,
+            label = media.title,
+            onClick = { onItemClicked(media) },
+        )
     }
 }
 

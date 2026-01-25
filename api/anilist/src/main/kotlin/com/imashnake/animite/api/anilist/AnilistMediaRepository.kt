@@ -102,6 +102,7 @@ class AnilistMediaRepository @Inject constructor(
                 MediaQuery(
                     id = Optional.presentIfNotNull(id),
                     type = Optional.presentIfNotNull(mediaType),
+                    isAnime = mediaType == MediaType.ANIME,
                     recommendationsPerPage = Optional.presentIfNotNull(recommendationCount)
                 )
             )
