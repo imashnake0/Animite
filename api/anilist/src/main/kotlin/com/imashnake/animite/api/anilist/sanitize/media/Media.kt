@@ -58,8 +58,10 @@ data class Media(
     val characters: List<Character>,
     /** @see MediaQuery.Media.trailer */
     val trailer: Trailer?,
+    /** @see MediaQuery.Media.relations */
+    val relations: List<Pair<String, Small>>,
     /** @see MediaQuery.Media.recommendations */
-    val recommendations: List<Small>
+    val recommendations: List<Small>,
 ) {
     companion object {
         fun getFormattedDate(
@@ -390,6 +392,10 @@ data class Media(
                     )
                 }
             )
+        },
+        relations = query.relations?.edges.orEmpty().mapNotNull { edge ->
+            // TODO: Properly transform this enum (or not).
+            edge?.node?.mediaSmall?.let { edge.relationType?.name.orEmpty() to Small(it) }
         },
         recommendations = query.recommendations?.nodes.orEmpty().mapNotNull { node ->
             node?.mediaRecommendation?.mediaSmall?.let { Small(it) }

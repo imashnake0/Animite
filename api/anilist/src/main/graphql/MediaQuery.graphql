@@ -48,6 +48,15 @@ query MediaQuery(
             thumbnail
         }
 
+        relations {
+            edges {
+                node {
+                    ...MediaSmall
+                }
+                relationType(version: 2)
+            }
+        }
+
         recommendations(
             sort: RATING_DESC,
             page: 0,

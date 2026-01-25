@@ -304,6 +304,27 @@ fun MediaPage(
                                 )
                             }
 
+                            if (!media.relations.isNullOrEmpty()) {
+                                MediaRelations(
+                                    relations = media.relations,
+                                    onItemClicked = {
+                                        onNavigateToMediaItem(
+                                            MediaPage(
+                                                id = it.id,
+                                                source = RECOMMENDATIONS,
+                                                mediaType = it.type.name,
+                                                title = it.title,
+                                            )
+                                        )
+                                    },
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    contentPadding = PaddingValues(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + horizontalInsets,
+                                )
+                            }
+
                             if (!media.recommendations.isNullOrEmpty()) {
                                 MediaRecommendations(
                                     recommendations = media.recommendations,
@@ -1017,6 +1038,53 @@ private fun MediaTrailer(
                 painter = painterResource(R.drawable.youtube),
                 contentDescription = null,
                 modifier = Modifier.align(Alignment.Center)
+            )
+        }
+    }
+}
+
+@Composable
+fun MediaRelations(
+    relations: List<Pair<String, Media.Small>>,
+    onItemClicked: (Media.Small) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+) {
+    MediaSmallRow(
+        title = stringResource(R.string.relations),
+        mediaList = relations,
+        modifier = modifier,
+        contentPadding = contentPadding,
+    ) { _, media ->
+        with(sharedTransitionScope) {
+            MediaCard(
+                image = media.second.coverImage,
+                label = media.second.title,
+                onClick = { onItemClicked(media.second) },
+                modifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.second.id,
+                            source = stringResource(R.string.relations),
+                            sharedComponents = Card to Page,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                ),
+                imageModifier = Modifier.sharedBounds(
+                    rememberSharedContentState(
+                        SharedContentKey(
+                            id = media.second.id,
+                            source = stringResource(R.string.recommendations),
+                            sharedComponents = Image to Image,
+                        )
+                    ),
+                    animatedVisibilityScope,
+                ),
+                textModifier = Modifier.skipToLookaheadSize(),
             )
         }
     }

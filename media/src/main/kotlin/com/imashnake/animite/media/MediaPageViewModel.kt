@@ -53,6 +53,7 @@ class MediaPageViewModel @Inject constructor(
                     genres = media?.genres,
                     characters = media?.characters,
                     trailer = media?.trailer,
+                    relations = media?.relations,
                     recommendations = media?.recommendations
                 )
             } catch(ioe: IOException) {
