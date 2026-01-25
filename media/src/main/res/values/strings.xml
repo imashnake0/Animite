@@ -65,4 +65,18 @@
         <item quantity="one">%1$d episode</item>
         <item quantity="other">%1$d episodes</item>
     </plurals>
+
+    <string name="adaptation_relation">adaptation</string>
+    <string name="prequel_relation">prequel</string>
+    <string name="sequel_relation">sequel</string>
+    <string name="parent_relation">parent</string>
+    <string name="side_story_relation">side story</string>
+    <string name="character_relation">character</string>
+    <string name="summary_relation">summary</string>
+    <string name="alternative_relation">alternative</string>
+    <string name="spin_off_relation">spin off</string>
+    <string name="other_relation">other</string>
+    <string name="source_relation">source</string>
+    <string name="compilation_relation">compilation</string>
+    <string name="contains_relation">contains</string>
 </resources>

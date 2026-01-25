@@ -9,10 +9,12 @@ import com.imashnake.animite.api.anilist.type.MediaRankType
 import androidx.core.graphics.toColorInt
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Status.Companion.sanitize
 import com.imashnake.animite.api.anilist.type.MediaFormat
+import com.imashnake.animite.api.anilist.type.MediaRelation
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSource
 import com.imashnake.animite.api.anilist.type.MediaStatus
@@ -59,7 +61,7 @@ data class Media(
     /** @see MediaQuery.Media.trailer */
     val trailer: Trailer?,
     /** @see MediaQuery.Media.relations */
-    val relations: List<Pair<String, Small>>,
+    val relations: List<Pair<Relation?, Small>>,
     /** @see MediaQuery.Media.recommendations */
     val recommendations: List<Small>,
 ) {
@@ -200,6 +202,33 @@ data class Media(
             }
 
             fun MediaSource.sanitize() = safeValueOf(this.name)
+        }
+    }
+
+    enum class Relation {
+        ADAPTATION,
+        PREQUEL,
+        SEQUEL,
+        PARENT,
+        SIDE_STORY,
+        CHARACTER,
+        SUMMARY,
+        ALTERNATIVE,
+        SPIN_OFF,
+        OTHER,
+        SOURCE,
+        COMPILATION,
+        CONTAINS;
+
+        companion object {
+            fun safeValueOf(rawValue: String): Relation? = try {
+                Relation.valueOf(rawValue)
+            } catch (e: IllegalArgumentException) {
+                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Source $rawValue not found.")
+                null
+            }
+
+            fun MediaRelation.sanitize() = safeValueOf(this.name)
         }
     }
 
@@ -394,8 +423,7 @@ data class Media(
             )
         },
         relations = query.relations?.edges.orEmpty().mapNotNull { edge ->
-            // TODO: Properly transform this enum (or not).
-            edge?.node?.mediaSmall?.let { edge.relationType?.name.orEmpty() to Small(it) }
+            edge?.node?.mediaSmall?.let { edge.relationType?.sanitize() to Small(it) }
         },
         recommendations = query.recommendations?.nodes.orEmpty().mapNotNull { node ->
             node?.mediaRecommendation?.mediaSmall?.let { Small(it) }

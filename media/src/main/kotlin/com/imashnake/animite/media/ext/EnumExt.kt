@@ -61,3 +61,19 @@ val Media.Source.res get() = when(this) {
     Media.Source.MULTIMEDIA_PROJECT -> R.string.multimedia_project
     Media.Source.PICTURE_BOOK -> R.string.picture_book
 }
+
+val Media.Relation.res get() = when(this) {
+    Media.Relation.ADAPTATION -> R.string.adaptation_relation
+    Media.Relation.PREQUEL -> R.string.prequel_relation
+    Media.Relation.SEQUEL -> R.string.sequel_relation
+    Media.Relation.PARENT -> R.string.parent_relation
+    Media.Relation.SIDE_STORY -> R.string.side_story_relation
+    Media.Relation.CHARACTER -> R.string.character_relation
+    Media.Relation.SUMMARY -> R.string.summary_relation
+    Media.Relation.ALTERNATIVE -> R.string.alternative_relation
+    Media.Relation.SPIN_OFF -> R.string.spin_off_relation
+    Media.Relation.OTHER -> R.string.other_relation
+    Media.Relation.SOURCE -> R.string.source_relation
+    Media.Relation.COMPILATION -> R.string.compilation_relation
+    Media.Relation.CONTAINS -> R.string.contains_relation
+}

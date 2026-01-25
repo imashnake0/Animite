@@ -1049,7 +1049,7 @@ private fun MediaTrailer(
 
 @Composable
 fun MediaRelations(
-    relations: List<Pair<String, Media.Small>>,
+    relations: List<Pair<Media.Relation?, Media.Small>>,
     onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -1062,7 +1062,7 @@ fun MediaRelations(
     ) { _, media ->
         MediaCard(
             image = media.second.coverImage,
-            tag = media.first,
+            tag = media.first?.let { stringResource(it.res) },
             label = media.second.title,
             onClick = { onItemClicked(media.second) },
         )
