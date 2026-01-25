@@ -230,12 +230,13 @@ fun MediaPage(
                                 onClick = { showDetailsSheet = true },
                             )
 
-                            MediaInfo(
-                                info = media.info,
-                                contentPadding = PaddingValues(
-                                    horizontal = LocalPaddings.current.large
-                                ) + horizontalInsets,
-                            )
+                            if (media.type == MediaType.ANIME.name)
+                                AnimeInfo(
+                                    info = media.info,
+                                    contentPadding = PaddingValues(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + horizontalInsets,
+                                )
 
                             if (!media.ranks.isNullOrEmpty()) {
                                 StatsRow(
@@ -785,7 +786,7 @@ private fun MediaDescription(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun MediaInfo(
+private fun AnimeInfo(
     info: List<Media.Info>?,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()

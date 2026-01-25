@@ -1,0 +1,28 @@
+fragment AnimeInfo on Media {
+    nextAiringEpisode {
+        airingAt
+        episode
+    }
+    format
+    episodes
+    duration
+    status
+    startDate {
+        year
+        month
+        day
+    }
+    endDate {
+        year
+        month
+        day
+    }
+    season
+    seasonYear
+    studios(sort: [FAVOURITES_DESC], isMain: true) {
+        nodes {
+            name
+        }
+    }
+    source
+}

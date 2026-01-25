@@ -7,6 +7,7 @@ import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import androidx.core.graphics.toColorInt
+import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
@@ -44,7 +45,7 @@ data class Media(
     val description: String,
     /**
      *  For example: "5d 19h" to 2
-     *  @see MediaQuery.NextAiringEpisode
+     *  @see com.imashnake.animite.api.anilist.fragment.AnimeInfo.NextAiringEpisode
      * */
     val timeToEpisode: Pair<String, Int>?,
     /** @see MediaQuery.Media */
@@ -74,6 +75,40 @@ data class Media(
             }?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
             return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
         }
+
+        fun getTimeToEpisode(animeInfo: AnimeInfo?) = animeInfo?.nextAiringEpisode?.let nextEp@{ nextEp ->
+            nextEp.airingAt.let {
+                val difference = Instant.fromEpochSeconds(it.toLong()) - Clock.System.now()
+                if (difference < Duration.ZERO) return@nextEp null
+                difference
+            }.let {
+                it.toComponents { days, hours, _, _, _ ->
+                    if (days == 0L && hours == 0) return@nextEp null
+                    if (days == 0L) "${hours}h" else "${days}d ${hours}h"
+                }
+            } to nextEp.episode
+        }
+
+        fun getAnimeInfo(animeInfo: AnimeInfo?) = listOfNotNull(
+            animeInfo?.format?.sanitize()?.let  { Info.Format(it) },
+            animeInfo?.episodes?.let { Info.Item(InfoItem.EPISODES, it.toString()) },
+            animeInfo?.duration?.let { Info.Item(InfoItem.DURATION, it.toString()) },
+
+            Info.Divider,
+
+            animeInfo?.status?.sanitize()?.let { Info.Status(it) },
+            animeInfo?.startDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.START_DATE, it) },
+            animeInfo?.endDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.END_DATE, it) },
+            animeInfo?.season?.sanitize()?.let { Info.Season(it, animeInfo.seasonYear) },
+
+            Info.Divider,
+
+            // TODO: These can be moved out of the list:
+            //  - We can use studio logos to properly show them.
+            //  - Source can also use an icon and be placed with this.
+            animeInfo?.studios?.nodes?.first()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
+            animeInfo?.source?.sanitize()?.let { Info.Source(it) },
+        )
     }
 
     enum class Format {
@@ -316,38 +351,8 @@ data class Media(
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
         // TODO: Make this a proper countdown.
-        timeToEpisode = query.nextAiringEpisode?.let nextEp@{ nextEp ->
-            nextEp.airingAt.let {
-                val difference = Instant.fromEpochSeconds(it.toLong()) - Clock.System.now()
-                if (difference < Duration.ZERO) return@nextEp null
-                difference
-            }.let {
-                it.toComponents { days, hours, _, _, _ ->
-                    if (days == 0L && hours == 0) return@nextEp null
-                    if (days == 0L && hours != 0) "${hours}h" else "${days}d ${hours}h"
-                }
-            } to nextEp.episode
-        },
-        info = listOfNotNull(
-            query.format?.sanitize()?.let  { Info.Format(it) },
-            query.episodes?.let { Info.Item(InfoItem.EPISODES, it.toString()) },
-            query.duration?.let { Info.Item(InfoItem.DURATION, it.toString()) },
-
-            Info.Divider,
-
-            query.status?.sanitize()?.let { Info.Status(it) },
-            query.startDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.START_DATE, it) },
-            query.endDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.END_DATE, it) },
-            query.season?.sanitize()?.let { Info.Season(it, query.seasonYear) },
-
-            Info.Divider,
-
-            // TODO: These can be moved out of the list:
-            //  - We can use studio logos to properly show them.
-            //  - Source can also use an icon and be placed with this.
-            query.studios?.nodes?.first()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
-            query.source?.sanitize()?.let { Info.Source(it) },
-        ),
+        timeToEpisode = getTimeToEpisode(query.animeInfo),
+        info = getAnimeInfo(query.animeInfo),
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.rankings.filter {

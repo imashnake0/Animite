@@ -1,6 +1,7 @@
 query MediaQuery(
     $id: Int,
-    $type: MediaType
+    $type: MediaType,
+    $isAnime: Boolean!,
     $recommendationsPerPage: Int
 ) {
     media: Media(id: $id, type: $type) {
@@ -20,33 +21,7 @@ query MediaQuery(
         }
         description
 
-        nextAiringEpisode {
-            airingAt
-            episode
-        }
-
-        format
-        episodes
-        duration
-        status
-        startDate {
-            year
-            month
-            day
-        }
-        endDate {
-            year
-            month
-            day
-        }
-        season
-        seasonYear
-        studios(sort: [FAVOURITES_DESC], isMain: true) {
-            nodes {
-                name
-            }
-        }
-        source
+        ...AnimeInfo @include(if: $isAnime)
 
         averageScore
         rankings {
