@@ -1,11 +1,13 @@
 package com.imashnake.animite.core.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,16 +20,21 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.crossfadeModel
@@ -90,6 +97,7 @@ fun <T> MediaSmallRow(
 @Composable
 fun MediaCard(
     image: String?,
+    tag: String? = null,
     label: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -104,6 +112,7 @@ fun MediaCard(
         modifier = modifier,
         imageModifier = imageModifier,
         textModifier = textModifier,
+        tag = tag,
         label = label
     )
 }
@@ -118,6 +127,7 @@ fun MediaCard(
 @Composable
 fun CharacterCard(
     image: String?,
+    tag: String? = null,
     label: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -132,6 +142,7 @@ fun CharacterCard(
         modifier = modifier,
         imageModifier = imageModifier,
         textModifier = textModifier,
+        tag = tag,
         label = label
     )
 }
@@ -149,6 +160,7 @@ fun CharacterCard(
 @Composable
 internal fun MediaSmall(
     image: String?,
+    tag: String? = null,
     label: String?,
     onClick: () -> Unit,
     imageHeight: Dp,
@@ -162,15 +174,37 @@ internal fun MediaSmall(
         shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)),
         modifier = modifier.width(cardWidth),
     ) {
-        AsyncImage(
-            model = crossfadeModel(image),
-            contentDescription = label,
-            contentScale = ContentScale.Crop,
+        Box(
             modifier = imageModifier
                 .height(imageHeight)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
-        )
+        ) {
+            AsyncImage(
+                model = crossfadeModel(image),
+                contentDescription = label,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            if (tag != null)
+                Text(
+                    text = tag,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .graphicsLayer {
+                            translationY = 10f
+                        }
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                        .padding(vertical = LocalPaddings.current.tiny)
+                )
+        }
 
         if (label != null)
             Box {
