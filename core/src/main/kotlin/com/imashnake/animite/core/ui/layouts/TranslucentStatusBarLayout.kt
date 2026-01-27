@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import com.imashnake.animite.core.R
+import com.imashnake.animite.core.extensions.statusBarScrollBackground
 
 @Composable
 @Suppress("LongParameterList")
@@ -26,27 +27,15 @@ fun TranslucentStatusBarLayout(
     targetColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit
 ) {
-    // TODO: Can this be a modifier?
-    val distanceUntilAnimatedPx = with(LocalDensity.current) { distanceUntilAnimated.toPx() }
-    val statusBarInsets = WindowInsets.statusBars
+
     Box(
         Modifier
-            .drawWithContent {
-                drawContent()
-                drawRect(
-                    color = targetColor.copy(
-                        alpha = targetAlpha * if (scrollState.value < distanceUntilAnimatedPx) {
-                            scrollState.value.toFloat() / distanceUntilAnimatedPx
-                        } else 1f
-                    ),
-                    size = Size(
-                        width = size.width,
-                        height = statusBarInsets
-                            .getTop(this)
-                            .toFloat()
-                    )
-                )
-            }
+            .statusBarScrollBackground(
+                distanceUntilAnimated,
+                scrollState,
+                targetAlpha,
+                targetColor
+            )
             .then(modifier)
     ) {
         content()
