@@ -77,12 +77,13 @@ fun MountFuji(
     val currentDayHour = localDateTime.hour + (localDateTime.minute / 60f)
 
     val dayHour = setDayHour ?: currentDayHour
-    val sunShader = remember(dayHour) {
-        RuntimeShader(sun).takeIf {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    dayHour.toDayPart() != NIGHT
+    val sunShader = if(  Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+        dayHour.toDayPart() != NIGHT){
+        remember(dayHour) {
+            RuntimeShader(sun)
         }
-    }
+    } else null
+
     val time by animateFloatAsState(dayHour * 2f * PI.toFloat() / 24)
 
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
