@@ -115,6 +115,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
+import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
@@ -606,9 +607,9 @@ fun MediaPage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .padding(insetPaddingValues)
+                            .padding(insetPaddingValues.copy(bottom = 0.dp))
                             .padding(horizontal = LocalPaddings.current.large)
-                            .padding(top = LocalPaddings.current.large)
+                            .padding(vertical = LocalPaddings.current.medium)
                     ) {
                         Text(
                             text = media.genreTitleList?.first.orEmpty(),
