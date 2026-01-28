@@ -77,8 +77,10 @@ fun MountFuji(
     val currentDayHour = localDateTime.hour + (localDateTime.minute / 60f)
 
     val dayHour = setDayHour ?: currentDayHour
-    val sunShader = if(  Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-        dayHour.toDayPart() != NIGHT){
+    val sunShader = if (
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+        dayHour.toDayPart() != NIGHT
+    ) {
         remember(dayHour) {
             RuntimeShader(sun)
         }
