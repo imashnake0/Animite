@@ -27,7 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -123,7 +123,7 @@ fun MainScreen(
     val navController = rememberNavController()
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val isNavBarVisible = remember(currentBackStackEntry) {
+    val isNavBarVisible = rememberSaveable(currentBackStackEntry) {
         if (currentBackStackEntry != null) {
             NavigationBarPaths.entries.any {
                 it.matchesDestination(currentBackStackEntry!!)

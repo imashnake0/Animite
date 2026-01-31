@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -76,7 +77,9 @@ fun MountFuji(
     val localDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     val currentDayHour = localDateTime.hour + (localDateTime.minute / 60f)
 
-    val dayHour = setDayHour ?: currentDayHour
+    val dayHour = rememberSaveable(setDayHour, currentDayHour) {
+        setDayHour ?: currentDayHour
+    }
     val sunShader = if (
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
         dayHour.toDayPart() != NIGHT
