@@ -2,18 +2,18 @@ package com.imashnake.animite.api.anilist.sanitize.media
 
 import android.graphics.Color
 import android.util.Log
+import androidx.core.graphics.toColorInt
 import com.imashnake.animite.api.anilist.MediaQuery
+import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
-import com.imashnake.animite.api.anilist.type.MediaRankType
-import androidx.core.graphics.toColorInt
-import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Status.Companion.sanitize
 import com.imashnake.animite.api.anilist.type.MediaFormat
+import com.imashnake.animite.api.anilist.type.MediaRankType
 import com.imashnake.animite.api.anilist.type.MediaRelation
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSource
@@ -93,26 +93,43 @@ data class Media(
             } to nextEp.episode
         }
 
-        fun getAnimeInfo(animeInfo: AnimeInfo?) = listOfNotNull(
-            animeInfo?.format?.sanitize()?.let  { Info.Format(it) },
-            animeInfo?.episodes?.let { Info.Item(InfoItem.EPISODES, it.toString()) },
-            animeInfo?.duration?.let { Info.Item(InfoItem.DURATION, it.toString()) },
+        fun getAnimeInfo(animeInfo: AnimeInfo?) = buildList {
+            if (
+                addAll(
+                    listOfNotNull(
+                        animeInfo?.format?.sanitize()?.let  { Info.Format(it) },
+                        animeInfo?.episodes?.let { Info.Item(InfoItem.EPISODES, it.toString()) },
+                        animeInfo?.duration?.let { Info.Item(InfoItem.DURATION, it.toString()) },
+                    )
+                )
+            ) {
+                add(Info.Divider)
+            }
 
-            Info.Divider,
+            if (
+                addAll(
+                    listOfNotNull(
+                        animeInfo?.status?.sanitize()?.let { Info.Status(it) },
+                        animeInfo?.startDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.START_DATE, it) },
+                        animeInfo?.endDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.END_DATE, it) },
+                        animeInfo?.season?.sanitize()?.let { Info.Season(it, animeInfo.seasonYear) },
+                    )
+                )
+            ) {
+                add(Info.Divider)
+            }
 
-            animeInfo?.status?.sanitize()?.let { Info.Status(it) },
-            animeInfo?.startDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.START_DATE, it) },
-            animeInfo?.endDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.END_DATE, it) },
-            animeInfo?.season?.sanitize()?.let { Info.Season(it, animeInfo.seasonYear) },
-
-            Info.Divider,
-
-            // TODO: These can be moved out of the list:
-            //  - We can use studio logos to properly show them.
-            //  - Source can also use an icon and be placed with this.
-            animeInfo?.studios?.nodes?.first()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
-            animeInfo?.source?.sanitize()?.let { Info.Source(it) },
-        )
+            if (
+                !addAll(
+                    listOfNotNull(
+                        animeInfo?.studios?.nodes?.first()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
+                        animeInfo?.source?.sanitize()?.let { Info.Source(it) },
+                    )
+                )
+            ) {
+                removeLastOrNull()
+            }
+        }
     }
 
     enum class Format {

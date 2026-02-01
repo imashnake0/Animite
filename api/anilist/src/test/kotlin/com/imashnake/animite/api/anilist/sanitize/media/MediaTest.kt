@@ -1,6 +1,12 @@
 package com.imashnake.animite.api.anilist.sanitize.media
 
+import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Info
+import com.imashnake.animite.api.anilist.type.MediaFormat
+import com.imashnake.animite.api.anilist.type.MediaSeason
+import com.imashnake.animite.api.anilist.type.MediaSource
+import com.imashnake.animite.api.anilist.type.MediaStatus
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -192,4 +198,132 @@ class MediaTest {
         favourites = "150"
     )
     // endregion
+
+    // region info
+    @Test
+    fun `info dividers are added`() {
+        val actual = Media.getAnimeInfo(getAniListAnimeInfo())
+
+        assertTrue(actual.count { it is Info.Divider } == 2)
+        assertTrue(actual[3] is Info.Divider)
+        assertTrue(actual[8] is Info.Divider)
+    }
+
+    @Test
+    fun `info has one divider`() {
+        var actual = Media.getAnimeInfo(getAniListAnimeInfo(
+            format = null,
+            episodes = null,
+            duration = null,
+        ))
+
+        assertTrue(actual.count { it is Info.Divider } == 1)
+        assertTrue(actual[4] is Info.Divider)
+
+        actual = Media.getAnimeInfo(getAniListAnimeInfo(
+            status = null,
+            startDate = null,
+            endDate = null,
+            season = null,
+        ))
+
+        assertTrue(actual.count { it is Info.Divider } == 1)
+        assertTrue(actual[3] is Info.Divider)
+
+        actual = Media.getAnimeInfo(getAniListAnimeInfo(
+            studios = null,
+            source = null,
+        ))
+
+        assertTrue(actual.count { it is Info.Divider } == 1)
+        assertTrue(actual[3] is Info.Divider)
+    }
+
+    @Test
+    fun `info has no dividers`() {
+        var actual = Media.getAnimeInfo(getAniListAnimeInfo(
+            format = null,
+            episodes = null,
+            duration = null,
+            status = null,
+            startDate = null,
+            endDate = null,
+            season = null,
+        ))
+
+        assertTrue(actual.none { it is Info.Divider })
+
+        actual = Media.getAnimeInfo(getAniListAnimeInfo(
+            format = null,
+            episodes = null,
+            duration = null,
+            studios = null,
+            source = null,
+        ))
+
+        assertTrue(actual.none { it is Info.Divider })
+
+        actual = Media.getAnimeInfo(getAniListAnimeInfo(
+            status = null,
+            startDate = null,
+            endDate = null,
+            season = null,
+            studios = null,
+            source = null,
+        ))
+
+        assertTrue(actual.none { it is Info.Divider })
+    }
+
+    @Test
+    fun `info has no item`() {
+        val actual = Media.getAnimeInfo(getAniListAnimeInfo(
+            format = null,
+            episodes = null,
+            duration = null,
+            status = null,
+            startDate = null,
+            endDate = null,
+            season = null,
+            studios = null,
+            source = null,
+        ))
+
+        assertTrue(actual.isEmpty())
+    }
+
+    private fun getAniListAnimeInfo(
+        format: MediaFormat? = MediaFormat.TV,
+        episodes: Int? = 24,
+        duration: Int? = 22,
+        status: MediaStatus? = MediaStatus.RELEASING,
+        startDate: AnimeInfo.StartDate? = AnimeInfo.StartDate(
+            year = 2025,
+            month = 10,
+            day = 15
+        ),
+        endDate: AnimeInfo.EndDate? = AnimeInfo.EndDate(
+            year = 2025,
+            month = 11,
+            day = 15
+        ),
+        season: MediaSeason? = MediaSeason.FALL,
+        seasonYear: Int? = 2025,
+        studios: AnimeInfo.Studios? = AnimeInfo.Studios(
+            nodes = listOf(AnimeInfo.Node(name = "studio"))
+        ),
+        source: MediaSource? = MediaSource.MANGA
+    ) = AnimeInfo(
+        nextAiringEpisode = null,
+        format = format,
+        episodes = episodes,
+        duration = duration,
+        status = status,
+        startDate = startDate,
+        endDate = endDate,
+        season = season,
+        seasonYear = seasonYear,
+        studios = studios,
+        source = source,
+    )
 }
