@@ -36,7 +36,7 @@ navigation = "2.9.6"
 # TODO: Breaking changes; review release notes and update.
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
-apollo = "4.4.0"
+apollo = "4.4.1"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore.
