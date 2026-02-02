@@ -43,6 +43,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -65,6 +66,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -298,15 +301,14 @@ fun MediaPage(
                                 )
                             }
 
-                            if (media.trailer != null) {
-                                MediaTrailer(
-                                    trailer = media.trailer,
-                                    modifier = Modifier
-                                        .skipToLookaheadSize()
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .padding(horizontalInsets)
-                                )
-                            }
+                            MediaWatch(
+                                trailer = media.trailer,
+                                streamingEpisodes = media.streamingEpisodes,
+                                modifier = Modifier
+                                    .skipToLookaheadSize()
+                                    .padding(horizontal = LocalPaddings.current.large)
+                                    .padding(horizontalInsets)
+                            )
 
                             if (!media.relations.isNullOrEmpty()) {
                                 MediaRelations(
@@ -985,71 +987,164 @@ private fun Chip(
 }
 
 @Composable
-private fun MediaTrailer(
-    trailer: Media.Trailer,
+private fun MediaWatch(
+    trailer: Media.Trailer?,
+    streamingEpisodes: List<Media.Episode>?,
+    contentPadding: PaddingValues = PaddingValues(),
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
         Text(
-            text = stringResource(R.string.trailer),
+            text = stringResource(R.string.watch),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium
         )
 
-        val context = LocalContext.current
-        Box(
-            modifier = Modifier
-                .wrapContentSize()
-                .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
-                .background(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f))
-                .clickable {
-                    val appIntent = Intent(Intent.ACTION_VIEW, trailer.url?.toUri())
-                    context.startActivity(appIntent)
-                }
-        ) {
-            var bestThumbnail by rememberSaveable { mutableStateOf(trailer.thumbnail.maxResDefault) }
+        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+            if (trailer != null) {
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
+                        .background(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f))
+                        .clickable {
+                            val appIntent = Intent(Intent.ACTION_VIEW, trailer.url?.toUri())
+                            context.startActivity(appIntent)
+                        }
+                ) {
+                    var bestThumbnail by rememberSaveable { mutableStateOf(trailer.thumbnail.maxResDefault) }
 
-            val model = remember(bestThumbnail) {
-                ImageRequest.Builder(context)
-                    .data(bestThumbnail)
-                    .apply {
-                        listener(
-                            onError = { _, _ ->
-                                bestThumbnail = if (bestThumbnail?.contains("maxresdefault") == true) {
-                                    trailer.thumbnail.sdDefault
-                                } else trailer.thumbnail.defaultThumbnail
+                    val model = remember(bestThumbnail) {
+                        ImageRequest.Builder(context)
+                            .data(bestThumbnail)
+                            .apply {
+                                listener(
+                                    onError = { _, _ ->
+                                        bestThumbnail =
+                                            if (bestThumbnail?.contains("maxresdefault") == true) {
+                                                trailer.thumbnail.sdDefault
+                                            } else trailer.thumbnail.defaultThumbnail
+                                    }
+                                )
                             }
-                        )
+                            .crossfade(Constants.CROSSFADE_DURATION)
+                            .build()
                     }
-                    .crossfade(Constants.CROSSFADE_DURATION)
-                    .build()
+
+                    AsyncImage(
+                        model = model,
+                        contentDescription = stringResource(R.string.trailer),
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16f / 9)
+                            .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))),
+                        alignment = Alignment.Center
+                    )
+
+                    Image(
+                        painter = painterResource(R.drawable.youtube),
+                        contentDescription = null,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
 
-            AsyncImage(
-                model = model,
-                contentDescription = stringResource(R.string.trailer),
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16f / 9)
-                    .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))),
-                alignment = Alignment.Center
-            )
-
-            Image(
-                painter = painterResource(R.drawable.youtube),
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.Center)
-            )
+            if (!streamingEpisodes.isNullOrEmpty()) {
+                MediaStreamingEpisode(
+                    streamingEpisodes = streamingEpisodes,
+                    contentPadding = contentPadding,
+                )
+            }
         }
     }
 }
 
 @Composable
-fun MediaRelations(
+private fun MediaStreamingEpisode(
+    streamingEpisodes: List<Media.Episode>,
+    contentPadding: PaddingValues = PaddingValues(),
+    modifier: Modifier = Modifier,
+) {
+    HorizontalMultiBrowseCarousel(
+        state = rememberCarouselState { streamingEpisodes.size },
+        preferredItemWidth = dimensionResource(coreR.dimen.media_card_width),
+        itemSpacing = LocalPaddings.current.small,
+        maxSmallItemWidth = dimensionResource(coreR.dimen.media_card_width),
+        minSmallItemWidth = 0.dp,
+        modifier = modifier.padding(contentPadding),
+    ) { index ->
+        val uriHandler = LocalUriHandler.current
+        with(streamingEpisodes[index]) {
+            Box(
+                modifier = Modifier
+                    .width(dimensionResource(coreR.dimen.media_card_width))
+                    .aspectRatio(4f / 3f)
+                    .maskClip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
+                    .clickable {
+                        url.let { uriHandler.openUri(it) }
+                    }
+            ) {
+                AsyncImage(
+                    model = thumbnail,
+                    contentDescription = "streaming episode",
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                number?.let {
+                    Text(
+                        text = it.toString(),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .padding(dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .padding(horizontal = LocalPaddings.current.small)
+                    )
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .graphicsLayer {
+                            translationY = 10f
+                        }
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                        .padding(vertical = LocalPaddings.current.tiny)
+                ) {
+                    title?.let {
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Start,
+                            maxLines = 1,
+                            modifier = Modifier.padding(
+                                start = dimensionResource(coreR.dimen.media_card_corner_radius) / 2
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MediaRelations(
     relations: List<Pair<Media.Relation?, Media.Small>>,
     onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier,
@@ -1071,7 +1166,7 @@ fun MediaRelations(
 }
 
 @Composable
-fun MediaRecommendations(
+private fun MediaRecommendations(
     recommendations: List<Media.Small>,
     onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier,

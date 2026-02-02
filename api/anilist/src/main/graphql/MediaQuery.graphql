@@ -48,6 +48,13 @@ query MediaQuery(
             thumbnail
         }
 
+        streamingEpisodes {
+            title
+            thumbnail
+            url
+            site
+        }
+
         relations {
             edges {
                 node {
