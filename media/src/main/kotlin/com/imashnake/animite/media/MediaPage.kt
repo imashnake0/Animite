@@ -1099,7 +1099,7 @@ private fun MediaStreamingEpisode(
 
                 number?.let {
                     Text(
-                        text = it.toString(),
+                        text = it,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
@@ -1113,18 +1113,18 @@ private fun MediaStreamingEpisode(
                     )
                 }
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .graphicsLayer {
-                            translationY = 10f
-                        }
-                        .fillMaxWidth()
-                        .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                        .padding(vertical = LocalPaddings.current.tiny)
-                ) {
-                    title?.let {
+                title?.let {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .graphicsLayer {
+                                translationY = 10f
+                            }
+                            .fillMaxWidth()
+                            .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
+                            .padding(vertical = LocalPaddings.current.tiny)
+                    ) {
                         Text(
                             text = it,
                             color = MaterialTheme.colorScheme.onBackground,

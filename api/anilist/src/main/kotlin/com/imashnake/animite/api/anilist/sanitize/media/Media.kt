@@ -395,7 +395,7 @@ data class Media(
     }
 
     data class Episode(
-        val number: Int?,
+        val number: String?,
         val title: String?,
         val thumbnail: String,
         val url: String,
@@ -453,10 +453,10 @@ data class Media(
         streamingEpisodes = query.streamingEpisodes.orEmpty().mapNotNull {
             it?.thumbnail ?: return@mapNotNull null
             it.url ?: return@mapNotNull null
-            val regex = Regex("""Episode\s+(\d+)\s*-\s*(.+)""")
+            val regex = Regex("""Episode\s+(\d+(?:\.\d+)?)\s*-\s*(.+)""")
             val match = it.title?.let { title -> regex.find(title) }
             Episode(
-                number = match?.groupValues[1]?.toIntOrNull(),
+                number = match?.groupValues[1],
                 title = match?.groupValues[2]?.lowercase(),
                 thumbnail = it.thumbnail,
                 url = it.url,
