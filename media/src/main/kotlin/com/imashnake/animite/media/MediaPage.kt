@@ -1058,7 +1058,6 @@ private fun MediaWatch(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(16f / 9),
-//                            .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))),
                     )
 
                     Image(
