@@ -6,6 +6,7 @@ import androidx.core.graphics.toColorInt
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
+import com.imashnake.animite.api.anilist.fragment.MediaMedium
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
@@ -47,7 +48,7 @@ data class Media(
     val description: String,
     /**
      *  For example: "5d 19h" to 2
-     *  @see com.imashnake.animite.api.anilist.fragment.AnimeInfo.NextAiringEpisode
+     *  @see AnimeInfo.NextAiringEpisode
      * */
     val timeToEpisode: Pair<String, Int>?,
     /** @see MediaQuery.Media */
@@ -60,6 +61,8 @@ data class Media(
     val characters: List<Character>,
     /** @see MediaQuery.Media.trailer */
     val trailer: Trailer?,
+    /** @see MediaQuery.Media.streamingEpisodes */
+    val streamingEpisodes: List<Episode>,
     /** @see MediaQuery.Media.relations */
     val relations: List<Pair<Relation?, Small>>,
     /** @see MediaQuery.Media.recommendations */
@@ -165,7 +168,7 @@ data class Media(
 
         companion object {
             fun safeValueOf(rawValue: String): Status? = try {
-                Status.valueOf(rawValue)
+                valueOf(rawValue)
             } catch (e: IllegalArgumentException) {
                 Log.e(EXCEPTION_TAG, "safeValueOf: $e; Status $rawValue not found.")
                 null
@@ -183,7 +186,7 @@ data class Media(
 
         companion object {
             fun safeValueOf(rawValue: String): Season? = try {
-                Season.valueOf(rawValue)
+                valueOf(rawValue)
             } catch (e: IllegalArgumentException) {
                 Log.e(EXCEPTION_TAG, "safeValueOf: $e; Season $rawValue not found.")
                 null
@@ -212,7 +215,7 @@ data class Media(
 
         companion object {
             fun safeValueOf(rawValue: String): Source? = try {
-                Source.valueOf(rawValue)
+                valueOf(rawValue)
             } catch (e: IllegalArgumentException) {
                 Log.e(EXCEPTION_TAG, "safeValueOf: $e; Source $rawValue not found.")
                 null
@@ -239,7 +242,7 @@ data class Media(
 
         companion object {
             fun safeValueOf(rawValue: String): Relation? = try {
-                Relation.valueOf(rawValue)
+                valueOf(rawValue)
             } catch (e: IllegalArgumentException) {
                 Log.e(EXCEPTION_TAG, "safeValueOf: $e; Source $rawValue not found.")
                 null
@@ -391,6 +394,14 @@ data class Media(
         )
     }
 
+    data class Episode(
+        val number: String?,
+        val title: String?,
+        val thumbnail: String,
+        val url: String,
+        val site: String?,
+    )
+
     internal constructor(query: MediaQuery.Media) : this(
         id = query.id,
         bannerImage = query.bannerImage,
@@ -437,6 +448,19 @@ data class Media(
                         defaultThumbnail = thumbnail
                     )
                 }
+            )
+        },
+        streamingEpisodes = query.streamingEpisodes.orEmpty().mapNotNull {
+            it?.thumbnail ?: return@mapNotNull null
+            it.url ?: return@mapNotNull null
+            val regex = Regex("""Episode\s+(\d+(?:\.\d+)?)\s*-\s*(.+)""")
+            val match = it.title?.let { title -> regex.find(title) }
+            Episode(
+                number = match?.groupValues[1],
+                title = match?.groupValues[2]?.lowercase(),
+                thumbnail = it.thumbnail,
+                url = it.url,
+                site = it.site
             )
         },
         relations = query.relations?.edges.orEmpty().mapNotNull { edge ->
@@ -490,7 +514,7 @@ data class Media(
         /** @see episodes */
         val episodes: Int?,
     ) {
-        internal constructor(query: com.imashnake.animite.api.anilist.fragment.MediaMedium) : this(
+        internal constructor(query: MediaMedium) : this(
             id = query.id,
             coverImage = query.coverImage?.extraLarge,
             title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
