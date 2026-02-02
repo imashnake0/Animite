@@ -994,18 +994,22 @@ private fun MediaWatch(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val isTrailerPresent = trailer != null
+    val isEpisodeListPresent = !streamingEpisodes.isNullOrEmpty()
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        Text(
-            text = stringResource(R.string.watch),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium
-        )
+        if (isTrailerPresent || isEpisodeListPresent) {
+            Text(
+                text = stringResource(R.string.watch),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
 
         Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
-            if (trailer != null) {
+            if (isTrailerPresent) {
                 Box(
                     modifier = Modifier
                         .wrapContentSize()
@@ -1054,7 +1058,7 @@ private fun MediaWatch(
                 }
             }
 
-            if (!streamingEpisodes.isNullOrEmpty()) {
+            if (isEpisodeListPresent) {
                 MediaStreamingEpisode(
                     streamingEpisodes = streamingEpisodes,
                     contentPadding = contentPadding,
@@ -1100,7 +1104,7 @@ private fun MediaStreamingEpisode(
                 number?.let {
                     Text(
                         text = it,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
@@ -1108,7 +1112,7 @@ private fun MediaStreamingEpisode(
                         modifier = Modifier
                             .padding(dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
                             .padding(horizontal = LocalPaddings.current.small)
                     )
                 }
