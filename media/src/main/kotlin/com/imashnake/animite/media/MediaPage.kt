@@ -996,6 +996,17 @@ private fun MediaWatch(
     val context = LocalContext.current
     val isTrailerPresent = trailer != null
     val isEpisodeListPresent = !streamingEpisodes.isNullOrEmpty()
+    val bottomCornerRadius = if (isEpisodeListPresent) {
+        LocalPaddings.current.small
+    } else {
+        dimensionResource(R.dimen.trailer_corner_radius)
+    }
+    val trailerShape = RoundedCornerShape(
+        topStart = dimensionResource(R.dimen.trailer_corner_radius),
+        topEnd = dimensionResource(R.dimen.trailer_corner_radius),
+        bottomStart = bottomCornerRadius,
+        bottomEnd = bottomCornerRadius,
+    )
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
@@ -1013,7 +1024,7 @@ private fun MediaWatch(
                 Box(
                     modifier = Modifier
                         .wrapContentSize()
-                        .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius)))
+                        .clip(trailerShape)
                         .background(color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f))
                         .clickable {
                             val appIntent = Intent(Intent.ACTION_VIEW, trailer.url?.toUri())
@@ -1043,11 +1054,11 @@ private fun MediaWatch(
                         model = model,
                         contentDescription = stringResource(R.string.trailer),
                         contentScale = ContentScale.FillWidth,
+                        alignment = Alignment.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(16f / 9)
-                            .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))),
-                        alignment = Alignment.Center
+                            .aspectRatio(16f / 9),
+//                            .clip(RoundedCornerShape(dimensionResource(R.dimen.trailer_corner_radius))),
                     )
 
                     Image(
@@ -1061,6 +1072,7 @@ private fun MediaWatch(
             if (isEpisodeListPresent) {
                 MediaStreamingEpisode(
                     streamingEpisodes = streamingEpisodes,
+                    isTrailerPresent = isTrailerPresent,
                     contentPadding = contentPadding,
                 )
             }
@@ -1072,6 +1084,7 @@ private fun MediaWatch(
 private fun MediaStreamingEpisode(
     streamingEpisodes: List<Media.Episode>,
     contentPadding: PaddingValues = PaddingValues(),
+    isTrailerPresent: Boolean,
     modifier: Modifier = Modifier,
 ) {
     HorizontalMultiBrowseCarousel(
@@ -1083,12 +1096,24 @@ private fun MediaStreamingEpisode(
         modifier = modifier.padding(contentPadding),
     ) { index ->
         val uriHandler = LocalUriHandler.current
+        val topCornerRadius = if (isTrailerPresent) {
+            LocalPaddings.current.small
+        } else {
+            dimensionResource(coreR.dimen.media_card_corner_radius)
+        }
         with(streamingEpisodes[index]) {
             Box(
                 modifier = Modifier
                     .width(dimensionResource(coreR.dimen.media_card_width))
                     .aspectRatio(4f / 3f)
-                    .maskClip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
+                    .maskClip(
+                        RoundedCornerShape(
+                            topStart = topCornerRadius,
+                            topEnd = topCornerRadius,
+                            bottomStart = dimensionResource(coreR.dimen.media_card_corner_radius),
+                            bottomEnd = dimensionResource(coreR.dimen.media_card_corner_radius),
+                        )
+                    )
                     .clickable {
                         url.let { uriHandler.openUri(it) }
                     }
