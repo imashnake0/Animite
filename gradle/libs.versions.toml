@@ -21,7 +21,7 @@ desugaring = "2.1.5"
 
 # Android Gradle Plugin
 # https://developer.android.com/studio/releases/gradle-plugin.
-agp = "8.13.2"
+agp = "9.0.0"
 
 # AndroidX
 # https://androidx.tech.
@@ -58,7 +58,7 @@ composeIcons = "1.7.8"
 
 # Dagger
 # https://github.com/google/dagger/releases.
-dagger = "2.58"
+dagger = "2.59.1"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
