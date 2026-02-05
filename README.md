@@ -1,4 +1,4 @@
-![brah](https://github.com/user-attachments/assets/18f1c1bf-f016-4e60-a92a-f63ca03749f7)
+![brah](https://github.com/user-attachments/assets/f265fb1d-e64d-4b32-946a-85c9488f582b)
 
 # Animite [![build-debug](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml/badge.svg)](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml)
 <a href="https://discord.gg/HEB7duYdqe">
