@@ -90,6 +90,7 @@ private fun UserFavouriteLists(
                         with(sharedTransitionScope) {
                             MediaCard(
                                 image = item.coverImage,
+                                tag = null,
                                 label = item.title,
                                 onClick = {
                                     onNavigateToMediaItem(
@@ -138,6 +139,7 @@ private fun UserFavouriteLists(
                     is Media.Character -> {
                         CharacterCard(
                             image = item.image,
+                            tag = null,
                             label = item.name,
                             onClick = { Log.d("CharacterId", "${item.id}") },
                         )

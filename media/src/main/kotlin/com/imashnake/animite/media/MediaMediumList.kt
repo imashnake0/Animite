@@ -97,6 +97,7 @@ private fun MediaMediumItem(
     ) {
         MediaCard(
             image = item.coverImage,
+            tag = null,
             label = null,
             onClick = { onClick(item.id, item.title) },
         )

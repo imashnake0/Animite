@@ -34,6 +34,7 @@ fun MediaMediumGrid(
         ) { media ->
             MediaCard(
                 image = media.coverImage,
+                tag = null,
                 label = media.title,
                 onClick = { onItemClick(media.id, media.title) }
             )

@@ -23,6 +23,8 @@ import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.collections.mapNotNull
+import kotlin.collections.orEmpty
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Instant
@@ -83,7 +85,7 @@ data class Media(
             return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
         }
 
-        fun getTimeToEpisode(animeInfo: AnimeInfo?) = animeInfo?.nextAiringEpisode?.let nextEp@{ nextEp ->
+        fun getTimeToEpisode(nextAiringEpisode: AnimeInfo.NextAiringEpisode?) = nextAiringEpisode?.let nextEp@{ nextEp ->
             nextEp.airingAt.let {
                 val difference = Instant.fromEpochSeconds(it.toLong()) - Clock.System.now()
                 if (difference < Duration.ZERO) return@nextEp null
@@ -125,12 +127,30 @@ data class Media(
             if (
                 !addAll(
                     listOfNotNull(
-                        animeInfo?.studios?.nodes?.first()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
+                        animeInfo?.studios?.nodes?.firstOrNull()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
                         animeInfo?.source?.sanitize()?.let { Info.Source(it) },
                     )
                 )
             ) {
                 removeLastOrNull()
+            }
+        }
+
+        fun getStreamingEpisodes(streamingEpisodes: List<MediaQuery.StreamingEpisode?>?): List<Episode> {
+            if (streamingEpisodes.isNullOrEmpty()) return emptyList()
+
+            val regex = Regex("""Episode\s+(\d+(?:\.\d+)?)(?:\s*-\s*(.+))?""")
+            return streamingEpisodes.mapNotNull {
+                it?.thumbnail ?: return@mapNotNull null
+                it.url ?: return@mapNotNull null
+                val match = it.title?.let { title -> regex.find(title) }
+                Episode(
+                    number = match?.groupValues[1],
+                    title = match?.groups[2]?.value?.lowercase(),
+                    thumbnail = it.thumbnail,
+                    url = it.url,
+                    site = it.site
+                )
             }
         }
     }
@@ -410,7 +430,7 @@ data class Media(
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
         // TODO: Make this a proper countdown.
-        timeToEpisode = getTimeToEpisode(query.animeInfo),
+        timeToEpisode = getTimeToEpisode(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
@@ -450,19 +470,7 @@ data class Media(
                 }
             )
         },
-        streamingEpisodes = query.streamingEpisodes.orEmpty().mapNotNull {
-            it?.thumbnail ?: return@mapNotNull null
-            it.url ?: return@mapNotNull null
-            val regex = Regex("""Episode\s+(\d+(?:\.\d+)?)\s*-\s*(.+)""")
-            val match = it.title?.let { title -> regex.find(title) }
-            Episode(
-                number = match?.groupValues[1],
-                title = match?.groupValues[2]?.lowercase(),
-                thumbnail = it.thumbnail,
-                url = it.url,
-                site = it.site
-            )
-        },
+        streamingEpisodes = getStreamingEpisodes(query.streamingEpisodes),
         relations = query.relations?.edges.orEmpty().mapNotNull { edge ->
             edge?.node?.mediaSmall?.let { edge.relationType?.sanitize() to Small(it) }
         },

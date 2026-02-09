@@ -95,7 +95,7 @@ fun <T> MediaSmallRow(
 @Composable
 fun MediaCard(
     image: String?,
-    tag: String? = null,
+    tag: String?,
     label: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -125,7 +125,7 @@ fun MediaCard(
 @Composable
 fun CharacterCard(
     image: String?,
-    tag: String? = null,
+    tag: String?,
     label: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -158,7 +158,7 @@ fun CharacterCard(
 @Composable
 internal fun MediaSmall(
     image: String?,
-    tag: String? = null,
+    tag: String?,
     label: String?,
     onClick: () -> Unit,
     imageHeight: Dp,
@@ -189,7 +189,7 @@ internal fun MediaSmall(
                 Text(
                     text = tag,
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 11.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
                     maxLines = 1,

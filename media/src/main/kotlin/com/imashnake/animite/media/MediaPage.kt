@@ -1,3 +1,5 @@
+@file:Suppress("AssignedValueIsNeverRead")
+
 package com.imashnake.animite.media
 
 import android.content.Intent
@@ -72,6 +74,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -301,14 +304,16 @@ fun MediaPage(
                                 )
                             }
 
-                            MediaWatch(
-                                trailer = media.trailer,
-                                streamingEpisodes = media.streamingEpisodes,
-                                modifier = Modifier
-                                    .skipToLookaheadSize()
-                                    .padding(horizontal = LocalPaddings.current.large)
-                                    .padding(horizontalInsets)
-                            )
+                            if (media.trailer != null || !media.streamingEpisodes.isNullOrEmpty()) {
+                                MediaWatch(
+                                    trailer = media.trailer,
+                                    streamingEpisodes = media.streamingEpisodes,
+                                    modifier = Modifier
+                                        .skipToLookaheadSize()
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .padding(horizontalInsets)
+                                )
+                            }
 
                             if (!media.relations.isNullOrEmpty()) {
                                 MediaRelations(
@@ -355,9 +360,9 @@ fun MediaPage(
                         )
                     )
 
-                    // TODO: https://developer.android.com/jetpack/compose/animation/quick-guide#concurrent-animations
+                    val isAtTop by remember { derivedStateOf { scrollState.value == 0 } }
                     val offset by animateDpAsState(
-                        targetValue = if (scrollState.value == 0)
+                        targetValue = if (isAtTop)
                             0.dp
                         else
                             dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height),
@@ -383,6 +388,7 @@ fun MediaPage(
                     ) {
                         MediaCard(
                             image = media.coverImage,
+                            tag = null,
                             label = null,
                             onClick = {},
                             modifier = Modifier.sharedBounds(
@@ -486,6 +492,7 @@ fun MediaPage(
                             ) {
                                 CharacterCard(
                                     image = currentCharacter.image,
+                                    tag = null,
                                     label = null,
                                     onClick = {},
                                 )
@@ -743,21 +750,20 @@ private fun MediaDetails(
             .padding(horizontal = LocalPaddings.current.large / 2)
             .padding(top = LocalPaddings.current.medium / 2)
     ) {
-        Box(Modifier.fillMaxWidth()) {
-            androidx.compose.animation.AnimatedVisibility(
-                visible = title != null,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Text(
-                    text = title.orEmpty(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = textModifier.align(Alignment.CenterStart),
-                )
-            }
+        AnimatedVisibility(
+            visible = title != null,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = title.orEmpty(),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = textModifier
+            )
         }
 
         if (nextEpisodeIn != null) {
@@ -945,6 +951,7 @@ private fun MediaCharacters(
     ) { index, character ->
         CharacterCard(
             image = character.image,
+            tag = null,
             label = character.name,
             onClick = { onCharacterClick(index, character) },
         )
@@ -990,8 +997,8 @@ private fun Chip(
 private fun MediaWatch(
     trailer: Media.Trailer?,
     streamingEpisodes: List<Media.Episode>?,
-    contentPadding: PaddingValues = PaddingValues(),
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val context = LocalContext.current
     val isTrailerPresent = trailer != null
@@ -1011,13 +1018,11 @@ private fun MediaWatch(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        if (isTrailerPresent || isEpisodeListPresent) {
-            Text(
-                text = stringResource(R.string.watch),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
+        Text(
+            text = stringResource(R.string.watch),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium
+        )
 
         Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
             if (isTrailerPresent) {
@@ -1082,9 +1087,9 @@ private fun MediaWatch(
 @Composable
 private fun MediaStreamingEpisode(
     streamingEpisodes: List<Media.Episode>,
-    contentPadding: PaddingValues = PaddingValues(),
     isTrailerPresent: Boolean,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     HorizontalMultiBrowseCarousel(
         state = rememberCarouselState { streamingEpisodes.size },
@@ -1129,7 +1134,7 @@ private fun MediaStreamingEpisode(
                     Text(
                         text = it,
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 11.sp,
+                        fontSize = 10.sp,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
@@ -1142,29 +1147,20 @@ private fun MediaStreamingEpisode(
                 }
 
                 title?.let {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Start,
+                        maxLines = 1,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .graphicsLayer {
-                                translationY = 10f
-                            }
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                            .padding(vertical = LocalPaddings.current.tiny)
-                    ) {
-                        Text(
-                            text = it,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Start,
-                            maxLines = 1,
-                            modifier = Modifier.padding(
-                                start = dimensionResource(coreR.dimen.media_card_corner_radius) / 2
-                            )
-                        )
-                    }
+                            .padding(start = dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
+                            .padding(vertical = LocalPaddings.current.ultraTiny)
+                    )
                 }
             }
         }
@@ -1208,6 +1204,7 @@ private fun MediaRecommendations(
     ) { _, media ->
         MediaCard(
             image = media.coverImage,
+            tag = null,
             label = media.title,
             onClick = { onItemClicked(media) },
         )
