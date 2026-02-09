@@ -1,7 +1,6 @@
 query MediaQuery(
     $id: Int,
     $type: MediaType,
-    $isAnime: Boolean!,
     $recommendationsPerPage: Int
 ) {
     media: Media(id: $id, type: $type) {
@@ -21,7 +20,7 @@ query MediaQuery(
         }
         description
 
-        ...AnimeInfo @include(if: $isAnime)
+        ...AnimeInfo
 
         averageScore
         rankings {

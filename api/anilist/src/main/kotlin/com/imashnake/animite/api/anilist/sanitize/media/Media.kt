@@ -85,7 +85,7 @@ data class Media(
             return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
         }
 
-        fun getTimeToEpisode(animeInfo: AnimeInfo?) = animeInfo?.nextAiringEpisode?.let nextEp@{ nextEp ->
+        fun getTimeToEpisode(nextAiringEpisode: AnimeInfo.NextAiringEpisode?) = nextAiringEpisode?.let nextEp@{ nextEp ->
             nextEp.airingAt.let {
                 val difference = Instant.fromEpochSeconds(it.toLong()) - Clock.System.now()
                 if (difference < Duration.ZERO) return@nextEp null
@@ -127,7 +127,7 @@ data class Media(
             if (
                 !addAll(
                     listOfNotNull(
-                        animeInfo?.studios?.nodes?.first()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
+                        animeInfo?.studios?.nodes?.firstOrNull()?.name?.let { Info.Item(InfoItem.STUDIO, it) },
                         animeInfo?.source?.sanitize()?.let { Info.Source(it) },
                     )
                 )
@@ -430,7 +430,7 @@ data class Media(
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
         // TODO: Make this a proper countdown.
-        timeToEpisode = getTimeToEpisode(query.animeInfo),
+        timeToEpisode = getTimeToEpisode(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
