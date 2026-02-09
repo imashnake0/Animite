@@ -1,5 +1,6 @@
 package com.imashnake.animite.api.anilist.sanitize.media
 
+import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Info
@@ -326,4 +327,31 @@ class MediaTest {
         studios = studios,
         source = source,
     )
+    // endregion
+
+    // region episodes
+    @Test
+    fun `episode number and title are parsed`() {
+        val actual = Media.getStreamingEpisodes(
+            streamingEpisodes = listOf(
+                MediaQuery.StreamingEpisode(
+                    title = "Episode 21.5 - Some Episode Title",
+                    thumbnail = "thumbnail",
+                    url = "url",
+                    site = "site"
+                )
+            )
+        )
+
+        val episode = actual.single()
+        assertEquals("21.5", episode.number)
+        assertEquals("some episode title", episode.title)
+    }
+
+    @Test
+    fun `episodes are empty`() {
+        val actual = Media.getStreamingEpisodes(null)
+
+        assertTrue(actual.isEmpty())
+    }
 }

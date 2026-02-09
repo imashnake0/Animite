@@ -99,6 +99,7 @@ private fun UserMediaLists(
                     val media = item as Media.Small
                     MediaCard(
                         image = media.coverImage,
+                        tag = null,
                         label = media.title,
                         onClick = {
                             onNavigateToMediaItem(

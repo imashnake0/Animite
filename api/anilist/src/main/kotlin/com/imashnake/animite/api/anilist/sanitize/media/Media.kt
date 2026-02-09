@@ -23,6 +23,8 @@ import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.collections.mapNotNull
+import kotlin.collections.orEmpty
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Instant
@@ -131,6 +133,24 @@ data class Media(
                 )
             ) {
                 removeLastOrNull()
+            }
+        }
+
+        fun getStreamingEpisodes(streamingEpisodes: List<MediaQuery.StreamingEpisode?>?): List<Episode> {
+            if (streamingEpisodes.isNullOrEmpty()) return emptyList()
+
+            val regex = Regex("""Episode\s+(\d+(?:\.\d+)?)(?:\s*-\s*(.+))?""")
+            return streamingEpisodes.mapNotNull {
+                it?.thumbnail ?: return@mapNotNull null
+                it.url ?: return@mapNotNull null
+                val match = it.title?.let { title -> regex.find(title) }
+                Episode(
+                    number = match?.groupValues[1],
+                    title = match?.groups[2]?.value?.lowercase(),
+                    thumbnail = it.thumbnail,
+                    url = it.url,
+                    site = it.site
+                )
             }
         }
     }
@@ -450,19 +470,7 @@ data class Media(
                 }
             )
         },
-        streamingEpisodes = query.streamingEpisodes.orEmpty().mapNotNull {
-            it?.thumbnail ?: return@mapNotNull null
-            it.url ?: return@mapNotNull null
-            val regex = Regex("""Episode\s+(\d+(?:\.\d+)?)\s*-\s*(.+)""")
-            val match = it.title?.let { title -> regex.find(title) }
-            Episode(
-                number = match?.groupValues[1],
-                title = match?.groupValues[2]?.lowercase(),
-                thumbnail = it.thumbnail,
-                url = it.url,
-                site = it.site
-            )
-        },
+        streamingEpisodes = getStreamingEpisodes(query.streamingEpisodes),
         relations = query.relations?.edges.orEmpty().mapNotNull { edge ->
             edge?.node?.mediaSmall?.let { edge.relationType?.sanitize() to Small(it) }
         },

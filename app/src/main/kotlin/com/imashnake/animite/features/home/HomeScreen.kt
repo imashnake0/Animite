@@ -192,6 +192,7 @@ private fun HomeRow(
         with(sharedTransitionScope) {
             MediaCard(
                 image = media.coverImage,
+                tag = null,
                 label = media.title,
                 onClick = { onItemClicked(media) },
                 modifier = Modifier.sharedBounds(
