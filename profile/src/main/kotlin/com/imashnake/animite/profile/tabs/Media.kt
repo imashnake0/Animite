@@ -28,6 +28,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.profile.R
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * This can either be the anime tab or manga tab, it has a collection of lists for different
@@ -73,7 +74,7 @@ fun MediaTab(
 
 @Composable
 private fun UserMediaLists(
-    lists: List<User.MediaCollection.NamedList>,
+    lists: ImmutableList<User.MediaCollection.NamedList>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,

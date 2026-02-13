@@ -34,6 +34,7 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.profile.R
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 /**
@@ -79,7 +80,7 @@ fun AboutTab(
 
 @Composable
 private fun Genres(
-    genres: List<User.Genre>,
+    genres: ImmutableList<User.Genre>,
     modifier: Modifier = Modifier
 ) {
     val barWidthAnimation = remember { Animatable(0f) }

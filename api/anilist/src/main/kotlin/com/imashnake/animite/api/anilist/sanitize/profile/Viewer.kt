@@ -1,5 +1,6 @@
 package com.imashnake.animite.api.anilist.sanitize.profile
 
+import androidx.compose.runtime.Immutable
 import com.imashnake.animite.api.anilist.UserMediaListQuery
 import com.imashnake.animite.api.anilist.fragment.User
 import com.imashnake.animite.api.anilist.sanitize.media.Media
@@ -22,6 +23,7 @@ import kotlin.time.DurationUnit
  * @param genres
  * @param favourites
  */
+@Immutable
 data class User(
     /** @see User.id */
     val id: Int,
@@ -38,12 +40,12 @@ data class User(
     /** User Stats */
     val stats: ImmutableList<Stat>,
     /** @see User.Anime.genres */
-    val genres: List<Genre>,
+    val genres: ImmutableList<Genre>,
     // endregion
 
     // region Fave
     /** @see User.favourites */
-    val favourites: List<MediaCollection.NamedList>,
+    val favourites: ImmutableList<MediaCollection.NamedList>,
     // endregion
 ) {
     data class Stat(
@@ -57,6 +59,7 @@ data class User(
      * @param genre
      * @param mediaCount
      */
+    @Immutable
     data class Genre(
         /** @see User.Genre.genre */
         val genre: String,
@@ -64,10 +67,12 @@ data class User(
         val mediaCount: Int,
     )
 
+    @Immutable
     data class MediaCollection(
         val type: Type,
-        val namedLists: List<NamedList>,
+        val namedLists: ImmutableList<NamedList>,
     ) {
+        @Immutable
         data class NamedList(
             val name: String?,
             val list: List<Any>,
@@ -105,7 +110,7 @@ data class User(
             type = type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             namedLists = query.mediaListCollection?.lists.orEmpty().mapNotNull {
                 NamedList(it ?: return@mapNotNull null)
-            }
+            }.toImmutableList()
         )
     }
 
@@ -137,12 +142,12 @@ data class User(
                 // Filters out anime genres that contribute to less than 5%.
                 it.mediaCount > totalCount/20
             }.sortedByDescending { it.mediaCount }
-        },
+        }.toImmutableList(),
         favourites = listOfNotNull(
             query.favourites?.anime?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
             query.favourites?.manga?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
             query.favourites?.characters?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
-        )
+        ).toImmutableList()
     )
 
     enum class Favouritables {

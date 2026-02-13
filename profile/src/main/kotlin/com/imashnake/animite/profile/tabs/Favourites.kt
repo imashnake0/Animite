@@ -30,6 +30,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.profile.R
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * The viewer's favourite Anime, Manga, and Characters.
@@ -38,7 +39,7 @@ import com.imashnake.animite.profile.R
  */
 @Composable
 fun FavouritesTab(
-    favouriteLists: List<NamedList>,
+    favouriteLists: ImmutableList<NamedList>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -63,7 +64,7 @@ fun FavouritesTab(
 
 @Composable
 private fun UserFavouriteLists(
-    lists: List<NamedList>,
+    lists: ImmutableList<NamedList>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
