@@ -1,12 +1,6 @@
 ![brah](https://github.com/user-attachments/assets/f265fb1d-e64d-4b32-946a-85c9488f582b)
 
-# Animite [![build-debug](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml/badge.svg)](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml)
-<a href="https://discord.gg/HEB7duYdqe">
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="resources/discord-assistive-chip-dark.svg">
-        <img alt="Discord chip." src="resources/discord-assistive-chip-light.svg">
-    </picture>
-</a>
+# Animite [![build-debug](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml/badge.svg)](https://github.com/imashnake0/Animite/actions/workflows/build-debug.yaml) <a href="https://play.google.com/store/apps/details?id=com.imashnake.animite"><img src="resources/google-play-assistive-chip-dark.svg" alt="Google Play Store Chip" height="35px" align="right"></a><a href="https://discord.gg/HEB7duYdqe"><picture><source media="(prefers-color-scheme: dark)" srcset="resources/discord-assistive-chip-dark.svg"><img src="resources/discord-assistive-chip-light.svg" alt="Discord Chip" height="35px" align="right"></picture></a>
 
 [Animite](https://github.com/users/imashnake0/projects/1) is an unofficial Android (and potentially iOS) client for [AniList](https://anilist.co/) (and potentially [MAL](https://myanimelist.net/)).
 
