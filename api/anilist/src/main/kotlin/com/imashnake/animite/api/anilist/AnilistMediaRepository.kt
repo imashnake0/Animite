@@ -9,6 +9,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import javax.inject.Inject
@@ -60,7 +61,7 @@ class AnilistMediaRepository @Inject constructor(
                     type = mediaListType,
                     list = it.page!!.media.orEmpty().filterNotNull().map { query ->
                         Media.Small(query.mediaSmall)
-                    }
+                    }.toImmutableList()
                 )
             }
     }

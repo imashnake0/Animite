@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.collectionsImmutable)
 
     // Hilt
     implementation(libs.hilt.android)

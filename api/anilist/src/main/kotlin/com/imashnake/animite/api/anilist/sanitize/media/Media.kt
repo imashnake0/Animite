@@ -2,6 +2,7 @@ package com.imashnake.animite.api.anilist.sanitize.media
 
 import android.graphics.Color
 import android.util.Log
+import androidx.compose.runtime.Immutable
 import androidx.core.graphics.toColorInt
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
@@ -479,6 +480,7 @@ data class Media(
         }
     )
 
+    @Immutable
     data class Small(
         /** @see MediaSmall.id */
         val id: Int,
