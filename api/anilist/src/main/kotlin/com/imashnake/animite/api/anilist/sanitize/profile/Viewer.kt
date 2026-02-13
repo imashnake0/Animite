@@ -116,9 +116,15 @@ data class User(
         avatar = query.avatar?.large,
         banner = query.bannerImage,
         stats = listOfNotNull(
-            query.statistics?.anime?.count?.toString()?.let { Stat("TOTAL ANIME", it) },
-            query.statistics?.anime?.minutesWatched ?.minutes?.toDouble(DurationUnit.DAYS)?.toString()?.let { Stat("DAYS WATCHED", it) },
-            query.statistics?.anime?.meanScore?.toFloat()?.toString()?.let { Stat("MEAN SCORE", it) }
+            query.statistics?.anime?.count?.toString()?.let {
+                Stat("TOTAL\nANIME", it)
+            },
+            query.statistics?.anime?.minutesWatched?.minutes?.toDouble(DurationUnit.DAYS)?.let{"%.1f".format(it)}?.let {
+                Stat("DAYS\nWATCHED", it)
+            },
+            query.statistics?.anime?.meanScore?.toFloat()?.let { "%.1f".format(it) }?.let {
+                Stat("MEAN\nSCORE", it)
+            },
         ).toImmutableList(),
         genres = query.statistics?.anime?.genres.orEmpty().filterNotNull().run {
             val totalCount = this.sumOf { genre -> genre.count }
