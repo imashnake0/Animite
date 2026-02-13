@@ -75,34 +75,34 @@ data class User(
         @Immutable
         data class NamedList(
             val name: String?,
-            val list: List<Any>,
+            val list: ImmutableList<Any>,
         ) {
             internal constructor(query: UserMediaListQuery.List) : this(
                 name = query.name,
                 list = query.entries.orEmpty().mapNotNull {
                     Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null)
-                }
+                }.toImmutableList()
             )
 
             internal constructor(query: User.Anime1) : this(
                 name = Favouritables.Anime.name,
                 list = query.nodes.orEmpty().mapNotNull {
                     Media.Small(it?.mediaSmall ?: return@mapNotNull null)
-                }
+                }.toImmutableList()
             )
 
             internal constructor(query: User.Manga) : this(
                 name = Favouritables.Manga.name,
                 list = query.nodes.orEmpty().mapNotNull {
                     Media.Small(it?.mediaSmall ?: return@mapNotNull null)
-                }
+                }.toImmutableList()
             )
 
             internal constructor(query: User.Characters) : this(
                 name = Favouritables.Characters.name,
                 list = query.nodes.orEmpty().filter { it?.characterSmall?.name != null }.map {
                     Media.Character(it!!.characterSmall)
-                }
+                }.toImmutableList()
             )
         }
 

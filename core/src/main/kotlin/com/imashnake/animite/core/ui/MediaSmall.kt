@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.imashnake.animite.core.R
 import com.imashnake.animite.core.extensions.crossfadeModel
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * A [LazyRow] of [MediaSmall]s.
@@ -45,7 +46,7 @@ import com.imashnake.animite.core.extensions.crossfadeModel
 @Composable
 fun <T> MediaSmallRow(
     title: String?,
-    mediaList: List<T>,
+    mediaList: ImmutableList<T>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable LazyItemScope.(Int, T) -> Unit

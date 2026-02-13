@@ -12,7 +12,7 @@ import com.imashnake.animite.core.Constants
  * @param model is the argument of [ImageRequest.Builder.data].
  */
 @Composable
-fun crossfadeModel(model: Any?) = ImageRequest
+fun crossfadeModel(model: String?) = ImageRequest
     .Builder(LocalContext.current)
     .data(model)
     .crossfade(Constants.CROSSFADE_DURATION)
