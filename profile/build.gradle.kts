@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.bundles.coil)
 
     // Kotlin
+    implementation(libs.kotlinx.collectionsImmutable)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.core)

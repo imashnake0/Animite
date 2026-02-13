@@ -5,6 +5,8 @@ import com.imashnake.animite.api.anilist.fragment.User
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
 import com.imashnake.animite.api.anilist.type.MediaType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
@@ -16,10 +18,9 @@ import kotlin.time.DurationUnit
  * @param description
  * @param avatar
  * @param banner
- * @param count
- * @param daysWatched
- * @param meanScore
+ * @param stats
  * @param genres
+ * @param favourites
  */
 data class User(
     /** @see User.id */
@@ -34,12 +35,8 @@ data class User(
     val banner: String?,
 
     // region About
-    /** @see User.Anime.count */
-    val count: Int?,
-    /** @see User.Anime.minutesWatched */
-    val daysWatched: Double?,
-    /** @see User.Anime.meanScore */
-    val meanScore: Float?,
+    /** User Stats */
+    val stats: ImmutableList<Stat>,
     /** @see User.Anime.genres */
     val genres: List<Genre>,
     // endregion
@@ -49,6 +46,11 @@ data class User(
     val favourites: List<MediaCollection.NamedList>,
     // endregion
 ) {
+    data class Stat(
+        val label: String,
+        val value: String,
+    )
+
     /**
      * Sanitized [User.Genre]
      *
@@ -113,10 +115,11 @@ data class User(
         description = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
-        count = query.statistics?.anime?.count,
-        daysWatched = query.statistics?.anime?.minutesWatched
-            ?.minutes?.toDouble(DurationUnit.DAYS),
-        meanScore = query.statistics?.anime?.meanScore?.toFloat(),
+        stats = listOfNotNull(
+            query.statistics?.anime?.count?.toString()?.let { Stat("TOTAL ANIME", it) },
+            query.statistics?.anime?.minutesWatched ?.minutes?.toDouble(DurationUnit.DAYS)?.toString()?.let { Stat("DAYS WATCHED", it) },
+            query.statistics?.anime?.meanScore?.toFloat()?.toString()?.let { Stat("MEAN SCORE", it) }
+        ).toImmutableList(),
         genres = query.statistics?.anime?.genres.orEmpty().filterNotNull().run {
             val totalCount = this.sumOf { genre -> genre.count }
             mapNotNull {

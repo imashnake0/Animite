@@ -9,6 +9,7 @@ import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
 import com.imashnake.animite.core.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -32,7 +33,7 @@ class SearchViewModel @Inject constructor(
         .combine(query, ::Pair)
         .flatMapLatest { (mediaType, query) ->
             if (query.isNullOrEmpty()) {
-                flowOf(Resource.success(emptyList()))
+                flowOf(Resource.success(persistentListOf()))
             } else {
                 searchRepository.fetchSearch(
                     type = mediaType,
