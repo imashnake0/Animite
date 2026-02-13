@@ -69,10 +69,10 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun MountFuji(
     setDayHour: Float?,
-    header: String? = null,
+    header: String?,
+    modifier: Modifier = Modifier,
     insetPaddingValues: PaddingValues = PaddingValues(),
     navigationComponentPaddingValues: PaddingValues = PaddingValues(),
-    modifier: Modifier = Modifier,
 ) {
     val localDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     val currentDayHour = localDateTime.hour + (localDateTime.minute / 60f)

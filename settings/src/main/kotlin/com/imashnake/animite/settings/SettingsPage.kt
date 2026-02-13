@@ -87,6 +87,8 @@ import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.banner.MountFuji
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
@@ -143,7 +145,7 @@ fun SettingsPage(
                         )
 
                         Items(
-                            items = listOf(
+                            items = persistentListOf(
                                 Item(
                                     icon = R.drawable.theme,
                                     label = R.string.theme,
@@ -268,7 +270,7 @@ fun SettingsPage(
                             )
 
                             Items(
-                                items = listOf(
+                                items = persistentListOf(
                                     Item(
                                         icon = R.drawable.day_hour,
                                         label = R.string.day_hour,
@@ -350,7 +352,7 @@ fun SettingsPage(
 
 @Composable
 private fun Items(
-    items: List<Item>,
+    items: ImmutableList<Item>,
     isDarkMode: Boolean,
     modifier: Modifier = Modifier,
     onItemClick: (Int) -> Unit,
@@ -725,7 +727,7 @@ private fun PreviewItems() {
         modifier = Modifier.padding(vertical = padding)
     ) {
         Items(
-            items = listOf(
+            items = persistentListOf(
                 Item(
                     icon = R.drawable.theme,
                     label = R.string.theme,
