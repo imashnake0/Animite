@@ -13,10 +13,11 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun MediaMediumGrid(
-    mediaMediumList: List<Media.Medium>,
+    mediaMediumList: ImmutableList<Media.Medium>,
     onItemClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier,
 ) {

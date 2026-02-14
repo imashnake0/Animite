@@ -34,6 +34,9 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
+    implementation(libs.kotlinx.collectionsImmutable)
+    implementation(libs.compose.runtime.annotation)
+
     testImplementation(libs.test.junit)
 }
 

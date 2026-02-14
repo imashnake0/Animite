@@ -140,6 +140,8 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
@@ -240,8 +242,8 @@ fun MediaPage(
                                 onClick = { showDetailsSheet = true },
                             )
 
-                            if (media.type == MediaType.ANIME.name)
-                                AnimeInfo(
+                            if (!media.info.isNullOrEmpty())
+                                MediaInfo(
                                     info = media.info,
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
@@ -673,7 +675,7 @@ fun MediaPage(
                     ) {
                         if (it) {
                             MediaMediumGrid(
-                                mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(
@@ -687,7 +689,7 @@ fun MediaPage(
                             )
                         } else {
                             MediaMediumList(
-                                mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(
@@ -815,8 +817,8 @@ private fun MediaDescription(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun AnimeInfo(
-    info: List<Media.Info>?,
+private fun MediaInfo(
+    info: ImmutableList<Media.Info>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -841,7 +843,7 @@ private fun AnimeInfo(
             )
             .padding(horizontal = LocalPaddings.current.medium)
     ) {
-        info?.fastForEach {
+        info.fastForEach {
             when (it) {
                 is Media.Info.Divider -> {
                     Box(
@@ -897,7 +899,7 @@ private fun AnimeInfo(
 
 @Composable
 private fun MediaGenres(
-    genres: List<String>,
+    genres: ImmutableList<String>,
     onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
@@ -938,7 +940,7 @@ private fun MediaGenres(
 
 @Composable
 private fun MediaCharacters(
-    characters: List<Media.Character>,
+    characters: ImmutableList<Media.Character>,
     onCharacterClick: (Int, Media.Character) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
@@ -996,7 +998,7 @@ private fun Chip(
 @Composable
 private fun MediaWatch(
     trailer: Media.Trailer?,
-    streamingEpisodes: List<Media.Episode>?,
+    streamingEpisodes: ImmutableList<Media.Episode>?,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -1086,7 +1088,7 @@ private fun MediaWatch(
 
 @Composable
 private fun MediaStreamingEpisode(
-    streamingEpisodes: List<Media.Episode>,
+    streamingEpisodes: ImmutableList<Media.Episode>,
     isTrailerPresent: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -1169,7 +1171,7 @@ private fun MediaStreamingEpisode(
 
 @Composable
 private fun MediaRelations(
-    relations: List<Pair<Media.Relation?, Media.Small>>,
+    relations: ImmutableList<Pair<Media.Relation?, Media.Small>>,
     onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -1191,7 +1193,7 @@ private fun MediaRelations(
 
 @Composable
 private fun MediaRecommendations(
-    recommendations: List<Media.Small>,
+    recommendations: ImmutableList<Media.Small>,
     onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),

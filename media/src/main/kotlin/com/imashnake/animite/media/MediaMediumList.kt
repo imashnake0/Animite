@@ -44,11 +44,12 @@ import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.media.ext.res
+import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.core.R as coreR
 
 @Composable
 fun MediaMediumList(
-    mediaMediumList: List<Media.Medium>,
+    mediaMediumList: ImmutableList<Media.Medium>,
     onItemClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier,
     searchBarHeight: Dp = 0.dp,

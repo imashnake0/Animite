@@ -11,6 +11,7 @@ import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -57,7 +58,7 @@ class MediaPageViewModel @Inject constructor(
                     relations = media?.relations,
                     recommendations = media?.recommendations
                 )
-            } catch(ioe: IOException) {
+            } catch(_: IOException) {
                 TODO()
             }
         }
@@ -65,7 +66,7 @@ class MediaPageViewModel @Inject constructor(
 
     fun getGenreMediaMediums(genre: String?) = viewModelScope.launch {
         if (genre == null) {
-            uiState = uiState.copy(genreTitleList = uiState.genreTitleList?.first.orEmpty() to emptyList())
+            uiState = uiState.copy(genreTitleList = uiState.genreTitleList?.first.orEmpty() to persistentListOf())
             return@launch
         }
         val list = mediaRepository.fetchMediaMediumList(
