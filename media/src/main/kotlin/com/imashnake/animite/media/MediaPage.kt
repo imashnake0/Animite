@@ -41,6 +41,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
@@ -239,6 +240,7 @@ fun MediaPage(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
                                 textModifier = Modifier.skipToLookaheadSize(),
+                                isSheetOpen = showDetailsSheet,
                                 onClick = { showDetailsSheet = true },
                             )
 
@@ -634,8 +636,9 @@ fun MediaPage(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.align(Alignment.CenterEnd)
                         ) {
-                            val listToGrid =
-                                AnimatedImageVector.animatedVectorResource(R.drawable.grid_list_anim)
+                            val listToGrid = AnimatedImageVector.animatedVectorResource(
+                                R.drawable.grid_list_anim
+                            )
                             Icon(
                                 painter = rememberAnimatedVectorPainter(listToGrid, isList),
                                 contentDescription = stringResource(R.string.list_to_grid),
@@ -741,51 +744,70 @@ private fun MediaDetails(
     title: String?,
     nextEpisodeIn: String?,
     description: String,
+    isSheetOpen: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(LocalPaddings.current.small))
-            .clickable { onClick() }
-            .padding(horizontal = LocalPaddings.current.large / 2)
-            .padding(top = LocalPaddings.current.medium / 2)
-    ) {
-        AnimatedVisibility(
-            visible = title != null,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier.fillMaxWidth()
+    Box(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(LocalPaddings.current.small))
+                .clickable { onClick() }
+                .padding(horizontal = LocalPaddings.current.large / 2)
+                .padding(top = LocalPaddings.current.medium / 2)
+                .fillMaxSize()
         ) {
-            Text(
-                text = title.orEmpty(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = textModifier
-            )
-        }
-
-        if (nextEpisodeIn != null) {
-            Box(contentAlignment = Alignment.Center) {
-                Chip(
-                    color = Color(0xFF80DF87),
-                    icon = ImageVector.vectorResource(R.drawable.hourglass),
-                    // TODO: Use string resources.
-                    text = nextEpisodeIn,
-                    modifier = Modifier.padding(
-                        top = LocalPaddings.current.small,
-                        bottom = LocalPaddings.current.tiny,
-                    )
+            AnimatedVisibility(
+                visible = title != null,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = title.orEmpty(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = textModifier.padding(end = LocalPaddings.current.small)
                 )
+            }
+
+            if (nextEpisodeIn != null) {
+                Box(contentAlignment = Alignment.Center) {
+                    Chip(
+                        color = Color(0xFF80DF87),
+                        icon = ImageVector.vectorResource(R.drawable.hourglass),
+                        // TODO: Use string resources.
+                        text = nextEpisodeIn,
+                        modifier = Modifier.padding(
+                            top = LocalPaddings.current.small,
+                            bottom = LocalPaddings.current.tiny,
+                        )
+                    )
+                }
+            }
+
+            NestedScrollableContent { contentModifier ->
+                MediaDescription(description, contentModifier)
             }
         }
 
-        NestedScrollableContent { contentModifier ->
-            MediaDescription(description, contentModifier)
-        }
+        val expandToCollapse = AnimatedImageVector.animatedVectorResource(
+            R.drawable.expand_collapse_anim
+        )
+        Icon(
+            painter = rememberAnimatedVectorPainter(
+                animatedImageVector = expandToCollapse,
+                atEnd = isSheetOpen,
+            ),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = LocalPaddings.current.small)
+                .requiredSize(LocalPaddings.current.medium)
+        )
     }
 }
 
