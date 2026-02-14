@@ -37,7 +37,7 @@ enum class NavigationBarPaths(
     ),
     Home(
         navigateTo = {
-            it.navigate(HomeRoute) {
+            it.navigate(AnimeRoute) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                     inclusive = true
@@ -46,12 +46,12 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(HomeRoute::class) }
+            it.destination.hierarchy.any { it.hasRoute(AnimeRoute::class) }
         },
         icon = {
-            Icon(ImageVector.vectorResource(R.drawable.home), contentDescription = stringResource(R.string.home))
+            Icon(ImageVector.vectorResource(R.drawable.anime), contentDescription = stringResource(R.string.anime))
         },
-        labelRes = R.string.home
+        labelRes = R.string.anime
     ),
 
     Profile(

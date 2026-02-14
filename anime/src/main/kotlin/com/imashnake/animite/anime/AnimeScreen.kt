@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.home
+package com.imashnake.animite.anime
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
@@ -28,7 +28,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -37,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -62,12 +60,12 @@ import com.imashnake.animite.navigation.R as navigationR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongMethod")
-fun HomeScreen(
+fun AnimeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: AnimeViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
     val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
@@ -79,9 +77,6 @@ fun HomeScreen(
         )
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
-
-    var homeMediaType by rememberSaveable { mutableStateOf(MediaType.ANIME) }
-    viewModel.setMediaType(homeMediaType)
 
     val dayHour by viewModel.dayHour.collectAsState(initial = null)
 
@@ -140,7 +135,7 @@ fun HomeScreen(
                                                             MediaPage(
                                                                 id = media.id,
                                                                 source = mediaList.type.name,
-                                                                mediaType = homeMediaType.rawValue,
+                                                                mediaType = MediaType.ANIME.rawValue,
                                                                 title = media.title,
                                                             )
                                                         )

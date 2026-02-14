@@ -17,4 +17,4 @@ data class ProfileRoute(
 data object SocialRoute
 
 @Serializable
-data object HomeRoute
+data object AnimeRoute
