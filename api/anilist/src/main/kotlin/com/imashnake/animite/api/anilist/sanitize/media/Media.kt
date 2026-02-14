@@ -109,7 +109,7 @@ data class Media(
                     listOfNotNull(
                         animeInfo?.format?.sanitize()?.let  { Info.Format(it) },
                         animeInfo?.episodes?.let { Info.Item(InfoItem.EPISODES, it.toString()) },
-                        animeInfo?.duration?.let { Info.Item(InfoItem.DURATION, it.toString()) },
+                        animeInfo?.duration?.let { Info.Item(InfoItem.DURATION, "$it mins") },
                     )
                 )
             ) {
@@ -120,9 +120,9 @@ data class Media(
                 addAll(
                     listOfNotNull(
                         animeInfo?.status?.sanitize()?.let { Info.Status(it) },
+                        animeInfo?.season?.sanitize()?.let { Info.Season(it, animeInfo.seasonYear) },
                         animeInfo?.startDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.START_DATE, it) },
                         animeInfo?.endDate?.let { getFormattedDate(it.year, it.month, it.day) }?.let { Info.Item(InfoItem.END_DATE, it) },
-                        animeInfo?.season?.sanitize()?.let { Info.Season(it, animeInfo.seasonYear) },
                     )
                 )
             ) {
@@ -383,7 +383,7 @@ data class Media(
             }
         }
 
-        internal constructor(query: CharacterSmall, role: String?) : this(
+        internal constructor(query: CharacterSmall, role: String? = null) : this(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
