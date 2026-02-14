@@ -38,6 +38,8 @@ dependencies {
     implementation(projects.core)
     implementation(projects.navigation)
 
+    implementation(libs.kotlinx.collectionsImmutable)
+
     // Compose
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
