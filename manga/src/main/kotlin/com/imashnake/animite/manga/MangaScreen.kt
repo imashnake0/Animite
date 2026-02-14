@@ -1,4 +1,4 @@
-package com.imashnake.animite.anime
+package com.imashnake.animite.manga
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
@@ -60,12 +60,12 @@ import com.imashnake.animite.navigation.R as navigationR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongMethod")
-fun AnimeScreen(
+fun MangaScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
-    viewModel: AnimeViewModel = hiltViewModel(),
+    viewModel: MangaViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
     val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
@@ -81,14 +81,10 @@ fun AnimeScreen(
     val dayHour by viewModel.dayHour.collectAsState(initial = null)
 
     val trendingList by viewModel.trendingMedia.collectAsState()
-    val popularList by viewModel.popularMediaThisSeason.collectAsState()
-    val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
     val rows = listOf(
         trendingList,
-        popularList,
-        upcomingList,
         allTimePopularList,
     )
 
@@ -124,10 +120,10 @@ fun AnimeScreen(
                                                 fadeIn(tween(750))
                                                     .togetherWith(fadeOut(tween(750)))
                                             },
-                                            label = "animate_anime_row"
+                                            label = "animate_manga_row"
                                         ) { mediaList ->
                                             if (mediaList.list.isNotEmpty()) {
-                                                AnimeRow(
+                                                MangaRow(
                                                     items = mediaList.list,
                                                     type = mediaList.type,
                                                     onItemClicked = { media ->
@@ -135,7 +131,7 @@ fun AnimeScreen(
                                                             MediaPage(
                                                                 id = media.id,
                                                                 source = mediaList.type.name,
-                                                                mediaType = MediaType.ANIME.rawValue,
+                                                                mediaType = MediaType.MANGA.rawValue,
                                                                 title = media.title,
                                                             )
                                                         )
@@ -170,7 +166,7 @@ fun AnimeScreen(
 }
 
 @Composable
-private fun AnimeRow(
+private fun MangaRow(
     items: ImmutableList<Media.Small>,
     type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,

@@ -42,6 +42,7 @@ include(
     ":api:preferences",
     ":app",
     ":core",
+    ":manga",
     ":media",
     ":navigation",
     ":profile",

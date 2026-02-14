@@ -27,15 +27,15 @@ enum class NavigationBarPaths(
                 launchSingleTop = true
             }
         },
-        matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(SocialRoute::class) }
+        matchesDestination = { navBackStackEntry ->
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(SocialRoute::class) }
         },
         icon = {
             Icon(ImageVector.vectorResource(R.drawable.social), contentDescription = stringResource(R.string.social))
         },
         labelRes = R.string.social
     ),
-    Home(
+    Anime(
         navigateTo = {
             it.navigate(AnimeRoute) {
                 popUpTo(id = it.graph.findStartDestination().id) {
@@ -45,13 +45,30 @@ enum class NavigationBarPaths(
                 launchSingleTop = true
             }
         },
-        matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(AnimeRoute::class) }
+        matchesDestination = { navBackStackEntry ->
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(AnimeRoute::class) }
         },
         icon = {
             Icon(ImageVector.vectorResource(R.drawable.anime), contentDescription = stringResource(R.string.anime))
         },
         labelRes = R.string.anime
+    ),
+    Manga(
+        navigateTo = {
+            it.navigate(MangaRoute) {
+                popUpTo(id = it.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+            }
+        },
+        matchesDestination = { navBackStackEntry ->
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(MangaRoute::class) }
+        },
+        icon = {
+            Icon(ImageVector.vectorResource(R.drawable.manga), contentDescription = stringResource(R.string.manga))
+        },
+        labelRes = R.string.manga
     ),
 
     Profile(
@@ -63,8 +80,8 @@ enum class NavigationBarPaths(
                 launchSingleTop = true
             }
         },
-        matchesDestination = {
-            it.destination.hierarchy.any { it.hasRoute(ProfileRoute::class) }
+        matchesDestination = { navBackStackEntry ->
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(ProfileRoute::class) }
         },
         icon = {
             Icon(ImageVector.vectorResource(R.drawable.profile), contentDescription = stringResource(R.string.profile))
