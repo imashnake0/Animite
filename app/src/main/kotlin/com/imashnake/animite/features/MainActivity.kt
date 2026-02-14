@@ -20,7 +20,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -31,7 +30,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -39,9 +37,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.anime.AnimeScreen
-import com.imashnake.animite.api.anilist.sanitize.media.MediaList
-import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.manga.MangaScreen
 import com.imashnake.animite.media.MediaPage
@@ -208,28 +203,5 @@ fun MainScreen(
                 ) { NavigationBar(navController = navController) }
             }
         }
-
-        SearchFrontDrop(
-            hasExtraPadding = isNavBarVisible &&
-                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT,
-            onItemClick = { id, mediaType, title ->
-                navController.navigate(
-                    MediaPage(
-                        id = id,
-                        source = MediaList.Type.SEARCH.name,
-                        mediaType = mediaType.rawValue,
-                        title = title,
-                    )
-                )
-            },
-            isFabVisible = currentBackStackEntry?.destination?.hasRoute<SettingsPage>() == false,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    start = LocalPaddings.current.large,
-                    end = LocalPaddings.current.large,
-                    bottom = LocalPaddings.current.large,
-                )
-        )
     }
 }

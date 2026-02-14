@@ -122,6 +122,7 @@ compose-material = { group = "androidx.compose.material", name = "material", ver
 compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "composeIcons" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "composeIcons" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "composeMaterial3" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
 compose-runtime-annotation = { group = "androidx.compose.runtime", name = "runtime-annotation", version.ref = "composeRuntime" }
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
