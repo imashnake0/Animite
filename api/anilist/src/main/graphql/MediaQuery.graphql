@@ -32,12 +32,15 @@ query MediaQuery(
         genres
 
         characters(
-            sort: FAVOURITES_DESC,
+            sort: [RELEVANCE, ROLE, FAVOURITES_DESC],
             page: 0,
             perPage: 10
         ) {
-            nodes {
-                ...CharacterSmall
+            edges {
+                role
+                node {
+                    ...CharacterSmall
+                }
             }
         }
 

@@ -2,6 +2,7 @@ package com.imashnake.animite.api.anilist.sanitize.media
 
 import android.graphics.Color
 import android.util.Log
+import androidx.compose.runtime.Immutable
 import androidx.core.graphics.toColorInt
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
@@ -13,6 +14,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Status.Companion.sanitize
+import com.imashnake.animite.api.anilist.type.CharacterRole
 import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import com.imashnake.animite.api.anilist.type.MediaRelation
@@ -20,6 +22,9 @@ import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSource
 import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
@@ -54,21 +59,21 @@ data class Media(
      * */
     val timeToEpisode: Pair<String, Int>?,
     /** @see MediaQuery.Media */
-    val info: List<Info>,
+    val info: ImmutableList<Info>,
     /** @see MediaQuery.Media.rankings */
-    val rankings: List<Ranking>,
+    val rankings: ImmutableList<Ranking>,
     /** @see MediaQuery.Media.genres */
-    val genres: List<String>,
+    val genres: ImmutableList<String>,
     /** @see MediaQuery.Media.characters */
-    val characters: List<Character>,
+    val characters: ImmutableList<Character>,
     /** @see MediaQuery.Media.trailer */
     val trailer: Trailer?,
     /** @see MediaQuery.Media.streamingEpisodes */
-    val streamingEpisodes: List<Episode>,
+    val streamingEpisodes: ImmutableList<Episode>,
     /** @see MediaQuery.Media.relations */
-    val relations: List<Pair<Relation?, Small>>,
+    val relations: ImmutableList<Pair<Relation?, Small>>,
     /** @see MediaQuery.Media.recommendations */
-    val recommendations: List<Small>,
+    val recommendations: ImmutableList<Small>,
 ) {
     companion object {
         fun getFormattedDate(
@@ -134,10 +139,10 @@ data class Media(
             ) {
                 removeLastOrNull()
             }
-        }
+        }.toImmutableList()
 
-        fun getStreamingEpisodes(streamingEpisodes: List<MediaQuery.StreamingEpisode?>?): List<Episode> {
-            if (streamingEpisodes.isNullOrEmpty()) return emptyList()
+        fun getStreamingEpisodes(streamingEpisodes: List<MediaQuery.StreamingEpisode?>?): ImmutableList<Episode> {
+            if (streamingEpisodes.isNullOrEmpty()) return persistentListOf()
 
             val regex = Regex("""Episode\s+(\d+(?:\.\d+)?)(?:\s*-\s*(.+))?""")
             return streamingEpisodes.mapNotNull {
@@ -151,7 +156,7 @@ data class Media(
                     url = it.url,
                     site = it.site
                 )
-            }
+            }.toImmutableList()
         }
     }
 
@@ -272,6 +277,7 @@ data class Media(
         }
     }
 
+    @Immutable
     sealed class Info(open val item: InfoItem) {
         data class Format(
             val format: Media.Format,
@@ -325,6 +331,7 @@ data class Media(
         }
     }
 
+    @Immutable
     data class Character(
         /** @see CharacterSmall.id */
         val id: Int,
@@ -332,6 +339,8 @@ data class Media(
         val image: String?,
         /** @see CharacterSmall.Name.full */
         val name: String?,
+        /** @see MediaQuery.Edge.role */
+        val role: String?,
 
         /**
          * Year, Month, Day.
@@ -374,10 +383,11 @@ data class Media(
             }
         }
 
-        internal constructor(query: CharacterSmall) : this(
+        internal constructor(query: CharacterSmall, role: String?) : this(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
+            role = role,
             dob = getFormattedDate(
                 year = query.dateOfBirth?.year,
                 month = query.dateOfBirth?.month,
@@ -393,6 +403,7 @@ data class Media(
         )
     }
 
+    @Immutable
     data class Trailer(
         /** @see MediaQuery.Trailer.id
          * @see MediaQuery.Trailer.site */
@@ -414,6 +425,7 @@ data class Media(
         )
     }
 
+    @Immutable
     data class Episode(
         val number: String?,
         val title: String?,
@@ -432,6 +444,7 @@ data class Media(
         // TODO: Make this a proper countdown.
         timeToEpisode = getTimeToEpisode(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
+        // TODO: Clean this up and add other rank info.
         rankings = if (query.rankings == null) { emptyList() } else {
             // TODO: Is this filter valid?
             query.rankings.filter {
@@ -446,12 +459,17 @@ data class Media(
                     Ranking(rank = it, type = Ranking.Type.SCORE)
                 }
             )
-        },
-        genres = query.genres?.filterNotNull().orEmpty(),
-        characters = query.characters?.nodes.orEmpty().mapNotNull {
-            if (it?.characterSmall?.name == null) return@mapNotNull null
-            Character(it.characterSmall)
-        },
+        }.toImmutableList(),
+        genres = query.genres?.filterNotNull().orEmpty().toImmutableList(),
+        characters = query.characters?.edges.orEmpty().mapNotNull {
+            if (it?.node?.characterSmall?.name == null) return@mapNotNull null
+            Character(
+                query = it.node.characterSmall,
+                role = it.role.takeUnless {
+                    role -> role == CharacterRole.UNKNOWN__
+                }?.name?.lowercase()
+            )
+        }.toImmutableList(),
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
             null
         } else {
@@ -473,12 +491,13 @@ data class Media(
         streamingEpisodes = getStreamingEpisodes(query.streamingEpisodes),
         relations = query.relations?.edges.orEmpty().mapNotNull { edge ->
             edge?.node?.mediaSmall?.let { edge.relationType?.sanitize() to Small(it) }
-        },
+        }.toImmutableList(),
         recommendations = query.recommendations?.nodes.orEmpty().mapNotNull { node ->
             node?.mediaRecommendation?.mediaSmall?.let { Small(it) }
-        }
+        }.toImmutableList()
     )
 
+    @Immutable
     data class Small(
         /** @see MediaSmall.id */
         val id: Int,
@@ -504,6 +523,7 @@ data class Media(
         )
     }
 
+    @Immutable
     data class Medium(
         /** @see id */
         val id: Int,
@@ -516,7 +536,7 @@ data class Media(
         /** @see seasonYear */
         val seasonYear: Int?,
         /** @see studios */
-        val studios: List<String>,
+        val studios: ImmutableList<String>,
         /** @see format */
         val format: Format?,
         /** @see episodes */
@@ -528,9 +548,11 @@ data class Media(
             title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
             season = query.season?.sanitize(),
             seasonYear = query.seasonYear,
-            studios = if (query.studios?.nodes == null) { emptyList() } else {
-                query.studios.nodes.filter { it?.name != null }.map { it!!.name }
-            },
+            studios = query.studios?.nodes
+                .orEmpty()
+                .filter { it?.name != null }
+                .map { it!!.name }
+                .toImmutableList(),
             format = query.format?.sanitize(),
             episodes = query.episodes
         )

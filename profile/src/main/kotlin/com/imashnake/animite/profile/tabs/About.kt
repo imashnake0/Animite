@@ -34,6 +34,7 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.profile.R
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 /**
@@ -49,12 +50,6 @@ fun AboutTab(
 ) {
     val scrollState = rememberScrollState()
 
-    val statsLabelToValue = listOf(
-        stringResource(R.string.total_anime) to user.count?.toString(),
-        stringResource(R.string.days_watched) to user.daysWatched?.let { "%.1f".format(it) },
-        stringResource(R.string.mean_score) to user.meanScore?.let { "%.1f".format(it) }
-    ).filter { it.second != null }
-
     Column(
         modifier = modifier
             .verticalScroll(scrollState)
@@ -62,23 +57,21 @@ fun AboutTab(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
         StatsRow(
-            stats = statsLabelToValue,
+            stats = user.stats,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = it.first,
+                text = it.label,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center
             )
 
-            it.second?.let { value ->
-                Text(
-                    text = value,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.displaySmall
-                )
-            }
+            Text(
+                text = it.value,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.displaySmall
+            )
         }
 
         if (user.genres.isNotEmpty()) Genres(user.genres)
@@ -87,7 +80,7 @@ fun AboutTab(
 
 @Composable
 private fun Genres(
-    genres: List<User.Genre>,
+    genres: ImmutableList<User.Genre>,
     modifier: Modifier = Modifier
 ) {
     val barWidthAnimation = remember { Animatable(0f) }

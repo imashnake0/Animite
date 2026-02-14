@@ -54,6 +54,7 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -170,7 +171,7 @@ fun AnimeScreen(
 
 @Composable
 private fun HomeRow(
-    items: List<Media.Small>,
+    items: ImmutableList<Media.Small>,
     type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,
     sharedTransitionScope: SharedTransitionScope,

@@ -1,10 +1,13 @@
 package com.imashnake.animite.api.anilist.sanitize.profile
 
+import androidx.compose.runtime.Immutable
 import com.imashnake.animite.api.anilist.UserMediaListQuery
 import com.imashnake.animite.api.anilist.fragment.User
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
 import com.imashnake.animite.api.anilist.type.MediaType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
@@ -16,11 +19,11 @@ import kotlin.time.DurationUnit
  * @param description
  * @param avatar
  * @param banner
- * @param count
- * @param daysWatched
- * @param meanScore
+ * @param stats
  * @param genres
+ * @param favourites
  */
+@Immutable
 data class User(
     /** @see User.id */
     val id: Int,
@@ -34,27 +37,29 @@ data class User(
     val banner: String?,
 
     // region About
-    /** @see User.Anime.count */
-    val count: Int?,
-    /** @see User.Anime.minutesWatched */
-    val daysWatched: Double?,
-    /** @see User.Anime.meanScore */
-    val meanScore: Float?,
+    /** User Stats */
+    val stats: ImmutableList<Stat>,
     /** @see User.Anime.genres */
-    val genres: List<Genre>,
+    val genres: ImmutableList<Genre>,
     // endregion
 
     // region Fave
     /** @see User.favourites */
-    val favourites: List<MediaCollection.NamedList>,
+    val favourites: ImmutableList<MediaCollection.NamedList>,
     // endregion
 ) {
+    data class Stat(
+        val label: String,
+        val value: String,
+    )
+
     /**
      * Sanitized [User.Genre]
      *
      * @param genre
      * @param mediaCount
      */
+    @Immutable
     data class Genre(
         /** @see User.Genre.genre */
         val genre: String,
@@ -62,40 +67,42 @@ data class User(
         val mediaCount: Int,
     )
 
+    @Immutable
     data class MediaCollection(
         val type: Type,
-        val namedLists: List<NamedList>,
+        val namedLists: ImmutableList<NamedList>,
     ) {
+        @Immutable
         data class NamedList(
             val name: String?,
-            val list: List<Any>,
+            val list: ImmutableList<Any>,
         ) {
             internal constructor(query: UserMediaListQuery.List) : this(
                 name = query.name,
                 list = query.entries.orEmpty().mapNotNull {
                     Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null)
-                }
+                }.toImmutableList()
             )
 
             internal constructor(query: User.Anime1) : this(
                 name = Favouritables.Anime.name,
                 list = query.nodes.orEmpty().mapNotNull {
                     Media.Small(it?.mediaSmall ?: return@mapNotNull null)
-                }
+                }.toImmutableList()
             )
 
             internal constructor(query: User.Manga) : this(
                 name = Favouritables.Manga.name,
                 list = query.nodes.orEmpty().mapNotNull {
                     Media.Small(it?.mediaSmall ?: return@mapNotNull null)
-                }
+                }.toImmutableList()
             )
 
             internal constructor(query: User.Characters) : this(
                 name = Favouritables.Characters.name,
                 list = query.nodes.orEmpty().filter { it?.characterSmall?.name != null }.map {
-                    Media.Character(it!!.characterSmall)
-                }
+                    Media.Character(it!!.characterSmall, null)
+                }.toImmutableList()
             )
         }
 
@@ -103,7 +110,7 @@ data class User(
             type = type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             namedLists = query.mediaListCollection?.lists.orEmpty().mapNotNull {
                 NamedList(it ?: return@mapNotNull null)
-            }
+            }.toImmutableList()
         )
     }
 
@@ -113,10 +120,17 @@ data class User(
         description = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
-        count = query.statistics?.anime?.count,
-        daysWatched = query.statistics?.anime?.minutesWatched
-            ?.minutes?.toDouble(DurationUnit.DAYS),
-        meanScore = query.statistics?.anime?.meanScore?.toFloat(),
+        stats = listOfNotNull(
+            query.statistics?.anime?.count?.toString()?.let {
+                Stat("TOTAL\nANIME", it)
+            },
+            query.statistics?.anime?.minutesWatched?.minutes?.toDouble(DurationUnit.DAYS)?.let{"%.1f".format(it)}?.let {
+                Stat("DAYS\nWATCHED", it)
+            },
+            query.statistics?.anime?.meanScore?.toFloat()?.let { "%.1f".format(it) }?.let {
+                Stat("MEAN\nSCORE", it)
+            },
+        ).toImmutableList(),
         genres = query.statistics?.anime?.genres.orEmpty().filterNotNull().run {
             val totalCount = this.sumOf { genre -> genre.count }
             mapNotNull {
@@ -128,12 +142,12 @@ data class User(
                 // Filters out anime genres that contribute to less than 5%.
                 it.mediaCount > totalCount/20
             }.sortedByDescending { it.mediaCount }
-        },
+        }.toImmutableList(),
         favourites = listOfNotNull(
             query.favourites?.anime?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
             query.favourites?.manga?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
             query.favourites?.characters?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
-        )
+        ).toImmutableList()
     )
 
     enum class Favouritables {

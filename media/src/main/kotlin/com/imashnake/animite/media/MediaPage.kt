@@ -41,6 +41,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
@@ -140,6 +141,8 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
@@ -237,11 +240,12 @@ fun MediaPage(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
                                     ),
                                 textModifier = Modifier.skipToLookaheadSize(),
+                                isSheetOpen = showDetailsSheet,
                                 onClick = { showDetailsSheet = true },
                             )
 
-                            if (media.type == MediaType.ANIME.name)
-                                AnimeInfo(
+                            if (!media.info.isNullOrEmpty())
+                                MediaInfo(
                                     info = media.info,
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
@@ -632,8 +636,9 @@ fun MediaPage(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.align(Alignment.CenterEnd)
                         ) {
-                            val listToGrid =
-                                AnimatedImageVector.animatedVectorResource(R.drawable.grid_list_anim)
+                            val listToGrid = AnimatedImageVector.animatedVectorResource(
+                                R.drawable.grid_list_anim
+                            )
                             Icon(
                                 painter = rememberAnimatedVectorPainter(listToGrid, isList),
                                 contentDescription = stringResource(R.string.list_to_grid),
@@ -673,7 +678,7 @@ fun MediaPage(
                     ) {
                         if (it) {
                             MediaMediumGrid(
-                                mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(
@@ -687,7 +692,7 @@ fun MediaPage(
                             )
                         } else {
                             MediaMediumList(
-                                mediaMediumList = media.genreTitleList?.second.orEmpty(),
+                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(
@@ -739,51 +744,70 @@ private fun MediaDetails(
     title: String?,
     nextEpisodeIn: String?,
     description: String,
+    isSheetOpen: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(LocalPaddings.current.small))
-            .clickable { onClick() }
-            .padding(horizontal = LocalPaddings.current.large / 2)
-            .padding(top = LocalPaddings.current.medium / 2)
-    ) {
-        AnimatedVisibility(
-            visible = title != null,
-            enter = fadeIn(),
-            exit = fadeOut(),
-            modifier = Modifier.fillMaxWidth()
+    Box(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(LocalPaddings.current.small))
+                .clickable { onClick() }
+                .padding(horizontal = LocalPaddings.current.large / 2)
+                .padding(top = LocalPaddings.current.medium / 2)
+                .fillMaxSize()
         ) {
-            Text(
-                text = title.orEmpty(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = textModifier
-            )
-        }
-
-        if (nextEpisodeIn != null) {
-            Box(contentAlignment = Alignment.Center) {
-                Chip(
-                    color = Color(0xFF80DF87),
-                    icon = ImageVector.vectorResource(R.drawable.hourglass),
-                    // TODO: Use string resources.
-                    text = nextEpisodeIn,
-                    modifier = Modifier.padding(
-                        top = LocalPaddings.current.small,
-                        bottom = LocalPaddings.current.tiny,
-                    )
+            AnimatedVisibility(
+                visible = title != null,
+                enter = fadeIn(),
+                exit = fadeOut(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = title.orEmpty(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = textModifier.padding(end = LocalPaddings.current.small)
                 )
+            }
+
+            if (nextEpisodeIn != null) {
+                Box(contentAlignment = Alignment.Center) {
+                    Chip(
+                        color = Color(0xFF80DF87),
+                        icon = ImageVector.vectorResource(R.drawable.hourglass),
+                        // TODO: Use string resources.
+                        text = nextEpisodeIn,
+                        modifier = Modifier.padding(
+                            top = LocalPaddings.current.small,
+                            bottom = LocalPaddings.current.tiny,
+                        )
+                    )
+                }
+            }
+
+            NestedScrollableContent { contentModifier ->
+                MediaDescription(description, contentModifier)
             }
         }
 
-        NestedScrollableContent { contentModifier ->
-            MediaDescription(description, contentModifier)
-        }
+        val expandToCollapse = AnimatedImageVector.animatedVectorResource(
+            R.drawable.expand_collapse_anim
+        )
+        Icon(
+            painter = rememberAnimatedVectorPainter(
+                animatedImageVector = expandToCollapse,
+                atEnd = isSheetOpen,
+            ),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = LocalPaddings.current.small)
+                .requiredSize(LocalPaddings.current.medium)
+        )
     }
 }
 
@@ -815,8 +839,8 @@ private fun MediaDescription(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun AnimeInfo(
-    info: List<Media.Info>?,
+private fun MediaInfo(
+    info: ImmutableList<Media.Info>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -841,7 +865,7 @@ private fun AnimeInfo(
             )
             .padding(horizontal = LocalPaddings.current.medium)
     ) {
-        info?.fastForEach {
+        info.fastForEach {
             when (it) {
                 is Media.Info.Divider -> {
                     Box(
@@ -897,7 +921,7 @@ private fun AnimeInfo(
 
 @Composable
 private fun MediaGenres(
-    genres: List<String>,
+    genres: ImmutableList<String>,
     onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
@@ -938,7 +962,7 @@ private fun MediaGenres(
 
 @Composable
 private fun MediaCharacters(
-    characters: List<Media.Character>,
+    characters: ImmutableList<Media.Character>,
     onCharacterClick: (Int, Media.Character) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
@@ -951,7 +975,7 @@ private fun MediaCharacters(
     ) { index, character ->
         CharacterCard(
             image = character.image,
-            tag = null,
+            tag = character.role,
             label = character.name,
             onClick = { onCharacterClick(index, character) },
         )
@@ -996,7 +1020,7 @@ private fun Chip(
 @Composable
 private fun MediaWatch(
     trailer: Media.Trailer?,
-    streamingEpisodes: List<Media.Episode>?,
+    streamingEpisodes: ImmutableList<Media.Episode>?,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -1086,7 +1110,7 @@ private fun MediaWatch(
 
 @Composable
 private fun MediaStreamingEpisode(
-    streamingEpisodes: List<Media.Episode>,
+    streamingEpisodes: ImmutableList<Media.Episode>,
     isTrailerPresent: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -1169,7 +1193,7 @@ private fun MediaStreamingEpisode(
 
 @Composable
 private fun MediaRelations(
-    relations: List<Pair<Media.Relation?, Media.Small>>,
+    relations: ImmutableList<Pair<Media.Relation?, Media.Small>>,
     onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -1191,7 +1215,7 @@ private fun MediaRelations(
 
 @Composable
 private fun MediaRecommendations(
-    recommendations: List<Media.Small>,
+    recommendations: ImmutableList<Media.Small>,
     onItemClicked: (Media.Small) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
