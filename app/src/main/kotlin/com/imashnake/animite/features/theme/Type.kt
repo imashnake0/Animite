@@ -42,7 +42,7 @@ val manropeFontFamily = FontFamily(
 
 const val BASELINE_SHIFT = 0.2f
 val AnimiteTypography = Typography(
-    // - [Home]: Media list headings.
+    // - [AnimeScreen, MangaScreen]: Media list headings.
     // - [MediaPage]: Media section headings.
     titleMedium = TextStyle(
         fontFamily = manropeFontFamily,
@@ -51,7 +51,7 @@ val AnimiteTypography = Typography(
         letterSpacing = 0.2.sp,
         baselineShift = BaselineShift(BASELINE_SHIFT)
     ),
-    // - [Home]: Media list item labels.
+    // - [AnimeScreen, MangaScreen]: Media list item labels.
     // - [MediaPage]: Character names.
     labelLarge = TextStyle(
         fontSize = 12.sp,

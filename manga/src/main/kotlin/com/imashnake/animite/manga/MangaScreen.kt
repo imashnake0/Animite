@@ -120,10 +120,10 @@ fun MangaScreen(
                                                 fadeIn(tween(750))
                                                     .togetherWith(fadeOut(tween(750)))
                                             },
-                                            label = "animate_home_row"
+                                            label = "animate_manga_row"
                                         ) { mediaList ->
                                             if (mediaList.list.isNotEmpty()) {
-                                                HomeRow(
+                                                MangaRow(
                                                     items = mediaList.list,
                                                     type = mediaList.type,
                                                     onItemClicked = { media ->
@@ -166,7 +166,7 @@ fun MangaScreen(
 }
 
 @Composable
-private fun HomeRow(
+private fun MangaRow(
     items: ImmutableList<Media.Small>,
     type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,

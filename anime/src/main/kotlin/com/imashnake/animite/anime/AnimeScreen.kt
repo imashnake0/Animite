@@ -124,10 +124,10 @@ fun AnimeScreen(
                                                 fadeIn(tween(750))
                                                     .togetherWith(fadeOut(tween(750)))
                                             },
-                                            label = "animate_home_row"
+                                            label = "animate_anime_row"
                                         ) { mediaList ->
                                             if (mediaList.list.isNotEmpty()) {
-                                                HomeRow(
+                                                AnimeRow(
                                                     items = mediaList.list,
                                                     type = mediaList.type,
                                                     onItemClicked = { media ->
@@ -170,7 +170,7 @@ fun AnimeScreen(
 }
 
 @Composable
-private fun HomeRow(
+private fun AnimeRow(
     items: ImmutableList<Media.Small>,
     type: MediaList.Type,
     onItemClicked: (Media.Small) -> Unit,
