@@ -953,7 +953,7 @@ private fun MediaCharacters(
     ) { index, character ->
         CharacterCard(
             image = character.image,
-            tag = null,
+            tag = character.role,
             label = character.name,
             onClick = { onCharacterClick(index, character) },
         )
