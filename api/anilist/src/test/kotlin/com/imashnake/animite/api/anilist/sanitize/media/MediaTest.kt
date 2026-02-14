@@ -17,7 +17,7 @@ class MediaTest {
     // region character
     @Test
     fun `character is transformed correctly`() {
-        val actual = Media.Character(getCharacterSmall())
+        val actual = Media.Character(getCharacterSmall(), "role")
         val expected = getMediaCharacter()
 
         assertEquals(expected, actual)
@@ -193,6 +193,7 @@ class MediaTest {
         id = 12345,
         image = "image",
         name = "fullName",
+        role = "role",
         alternativeNames = "name1, name2",
         description = "<b>Age:</b> 50<br><b>Gender:</b> male<br>description",
         dob = "Nov 23, 2025",
