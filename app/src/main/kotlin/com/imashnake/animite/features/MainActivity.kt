@@ -38,13 +38,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.BuildConfig
+import com.imashnake.animite.anime.AnimeScreen
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.features.home.HomeScreen
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.media.MediaPage
-import com.imashnake.animite.navigation.HomeRoute
+import com.imashnake.animite.navigation.AnimeRoute
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationRail
@@ -138,9 +138,9 @@ fun MainScreen(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
             SharedTransitionLayout {
-                NavHost(navController = navController, startDestination = HomeRoute) {
-                    composable<HomeRoute> {
-                        HomeScreen(
+                NavHost(navController = navController, startDestination = AnimeRoute) {
+                    composable<AnimeRoute> {
+                        AnimeScreen(
                             onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,

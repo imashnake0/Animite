@@ -1,4 +1,4 @@
-package com.imashnake.animite.dev.ext
+package com.imashnake.animite.media.ext
 
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import java.time.Month
