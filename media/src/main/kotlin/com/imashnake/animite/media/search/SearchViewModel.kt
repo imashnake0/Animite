@@ -25,12 +25,10 @@ class SearchViewModel @Inject constructor(
     private val searchRepository: AnilistSearchRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
-    private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
-    private val query = savedStateHandle.getStateFlow<String?>(QUERY, null)
+    private lateinit var mediaType: MediaType
+    private val query = savedStateHandle.getStateFlow<Pair<MediaType, String>>(QUERY, MediaType.UNKNOWN__ to "")
 
-    val searchList = mediaType
-        .filterNotNull()
-        .combine(query, ::Pair)
+    val searchList = query
         .flatMapLatest { (mediaType, query) ->
             if (query.isNullOrEmpty()) {
                 flowOf(Resource.success(persistentListOf()))
@@ -44,12 +42,8 @@ class SearchViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
 
-    fun setMediaType(mediaType: MediaType) {
-        savedStateHandle[Constants.MEDIA_TYPE] = mediaType
-    }
-
-    fun setQuery(query: String?) {
-        savedStateHandle[QUERY] = query
+    fun setQuery(mediaType: MediaType, query: String) {
+        savedStateHandle[QUERY] = mediaType to query
     }
 
     companion object {

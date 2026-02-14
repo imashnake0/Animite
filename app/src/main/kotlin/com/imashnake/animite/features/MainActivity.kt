@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -118,6 +119,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
+    val windowSizeClass = currentWindowAdaptiveInfo(true).windowSizeClass
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isNavBarVisible = rememberSaveable(currentBackStackEntry) {
@@ -138,6 +140,7 @@ fun MainScreen(
                 NavHost(navController = navController, startDestination = AnimeRoute) {
                     composable<AnimeRoute> {
                         AnimeScreen(
+                            windowSizeClass = windowSizeClass,
                             onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,

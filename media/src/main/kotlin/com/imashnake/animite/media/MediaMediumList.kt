@@ -50,7 +50,7 @@ import com.imashnake.animite.core.R as coreR
 @Composable
 fun MediaMediumList(
     mediaMediumList: ImmutableList<Media.Medium>,
-    onItemClick: (Int, String?) -> Unit,
+    onItemClick: (Media.Medium) -> Unit,
     modifier: Modifier = Modifier,
     searchBarHeight: Dp = 0.dp,
     searchBarBottomPadding: Dp = 0.dp,
@@ -74,9 +74,10 @@ fun MediaMediumList(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
         items(mediaMediumList.size, key = { mediaMediumList[it].id }) { index ->
+            val item = mediaMediumList[index]
             MediaMediumItem(
-                item = mediaMediumList[index],
-                onClick = onItemClick,
+                item = item,
+                onClick = { onItemClick(item) },
                 modifier = Modifier.animateItem()
             )
         }
@@ -87,20 +88,20 @@ fun MediaMediumList(
 @Composable
 private fun MediaMediumItem(
     item: Media.Medium,
-    onClick: (Int, String?) -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
-            .clickable { onClick(item.id, item.title) }
+            .clickable(onClick = onClick)
     ) {
         MediaCard(
             image = item.coverImage,
             tag = null,
             label = null,
-            onClick = { onClick(item.id, item.title) },
+            onClick = onClick,
         )
 
         Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {
