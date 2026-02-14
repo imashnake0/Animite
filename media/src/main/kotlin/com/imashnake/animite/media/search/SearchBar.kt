@@ -9,21 +9,21 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.DockedSearchBar
-import androidx.compose.material3.ExpandedFullScreenSearchBar
+import androidx.compose.material3.ExpandedDockedSearchBar
+import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,6 +85,7 @@ fun MediaSearchBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AdaptiveSearchBar(
     windowSizeClass: WindowSizeClass,
@@ -93,81 +94,69 @@ fun AdaptiveSearchBar(
     searchContent: @Composable ColumnScope.() -> Unit,
 ) {
     val canFitDockedSearch = windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val searchBarState = rememberSearchBarState()
+
+    SearchBar(
+        state = searchBarState,
+        inputField = {
+            SearchInputField(
+                searchTextState = searchTextState,
+                searchBarState = searchBarState,
+                onSearch = { }
+            )
+        },
+        modifier = modifier,
+    )
     if (canFitDockedSearch) {
-        DockedSearchBar(
-            searchTextState = searchTextState,
-            modifier = modifier,
-            searchContent = searchContent
+        ExpandedDockedSearchBar(
+            inputField = {
+                SearchInputField(
+                    searchTextState = searchTextState,
+                    searchBarState = searchBarState,
+                    onSearch = { }
+                )
+            },
+            state = searchBarState,
+            content = searchContent,
         )
     } else {
-        FullscreenSearchBar(
-            searchTextState = searchTextState,
-            modifier = modifier,
-            searchContent = searchContent
+        ExpandedFullScreenContainedSearchBar(
+            state = searchBarState,
+            inputField = {
+                SearchInputField(
+                    searchTextState = searchTextState,
+                    searchBarState = searchBarState,
+                    onSearch = { }
+                )
+            },
+            content = searchContent
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun DockedSearchBar(
+internal fun SearchInputField(
     searchTextState: TextFieldState,
+    searchBarState: SearchBarState,
+    onSearch: (String) -> Unit,
     modifier: Modifier = Modifier,
-    searchContent: @Composable ColumnScope.() -> Unit,
 ) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    DockedSearchBar(
-        inputField = {
-            SearchBarDefaults.InputField(
-                state = searchTextState,
-                onSearch = { },
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-                placeholder = {
-                    Text("Search")
-                },
-                leadingIcon = {
-                    Icon(Icons.Rounded.Search, null)
-                }
-            )
+    SearchBarDefaults.InputField(
+        textFieldState = searchTextState,
+        onSearch = onSearch,
+        searchBarState = searchBarState,
+        placeholder = {
+            Text("Search")
         },
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
+        leadingIcon = {
+            Icon(Icons.Rounded.Search, null)
+        },
         modifier = modifier,
-        content = searchContent,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Composable
-internal fun FullscreenSearchBar(
-    searchTextState: TextFieldState,
-    modifier: Modifier = Modifier,
-    searchContent: @Composable ColumnScope.() -> Unit,
-) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    SearchBar(
-        inputField = {
-            SearchBarDefaults.InputField(
-                state = searchTextState,
-                onSearch = { },
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-                placeholder = {
-                    Text("Search")
-                },
-                leadingIcon = {
-                    Icon(Icons.Rounded.Search, null)
-                }
-            )
-        },
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-        modifier = modifier,
-        content = searchContent,
-    )
-}
-
 @Preview
 @Composable
 internal fun DockedSearchBarPreview() {
@@ -175,7 +164,8 @@ internal fun DockedSearchBarPreview() {
     MaterialTheme {
         Scaffold {
             Box(Modifier.fillMaxSize()) {
-                DockedSearchBar(
+                AdaptiveSearchBar(
+                    windowSizeClass = WindowSizeClass(600, 600),
                     searchTextState = searchState,
                     modifier = Modifier.padding(it).align(Alignment.Center)
                 ) {
@@ -186,6 +176,7 @@ internal fun DockedSearchBarPreview() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 internal fun FullscreenSearchBarPreview() {
@@ -193,7 +184,8 @@ internal fun FullscreenSearchBarPreview() {
     MaterialTheme {
         Scaffold {
             Box(Modifier.fillMaxSize()) {
-                FullscreenSearchBar(
+                AdaptiveSearchBar(
+                    windowSizeClass = WindowSizeClass(300, 300),
                     searchTextState = searchState,
                     modifier = Modifier.padding(it).align(Alignment.Center)
                 ) {
