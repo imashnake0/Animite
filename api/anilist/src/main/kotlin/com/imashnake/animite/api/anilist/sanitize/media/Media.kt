@@ -457,9 +457,9 @@ data class Media(
             )
         }.toImmutableList(),
         genres = query.genres?.filterNotNull().orEmpty().toImmutableList(),
-        characters = query.characters?.nodes.orEmpty().mapNotNull {
-            if (it?.characterSmall?.name == null) return@mapNotNull null
-            Character(it.characterSmall)
+        characters = query.characters?.edges.orEmpty().mapNotNull {
+            if (it?.node?.characterSmall?.name == null) return@mapNotNull null
+            Character(it.node.characterSmall)
         }.toImmutableList(),
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
             null

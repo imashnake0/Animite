@@ -36,8 +36,11 @@ query MediaQuery(
             page: 0,
             perPage: 10
         ) {
-            nodes {
-                ...CharacterSmall
+            edges {
+                role
+                node {
+                    ...CharacterSmall
+                }
             }
         }
 
