@@ -14,6 +14,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Status.Companion.sanitize
+import com.imashnake.animite.api.anilist.type.CharacterRole
 import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import com.imashnake.animite.api.anilist.type.MediaRelation
@@ -338,6 +339,8 @@ data class Media(
         val image: String?,
         /** @see CharacterSmall.Name.full */
         val name: String?,
+        /** @see MediaQuery.Edge.role */
+        val role: String?,
 
         /**
          * Year, Month, Day.
@@ -380,10 +383,11 @@ data class Media(
             }
         }
 
-        internal constructor(query: CharacterSmall) : this(
+        internal constructor(query: CharacterSmall, role: String?) : this(
             id = query.id,
             image = query.image?.large,
             name = query.name?.full,
+            role = role,
             dob = getFormattedDate(
                 year = query.dateOfBirth?.year,
                 month = query.dateOfBirth?.month,
@@ -457,9 +461,14 @@ data class Media(
             )
         }.toImmutableList(),
         genres = query.genres?.filterNotNull().orEmpty().toImmutableList(),
-        characters = query.characters?.nodes.orEmpty().mapNotNull {
-            if (it?.characterSmall?.name == null) return@mapNotNull null
-            Character(it.characterSmall)
+        characters = query.characters?.edges.orEmpty().mapNotNull {
+            if (it?.node?.characterSmall?.name == null) return@mapNotNull null
+            Character(
+                query = it.node.characterSmall,
+                role = it.role.takeUnless {
+                    role -> role == CharacterRole.UNKNOWN__
+                }?.name?.lowercase()
+            )
         }.toImmutableList(),
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
             null
