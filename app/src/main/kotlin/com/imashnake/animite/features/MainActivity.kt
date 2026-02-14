@@ -43,8 +43,10 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.manga.MangaScreen
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.AnimeRoute
+import com.imashnake.animite.navigation.MangaRoute
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationRail
@@ -141,6 +143,13 @@ fun MainScreen(
                 NavHost(navController = navController, startDestination = AnimeRoute) {
                     composable<AnimeRoute> {
                         AnimeScreen(
+                            onNavigateToMediaItem = navController::navigate,
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this,
+                        )
+                    }
+                    composable<MangaRoute> {
+                        MangaScreen(
                             onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,

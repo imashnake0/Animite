@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="okaeri" translatable="false">おかえり</string>
+    <string name="trending_now">Trending Now</string>
+    <string name="all_time_popular">All Time Popular</string>
+</resources>

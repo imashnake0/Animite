@@ -18,3 +18,6 @@ data object SocialRoute
 
 @Serializable
 data object AnimeRoute
+
+@Serializable
+data object MangaRoute

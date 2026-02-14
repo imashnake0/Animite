@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.imashnake.animite.navigation.AnimeRoute
 
 enum class NavigationBarPaths(
     val navigateTo: (NavController) -> Unit,
@@ -52,6 +53,24 @@ enum class NavigationBarPaths(
             Icon(ImageVector.vectorResource(R.drawable.anime), contentDescription = stringResource(R.string.anime))
         },
         labelRes = R.string.anime
+    ),
+    Manga(
+        navigateTo = {
+            it.navigate(MangaRoute) {
+                popUpTo(id = it.graph.findStartDestination().id) {
+                    saveState = true
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        },
+        matchesDestination = {
+            it.destination.hierarchy.any { it.hasRoute(MangaRoute::class) }
+        },
+        icon = {
+            Icon(ImageVector.vectorResource(R.drawable.manga), contentDescription = stringResource(R.string.manga))
+        },
+        labelRes = R.string.manga
     ),
 
     Profile(

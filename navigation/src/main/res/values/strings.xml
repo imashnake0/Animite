@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="anime">Anime</string>
+    <string name="manga">Manga</string>
     <string name="profile">Profile</string>
     <string name="social">Social</string>
 </resources>
