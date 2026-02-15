@@ -7,13 +7,10 @@ import com.imashnake.animite.api.anilist.AnilistSearchRepository
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
-import com.imashnake.animite.core.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -25,12 +22,11 @@ class SearchViewModel @Inject constructor(
     private val searchRepository: AnilistSearchRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
-    private lateinit var mediaType: MediaType
-    private val query = savedStateHandle.getStateFlow<Pair<MediaType, String>>(QUERY, MediaType.UNKNOWN__ to "")
+    private val query = savedStateHandle.getStateFlow(QUERY, MediaType.UNKNOWN__ to "")
 
     val searchList = query
         .flatMapLatest { (mediaType, query) ->
-            if (query.isNullOrEmpty()) {
+            if (query.isEmpty()) {
                 flowOf(Resource.success(persistentListOf()))
             } else {
                 searchRepository.fetchSearch(
