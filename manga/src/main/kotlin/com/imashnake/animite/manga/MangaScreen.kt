@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
@@ -36,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.window.core.layout.WindowSizeClass
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -50,6 +52,7 @@ import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.banner.MountFuji
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.media.search.MediaSearchBar
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -61,6 +64,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @Composable
 @Suppress("LongMethod")
 fun MangaScreen(
+    windowSizeClass: WindowSizeClass,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -112,6 +116,24 @@ fun MangaScreen(
                                 )
                             },
                             content = {
+                                MediaSearchBar(
+                                    mediaType = MediaType.MANGA,
+                                    onItemClick = { item ->
+                                        onNavigateToMediaItem(
+                                            MediaPage(
+                                                id = item.id,
+                                                source = MediaList.Type.SEARCH.name,
+                                                mediaType = MediaType.MANGA.rawValue,
+                                                title = item.title,
+                                            )
+                                        )
+                                    },
+                                    windowSizeClass = windowSizeClass,
+                                    modifier = Modifier
+                                        .padding(insetAndNavigationPaddingValues.horizontalOnly)
+                                        .padding(horizontal = LocalPaddings.current.large)
+                                        .align(Alignment.CenterHorizontally)
+                                )
                                 rows.fastForEach { row ->
                                     row.data?.let {
                                         AnimatedContent(

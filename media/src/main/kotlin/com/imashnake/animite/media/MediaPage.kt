@@ -693,13 +693,13 @@ fun MediaPage(
                         } else {
                             MediaMediumList(
                                 mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
-                                onItemClick = { id, title ->
+                                onItemClick = { item ->
                                     onNavigateToMediaItem(
                                         MediaPage(
-                                            id = id,
+                                            id = item.id,
                                             source = MediaList.Type.GENRE_LIST.name,
                                             mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
-                                            title = title
+                                            title = item.title
                                         )
                                     )
                                 }

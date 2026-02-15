@@ -48,7 +48,6 @@ dependencies {
     // Compose
     implementation(libs.compose.animation)
     implementation(libs.compose.foundation)
-    implementation(libs.compose.material)
     implementation(libs.compose.material.icons.core)
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
@@ -56,6 +55,7 @@ dependencies {
     implementation(libs.compose.animation.graphics)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+    implementation(libs.compose.material3.adaptive)
 
     // Hilt
     implementation(libs.hilt.android)

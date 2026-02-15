@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.compose.ui.text.googleFonts)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+    implementation(libs.compose.material3.adaptive)
 
     // Coil
     implementation(libs.bundles.coil)
