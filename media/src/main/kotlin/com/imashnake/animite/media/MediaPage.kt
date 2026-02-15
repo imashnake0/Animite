@@ -508,6 +508,7 @@ fun MediaPage(
                                 CharacterCard(
                                     image = currentCharacter.image,
                                     tag = null,
+                                    tagMinLines = 1,
                                     label = null,
                                     onClick = {},
                                 )
@@ -991,6 +992,7 @@ private fun MediaCredits(
         CharacterCard(
             image = credit.image,
             tag = credit.role,
+            tagMinLines = tagMinLines,
             label = credit.name,
             onClick = { onCreditClick(index, credit) },
         )

@@ -304,7 +304,7 @@ private fun PreviewCharacterCardLongTag() {
             image = null,
             tag = "long\ntag",
             tagMinLines = 2,
-            label = "label",
+            label = "long\nlabel",
             onClick = {},
         )
     }

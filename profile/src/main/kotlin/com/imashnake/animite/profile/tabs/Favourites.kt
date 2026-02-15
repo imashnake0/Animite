@@ -141,6 +141,7 @@ private fun UserFavouriteLists(
                         CharacterCard(
                             image = item.image,
                             tag = null,
+                            tagMinLines = 1,
                             label = item.name,
                             onClick = { Log.d("CharacterId", "${item.id}") },
                         )
