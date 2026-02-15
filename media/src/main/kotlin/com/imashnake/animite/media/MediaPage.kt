@@ -3,6 +3,8 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
+import android.os.Build
+import android.view.RoundedCorner
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
@@ -105,6 +107,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -146,6 +149,7 @@ import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.media.ext.title
+import com.imashnake.animite.navigation.Nested.MediaRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -154,7 +158,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -172,14 +175,21 @@ private const val RELATIONS = "Relations"
 )
 fun MediaPage(
     onBack: () -> Unit,
-    onNavigateToMediaItem: (MediaPage) -> Unit,
-    deviceScreenCornerRadius: Int,
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     useDarkTheme: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: MediaPageViewModel = hiltViewModel(),
 ) {
+    val insets = LocalView.current.rootWindowInsets
+    val deviceScreenCornerRadius = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val topRight = insets.getRoundedCorner(RoundedCorner.POSITION_TOP_RIGHT)
+        topRight?.radius ?: 0
+    } else {
+        0
+    }
+
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
     val horizontalInsets = insetPaddingValues.horizontalOnly
 
@@ -352,7 +362,7 @@ fun MediaPage(
                                     relations = media.relations,
                                     onItemClicked = {
                                         onNavigateToMediaItem(
-                                            MediaPage(
+                                            MediaRoute(
                                                 id = it.id,
                                                 source = RELATIONS,
                                                 mediaType = it.type.name,
@@ -371,7 +381,7 @@ fun MediaPage(
                                     recommendations = media.recommendations,
                                     onItemClicked = {
                                         onNavigateToMediaItem(
-                                            MediaPage(
+                                            MediaRoute(
                                                 id = it.id,
                                                 source = RECOMMENDATIONS,
                                                 mediaType = it.type.name,
@@ -718,7 +728,7 @@ fun MediaPage(
                                 mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
-                                        MediaPage(
+                                        MediaRoute(
                                             id = id,
                                             source = MediaList.Type.GENRE_LIST.name,
                                             mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
@@ -732,7 +742,7 @@ fun MediaPage(
                                 mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
-                                        MediaPage(
+                                        MediaRoute(
                                             id = id,
                                             source = MediaList.Type.GENRE_LIST.name,
                                             mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
@@ -1455,11 +1465,3 @@ private fun MediaRecommendations(
         )
     }
 }
-
-@Serializable
-data class MediaPage(
-    val id: Int,
-    val source: String,
-    val mediaType: String,
-    val title: String?,
-)

@@ -90,7 +90,6 @@ import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.serialization.Serializable
 
 private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
@@ -100,7 +99,7 @@ private const val ANIMITE = "Animite"
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsPage(
+internal fun SettingsPage(
     versionName: String,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -813,5 +812,3 @@ enum class Theme(@param:StringRes val theme: Int) {
     DEVICE_THEME(R.string.system),
 }
 
-@Serializable
-data object SettingsPage

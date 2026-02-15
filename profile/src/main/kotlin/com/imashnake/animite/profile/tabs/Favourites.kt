@@ -23,7 +23,7 @@ import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
-import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.Nested.MediaRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -40,7 +40,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun FavouritesTab(
     favouriteLists: ImmutableList<NamedList>,
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -65,7 +65,7 @@ fun FavouritesTab(
 @Composable
 private fun UserFavouriteLists(
     lists: ImmutableList<NamedList>,
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -95,7 +95,7 @@ private fun UserFavouriteLists(
                                 label = item.title,
                                 onClick = {
                                     onNavigateToMediaItem(
-                                        MediaPage(
+                                        MediaRoute(
                                             id = item.id,
                                             source = namedList.name.orEmpty(),
                                             mediaType = item.type.name,

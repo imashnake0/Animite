@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation3.runtime.NavKey
 import coil3.compose.AsyncImage
 
 enum class NavigationBarPaths(
@@ -35,10 +36,10 @@ enum class NavigationBarPaths(
     val matchesDestination: (NavBackStackEntry) -> Boolean,
     val icon: @Composable (selected: Boolean, avatar: String?) -> Unit,
     @param:StringRes val labelRes: Int
-) {
+) : NavKey {
     Social(
         navigateTo = {
-            it.navigate(SocialRoute) {
+            it.navigate(Root.SocialRoute) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }
@@ -46,16 +47,19 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = { navBackStackEntry ->
-            navBackStackEntry.destination.hierarchy.any { it.hasRoute(SocialRoute::class) }
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(Root.SocialRoute::class) }
         },
         icon = { _, _ ->
-            Icon(ImageVector.vectorResource(R.drawable.social), contentDescription = stringResource(R.string.social))
+            Icon(
+                ImageVector.vectorResource(R.drawable.social),
+                contentDescription = stringResource(R.string.social)
+            )
         },
         labelRes = R.string.social
     ),
     Anime(
         navigateTo = {
-            it.navigate(AnimeRoute) {
+            it.navigate(Root.AnimeRoute) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                     inclusive = true
@@ -64,7 +68,7 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = { navBackStackEntry ->
-            navBackStackEntry.destination.hierarchy.any { it.hasRoute(AnimeRoute::class) }
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(Root.AnimeRoute::class) }
         },
         icon = { selected, _ ->
             if (selected) {
@@ -82,24 +86,23 @@ enum class NavigationBarPaths(
                         imageVector = ImageVector.vectorResource(R.drawable.anime_inner),
                         contentDescription = stringResource(R.string.anime)
                     )
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.anime_outer),
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.anime_outer),
                         contentDescription = stringResource(R.string.anime),
-                        modifier = Modifier.graphicsLayer { rotationZ = angle }
+               modifier = Modifier.graphicsLayer { rotationZ = angle }
                     )
                 }
             } else {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.anime),
-                    contentDescription = stringResource(R.string.anime)
-                )
+                    imageVector = ImageVector.vectorResource(R.drawable.anime), contentDescription = stringResource(R.string.anime)
+            )
             }
         },
         labelRes = R.string.anime
     ),
     Manga(
         navigateTo = {
-            it.navigate(MangaRoute) {
+            it.navigate(Root.MangaRoute) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }
@@ -107,17 +110,20 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = { navBackStackEntry ->
-            navBackStackEntry.destination.hierarchy.any { it.hasRoute(MangaRoute::class) }
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(Root.MangaRoute::class) }
         },
         icon = { _, _ ->
-            Icon(ImageVector.vectorResource(R.drawable.manga), contentDescription = stringResource(R.string.manga))
+            Icon(
+                ImageVector.vectorResource(R.drawable.manga),
+                contentDescription = stringResource(R.string.manga)
+            )
         },
         labelRes = R.string.manga
     ),
 
     Profile(
         navigateTo = {
-            it.navigate(ProfileRoute()) {
+            it.navigate(Root.ProfileRoute()) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }
@@ -125,7 +131,7 @@ enum class NavigationBarPaths(
             }
         },
         matchesDestination = { navBackStackEntry ->
-            navBackStackEntry.destination.hierarchy.any { it.hasRoute(ProfileRoute::class) }
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(Root.ProfileRoute::class) }
         },
         icon = { _, avatar ->
             AnimatedContent(targetState = avatar) {
@@ -139,10 +145,10 @@ enum class NavigationBarPaths(
                             .background(MaterialTheme.colorScheme.onSurface.copy(0.1f))
                     )
                 } else {
-                    Icon(
-                        ImageVector.vectorResource(R.drawable.profile),
-                        contentDescription = stringResource(R.string.profile)
-                    )
+            Icon(
+                ImageVector.vectorResource(R.drawable.profile),
+                contentDescription = stringResource(R.string.profile)
+            )
                 }
             }
         },

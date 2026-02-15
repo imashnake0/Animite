@@ -58,18 +58,19 @@ import com.imashnake.animite.navigation.R as navigationR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongMethod")
-fun AnimeScreen(
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+internal fun AnimeScreen(
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: AnimeViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
+    val navigationComponentPaddingValues = when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(
             bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
         )
+
         else -> PaddingValues(
             start = dimensionResource(navigationR.dimen.navigation_rail_width)
         )
@@ -128,7 +129,7 @@ fun AnimeScreen(
                                             type = mediaList.type,
                                             onItemClicked = { media ->
                                                 onNavigateToMediaItem(
-                                                    MediaPage(
+                                                    MediaRoute(
                                                         id = media.id,
                                                         source = mediaList.type.name,
                                                         mediaType = MediaType.ANIME.rawValue,

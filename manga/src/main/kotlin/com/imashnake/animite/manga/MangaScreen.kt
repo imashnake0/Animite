@@ -47,7 +47,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.Nested.MediaRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -58,8 +58,8 @@ import com.imashnake.animite.navigation.R as navigationR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongMethod")
-fun MangaScreen(
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+internal fun MangaScreen(
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -124,7 +124,7 @@ fun MangaScreen(
                                             type = mediaList.type,
                                             onItemClicked = { media ->
                                                 onNavigateToMediaItem(
-                                                    MediaPage(
+                                                    MediaRoute(
                                                         id = media.id,
                                                         source = mediaList.type.name,
                                                         mediaType = MediaType.MANGA.rawValue,
