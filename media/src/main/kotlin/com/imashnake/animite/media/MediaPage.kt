@@ -1164,7 +1164,7 @@ private fun MediaStreamingEpisode(
                     }
             ) {
                 AsyncImage(
-                    model = thumbnail,
+                    model = crossfadeModel(thumbnail),
                     contentDescription = "streaming episode",
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
