@@ -1176,7 +1176,6 @@ private fun MediaStreamingEpisode(
                         text = it,
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         modifier = Modifier
@@ -1188,20 +1187,30 @@ private fun MediaStreamingEpisode(
                 }
 
                 title?.let {
-                    Text(
-                        text = it,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.Start,
-                        maxLines = 1,
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                            .padding(start = dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
+                            .padding(horizontal = dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
                             .padding(vertical = LocalPaddings.current.ultraTiny)
-                    )
+                    ) {
+                        Text(
+                            text = " \n ",
+                            maxLines = 2,
+                            minLines = 2,
+                            lineHeight = 16.sp,
+                        )
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 10.sp,
+                            textAlign = TextAlign.Center,
+                            maxLines = 2,
+                            lineHeight = 16.sp,
+                        )
+                    }
                 }
             }
         }

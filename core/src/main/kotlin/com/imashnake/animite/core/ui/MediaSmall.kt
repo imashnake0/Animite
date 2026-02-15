@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -192,7 +191,8 @@ internal fun MediaSmall(
             )
 
             if (tag != null)
-                Box(contentAlignment = Alignment.Center,
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .graphicsLayer {
                             translationY = 7f
@@ -208,11 +208,6 @@ internal fun MediaSmall(
                     if (tagMinLines > 1) {
                         Text(
                             text = " \n ",
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.labelLarge,
                             maxLines = tagMinLines,
                             minLines = tagMinLines,
                             lineHeight = 16.sp,
@@ -222,9 +217,7 @@ internal fun MediaSmall(
                         text = tag,
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelLarge,
                         maxLines = tagMinLines,
                         lineHeight = 16.sp,
                     )
