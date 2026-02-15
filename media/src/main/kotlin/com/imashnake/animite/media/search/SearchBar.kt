@@ -29,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.media.R
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -148,7 +150,7 @@ internal fun SearchInputField(
         onSearch = onSearch,
         searchBarState = searchBarState,
         placeholder = {
-            Text("Search")
+            Text(stringResource(R.string.search_placeholder))
         },
         leadingIcon = {
             Icon(Icons.Rounded.Search, null)

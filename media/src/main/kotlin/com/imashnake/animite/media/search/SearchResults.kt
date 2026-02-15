@@ -116,7 +116,7 @@ private fun SearchEmptyContent(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "No results found",
+            text = stringResource(R.string.search_results_empty),
             style = MaterialTheme.typography.bodyMedium
         )
     }
@@ -134,7 +134,7 @@ private fun SearchErrorContent(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = errorMessage ?: "Unknown error",
+            text = errorMessage ?: stringResource(R.string.search_results_error),
             style = MaterialTheme.typography.bodyMedium
         )
     }
