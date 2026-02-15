@@ -1,16 +1,12 @@
 package com.imashnake.animite.media.search
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -42,20 +38,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.MediaList
-import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
-import com.imashnake.animite.navigation.SharedContentKey
-import com.imashnake.animite.navigation.SharedContentKey.Component.Card
-import com.imashnake.animite.navigation.SharedContentKey.Component.Image
-import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import com.imashnake.animite.core.R as coreR
 
 @Composable
 fun SearchResults(
-    items: List<Media.Medium>,
+    items: Result<List<Media.Medium>>,
     onItemClick: (Media.Medium) -> Unit,
     loading: Boolean,
     modifier: Modifier = Modifier
@@ -64,14 +55,31 @@ fun SearchResults(
         AnimatedVisibility(loading) {
             LinearProgressIndicator()
         }
-        LazyColumn {
-            items(items) { mediaItem ->
-                MediaMediumItem(
-                    item = mediaItem,
-                    onClick = { onItemClick(mediaItem) }
-                )
+        items.fold(
+            onSuccess = {
+                LazyColumn {
+                    items(it) { mediaItem ->
+                        MediaMediumItem(
+                            item = mediaItem,
+                            onClick = { onItemClick(mediaItem) }
+                        )
+                    }
+                }
+            },
+            onFailure = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(LocalPaddings.current.medium),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = it.message ?: "Unknown error",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
-        }
+        )
     }
 }
 

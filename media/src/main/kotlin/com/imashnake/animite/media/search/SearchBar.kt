@@ -1,7 +1,5 @@
 package com.imashnake.animite.media.search
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,7 +34,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.core.data.Resource
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
@@ -53,6 +50,7 @@ fun MediaSearchBar(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val searchResults by viewModel.searchList.collectAsStateWithLifecycle()
+    val isLoading by viewModel.loading.collectAsStateWithLifecycle()
     val searchTextState = rememberTextFieldState()
     val searchBarState = rememberSearchBarState()
 
@@ -72,14 +70,14 @@ fun MediaSearchBar(
         modifier = modifier,
     ) {
         SearchResults(
-            items = searchResults.data.orEmpty(),
+            items = searchResults,
             onItemClick = {
                 coroutineScope.launch {
                     searchBarState.animateToCollapsed()
                 }
                 onItemClick(it)
             },
-            loading = searchResults is Resource.Loading,
+            loading = isLoading,
             modifier = Modifier.fillMaxWidth()
         )
     }
