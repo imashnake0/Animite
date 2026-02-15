@@ -34,12 +34,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaSearchBar(
     mediaType: MediaType,
@@ -56,7 +53,6 @@ fun MediaSearchBar(
 
     LaunchedEffect(mediaType, searchTextState) {
         snapshotFlow { searchTextState.text }
-            .debounce(300.milliseconds)
             .collect {
                 viewModel.setQuery(mediaType, it.toString())
             }
@@ -108,6 +104,7 @@ fun AdaptiveSearchBar(
     )
     if (canFitDockedSearch) {
         ExpandedDockedSearchBarWithGap(
+            state = searchBarState,
             inputField = {
                 SearchInputField(
                     searchTextState = searchTextState,
@@ -115,7 +112,6 @@ fun AdaptiveSearchBar(
                     onSearch = onSearch
                 )
             },
-            state = searchBarState,
             content = searchContent,
         )
     } else {

@@ -7,17 +7,22 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearProgressIndicator
@@ -38,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.media.R
@@ -52,33 +58,60 @@ fun SearchResults(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        AnimatedVisibility(loading) {
-            LinearProgressIndicator()
+        AnimatedVisibility(
+            visible = loading,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
         }
         items.fold(
             onSuccess = {
-                LazyColumn {
-                    items(it) { mediaItem ->
-                        MediaMediumItem(
-                            item = mediaItem,
-                            onClick = { onItemClick(mediaItem) }
-                        )
+                if (it.isNotEmpty()) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(140.dp),
+                        contentPadding = PaddingValues(LocalPaddings.current.large) +
+                                PaddingValues(bottom = LocalPaddings.current.large),
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                        horizontalArrangement = Arrangement.Absolute.SpaceAround
+                    ) {
+                        items(
+                            items = it,
+                            key = { it.id }
+                        ) { media ->
+                            MediaCard(
+                                image = media.coverImage,
+                                tag = null,
+                                label = media.title,
+                                onClick = { onItemClick(media) }
+                            )
+                        }
                     }
+                } else {
+                    // Empty state
                 }
             },
             onFailure = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(LocalPaddings.current.medium),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = it.message ?: "Unknown error",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+                SearchErrorContent(it.message, modifier = Modifier.fillMaxWidth())
             }
+        )
+    }
+}
+
+@Composable
+private fun SearchErrorContent(
+    errorMessage: String?,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(LocalPaddings.current.medium),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = errorMessage ?: "Unknown error",
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
@@ -119,13 +152,15 @@ private fun MediaMediumItem(
 
             Spacer(Modifier.size(LocalPaddings.current.medium))
 
-            Text(
-                text = item.studios.joinToString(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            if (item.studios.isNotEmpty()) {
+                Text(
+                    text = item.studios.joinToString(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 item.format?.let {
