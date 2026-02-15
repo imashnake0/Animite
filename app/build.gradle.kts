@@ -106,6 +106,11 @@ dependencies {
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
 
+    // Nav3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.vm)
+
     implementation(libs.materialKolor)
 
     coreLibraryDesugaring(libs.android.desugaring)

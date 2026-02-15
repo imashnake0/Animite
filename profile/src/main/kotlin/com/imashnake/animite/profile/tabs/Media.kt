@@ -21,7 +21,7 @@ import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
-import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.Nested.MediaRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -39,7 +39,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -75,7 +75,7 @@ fun MediaTab(
 @Composable
 private fun UserMediaLists(
     lists: ImmutableList<User.MediaCollection.NamedList>,
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -104,7 +104,7 @@ private fun UserMediaLists(
                         label = media.title,
                         onClick = {
                             onNavigateToMediaItem(
-                                MediaPage(
+                                MediaRoute(
                                     id = media.id,
                                     source = namedList.name.orEmpty(),
                                     mediaType = media.type.name,

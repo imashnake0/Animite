@@ -1,15 +1,16 @@
 package com.imashnake.animite.profile
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.data.Resource.Companion.asResource
-import com.imashnake.animite.navigation.ProfileRoute
+import com.imashnake.animite.navigation.Root
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,17 +24,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class ProfileViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = ProfileViewModel.Factory::class)
+class ProfileViewModel @AssistedInject constructor(
+    @Assisted val navArgs: Root.ProfileRoute,
     private val userRepository: AnilistUserRepository,
     private val preferencesRepository: PreferencesRepository,
-    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-    private val navArgs = savedStateHandle.toRoute<ProfileRoute>()
     private val refreshTrigger = MutableSharedFlow<Unit>()
 
     var useNetwork = false
@@ -104,5 +102,10 @@ class ProfileViewModel @Inject constructor(
                 preferencesRepository.setAccessToken(navArgs.accessToken)
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navArgs: Root.ProfileRoute): ProfileViewModel
     }
 }

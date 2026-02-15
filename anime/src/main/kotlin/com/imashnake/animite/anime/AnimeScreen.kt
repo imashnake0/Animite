@@ -49,7 +49,7 @@ import com.imashnake.animite.core.ui.ProgressIndicatorScreen
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.banner.MountFuji
-import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.Nested.MediaRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -60,18 +60,19 @@ import com.imashnake.animite.navigation.R as navigationR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongMethod")
-fun AnimeScreen(
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+internal fun AnimeScreen(
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: AnimeViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
+    val navigationComponentPaddingValues = when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(
             bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
         )
+
         else -> PaddingValues(
             start = dimensionResource(navigationR.dimen.navigation_rail_width)
         )
@@ -132,7 +133,7 @@ fun AnimeScreen(
                                                     type = mediaList.type,
                                                     onItemClicked = { media ->
                                                         onNavigateToMediaItem(
-                                                            MediaPage(
+                                                            MediaRoute(
                                                                 id = media.id,
                                                                 source = mediaList.type.name,
                                                                 mediaType = MediaType.ANIME.rawValue,
@@ -165,6 +166,7 @@ fun AnimeScreen(
                 }
             }
         }
+
         else -> ProgressIndicatorScreen(Modifier.padding(insetPaddingValues))
     }
 }
