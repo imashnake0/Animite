@@ -20,9 +20,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LinearProgressIndicator
@@ -43,9 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.core.extensions.plus
+import com.imashnake.animite.core.ui.CharacterCard
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.core.R as coreR
@@ -68,22 +66,20 @@ fun SearchResults(
         items.fold(
             onSuccess = {
                 if (it.isNotEmpty()) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(140.dp),
-                        contentPadding = PaddingValues(LocalPaddings.current.large) +
-                                PaddingValues(bottom = LocalPaddings.current.large),
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                        horizontalArrangement = Arrangement.Absolute.SpaceAround
+                    LazyColumn(
+                        contentPadding = PaddingValues(
+                            vertical = LocalPaddings.current.large
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
                     ) {
                         items(
                             items = it,
                             key = { it.id }
                         ) { media ->
-                            MediaCard(
-                                image = media.coverImage,
-                                tag = null,
-                                label = media.title,
-                                onClick = { onItemClick(media) }
+                            MediaMediumItem(
+                                item = media,
+                                onClick = { onItemClick(media) },
+                                modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
                             )
                         }
                     }
@@ -129,7 +125,7 @@ private fun MediaMediumItem(
             .clip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
             .clickable(onClick = onClick)
     ) {
-        MediaCard(
+        CharacterCard(
             image = item.coverImage,
             tag = null,
             label = null,
