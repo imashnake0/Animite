@@ -294,14 +294,25 @@ fun MediaPage(
                             }
 
                             if (!media.characters.isNullOrEmpty()) {
-                                MediaCharacters(
-                                    characters = media.characters,
-                                    onCharacterClick = { index, _ ->
+                                MediaCredits(
+                                    credits = media.characters,
+                                    onCreditClick = { index, _ ->
                                         coroutineScope.launch {
                                             characterPagerState.scrollToPage(index)
                                         }
                                         showCharacterSheet = true
                                     },
+                                    contentPadding = PaddingValues(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + horizontalInsets,
+                                )
+                            }
+
+                            if (!media.staff.isNullOrEmpty()) {
+                                MediaCredits(
+                                    credits = media.staff,
+                                    onCreditClick = { _, _ -> },
+                                    tagMinLines = 2,
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
@@ -960,24 +971,28 @@ private fun MediaGenres(
     }
 }
 
+/**
+ * Credit -> Character | Staff.
+ */
 @Composable
-private fun MediaCharacters(
-    characters: ImmutableList<Media.Character>,
-    onCharacterClick: (Int, Media.Character) -> Unit,
+private fun MediaCredits(
+    credits: ImmutableList<Media.Credit>,
+    onCreditClick: (Int, Media.Credit) -> Unit,
     modifier: Modifier = Modifier,
+    tagMinLines: Int = 1,
     contentPadding: PaddingValues = PaddingValues()
 ) {
     MediaSmallRow(
         title = stringResource(R.string.characters),
-        mediaList = characters,
+        mediaList = credits,
         modifier = modifier,
         contentPadding = contentPadding,
-    ) { index, character ->
+    ) { index, credit ->
         CharacterCard(
-            image = character.image,
-            tag = character.role,
-            label = character.name,
-            onClick = { onCharacterClick(index, character) },
+            image = credit.image,
+            tag = credit.role,
+            label = credit.name,
+            onClick = { onCreditClick(index, credit) },
         )
     }
 }

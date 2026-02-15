@@ -137,7 +137,7 @@ private fun UserFavouriteLists(
                             )
                         }
                     }
-                    is Media.Character -> {
+                    is Media.Credit -> {
                         CharacterCard(
                             image = item.image,
                             tag = null,

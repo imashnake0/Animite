@@ -101,7 +101,7 @@ data class User(
             internal constructor(query: User.Characters) : this(
                 name = Favouritables.Characters.name,
                 list = query.nodes.orEmpty().filter { it?.characterSmall?.name != null }.map {
-                    Media.Character(it!!.characterSmall, null)
+                    Media.Credit(it!!.characterSmall, null)
                 }.toImmutableList()
             )
         }

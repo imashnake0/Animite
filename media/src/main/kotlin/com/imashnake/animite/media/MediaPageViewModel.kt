@@ -53,6 +53,7 @@ class MediaPageViewModel @Inject constructor(
                     ranks = media?.rankings,
                     genres = media?.genres,
                     characters = media?.characters,
+                    staff = media?.staff,
                     trailer = media?.trailer,
                     streamingEpisodes = media?.streamingEpisodes,
                     relations = media?.relations,
