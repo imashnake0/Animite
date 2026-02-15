@@ -1,5 +1,6 @@
 package com.imashnake.animite.media.search
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -8,7 +9,10 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -63,33 +67,57 @@ fun SearchResults(
         ) {
             LinearProgressIndicator(Modifier.fillMaxWidth())
         }
-        items.fold(
-            onSuccess = {
-                if (it.isNotEmpty()) {
-                    LazyColumn(
-                        contentPadding = PaddingValues(
-                            vertical = LocalPaddings.current.large
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
-                    ) {
-                        items(
-                            items = it,
-                            key = { it.id }
-                        ) { media ->
-                            MediaMediumItem(
-                                item = media,
-                                onClick = { onItemClick(media) },
-                                modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
-                            )
+        AnimatedContent(
+            targetState = items,
+            modifier = Modifier.fillMaxWidth(),
+            transitionSpec = { fadeIn() togetherWith fadeOut() }
+        ) {
+            it.fold(
+                onSuccess = {
+                    if (it.isNotEmpty()) {
+                        LazyColumn(
+                            contentPadding = PaddingValues(
+                                vertical = LocalPaddings.current.large
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+                        ) {
+                            items(
+                                items = it,
+                                key = { it.id }
+                            ) { media ->
+                                MediaMediumItem(
+                                    item = media,
+                                    onClick = { onItemClick(media) },
+                                    modifier = Modifier.padding(horizontal = LocalPaddings.current.large)
+                                )
+                            }
                         }
+                    } else if (!loading) {
+                        // Empty state is only visible when not loading
+                        SearchEmptyContent(Modifier.fillMaxWidth())
                     }
-                } else {
-                    // Empty state
+                },
+                onFailure = {
+                    SearchErrorContent(it.message, modifier = Modifier.fillMaxWidth())
                 }
-            },
-            onFailure = {
-                SearchErrorContent(it.message, modifier = Modifier.fillMaxWidth())
-            }
+            )
+        }
+    }
+}
+
+@Composable
+private fun SearchEmptyContent(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(LocalPaddings.current.medium),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No results found",
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
