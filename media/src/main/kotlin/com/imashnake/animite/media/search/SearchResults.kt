@@ -156,6 +156,7 @@ private fun MediaMediumItem(
         CharacterCard(
             image = item.coverImage,
             tag = null,
+            tagMinLines = 1,
             label = null,
             onClick = onClick,
         )
