@@ -137,10 +137,11 @@ private fun UserFavouriteLists(
                             )
                         }
                     }
-                    is Media.Character -> {
+                    is Media.Credit -> {
                         CharacterCard(
                             image = item.image,
                             tag = null,
+                            tagMinLines = 1,
                             label = item.name,
                             onClick = { Log.d("CharacterId", "${item.id}") },
                         )

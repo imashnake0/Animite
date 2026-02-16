@@ -44,6 +44,19 @@ query MediaQuery(
             }
         }
 
+        staff(
+            sort: [RELEVANCE, ROLE, FAVOURITES_DESC],
+            page: 0,
+            perPage: 10
+        ) {
+            edges {
+                role
+                node {
+                    ...StaffSmall
+                }
+            }
+        }
+
         trailer {
             id
             site

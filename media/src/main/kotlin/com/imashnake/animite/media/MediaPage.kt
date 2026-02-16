@@ -294,14 +294,25 @@ fun MediaPage(
                             }
 
                             if (!media.characters.isNullOrEmpty()) {
-                                MediaCharacters(
-                                    characters = media.characters,
-                                    onCharacterClick = { index, _ ->
+                                MediaCredits(
+                                    credits = media.characters,
+                                    onCreditClick = { index, _ ->
                                         coroutineScope.launch {
                                             characterPagerState.scrollToPage(index)
                                         }
                                         showCharacterSheet = true
                                     },
+                                    contentPadding = PaddingValues(
+                                        horizontal = LocalPaddings.current.large
+                                    ) + horizontalInsets,
+                                )
+                            }
+
+                            if (!media.staff.isNullOrEmpty()) {
+                                MediaCredits(
+                                    credits = media.staff,
+                                    onCreditClick = { _, _ -> },
+                                    tagMinLines = 2,
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
@@ -497,6 +508,7 @@ fun MediaPage(
                                 CharacterCard(
                                     image = currentCharacter.image,
                                     tag = null,
+                                    tagMinLines = 1,
                                     label = null,
                                     onClick = {},
                                 )
@@ -960,24 +972,29 @@ private fun MediaGenres(
     }
 }
 
+/**
+ * Credit -> Character | Staff.
+ */
 @Composable
-private fun MediaCharacters(
-    characters: ImmutableList<Media.Character>,
-    onCharacterClick: (Int, Media.Character) -> Unit,
+private fun MediaCredits(
+    credits: ImmutableList<Media.Credit>,
+    onCreditClick: (Int, Media.Credit) -> Unit,
     modifier: Modifier = Modifier,
+    tagMinLines: Int = 1,
     contentPadding: PaddingValues = PaddingValues()
 ) {
     MediaSmallRow(
         title = stringResource(R.string.characters),
-        mediaList = characters,
+        mediaList = credits,
         modifier = modifier,
         contentPadding = contentPadding,
-    ) { index, character ->
+    ) { index, credit ->
         CharacterCard(
-            image = character.image,
-            tag = character.role,
-            label = character.name,
-            onClick = { onCharacterClick(index, character) },
+            image = credit.image,
+            tag = credit.role,
+            tagMinLines = tagMinLines,
+            label = credit.name,
+            onClick = { onCreditClick(index, credit) },
         )
     }
 }
@@ -1147,7 +1164,7 @@ private fun MediaStreamingEpisode(
                     }
             ) {
                 AsyncImage(
-                    model = thumbnail,
+                    model = crossfadeModel(thumbnail),
                     contentDescription = "streaming episode",
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
@@ -1159,7 +1176,6 @@ private fun MediaStreamingEpisode(
                         text = it,
                         color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         modifier = Modifier
@@ -1171,20 +1187,30 @@ private fun MediaStreamingEpisode(
                 }
 
                 title?.let {
-                    Text(
-                        text = it,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.Start,
-                        maxLines = 1,
+                    Box(
+                        contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                            .padding(start = dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
+                            .padding(horizontal = dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
                             .padding(vertical = LocalPaddings.current.ultraTiny)
-                    )
+                    ) {
+                        Text(
+                            text = " \n ",
+                            maxLines = 2,
+                            minLines = 2,
+                            lineHeight = 16.sp,
+                        )
+                        Text(
+                            text = it,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 10.sp,
+                            textAlign = TextAlign.Center,
+                            maxLines = 2,
+                            lineHeight = 16.sp,
+                        )
+                    }
                 }
             }
         }
