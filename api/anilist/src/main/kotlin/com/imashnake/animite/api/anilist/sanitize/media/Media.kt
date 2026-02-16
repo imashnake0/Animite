@@ -9,6 +9,7 @@ import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaMedium
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
+import com.imashnake.animite.api.anilist.fragment.StaffSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
@@ -65,7 +66,9 @@ data class Media(
     /** @see MediaQuery.Media.genres */
     val genres: ImmutableList<String>,
     /** @see MediaQuery.Media.characters */
-    val characters: ImmutableList<Character>,
+    val characters: ImmutableList<Credit>,
+    /** @see MediaQuery.Media.staff */
+    val staff: ImmutableList<Credit>,
     /** @see MediaQuery.Media.trailer */
     val trailer: Trailer?,
     /** @see MediaQuery.Media.streamingEpisodes */
@@ -332,7 +335,7 @@ data class Media(
     }
 
     @Immutable
-    data class Character(
+    data class Credit(
         /** @see CharacterSmall.id */
         val id: Int,
         /** @see CharacterSmall.image */
@@ -401,6 +404,25 @@ data class Media(
                 description = query.description,
             ),
         )
+
+        internal constructor(query: StaffSmall, role: String? = null) : this(
+            id = query.id,
+            image = query.image?.large,
+            name = query.name?.full,
+            role = role,
+            dob = getFormattedDate(
+                year = query.dateOfBirth?.year,
+                month = query.dateOfBirth?.month,
+                day = query.dateOfBirth?.day
+            ),
+            favourites = getFormattedFavourites(query.favourites),
+            alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
+            description = getDescription(
+                age = query.age.toString(),
+                gender = query.gender,
+                description = query.description,
+            ),
+        )
     }
 
     @Immutable
@@ -463,11 +485,18 @@ data class Media(
         genres = query.genres?.filterNotNull().orEmpty().toImmutableList(),
         characters = query.characters?.edges.orEmpty().mapNotNull {
             if (it?.node?.characterSmall?.name == null) return@mapNotNull null
-            Character(
+            Credit(
                 query = it.node.characterSmall,
                 role = it.role.takeUnless {
                     role -> role == CharacterRole.UNKNOWN__
                 }?.name?.lowercase()
+            )
+        }.toImmutableList(),
+        staff = query.staff?.edges.orEmpty().mapNotNull {
+            if (it?.node?.staffSmall?.name == null) return@mapNotNull null
+            Credit(
+                query = it.node.staffSmall,
+                role = it.role?.lowercase()
             )
         }.toImmutableList(),
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
