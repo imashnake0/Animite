@@ -178,8 +178,9 @@ fun MediaPage(
     val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     var showCharacterSheet by remember { mutableStateOf(false) }
-    val characterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
-    val characterPagerState = rememberPagerState(pageCount = { media.characters.orEmpty().size })
+    var showStaffSheet by remember { mutableStateOf(false) }
+    val creditSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    val creditPagerState = rememberPagerState(pageCount = { media.characters.orEmpty().size })
     val coroutineScope = rememberCoroutineScope()
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -295,10 +296,11 @@ fun MediaPage(
 
                             if (!media.characters.isNullOrEmpty()) {
                                 MediaCredits(
+                                    title = stringResource(R.string.characters),
                                     credits = media.characters,
                                     onCreditClick = { index, _ ->
                                         coroutineScope.launch {
-                                            characterPagerState.scrollToPage(index)
+                                            creditPagerState.scrollToPage(index)
                                         }
                                         showCharacterSheet = true
                                     },
@@ -310,8 +312,14 @@ fun MediaPage(
 
                             if (!media.staff.isNullOrEmpty()) {
                                 MediaCredits(
+                                    title = stringResource(R.string.staff),
                                     credits = media.staff,
-                                    onCreditClick = { _, _ -> },
+                                    onCreditClick = { index, _ ->
+                                        coroutineScope.launch {
+                                            creditPagerState.scrollToPage(index)
+                                        }
+                                        showStaffSheet = true
+                                    },
                                     tagMinLines = 2,
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
@@ -466,16 +474,24 @@ fun MediaPage(
                 }
             }
 
-            if (showCharacterSheet) {
+            if (showCharacterSheet || showStaffSheet) {
                 BottomSheet(
-                    sheetState = characterSheetState,
+                    sheetState = creditSheetState,
                     dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    onDismissRequest = { showCharacterSheet = false },
+                    onDismissRequest = {
+                        if (showCharacterSheet) {
+                            showCharacterSheet = false
+                        } else showStaffSheet = false
+                    },
                     deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp
                 ) { paddingValues, modifier ->
-                    HorizontalPager(state = characterPagerState) { page ->
+                    HorizontalPager(state = creditPagerState) { page ->
                         Column(modifier = modifier) {
-                            val currentCharacter = media.characters.orEmpty()[page]
+                            val currentCredit = if (showCharacterSheet) {
+                                media.characters.orEmpty()[page]
+                            } else {
+                                media.staff.orEmpty()[page]
+                            }
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                                 modifier = Modifier
@@ -485,7 +501,7 @@ fun MediaPage(
                                     .padding(bottom = LocalPaddings.current.large)
                                     .graphicsLayer {
                                         val pageOffset = (
-                                            characterPagerState.currentPage - page + characterPagerState.currentPageOffsetFraction
+                                            creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
                                         ).absoluteValue
 
                                         alpha = lerp(
@@ -506,7 +522,7 @@ fun MediaPage(
                                     }
                             ) {
                                 CharacterCard(
-                                    image = currentCharacter.image,
+                                    image = currentCredit.image,
                                     tag = null,
                                     tagMinLines = 1,
                                     label = null,
@@ -519,7 +535,7 @@ fun MediaPage(
                                 ) {
                                     Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
                                         Text(
-                                            text = currentCharacter.name.orEmpty(),
+                                            text = currentCredit.name.orEmpty(),
                                             color = MaterialTheme.colorScheme.onBackground,
                                             style = MaterialTheme.typography.titleLarge,
                                         )
@@ -529,7 +545,7 @@ fun MediaPage(
                                                 LocalPaddings.current.small
                                             )
                                         ) {
-                                            currentCharacter.dob?.let { dob ->
+                                            currentCredit.dob?.let { dob ->
                                                 Chip(
                                                     color = Color(0xFF80DF87),
                                                     text = dob,
@@ -538,7 +554,7 @@ fun MediaPage(
                                                 )
                                             }
 
-                                            currentCharacter.favourites?.let { fav ->
+                                            currentCredit.favourites?.let { fav ->
                                                 Chip(
                                                     color = Color(0xFFFF9999),
                                                     text = fav,
@@ -548,14 +564,14 @@ fun MediaPage(
                                         }
                                     }
 
-                                    if (currentCharacter.alternativeNames.isNotBlank()) {
-                                        MediaDescription(currentCharacter.alternativeNames)
+                                    if (currentCredit.alternativeNames.isNotBlank()) {
+                                        MediaDescription(currentCredit.alternativeNames)
                                     }
                                 }
                             }
 
                             // TODO: Remove spoilers.
-                            currentCharacter.description?.let { description ->
+                            currentCredit.description?.let { description ->
                                 MediaDescription(
                                     html = description,
                                     onLinkClick = onLinkClick@{
@@ -564,7 +580,7 @@ fun MediaPage(
                                         val index = media.characters.indexOf(character)
                                         if (index != -1) {
                                             coroutineScope.launch {
-                                                characterPagerState.animateScrollToPage(index)
+                                                creditPagerState.animateScrollToPage(index)
                                             }
                                         } else return@onLinkClick null
                                         return@onLinkClick Unit
@@ -575,7 +591,7 @@ fun MediaPage(
                                         .padding(top = LocalPaddings.current.medium)
                                         .graphicsLayer {
                                             val pageOffset = (
-                                                characterPagerState.currentPage - page + characterPagerState.currentPageOffsetFraction
+                                                creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
                                             ).absoluteValue
 
                                             alpha = lerp(
@@ -977,6 +993,7 @@ private fun MediaGenres(
  */
 @Composable
 private fun MediaCredits(
+    title: String?,
     credits: ImmutableList<Media.Credit>,
     onCreditClick: (Int, Media.Credit) -> Unit,
     modifier: Modifier = Modifier,
@@ -984,7 +1001,7 @@ private fun MediaCredits(
     contentPadding: PaddingValues = PaddingValues()
 ) {
     MediaSmallRow(
-        title = stringResource(R.string.characters),
+        title = title,
         mediaList = credits,
         modifier = modifier,
         contentPadding = contentPadding,

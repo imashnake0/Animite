@@ -418,7 +418,7 @@ data class Media(
             favourites = getFormattedFavourites(query.favourites),
             alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
             description = getDescription(
-                age = query.age.toString(),
+                age = query.age?.toString(),
                 gender = query.gender,
                 description = query.description,
             ),
