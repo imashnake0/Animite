@@ -88,12 +88,12 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
-import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.Nested.MediaRoute
+import com.imashnake.animite.navigation.Nested.SettingsRoute
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
-import com.imashnake.animite.settings.SettingsPage
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
@@ -103,9 +103,9 @@ private const val DROP_DOWN_ITEMS_COUNT = 2
 
 @Suppress("LongMethod")
 @Composable
-fun ProfileScreen(
-    onNavigateToMediaItem: (MediaPage) -> Unit,
-    onNavigateToSettings: (SettingsPage) -> Unit,
+internal fun ProfileScreen(
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
+    onNavigateToSettings: (SettingsRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -261,7 +261,7 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
 
 @Composable
 private fun SettingsAndMore(
-    onNavigateToSettings: (SettingsPage) -> Unit,
+    onNavigateToSettings: (SettingsRoute) -> Unit,
     expanded: Boolean,
     setExpanded: (Boolean) -> Unit,
     logOut: () -> Unit,
@@ -352,7 +352,7 @@ private fun SettingsAndMore(
 
 @Composable
 fun SettingsIcon(
-    onNavigateToSettings: (SettingsPage) -> Unit,
+    onNavigateToSettings: (SettingsRoute) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "settings_icon")
@@ -376,7 +376,7 @@ fun SettingsIcon(
             contentDescription = stringResource(R.string.settings),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
-                .clickable { onNavigateToSettings(SettingsPage) }
+                .clickable { onNavigateToSettings(SettingsRoute) }
                 .padding(LocalPaddings.current.small)
                 .size(LocalPaddings.current.medium)
                 .graphicsLayer { rotationZ = angle }
@@ -419,7 +419,7 @@ private fun UserTabs(
     user: User,
     animeCollection: User.MediaCollection?,
     mangaCollection: User.MediaCollection?,
-    onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToMediaItem: (MediaRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,

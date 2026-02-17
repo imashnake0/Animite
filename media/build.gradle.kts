@@ -62,6 +62,10 @@ dependencies {
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
 
+    // Nav3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+
     // Kotlin
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.collectionsImmutable)

@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -29,4 +31,13 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
     implementation(libs.kotlinx.serialization.core)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigationCompose)
+    ksp(libs.hilt.android.compiler)
+
+    // Nav3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
 }

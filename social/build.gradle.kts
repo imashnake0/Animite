@@ -25,6 +25,7 @@ kotlin {
 
 dependencies {
     implementation(projects.core)
+    implementation(projects.navigation)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
@@ -40,6 +41,15 @@ dependencies {
     implementation(libs.compose.ui)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigationCompose)
+    ksp(libs.hilt.android.compiler)
+
+    // Nav3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
 
     // Kotlin
     implementation(libs.kotlinx.coroutines.android)
