@@ -116,7 +116,7 @@ fun AnimeScreen(
                             AnimatedContent(
                                 targetState = row is Resource.Success,
                                 transitionSpec = {
-                                    fadeIn(tween(750))
+                                    fadeIn(tween(750, delayMillis = 250))
                                         .togetherWith(fadeOut(tween(750)))
                                 },
                             ) {

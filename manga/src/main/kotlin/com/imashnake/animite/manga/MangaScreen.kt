@@ -42,6 +42,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
+import com.imashnake.animite.core.ui.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
@@ -91,77 +92,78 @@ fun MangaScreen(
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
 
-    when {
-        rows.all { it is Resource.Success } -> {
-            val scrollState = rememberScrollState()
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = { viewModel.refresh { isRefreshing = it } },
-                state = pullToRefreshState,
-            ) {
-                TranslucentStatusBarLayout(scrollState) {
-                    Box(Modifier.verticalScroll(scrollState)) {
-                        BannerLayout(
-                            banner = { bannerModifier ->
-                                MountFuji(
-                                    setDayHour = dayHour,
-                                    header = stringResource(R.string.okaeri),
-                                    insetPaddingValues = insetPaddingValues,
-                                    navigationComponentPaddingValues = navigationComponentPaddingValues,
-                                    modifier = bannerModifier,
-                                )
-                            },
-                            content = {
-                                rows.fastForEach { row ->
-                                    row.data?.let {
-                                        AnimatedContent(
-                                            targetState = it,
-                                            transitionSpec = {
-                                                fadeIn(tween(750))
-                                                    .togetherWith(fadeOut(tween(750)))
-                                            },
-                                            label = "animate_manga_row"
-                                        ) { mediaList ->
-                                            if (mediaList.list.isNotEmpty()) {
-                                                MangaRow(
-                                                    items = mediaList.list,
-                                                    type = mediaList.type,
-                                                    onItemClicked = { media ->
-                                                        onNavigateToMediaItem(
-                                                            MediaPage(
-                                                                id = media.id,
-                                                                source = mediaList.type.name,
-                                                                mediaType = MediaType.MANGA.rawValue,
-                                                                title = media.title,
-                                                            )
-                                                        )
-                                                    },
-                                                    sharedTransitionScope = sharedTransitionScope,
-                                                    animatedVisibilityScope = animatedVisibilityScope,
-                                                    contentPadding = PaddingValues(
-                                                        horizontal = LocalPaddings.current.large,
-                                                        vertical = LocalPaddings.current.large / 2,
-                                                    ) + insetAndNavigationPaddingValues.horizontalOnly
-                                                )
-                                            } else {
-                                                Box(Modifier.fillMaxWidth())
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            contentPadding = PaddingValues(
-                                top = LocalPaddings.current.large / 2,
-                                bottom = LocalPaddings.current.large / 2 +
-                                        insetAndNavigationPaddingValues.calculateBottomPadding()
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(0.dp)
+    val scrollState = rememberScrollState()
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refresh { isRefreshing = it } },
+        state = pullToRefreshState,
+    ) {
+        TranslucentStatusBarLayout(scrollState) {
+            Box(Modifier.verticalScroll(scrollState)) {
+                BannerLayout(
+                    banner = { bannerModifier ->
+                        MountFuji(
+                            setDayHour = dayHour,
+                            header = stringResource(R.string.okaeri),
+                            insetPaddingValues = insetPaddingValues,
+                            navigationComponentPaddingValues = navigationComponentPaddingValues,
+                            modifier = bannerModifier,
                         )
-                    }
-                }
+                    },
+                    content = {
+                        rows.fastForEach { row ->
+                            AnimatedContent(
+                                targetState = row is Resource.Success,
+                                transitionSpec = {
+                                    fadeIn(tween(750, delayMillis = 250))
+                                        .togetherWith(fadeOut(tween(750)))
+                                },
+                            ) {
+                                if (it) {
+                                    val mediaList = (row as? Resource.Success)?.data
+                                    if (mediaList?.list.orEmpty().isNotEmpty()) {
+                                        MangaRow(
+                                            items = mediaList!!.list,
+                                            type = mediaList.type,
+                                            onItemClicked = { media ->
+                                                onNavigateToMediaItem(
+                                                    MediaPage(
+                                                        id = media.id,
+                                                        source = mediaList.type.name,
+                                                        mediaType = MediaType.ANIME.rawValue,
+                                                        title = media.title,
+                                                    )
+                                                )
+                                            },
+                                            sharedTransitionScope = sharedTransitionScope,
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                            contentPadding = PaddingValues(
+                                                horizontal = LocalPaddings.current.large,
+                                                vertical = LocalPaddings.current.large / 2,
+                                            ) + insetAndNavigationPaddingValues.horizontalOnly
+                                        )
+                                    }
+                                } else {
+                                    LoadingMediaSmallRow(
+                                        count = 10,
+                                        contentPadding = PaddingValues(
+                                            horizontal = LocalPaddings.current.large,
+                                            vertical = LocalPaddings.current.large / 2,
+                                        ) + insetAndNavigationPaddingValues.horizontalOnly
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    contentPadding = PaddingValues(
+                        top = LocalPaddings.current.large / 2,
+                        bottom = LocalPaddings.current.large / 2 +
+                                insetAndNavigationPaddingValues.calculateBottomPadding()
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                )
             }
         }
-        else -> ProgressIndicatorScreen(Modifier.padding(insetPaddingValues))
     }
 }
 
