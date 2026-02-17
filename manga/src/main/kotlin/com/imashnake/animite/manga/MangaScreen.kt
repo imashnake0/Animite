@@ -127,7 +127,7 @@ fun MangaScreen(
                                                     MediaPage(
                                                         id = media.id,
                                                         source = mediaList.type.name,
-                                                        mediaType = MediaType.ANIME.rawValue,
+                                                        mediaType = MediaType.MANGA.rawValue,
                                                         title = media.title,
                                                     )
                                                 )
