@@ -59,7 +59,7 @@ fun NavigationBar(
                 NavigationBarItem(
                     selected = selected,
                     onClick = { if (!selected) destination.navigateTo(navController) },
-                    icon = destination.icon,
+                    icon = { destination.icon.invoke(selected) },
                     modifier = Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
                 )
             }

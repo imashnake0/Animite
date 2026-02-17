@@ -73,7 +73,7 @@ fun NavigationRail(
                 NavigationRailItem(
                     selected = selected,
                     onClick = { if (!selected) destination.navigateTo(navController) },
-                    icon = destination.icon,
+                    icon = { destination.icon.invoke(selected) },
                     modifier = Modifier.width(dimensionResource(R.dimen.navigation_rail_width))
                 )
             }
