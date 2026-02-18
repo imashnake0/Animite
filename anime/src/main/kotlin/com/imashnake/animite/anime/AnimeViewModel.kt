@@ -30,7 +30,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class AnimeViewModel @Inject constructor(
     private val mediaListRepository: AnilistMediaRepository,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 

@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
@@ -34,7 +32,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
@@ -42,10 +40,10 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.plus
+import com.imashnake.animite.core.ui.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
-import com.imashnake.animite.core.ui.ProgressIndicatorScreen
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.core.ui.layouts.banner.MountFuji
@@ -91,77 +89,78 @@ fun MangaScreen(
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
 
-    when {
-        rows.all { it is Resource.Success } -> {
-            val scrollState = rememberScrollState()
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = { viewModel.refresh { isRefreshing = it } },
-                state = pullToRefreshState,
-            ) {
-                TranslucentStatusBarLayout(scrollState) {
-                    Box(Modifier.verticalScroll(scrollState)) {
-                        BannerLayout(
-                            banner = { bannerModifier ->
-                                MountFuji(
-                                    setDayHour = dayHour,
-                                    header = stringResource(R.string.okaeri),
-                                    insetPaddingValues = insetPaddingValues,
-                                    navigationComponentPaddingValues = navigationComponentPaddingValues,
-                                    modifier = bannerModifier,
-                                )
-                            },
-                            content = {
-                                rows.fastForEach { row ->
-                                    row.data?.let {
-                                        AnimatedContent(
-                                            targetState = it,
-                                            transitionSpec = {
-                                                fadeIn(tween(750))
-                                                    .togetherWith(fadeOut(tween(750)))
-                                            },
-                                            label = "animate_manga_row"
-                                        ) { mediaList ->
-                                            if (mediaList.list.isNotEmpty()) {
-                                                MangaRow(
-                                                    items = mediaList.list,
-                                                    type = mediaList.type,
-                                                    onItemClicked = { media ->
-                                                        onNavigateToMediaItem(
-                                                            MediaPage(
-                                                                id = media.id,
-                                                                source = mediaList.type.name,
-                                                                mediaType = MediaType.MANGA.rawValue,
-                                                                title = media.title,
-                                                            )
-                                                        )
-                                                    },
-                                                    sharedTransitionScope = sharedTransitionScope,
-                                                    animatedVisibilityScope = animatedVisibilityScope,
-                                                    contentPadding = PaddingValues(
-                                                        horizontal = LocalPaddings.current.large,
-                                                        vertical = LocalPaddings.current.large / 2,
-                                                    ) + insetAndNavigationPaddingValues.horizontalOnly
-                                                )
-                                            } else {
-                                                Box(Modifier.fillMaxWidth())
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            contentPadding = PaddingValues(
-                                top = LocalPaddings.current.large / 2,
-                                bottom = LocalPaddings.current.large / 2 +
-                                        insetAndNavigationPaddingValues.calculateBottomPadding()
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(0.dp)
+    val scrollState = rememberScrollState()
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refresh { isRefreshing = it } },
+        state = pullToRefreshState,
+    ) {
+        TranslucentStatusBarLayout(scrollState) {
+            Box(Modifier.verticalScroll(scrollState)) {
+                BannerLayout(
+                    banner = { bannerModifier ->
+                        MountFuji(
+                            setDayHour = dayHour,
+                            header = stringResource(R.string.okaeri),
+                            insetPaddingValues = insetPaddingValues,
+                            navigationComponentPaddingValues = navigationComponentPaddingValues,
+                            modifier = bannerModifier,
                         )
-                    }
-                }
+                    },
+                    content = {
+                        rows.fastForEachIndexed { index, row ->
+                            AnimatedContent(
+                                targetState = row is Resource.Success,
+                                transitionSpec = {
+                                    fadeIn(tween(500, delayMillis = index * 100))
+                                        .togetherWith(fadeOut(tween(500)))
+                                },
+                            ) {
+                                if (it) {
+                                    val mediaList = (row as? Resource.Success)?.data
+                                    if (mediaList?.list.orEmpty().isNotEmpty()) {
+                                        MangaRow(
+                                            items = mediaList!!.list,
+                                            type = mediaList.type,
+                                            onItemClicked = { media ->
+                                                onNavigateToMediaItem(
+                                                    MediaPage(
+                                                        id = media.id,
+                                                        source = mediaList.type.name,
+                                                        mediaType = MediaType.MANGA.rawValue,
+                                                        title = media.title,
+                                                    )
+                                                )
+                                            },
+                                            sharedTransitionScope = sharedTransitionScope,
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                            contentPadding = PaddingValues(
+                                                horizontal = LocalPaddings.current.large,
+                                                vertical = LocalPaddings.current.large / 2,
+                                            ) + insetAndNavigationPaddingValues.horizontalOnly
+                                        )
+                                    }
+                                } else {
+                                    LoadingMediaSmallRow(
+                                        count = 10,
+                                        contentPadding = PaddingValues(
+                                            horizontal = LocalPaddings.current.large,
+                                            vertical = LocalPaddings.current.large / 2,
+                                        ) + insetAndNavigationPaddingValues.horizontalOnly
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    contentPadding = PaddingValues(
+                        top = LocalPaddings.current.large / 2,
+                        bottom = LocalPaddings.current.large / 2 +
+                                insetAndNavigationPaddingValues.calculateBottomPadding()
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                )
             }
         }
-        else -> ProgressIndicatorScreen(Modifier.padding(insetPaddingValues))
     }
 }
 

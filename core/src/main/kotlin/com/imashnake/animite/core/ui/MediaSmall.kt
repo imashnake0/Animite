@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -82,6 +84,53 @@ fun <T> MediaSmallRow(
         ) {
             itemsIndexed(mediaList) { index, media ->
                 content(index, media)
+            }
+        }
+    }
+}
+
+@Composable
+fun LoadingMediaSmallRow(
+    count: Int,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+) {
+    Column(
+        modifier = modifier.padding(
+            top = contentPadding.calculateTopPadding(),
+            bottom = contentPadding.calculateBottomPadding()
+        ),
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+    ) {
+        val layoutDirection = LocalLayoutDirection.current
+        val startPadding = contentPadding.calculateStartPadding(layoutDirection)
+        val endPadding = contentPadding.calculateEndPadding(layoutDirection)
+        Text(
+            text = " ",
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(
+                    start = startPadding,
+                    end = endPadding,
+                )
+                .clip(CircleShape)
+                .requiredWidth(140.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            contentPadding = PaddingValues(
+                start = startPadding,
+                end = endPadding,
+            ),
+            userScrollEnabled = false
+        ) {
+            items(count) {
+                LoadingMediaSmall(
+                    imageHeight = 200.dp,
+                    cardWidth = 140.dp,
+                )
             }
         }
     }
@@ -261,6 +310,34 @@ internal fun MediaSmall(
     }
 }
 
+@Composable
+internal fun LoadingMediaSmall(
+    imageHeight: Dp,
+    cardWidth: Dp,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)),
+        modifier = modifier.width(cardWidth),
+    ) {
+        Box(
+            modifier = Modifier
+                .height(imageHeight)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
+        )
+
+        Text(
+            text = "",
+            style = MaterialTheme.typography.labelLarge,
+            minLines = 2,
+            modifier = Modifier.padding(
+                vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
+            )
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewCharacterCard() {
@@ -298,6 +375,32 @@ private fun PreviewCharacterCardLongTag() {
             tag = "long\ntag",
             tagMinLines = 2,
             label = "long\nlabel",
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewLoadingMediaSmall() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        LoadingMediaSmall(
+            imageHeight = 200.dp,
+            cardWidth = 140.dp,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewLsoadingMediaSmall() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        MediaSmall(
+            imageHeight = 200.dp,
+            cardWidth = 140.dp,
+            image = "",
+            tag = "tag",
+            label = "",
             onClick = {},
         )
     }
