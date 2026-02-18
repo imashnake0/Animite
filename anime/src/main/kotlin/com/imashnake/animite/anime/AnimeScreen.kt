@@ -32,7 +32,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
@@ -112,12 +112,12 @@ fun AnimeScreen(
                         )
                     },
                     content = {
-                        rows.fastForEach { row ->
+                        rows.fastForEachIndexed { index, row ->
                             AnimatedContent(
                                 targetState = row is Resource.Success,
                                 transitionSpec = {
-                                    fadeIn(tween(750, delayMillis = 250))
-                                        .togetherWith(fadeOut(tween(750)))
+                                    fadeIn(tween(500, delayMillis = index * 100))
+                                        .togetherWith(fadeOut(tween(500)))
                                 },
                             ) {
                                 if (it) {
