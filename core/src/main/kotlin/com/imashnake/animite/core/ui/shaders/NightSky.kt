@@ -22,15 +22,13 @@ import org.intellij.lang.annotations.Language
  */
 @Language("AGSL")
 val nightSky = """
-uniform float2 resolution;
-    
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
 // Return random noise in the range [0.0, 1.0], as a function of x.
 float noise2d(float2 x) {
     float xhash = cos(x.x * 37.0);
     float yhash = cos(x.y * 57.0);
-    return fract(415.92653 * ( xhash + yhash ));
+    return fract(415.92653 * (xhash + yhash));
 }
 
 // Convert noise2d() into a "star field" by stomping everthing below fThreshhold to zero.
@@ -44,7 +42,7 @@ float noisyStarField(in float2 vSamplePos, float fThreshhold) {
 }
 
 // Stabilize noisyStarField() by only sampling at integer values.
-float stableStarField(in float2 vSamplePos, float fThreshhold) {
+float stableStarField(float2 vSamplePos, float fThreshhold) {
     // Linear interpolation between four samples.
     // Note: This approach has some visual artifacts.
     // There must be a better way to "anti alias" the star field.
@@ -64,20 +62,12 @@ float stableStarField(in float2 vSamplePos, float fThreshhold) {
 }
 
 half4 main(float2 coord) {
-    // Sky Background Color
-    float3 color = float3(0.0, 0.0, 0.0) * coord.y / resolution.y;
-
     // Note: Choose fThreshhold in the range [0.99, 0.9999].
     // Higher values (i.e., closer to one) yield a sparser starfield.
-    float StarFieldThreshhold = 0.99;
+    float starFieldThreshhold = 0.99;
+    float starVal = stableStarField(coord, starFieldThreshhold);
 
-    // Stars with a slow crawl.
-    float xRate = 0.0;
-    float yRate = -0.00;
-    float starVal = stableStarField(coord, StarFieldThreshhold);
-    color += float3(starVal);
-
-    return half4(color, 1.0);
+    return half4(starVal);
 }
 """.trimIndent()
 
@@ -91,13 +81,6 @@ fun PreviewNightSkyShader() {
             .fillMaxWidth()
             .height(dimensionResource(R.dimen.banner_height))
             .drawWithCache {
-                with(nightSky) {
-                    setFloatUniform(
-                        "resolution",
-                        size.width,
-                        size.height
-                    )
-                }
                 onDrawBehind {
                     drawRect(brush = ShaderBrush(nightSky))
                 }
