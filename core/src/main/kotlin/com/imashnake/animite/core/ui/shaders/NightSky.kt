@@ -21,68 +21,83 @@ import org.intellij.lang.annotations.Language
  * @author xaot88
  */
 @Language("AGSL")
-val nightSky = """
-// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-
-// Return random noise in the range [0.0, 1.0], as a function of x.
-float noise2d(float2 x) {
-    float xhash = cos(x.x * 37.0);
-    float yhash = cos(x.y * 57.0);
-    return fract(415.92653 * (xhash + yhash));
-}
-
-// Convert noise2d() into a "star field" by stomping everthing below fThreshhold to zero.
-float noisyStarField(in float2 vSamplePos, float fThreshhold) {
-    float starVal = noise2d(vSamplePos);
-    if (starVal >= fThreshhold)
-        starVal = pow((starVal - fThreshhold) / (1.0 - fThreshhold), 6.0);
-    else
-        starVal = 0.0;
-    return starVal;
-}
-
-// Stabilize noisyStarField() by only sampling at integer values.
-float stableStarField(float2 vSamplePos, float fThreshhold) {
-    // Linear interpolation between four samples.
-    // Note: This approach has some visual artifacts.
-    // There must be a better way to "anti alias" the star field.
-    float fractX = fract(vSamplePos.x);
-    float fractY = fract(vSamplePos.y);
-    float2 floorSample = floor(vSamplePos);
-    float v1 = noisyStarField(floorSample, fThreshhold);
-    float v2 = noisyStarField(floorSample + float2(0.0, 1.0), fThreshhold);
-    float v3 = noisyStarField(floorSample + float2(1.0, 0.0), fThreshhold);
-    float v4 = noisyStarField(floorSample + float2(1.0, 1.0), fThreshhold);
-
-    float starVal = v1 * (1.0 - fractX) * (1.0 - fractY)
-        + v2 * (1.0 - fractX) * fractY
-        + v3 * fractX * (1.0 - fractY)
-        + v4 * fractX * fractY;
-    return starVal;
-}
-
-half4 main(float2 coord) {
-    // Note: Choose fThreshhold in the range [0.99, 0.9999].
-    // Higher values (i.e., closer to one) yield a sparser starfield.
-    float starFieldThreshhold = 0.99;
-    float starVal = stableStarField(coord, starFieldThreshhold);
-
-    return half4(starVal);
-}
+  val nightSky = """
+  // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+  uniform float sparsity;
+  
+  // dummy vars for sun
+  uniform float2 resolution;
+  // 0 -> 2 * PI
+  uniform float radius;
+  uniform float time;
+  uniform float PI;
+  
+  
+  // Return random noise in the range [0.0, 1.0], as a function of x.
+  float noise2d(float2 x) {
+      float xhash = cos(x.x * 37.0);
+      float yhash = cos(x.y * 57.0);
+      return fract(415.92653 * (xhash + yhash));
+  }
+  
+  // Convert noise2d() into a "star field" by stomping everthing below fThreshhold to zero.
+  float noisyStarField(in float2 vSamplePos, float fThreshhold) {
+      float starVal = noise2d(vSamplePos);
+      if (starVal >= fThreshhold)
+          starVal = pow((starVal - fThreshhold) / (1.0 - fThreshhold), 6.0);
+      else
+          starVal = 0.0;
+      return starVal;
+  }
+  
+  // Stabilize noisyStarField() by only sampling at integer values.
+  float stableStarField(float2 vSamplePos, float fThreshhold) {
+      // Linear interpolation between four samples.
+      // Note: This approach has some visual artifacts.
+      // There must be a better way to "anti alias" the star field.
+      float fractX = fract(vSamplePos.x);
+      float fractY = fract(vSamplePos.y);
+      float2 floorSample = floor(vSamplePos);
+      float v1 = noisyStarField(floorSample, fThreshhold);
+      float v2 = noisyStarField(floorSample + float2(0.0, 1.0), fThreshhold);
+      float v3 = noisyStarField(floorSample + float2(1.0, 0.0), fThreshhold);
+      float v4 = noisyStarField(floorSample + float2(1.0, 1.0), fThreshhold);
+  
+      float starVal = v1 * (1.0 - fractX) * (1.0 - fractY)
+          + v2 * (1.0 - fractX) * fractY
+          + v3 * fractX * (1.0 - fractY)
+          + v4 * fractX * fractY;
+      return starVal;
+  }
+  
+  half4 main(float2 coord) {
+      // Note: Choose fThreshhold in the range [0.99, 0.9999].
+      // Higher values (i.e., closer to one) yield a sparser starfield.
+      float starFieldThreshhold = sparsity;
+      float starVal = stableStarField(coord, starFieldThreshhold);
+  
+      return half4(starVal);
+  }
 """.trimIndent()
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview
 @Composable
 fun PreviewNightSkyShader() {
-    val nightSky = remember { RuntimeShader(nightSky) }
+    val nightSkyShader = remember { RuntimeShader(nightSky) }
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(dimensionResource(R.dimen.banner_height))
             .drawWithCache {
+                with(nightSkyShader) {
+                    setFloatUniform(
+                        "sparsity",
+                        0.99f
+                    )
+                }
                 onDrawBehind {
-                    drawRect(brush = ShaderBrush(nightSky))
+                    drawRect(brush = ShaderBrush(nightSkyShader))
                 }
             }
     )
