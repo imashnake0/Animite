@@ -25,12 +25,15 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,6 +46,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.features.theme.manropeFontFamily
 import com.imashnake.animite.manga.MangaScreen
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.AnimeRoute
@@ -64,12 +68,20 @@ import kotlinx.coroutines.flow.filterNotNull
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
+    var showSplashScreen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        installSplashScreen().setKeepOnScreenCondition { showSplashScreen }
         enableEdgeToEdge()
         setContent {
+            val fontFamilyResolver = LocalFontFamilyResolver.current
+            LaunchedEffect(Unit) {
+                fontFamilyResolver.preload(manropeFontFamily)
+                showSplashScreen = false
+            }
+
             val theme by settingsViewModel.theme
                 .filterNotNull()
                 .collectAsState(initial = Theme.DEVICE_THEME.name)
