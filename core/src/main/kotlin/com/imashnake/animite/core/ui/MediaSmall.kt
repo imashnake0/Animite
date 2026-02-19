@@ -26,6 +26,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -328,9 +329,8 @@ internal fun LoadingMediaSmall(
         )
 
         Text(
-            text = "",
+            text = " \n ",
             style = MaterialTheme.typography.labelLarge,
-            minLines = 2,
             modifier = Modifier.padding(
                 vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
             )
@@ -393,7 +393,7 @@ private fun PreviewLoadingMediaSmall() {
 
 @Preview
 @Composable
-private fun PreviewLsoadingMediaSmall() {
+private fun PreviewMediaSmall() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MediaSmall(
             imageHeight = 200.dp,
