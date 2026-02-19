@@ -133,7 +133,7 @@ private fun UserFavouriteLists(
                                         )
                                     ),
                                     animatedVisibilityScope,
-                                ),
+                                ).skipToLookaheadSize(),
                             )
                         }
                     }
