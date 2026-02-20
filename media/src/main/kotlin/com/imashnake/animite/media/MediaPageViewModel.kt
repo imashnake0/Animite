@@ -50,7 +50,7 @@ class MediaPageViewModel @Inject constructor(
                     dayHoursToNextEpisode = media?.timeToEpisode?.first,
                     nextEpisode = media?.timeToEpisode?.second,
                     info = media?.info,
-                    ranks = media?.rankings,
+                    rankings = media?.rankings,
                     genres = media?.genres,
                     characters = media?.characters,
                     staff = media?.staff,

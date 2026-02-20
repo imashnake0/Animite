@@ -253,30 +253,35 @@ fun MediaPage(
                                     ) + horizontalInsets,
                                 )
 
-                            if (!media.ranks.isNullOrEmpty()) {
-                                StatsRow(
-                                    stats = media.ranks,
-                                    modifier = Modifier
-                                        .skipToLookaheadSize()
-                                        .fillMaxWidth()
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .padding(horizontalInsets)
-                                ) {
-                                    Text(
-                                        text = it.type.name,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        style = MaterialTheme.typography.labelSmall
-                                    )
+                            if (!media.rankings.isNullOrEmpty()) {
+                                Column {
+                                    media.rankings.fastForEach {
+                                        StatsRow(
+                                            stats = it.second,
+                                            modifier = Modifier
+                                                .skipToLookaheadSize()
+                                                .fillMaxWidth()
+                                                .padding(horizontal = LocalPaddings.current.large)
+                                                .padding(horizontalInsets)
+                                        ) { ranking ->
+                                            Text(
+                                                // TODO: Use string resources.
+                                                text = ranking.type.name,
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                style = MaterialTheme.typography.labelSmall
+                                            )
 
-                                    Text(
-                                        text = when (it.type) {
-                                            Media.Ranking.Type.SCORE -> "${it.rank}%"
-                                            Media.Ranking.Type.RATED,
-                                            Media.Ranking.Type.POPULAR -> "#${it.rank}"
-                                        },
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        style = MaterialTheme.typography.displaySmall
-                                    )
+                                            Text(
+                                                text = when (ranking.type) {
+                                                    Media.Ranking.Type.SCORE -> "${ranking.rank}%"
+                                                    Media.Ranking.Type.RATED,
+                                                    Media.Ranking.Type.POPULAR -> "#${ranking.rank}"
+                                                },
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                style = MaterialTheme.typography.displaySmall
+                                            )
+                                        }
+                                    }
                                 }
                             }
 

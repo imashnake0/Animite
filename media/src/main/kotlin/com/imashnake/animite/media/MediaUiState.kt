@@ -1,6 +1,7 @@
 package com.imashnake.animite.media
 
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Ranking
 import kotlinx.collections.immutable.ImmutableList
 
 data class MediaUiState(
@@ -15,7 +16,7 @@ data class MediaUiState(
     val dayHoursToNextEpisode: String? = null,
     val nextEpisode: Int? = null,
     val info: ImmutableList<Media.Info>? = null,
-    val ranks: ImmutableList<Media.Ranking>? = null,
+    val rankings: ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>>? = null,
     val genres: ImmutableList<String>? = null,
     val genreTitleList: Pair<String, ImmutableList<Media.Medium>>? = null,
     val characters: ImmutableList<Media.Credit>? = null,
