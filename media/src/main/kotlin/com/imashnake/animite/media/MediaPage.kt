@@ -286,17 +286,22 @@ fun MediaPage(
                                                             HapticFeedbackType.SegmentTick
                                                         )
                                                     },
-                                                    shapes = when (selectedTimeSpanIndex) {
+                                                    shapes = when (timeSpan.index) {
                                                         0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                                                         2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                                         else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                                     },
-                                                    colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = MaterialTheme.colorScheme.background
-                                                    ),
                                                     modifier = Modifier.weight(1f)
                                                 ) {
-                                                    Text(stringResource(timeSpan.res))
+                                                    val seasonYear = media.info?.find { it.item == Media.InfoItem.SEASON } as? Media.Info.Season
+                                                    Column {
+                                                        Text(stringResource(timeSpan.res))
+//                                                        when(timeSpan.index) {
+//                                                            1 -> Text(seasonYear?.year?.toString() ?: " ")
+//                                                            2 -> seasonYear?.season?.res?.let { Text(stringResource(it)) }
+//                                                            else -> Text(" ")
+//                                                        }
+                                                    }
                                                 }
                                             }
                                         }
