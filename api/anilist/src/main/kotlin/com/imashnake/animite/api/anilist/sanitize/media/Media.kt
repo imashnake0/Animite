@@ -149,6 +149,7 @@ data class Media(
         }.toImmutableList()
 
 
+        // TODO: Split this into getAllTimeRankings and getYearSeasonRankings.
         fun getRankings(
             rankings: List<MediaQuery.Ranking?>?,
             averageScore: Int?
