@@ -323,41 +323,66 @@ fun MediaPage(
                                         }
                                         AnimatedContent(targetState = selectedTimeSpanIndex) {
                                             val selectedList = media.rankings[it]
-                                            StatsRow(
-                                                stats = selectedList.second,
-                                                modifier = Modifier.fillMaxWidth()
-                                            ) { ranking ->
-                                                val textColor = when (ranking.type) {
-                                                    Media.Ranking.Type.SCORE -> MaterialTheme.colorScheme.onBackground
-                                                    Media.Ranking.Type.RATED,
-                                                    Media.Ranking.Type.POPULAR -> when(ranking.rank) {
-                                                        1 -> Color(0xFFEFBF04)
-                                                        2 -> Color(0xFFC4C4C4)
-                                                        3 -> Color(0xFFA45100)
-                                                        else -> MaterialTheme.colorScheme.onBackground
+                                            if (selectedList.second.isEmpty()) {
+                                                Box(
+                                                    contentAlignment = Alignment.Center,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Column(verticalArrangement = Arrangement.SpaceEvenly) {
+                                                        Text(
+                                                            text = " ",
+                                                            style = MaterialTheme.typography.labelSmall
+                                                        )
+                                                        Text(
+                                                            text = " ",
+                                                            style = MaterialTheme.typography.displaySmall
+                                                        )
                                                     }
+                                                    Text(
+                                                        text = stringResource(R.string.no_rankings),
+                                                        color = MaterialTheme.colorScheme.onBackground.copy(
+                                                            alpha = 0.74f
+                                                        ),
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                    )
                                                 }
-
-                                                Text(
-                                                    text = stringResource(ranking.type.res),
-                                                    color = textColor,
-                                                    style = MaterialTheme.typography.labelSmall
-                                                )
-
-                                                Text(
-                                                    text = when (ranking.type) {
-                                                        Media.Ranking.Type.SCORE -> "${ranking.rank}%"
+                                            } else {
+                                                StatsRow(
+                                                    stats = selectedList.second,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) { ranking ->
+                                                    val textColor = when (ranking.type) {
+                                                        Media.Ranking.Type.SCORE -> MaterialTheme.colorScheme.onBackground
                                                         Media.Ranking.Type.RATED,
                                                         Media.Ranking.Type.POPULAR -> when (ranking.rank) {
-                                                            1 -> "\uD83E\uDD47"
-                                                            2 -> "\uD83E\uDD48"
-                                                            3 -> "\uD83E\uDD49"
-                                                            else -> "#${ranking.rank}"
+                                                            1 -> Color(0xFFEFBF04)
+                                                            2 -> Color(0xFFC4C4C4)
+                                                            3 -> Color(0xFFA45100)
+                                                            else -> MaterialTheme.colorScheme.onBackground
                                                         }
-                                                    },
-                                                    color = textColor,
-                                                    style = MaterialTheme.typography.displaySmall
-                                                )
+                                                    }
+
+                                                    Text(
+                                                        text = stringResource(ranking.type.res),
+                                                        color = textColor,
+                                                        style = MaterialTheme.typography.labelSmall
+                                                    )
+
+                                                    Text(
+                                                        text = when (ranking.type) {
+                                                            Media.Ranking.Type.SCORE -> "${ranking.rank}%"
+                                                            Media.Ranking.Type.RATED,
+                                                            Media.Ranking.Type.POPULAR -> when (ranking.rank) {
+                                                                1 -> "\uD83E\uDD47"
+                                                                2 -> "\uD83E\uDD48"
+                                                                3 -> "\uD83E\uDD49"
+                                                                else -> "#${ranking.rank}"
+                                                            }
+                                                        },
+                                                        color = textColor,
+                                                        style = MaterialTheme.typography.displaySmall
+                                                    )
+                                                }
                                             }
                                         }
                                     }

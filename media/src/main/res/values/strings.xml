@@ -63,6 +63,8 @@
     <string name="popular">POPULAR</string>
     <string name="score">SCORE</string>
 
+    <string name="no_rankings">No rankings available</string>
+
     <string name="characters">Characters</string>
     <string name="staff">Staff</string>
     <string name="trailer">Trailer</string>
