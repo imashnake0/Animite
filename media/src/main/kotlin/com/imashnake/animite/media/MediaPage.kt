@@ -71,7 +71,6 @@ import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -141,6 +140,7 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
+import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.media.ext.title
 import com.imashnake.animite.navigation.SharedContentKey
@@ -293,14 +293,30 @@ fun MediaPage(
                                                     },
                                                     modifier = Modifier.weight(1f)
                                                 ) {
-                                                    val seasonYear = media.info?.find { it.item == Media.InfoItem.SEASON } as? Media.Info.Season
-                                                    Column {
-                                                        Text(stringResource(timeSpan.res))
-//                                                        when(timeSpan.index) {
-//                                                            1 -> Text(seasonYear?.year?.toString() ?: " ")
-//                                                            2 -> seasonYear?.season?.res?.let { Text(stringResource(it)) }
-//                                                            else -> Text(" ")
-//                                                        }
+                                                    Row(
+                                                        verticalAlignment = Alignment.Bottom,
+                                                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                                                        Text(text = stringResource(timeSpan.res), Modifier.alignByBaseline())
+                                                        when(timeSpan.index) {
+                                                            1 -> media.year?.let {
+                                                                Text(
+                                                                    text = it,
+                                                                    fontSize = 10.sp,
+                                                                    modifier = Modifier.graphicsLayer { alpha = 0.5f }.alignByBaseline()
+                                                                )
+                                                            }
+                                                            2 -> media.season?.let {
+                                                                Icon(
+                                                                    imageVector = ImageVector.vectorResource(it.icon),
+                                                                    contentDescription = stringResource(it.res),
+                                                                    modifier = Modifier
+                                                                        .graphicsLayer { alpha = 0.5f }
+                                                                        .height(14.dp)
+                                                                        .align(Alignment.CenterVertically)
+                                                                )
+                                                            }
+                                                            else -> {}
+                                                        }
                                                     }
                                                 }
                                             }
@@ -311,10 +327,20 @@ fun MediaPage(
                                                 stats = selectedList.second,
                                                 modifier = Modifier.fillMaxWidth()
                                             ) { ranking ->
+                                                val textColor = when (ranking.type) {
+                                                    Media.Ranking.Type.SCORE -> MaterialTheme.colorScheme.onBackground
+                                                    Media.Ranking.Type.RATED,
+                                                    Media.Ranking.Type.POPULAR -> when(ranking.rank) {
+                                                        1 -> Color(0xFFEFBF04)
+                                                        2 -> Color(0xFFC4C4C4)
+                                                        3 -> Color(0xFFA45100)
+                                                        else -> MaterialTheme.colorScheme.onBackground
+                                                    }
+                                                }
                                                 Text(
                                                     // TODO: Use string resources.
                                                     text = ranking.type.name,
-                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    color = textColor,
                                                     style = MaterialTheme.typography.labelSmall
                                                 )
 
@@ -322,9 +348,14 @@ fun MediaPage(
                                                     text = when (ranking.type) {
                                                         Media.Ranking.Type.SCORE -> "${ranking.rank}%"
                                                         Media.Ranking.Type.RATED,
-                                                        Media.Ranking.Type.POPULAR -> "#${ranking.rank}"
+                                                        Media.Ranking.Type.POPULAR -> when (ranking.rank) {
+                                                            1 -> "\uD83E\uDD47"
+                                                            2 -> "\uD83E\uDD48"
+                                                            3 -> "\uD83E\uDD49"
+                                                            else -> "#${ranking.rank}"
+                                                        }
                                                     },
-                                                    color = MaterialTheme.colorScheme.onBackground,
+                                                    color = textColor,
                                                     style = MaterialTheme.typography.displaySmall
                                                 )
                                             }

@@ -44,6 +44,13 @@ val Media.Season.res get() = when(this) {
     Media.Season.FALL -> R.string.fall
 }
 
+val Media.Season.icon get() = when(this) {
+    Media.Season.WINTER -> R.drawable.winter
+    Media.Season.SPRING -> R.drawable.spring
+    Media.Season.SUMMER -> R.drawable.summer
+    Media.Season.FALL -> R.drawable.fall
+}
+
 val Media.Source.res get() = when(this) {
     Media.Source.ORIGINAL -> R.string.original
     Media.Source.MANGA -> R.string.manga

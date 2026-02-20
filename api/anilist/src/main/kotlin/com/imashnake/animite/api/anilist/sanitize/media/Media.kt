@@ -61,6 +61,10 @@ data class Media(
     val timeToEpisode: Pair<String, Int>?,
     /** @see MediaQuery.Media */
     val info: ImmutableList<Info>,
+    /** @see AnimeInfo.seasonYear */
+    val year: String?,
+    /** @see AnimeInfo.season */
+    val season: Season?,
     /** @see MediaQuery.Media.rankings */
     val rankings: ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>>,
     /** @see MediaQuery.Media.genres */
@@ -150,13 +154,10 @@ data class Media(
             averageScore: Int?
         ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
             if (rankings == null) return persistentListOf()
-            val parts = rankings.filter {
-                it?.type != null && it.type != MediaRankType.UNKNOWN__
-            }.partition { it!!.type == MediaRankType.POPULAR }
+            val rankings = rankings.filterNotNull().filter { it.type != MediaRankType.UNKNOWN__ }
+            val (ratedList, popularList) = rankings.partition { it.type == MediaRankType.RATED }
 
-            val ratedList = parts.first.filterNotNull()
-            val popularList = parts.second.filterNotNull()
-            if (ratedList.isEmpty() || popularList.isEmpty()) return persistentListOf()
+            if (ratedList.isEmpty() && popularList.isEmpty()) return persistentListOf()
 
             // We're assuming that rankings are returned in this order
             // All time, Year, Season
@@ -523,6 +524,8 @@ data class Media(
         // TODO: Make this a proper countdown.
         timeToEpisode = getTimeToEpisode(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
+        year = query.animeInfo.seasonYear?.toString(),
+        season = query.animeInfo.season?.sanitize(),
         rankings = getRankings(query.rankings, query.averageScore),
         genres = query.genres?.filterNotNull().orEmpty().toImmutableList(),
         characters = query.characters?.edges.orEmpty().mapNotNull {

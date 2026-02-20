@@ -16,6 +16,8 @@ data class MediaUiState(
     val dayHoursToNextEpisode: String? = null,
     val nextEpisode: Int? = null,
     val info: ImmutableList<Media.Info>? = null,
+    val year: String? = null,
+    val season: Media.Season? = null,
     val rankings: ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>>? = null,
     val genres: ImmutableList<String>? = null,
     val genreTitleList: Pair<String, ImmutableList<Media.Medium>>? = null,
