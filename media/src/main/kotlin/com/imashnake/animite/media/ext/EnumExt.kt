@@ -90,3 +90,9 @@ val Media.Ranking.TimeSpan.res get() = when(this) {
     Media.Ranking.TimeSpan.YEAR -> R.string.year
     Media.Ranking.TimeSpan.SEASON -> R.string.season
 }
+
+val Media.Ranking.Type.res get() = when(this) {
+    Media.Ranking.Type.RATED -> R.string.rated
+    Media.Ranking.Type.POPULAR -> R.string.popular
+    Media.Ranking.Type.SCORE -> R.string.score
+}

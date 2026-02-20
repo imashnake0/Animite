@@ -337,9 +337,9 @@ fun MediaPage(
                                                         else -> MaterialTheme.colorScheme.onBackground
                                                     }
                                                 }
+
                                                 Text(
-                                                    // TODO: Use string resources.
-                                                    text = ranking.type.name,
+                                                    text = stringResource(ranking.type.res),
                                                     color = textColor,
                                                     style = MaterialTheme.typography.labelSmall
                                                 )
