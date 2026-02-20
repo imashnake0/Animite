@@ -55,6 +55,10 @@
     <string name="multimedia_project">Multimedia Project</string>
     <string name="picture_book">Picture Book</string>
 
+    <string name="all_time">All Time</string>
+    <string name="year">Year</string>
+<!--    <string name="season">Season</string>-->
+
     <string name="characters">Characters</string>
     <string name="staff">Staff</string>
     <string name="trailer">Trailer</string>

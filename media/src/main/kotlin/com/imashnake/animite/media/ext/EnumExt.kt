@@ -77,3 +77,9 @@ val Media.Relation.res get() = when(this) {
     Media.Relation.COMPILATION -> R.string.compilation_relation
     Media.Relation.CONTAINS -> R.string.contains_relation
 }
+
+val Media.Ranking.TimeSpan.res get() = when(this) {
+    Media.Ranking.TimeSpan.ALL_TIME -> R.string.all_time
+    Media.Ranking.TimeSpan.YEAR -> R.string.year
+    Media.Ranking.TimeSpan.SEASON -> R.string.season
+}
