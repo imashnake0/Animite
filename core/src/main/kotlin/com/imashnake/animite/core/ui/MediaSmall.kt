@@ -258,6 +258,7 @@ internal fun MediaSmall(
                     if (tagMinLines > 1) {
                         Text(
                             text = " \n ",
+                            fontSize = 10.sp,
                             maxLines = tagMinLines,
                             minLines = tagMinLines,
                             lineHeight = 16.sp,

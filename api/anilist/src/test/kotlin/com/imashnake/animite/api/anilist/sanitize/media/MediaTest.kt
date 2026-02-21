@@ -4,7 +4,9 @@ import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Info
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Ranking
 import com.imashnake.animite.api.anilist.type.MediaFormat
+import com.imashnake.animite.api.anilist.type.MediaRankType
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSource
 import com.imashnake.animite.api.anilist.type.MediaStatus
@@ -17,7 +19,7 @@ class MediaTest {
     // region character
     @Test
     fun `character is transformed correctly`() {
-        val actual = Media.Character(getCharacterSmall(), "role")
+        val actual = Media.Credit(getCharacterSmall(), "role")
         val expected = getMediaCharacter()
 
         assertEquals(expected, actual)
@@ -25,14 +27,14 @@ class MediaTest {
 
     @Test
     fun `character alternative names is empty if there are none`() {
-        val actual = Media.Character(getCharacterSmall(alternative = emptyList()))
+        val actual = Media.Credit(getCharacterSmall(alternative = emptyList()))
 
         assertTrue(actual.alternativeNames.isEmpty())
     }
 
     @Test
     fun `character dob is null if year and month are null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             dateOfBirth = CharacterSmall.DateOfBirth(
                 year = null,
                 month = null,
@@ -45,7 +47,7 @@ class MediaTest {
 
     @Test
     fun `character dob is year if only month is null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             dateOfBirth = CharacterSmall.DateOfBirth(
                 year = 2025,
                 month = null,
@@ -58,7 +60,7 @@ class MediaTest {
 
     @Test
     fun `character dob if year is null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             dateOfBirth = CharacterSmall.DateOfBirth(
                 year = null,
                 month = 11,
@@ -71,7 +73,7 @@ class MediaTest {
 
     @Test
     fun `character dob if day is null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             dateOfBirth = CharacterSmall.DateOfBirth(
                 year = 2025,
                 month = 11,
@@ -84,7 +86,7 @@ class MediaTest {
 
     @Test
     fun `character dob if year and day are null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             dateOfBirth = CharacterSmall.DateOfBirth(
                 year = null,
                 month = 11,
@@ -97,7 +99,7 @@ class MediaTest {
 
     @Test
     fun `character dob`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             dateOfBirth = CharacterSmall.DateOfBirth(
                 year = 2025,
                 month = 11,
@@ -110,7 +112,7 @@ class MediaTest {
 
     @Test
     fun `character favourites is null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             favourites = null
         ))
 
@@ -119,7 +121,7 @@ class MediaTest {
 
     @Test
     fun `character favourites does not have decimal for whole thousands`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             favourites = 15000
         ))
 
@@ -128,7 +130,7 @@ class MediaTest {
 
     @Test
     fun `character favourites is not a whole thousand`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             favourites = 123456
         ))
 
@@ -137,7 +139,7 @@ class MediaTest {
 
     @Test
     fun `character description when age is null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             age = null,
         ))
 
@@ -146,7 +148,7 @@ class MediaTest {
 
     @Test
     fun `character description when gender is null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             gender = null,
         ))
 
@@ -155,7 +157,7 @@ class MediaTest {
 
     @Test
     fun `character description when age and gender are null`() {
-        val actual = Media.Character(getCharacterSmall(
+        val actual = Media.Credit(getCharacterSmall(
             age = null,
             gender = null,
         ))
@@ -189,7 +191,7 @@ class MediaTest {
         favourites = favourites
     )
 
-    private fun getMediaCharacter() = Media.Character(
+    private fun getMediaCharacter() = Media.Credit(
         id = 12345,
         image = "image",
         name = "fullName",
@@ -355,4 +357,233 @@ class MediaTest {
 
         assertTrue(actual.isEmpty())
     }
+    // endregion
+
+    // region rankings
+    @Test
+    fun `rankings are grouped properly`() {
+        val actual = Media.getRankings(
+            rankings = listOf(
+                MediaQuery.Ranking(
+                    rank = 6,
+                    type = MediaRankType.RATED,
+                    allTime = true
+                ),
+                MediaQuery.Ranking(
+                    rank = 5,
+                    type = MediaRankType.POPULAR,
+                    allTime = true
+                ),
+                MediaQuery.Ranking(
+                    rank = 4,
+                    type = MediaRankType.RATED,
+                    allTime = false
+                ),
+                MediaQuery.Ranking(
+                    rank = 3,
+                    type = MediaRankType.POPULAR,
+                    allTime = false
+                ),
+                MediaQuery.Ranking(
+                    rank = 2,
+                    type = MediaRankType.RATED,
+                    allTime = false
+                ),
+                MediaQuery.Ranking(
+                    rank = 1,
+                    type = MediaRankType.POPULAR,
+                    allTime = false
+                )
+            ),
+            averageScore = 50
+        )
+
+        assertEquals(actual.size, 3)
+
+        with(actual[0]) {
+            assertEquals(Ranking.TimeSpan.ALL_TIME, first)
+
+            assertEquals(3, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(6, second[0].rank)
+
+            assertEquals(Ranking.Type.POPULAR, second[1].type)
+            assertEquals(5, second[1].rank)
+
+            assertEquals(Ranking.Type.SCORE, second[2].type)
+            assertEquals(50, second[2].rank)
+        }
+
+        with(actual[1]) {
+            assertEquals(Ranking.TimeSpan.YEAR, first)
+
+            assertEquals(2, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(4, second[0].rank)
+
+            assertEquals(Ranking.Type.POPULAR, second[1].type)
+            assertEquals(3, second[1].rank)
+        }
+
+        with(actual[2]) {
+            assertEquals(Ranking.TimeSpan.SEASON, first)
+
+            assertEquals(2, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(2, second[0].rank)
+
+            assertEquals(Ranking.Type.POPULAR, second[1].type)
+            assertEquals(1, second[1].rank)
+        }
+    }
+
+    @Test
+    fun `only all time rankings are present`() {
+        val actual = Media.getRankings(
+            rankings = listOf(
+                MediaQuery.Ranking(
+                    rank = 6,
+                    type = MediaRankType.RATED,
+                    allTime = true
+                ),
+                MediaQuery.Ranking(
+                    rank = 5,
+                    type = MediaRankType.POPULAR,
+                    allTime = true
+                )
+            ),
+            averageScore = 50
+        )
+
+        assertEquals(actual.size, 3)
+
+        with(actual[0]) {
+            assertEquals(Ranking.TimeSpan.ALL_TIME, first)
+
+            assertEquals(3, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(6, second[0].rank)
+
+            assertEquals(Ranking.Type.POPULAR, second[1].type)
+            assertEquals(5, second[1].rank)
+
+            assertEquals(Ranking.Type.SCORE, second[2].type)
+            assertEquals(50, second[2].rank)
+        }
+
+        with(actual[1]) {
+            assertEquals(Ranking.TimeSpan.YEAR, first)
+
+            assertEquals(0, second.size)
+        }
+
+        with(actual[2]) {
+            assertEquals(Ranking.TimeSpan.SEASON, first)
+
+            assertEquals(0, second.size)
+        }
+    }
+
+    @Test
+    fun `only year rankings are present`() {
+        val actual = Media.getRankings(
+            rankings = listOf(
+                MediaQuery.Ranking(
+                    rank = 4,
+                    type = MediaRankType.RATED,
+                    allTime = false
+                ),
+                MediaQuery.Ranking(
+                    rank = 3,
+                    type = MediaRankType.POPULAR,
+                    allTime = false
+                )
+            ),
+            averageScore = null
+        )
+
+        assertEquals(actual.size, 3)
+
+        with(actual[0]) {
+            assertEquals(Ranking.TimeSpan.ALL_TIME, first)
+
+            assertEquals(0, second.size)
+        }
+
+        with(actual[1]) {
+            assertEquals(Ranking.TimeSpan.YEAR, first)
+
+            assertEquals(2, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(4, second[0].rank)
+
+            assertEquals(Ranking.Type.POPULAR, second[1].type)
+            assertEquals(3, second[1].rank)
+        }
+
+        with(actual[2]) {
+            assertEquals(Ranking.TimeSpan.SEASON, first)
+
+            assertEquals(0, second.size)
+        }
+    }
+
+    @Test
+    fun `only rated rankings are present`() {
+        val actual = Media.getRankings(
+            rankings = listOf(
+                MediaQuery.Ranking(
+                    rank = 6,
+                    type = MediaRankType.RATED,
+                    allTime = true
+                ),
+                MediaQuery.Ranking(
+                    rank = 4,
+                    type = MediaRankType.RATED,
+                    allTime = false
+                ),
+                MediaQuery.Ranking(
+                    rank = 2,
+                    type = MediaRankType.RATED,
+                    allTime = false
+                ),
+            ),
+            averageScore = null
+        )
+
+        assertEquals(actual.size, 3)
+
+        with(actual[0]) {
+            assertEquals(Ranking.TimeSpan.ALL_TIME, first)
+
+            assertEquals(1, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(6, second[0].rank)
+        }
+
+        with(actual[1]) {
+            assertEquals(Ranking.TimeSpan.YEAR, first)
+
+            assertEquals(1, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(4, second[0].rank)
+        }
+
+        with(actual[2]) {
+            assertEquals(Ranking.TimeSpan.SEASON, first)
+
+            assertEquals(1, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(2, second[0].rank)
+        }
+    }
+    // endregion
 }

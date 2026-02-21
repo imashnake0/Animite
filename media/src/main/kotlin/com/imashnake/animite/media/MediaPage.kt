@@ -60,6 +60,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -69,6 +70,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -77,6 +79,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -92,9 +95,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -135,6 +140,7 @@ import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
+import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.media.ext.title
 import com.imashnake.animite.navigation.SharedContentKey
@@ -151,7 +157,7 @@ import com.imashnake.animite.core.R as coreR
 private const val RECOMMENDATIONS = "Recommendations"
 private const val RELATIONS = "Relations"
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",
@@ -176,6 +182,9 @@ fun MediaPage(
 
     var showDetailsSheet by remember { mutableStateOf(false) }
     val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+
+    var selectedTimeSpanIndex by remember { mutableIntStateOf(0) }
+    val haptic = LocalHapticFeedback.current
 
     var showCharacterSheet by remember { mutableStateOf(false) }
     var showStaffSheet by remember { mutableStateOf(false) }
@@ -245,38 +254,138 @@ fun MediaPage(
                                 onClick = { showDetailsSheet = true },
                             )
 
-                            if (!media.info.isNullOrEmpty())
-                                MediaInfo(
-                                    info = media.info,
-                                    contentPadding = PaddingValues(
-                                        horizontal = LocalPaddings.current.large
-                                    ) + horizontalInsets,
-                                )
-
-                            if (!media.ranks.isNullOrEmpty()) {
-                                StatsRow(
-                                    stats = media.ranks,
-                                    modifier = Modifier
-                                        .skipToLookaheadSize()
-                                        .fillMaxWidth()
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .padding(horizontalInsets)
-                                ) {
-                                    Text(
-                                        text = it.type.name,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        style = MaterialTheme.typography.labelSmall
+                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                                if (!media.info.isNullOrEmpty())
+                                    MediaInfo(
+                                        info = media.info,
+                                        contentPadding = PaddingValues(
+                                            horizontal = LocalPaddings.current.large
+                                        ) + horizontalInsets,
                                     )
 
-                                    Text(
-                                        text = when (it.type) {
-                                            Media.Ranking.Type.SCORE -> "${it.rank}%"
-                                            Media.Ranking.Type.RATED,
-                                            Media.Ranking.Type.POPULAR -> "#${it.rank}"
-                                        },
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        style = MaterialTheme.typography.displaySmall
-                                    )
+                                if (!media.rankings.isNullOrEmpty()) {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                        modifier = Modifier
+                                            .skipToLookaheadSize()
+                                            .fillMaxWidth()
+                                            .padding(horizontal = LocalPaddings.current.large)
+                                            .padding(horizontalInsets)
+                                    ) {
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                ButtonGroupDefaults.ConnectedSpaceBetween
+                                            )
+                                        ) {
+                                            Media.Ranking.TimeSpan.entries.forEach { timeSpan ->
+                                                ToggleButton(
+                                                    checked = selectedTimeSpanIndex == timeSpan.index,
+                                                    onCheckedChange = {
+                                                        selectedTimeSpanIndex = timeSpan.index
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.SegmentTick
+                                                        )
+                                                    },
+                                                    shapes = when (timeSpan.index) {
+                                                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                        2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                                    },
+                                                    modifier = Modifier.weight(1f)
+                                                ) {
+                                                    Row(
+                                                        verticalAlignment = Alignment.Bottom,
+                                                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                                                        Text(text = stringResource(timeSpan.res), Modifier.alignByBaseline())
+                                                        when(timeSpan.index) {
+                                                            1 -> media.year?.let {
+                                                                Text(
+                                                                    text = it,
+                                                                    fontSize = 10.sp,
+                                                                    modifier = Modifier.graphicsLayer { alpha = 0.5f }.alignByBaseline()
+                                                                )
+                                                            }
+                                                            2 -> media.season?.let {
+                                                                Icon(
+                                                                    imageVector = ImageVector.vectorResource(it.icon),
+                                                                    contentDescription = stringResource(it.res),
+                                                                    modifier = Modifier
+                                                                        .graphicsLayer { alpha = 0.5f }
+                                                                        .height(14.dp)
+                                                                        .align(Alignment.CenterVertically)
+                                                                )
+                                                            }
+                                                            else -> {}
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        AnimatedContent(targetState = selectedTimeSpanIndex) {
+                                            val selectedList = media.rankings[it]
+                                            if (selectedList.second.isEmpty()) {
+                                                Box(
+                                                    contentAlignment = Alignment.Center,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Column(verticalArrangement = Arrangement.SpaceEvenly) {
+                                                        Text(
+                                                            text = " ",
+                                                            style = MaterialTheme.typography.labelSmall
+                                                        )
+                                                        Text(
+                                                            text = " ",
+                                                            style = MaterialTheme.typography.displaySmall
+                                                        )
+                                                    }
+                                                    Text(
+                                                        text = stringResource(R.string.no_rankings),
+                                                        color = MaterialTheme.colorScheme.onBackground.copy(
+                                                            alpha = 0.74f
+                                                        ),
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                    )
+                                                }
+                                            } else {
+                                                StatsRow(
+                                                    stats = selectedList.second,
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) { ranking ->
+                                                    val textColor = when (ranking.type) {
+                                                        Media.Ranking.Type.SCORE -> MaterialTheme.colorScheme.onBackground
+                                                        Media.Ranking.Type.RATED,
+                                                        Media.Ranking.Type.POPULAR -> when (ranking.rank) {
+                                                            1 -> Color(0xFFEFBF04)
+                                                            2 -> Color(0xFFC4C4C4)
+                                                            3 -> Color(0xFFA45100)
+                                                            else -> MaterialTheme.colorScheme.onBackground
+                                                        }
+                                                    }
+
+                                                    Text(
+                                                        text = stringResource(ranking.type.res),
+                                                        color = textColor,
+                                                        style = MaterialTheme.typography.labelSmall
+                                                    )
+
+                                                    Text(
+                                                        text = when (ranking.type) {
+                                                            Media.Ranking.Type.SCORE -> "${ranking.rank}%"
+                                                            Media.Ranking.Type.RATED,
+                                                            Media.Ranking.Type.POPULAR -> when (ranking.rank) {
+                                                                1 -> "\uD83E\uDD47"
+                                                                2 -> "\uD83E\uDD48"
+                                                                3 -> "\uD83E\uDD49"
+                                                                else -> "#${ranking.rank}"
+                                                            }
+                                                        },
+                                                        color = textColor,
+                                                        style = MaterialTheme.typography.displaySmall
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
 

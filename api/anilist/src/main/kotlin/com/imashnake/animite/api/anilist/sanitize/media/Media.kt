@@ -61,8 +61,12 @@ data class Media(
     val timeToEpisode: Pair<String, Int>?,
     /** @see MediaQuery.Media */
     val info: ImmutableList<Info>,
+    /** @see AnimeInfo.seasonYear */
+    val year: String?,
+    /** @see AnimeInfo.season */
+    val season: Season?,
     /** @see MediaQuery.Media.rankings */
-    val rankings: ImmutableList<Ranking>,
+    val rankings: ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>>,
     /** @see MediaQuery.Media.genres */
     val genres: ImmutableList<String>,
     /** @see MediaQuery.Media.characters */
@@ -143,6 +147,75 @@ data class Media(
                 removeLastOrNull()
             }
         }.toImmutableList()
+
+        fun getRankings(
+            rankings: List<MediaQuery.Ranking?>?,
+            averageScore: Int?
+        ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
+            if (rankings == null) return persistentListOf()
+            val (allTimeRankings, yearSeasonRankings) = rankings.filterNotNull().partition { it.allTime == true }
+
+            return persistentListOf(getAllTimeRankings(allTimeRankings, averageScore)).addAll(
+                elements = getYearSeasonRankings(yearSeasonRankings)
+            )
+        }
+
+        fun getAllTimeRankings(
+            rankings: List<MediaQuery.Ranking>,
+            averageScore: Int?
+        ): Pair<Ranking.TimeSpan, ImmutableList<Ranking>> {
+            val rankings = rankings.mapNotNull {
+                if (it.type == MediaRankType.UNKNOWN__) return@mapNotNull null
+                Ranking(
+                    rank = it.rank,
+                    type = when (it.type) {
+                        MediaRankType.RATED -> Ranking.Type.RATED
+                        MediaRankType.POPULAR -> Ranking.Type.POPULAR
+                    }
+                )
+            } + listOfNotNull(
+                element = averageScore?.let {
+                    Ranking(rank = it, type = Ranking.Type.SCORE)
+                }
+            )
+
+            return Ranking.TimeSpan.ALL_TIME to rankings.toImmutableList()
+        }
+
+        fun getYearSeasonRankings(
+            rankings: List<MediaQuery.Ranking>,
+        ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
+            val rankings = rankings.filter { it.type != MediaRankType.UNKNOWN__ }
+            val (ratedList, popularList) = rankings.partition { it.type == MediaRankType.RATED }
+
+            // We're assuming that rankings are returned in this order
+            // All time, Year, Season
+            return listOf(Ranking.TimeSpan.YEAR, Ranking.TimeSpan.SEASON).map { timeSpan ->
+                getTimeSpanToList(timeSpan, ratedList, popularList)
+            }.toImmutableList()
+        }
+
+        private fun getTimeSpanToList(
+            timeSpan: Ranking.TimeSpan,
+            ratedList: List<MediaQuery.Ranking>,
+            popularList: List<MediaQuery.Ranking>,
+        ): Pair<Ranking.TimeSpan, ImmutableList<Ranking>> {
+            val timeSpanIndex = timeSpan.index - 1
+            return timeSpan to listOfNotNull(
+                ratedList.getOrNull(timeSpanIndex)?.let {
+                    Ranking(
+                        rank = it.rank,
+                        type = Ranking.Type.RATED,
+                    )
+                },
+                popularList.getOrNull(timeSpanIndex)?.let {
+                    Ranking(
+                        rank = it.rank,
+                        type = Ranking.Type.POPULAR,
+                    )
+                },
+            ).toImmutableList()
+        }
 
         fun getStreamingEpisodes(streamingEpisodes: List<MediaQuery.StreamingEpisode?>?): ImmutableList<Episode> {
             if (streamingEpisodes.isNullOrEmpty()) return persistentListOf()
@@ -327,10 +400,16 @@ data class Media(
         val type: Type,
     ) {
         /** @see MediaQuery.Ranking.type */
-        enum class Type(val string: String) {
-            RATED("Rated"),
-            POPULAR("Popular"),
-            SCORE("Score")
+        enum class Type {
+            RATED,
+            POPULAR,
+            SCORE,
+        }
+
+        enum class TimeSpan(val index: Int) {
+            ALL_TIME(0),
+            YEAR(1),
+            SEASON(2),
         }
     }
 
@@ -466,22 +545,9 @@ data class Media(
         // TODO: Make this a proper countdown.
         timeToEpisode = getTimeToEpisode(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
-        // TODO: Clean this up and add other rank info.
-        rankings = if (query.rankings == null) { emptyList() } else {
-            // TODO: Is this filter valid?
-            query.rankings.filter {
-                it?.allTime == true && it.type != MediaRankType.UNKNOWN__
-            }.map {
-                Ranking(
-                    rank = it!!.rank,
-                    type = Ranking.Type.valueOf(it.type.name)
-                )
-            } + listOfNotNull(
-                query.averageScore?.let {
-                    Ranking(rank = it, type = Ranking.Type.SCORE)
-                }
-            )
-        }.toImmutableList(),
+        year = query.animeInfo.seasonYear?.toString(),
+        season = query.animeInfo.season?.sanitize(),
+        rankings = getRankings(query.rankings, query.averageScore),
         genres = query.genres?.filterNotNull().orEmpty().toImmutableList(),
         characters = query.characters?.edges.orEmpty().mapNotNull {
             if (it?.node?.characterSmall?.name == null) return@mapNotNull null
