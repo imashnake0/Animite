@@ -148,23 +148,50 @@ data class Media(
             }
         }.toImmutableList()
 
-
-        // TODO: Split this into getAllTimeRankings and getYearSeasonRankings.
         fun getRankings(
             rankings: List<MediaQuery.Ranking?>?,
             averageScore: Int?
         ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
             if (rankings == null) return persistentListOf()
-            val rankings = rankings.filterNotNull().filter { it.type != MediaRankType.UNKNOWN__ }
-            val (ratedList, popularList) = rankings.partition { it.type == MediaRankType.RATED }
+            val (allTimeRankings, yearSeasonRankings) = rankings.filterNotNull().partition { it.allTime == true }
 
-            if (ratedList.isEmpty() && popularList.isEmpty()) return persistentListOf()
+            return persistentListOf(getAllTimeRankings(allTimeRankings, averageScore)).addAll(
+                elements = getYearSeasonRankings(yearSeasonRankings)
+            )
+        }
+
+        fun getAllTimeRankings(
+            rankings: List<MediaQuery.Ranking>,
+            averageScore: Int?
+        ): Pair<Ranking.TimeSpan, ImmutableList<Ranking>> {
+            val rankings = rankings.mapNotNull {
+                if (it.type == MediaRankType.UNKNOWN__) return@mapNotNull null
+                Ranking(
+                    rank = it.rank,
+                    type = when (it.type) {
+                        MediaRankType.RATED -> Ranking.Type.RATED
+                        MediaRankType.POPULAR -> Ranking.Type.POPULAR
+                    }
+                )
+            } + listOfNotNull(
+                element = averageScore?.let {
+                    Ranking(rank = it, type = Ranking.Type.SCORE)
+                }
+            )
+
+            return Ranking.TimeSpan.ALL_TIME to rankings.toImmutableList()
+        }
+
+        fun getYearSeasonRankings(
+            rankings: List<MediaQuery.Ranking>,
+        ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
+            val rankings = rankings.filter { it.type != MediaRankType.UNKNOWN__ }
+            val (ratedList, popularList) = rankings.partition { it.type == MediaRankType.RATED }
 
             // We're assuming that rankings are returned in this order
             // All time, Year, Season
-            return Ranking.TimeSpan.entries.map { timeSpan ->
-                val score = averageScore.takeIf { timeSpan == Ranking.TimeSpan.ALL_TIME }
-                getTimeSpanToList(timeSpan, ratedList, popularList, score)
+            return listOf(Ranking.TimeSpan.YEAR, Ranking.TimeSpan.SEASON).map { timeSpan ->
+                getTimeSpanToList(timeSpan, ratedList, popularList)
             }.toImmutableList()
         }
 
@@ -172,9 +199,8 @@ data class Media(
             timeSpan: Ranking.TimeSpan,
             ratedList: List<MediaQuery.Ranking>,
             popularList: List<MediaQuery.Ranking>,
-            averageScore: Int?
         ): Pair<Ranking.TimeSpan, ImmutableList<Ranking>> {
-            val timeSpanIndex = timeSpan.index
+            val timeSpanIndex = timeSpan.index - 1
             return timeSpan to listOfNotNull(
                 ratedList.getOrNull(timeSpanIndex)?.let {
                     Ranking(
@@ -188,12 +214,6 @@ data class Media(
                         type = Ranking.Type.POPULAR,
                     )
                 },
-                averageScore?.let {
-                    Ranking(
-                        rank = it,
-                        type = Ranking.Type.SCORE
-                    )
-                }
             ).toImmutableList()
         }
 
