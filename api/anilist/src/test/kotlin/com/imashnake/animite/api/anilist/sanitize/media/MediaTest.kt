@@ -487,4 +487,103 @@ class MediaTest {
             assertEquals(0, second.size)
         }
     }
+
+    @Test
+    fun `only year rankings are present`() {
+        val actual = Media.getRankings(
+            rankings = listOf(
+                MediaQuery.Ranking(
+                    rank = 4,
+                    type = MediaRankType.RATED,
+                    allTime = false
+                ),
+                MediaQuery.Ranking(
+                    rank = 3,
+                    type = MediaRankType.POPULAR,
+                    allTime = false
+                )
+            ),
+            averageScore = null
+        )
+
+        assertEquals(actual.size, 3)
+
+        with(actual[0]) {
+            assertEquals(Ranking.TimeSpan.ALL_TIME, first)
+
+            assertEquals(0, second.size)
+        }
+
+        with(actual[1]) {
+            assertEquals(Ranking.TimeSpan.YEAR, first)
+
+            assertEquals(2, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(4, second[0].rank)
+
+            assertEquals(Ranking.Type.POPULAR, second[1].type)
+            assertEquals(3, second[1].rank)
+        }
+
+        with(actual[2]) {
+            assertEquals(Ranking.TimeSpan.SEASON, first)
+
+            assertEquals(0, second.size)
+        }
+    }
+
+    @Test
+    fun `only rated rankings are present`() {
+        val actual = Media.getRankings(
+            rankings = listOf(
+                MediaQuery.Ranking(
+                    rank = 6,
+                    type = MediaRankType.RATED,
+                    allTime = true
+                ),
+                MediaQuery.Ranking(
+                    rank = 4,
+                    type = MediaRankType.RATED,
+                    allTime = false
+                ),
+                MediaQuery.Ranking(
+                    rank = 2,
+                    type = MediaRankType.RATED,
+                    allTime = false
+                ),
+            ),
+            averageScore = null
+        )
+
+        assertEquals(actual.size, 3)
+
+        with(actual[0]) {
+            assertEquals(Ranking.TimeSpan.ALL_TIME, first)
+
+            assertEquals(1, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(6, second[0].rank)
+        }
+
+        with(actual[1]) {
+            assertEquals(Ranking.TimeSpan.YEAR, first)
+
+            assertEquals(1, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(4, second[0].rank)
+        }
+
+        with(actual[2]) {
+            assertEquals(Ranking.TimeSpan.SEASON, first)
+
+            assertEquals(1, second.size)
+
+            assertEquals(Ranking.Type.RATED, second[0].type)
+            assertEquals(2, second[0].rank)
+        }
+    }
+    // endregion
 }
