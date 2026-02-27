@@ -5,6 +5,8 @@ package com.imashnake.animite.media
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -321,7 +323,17 @@ fun MediaPage(
                                                 }
                                             }
                                         }
-                                        AnimatedContent(targetState = selectedTimeSpanIndex) {
+                                        AnimatedContent(
+                                            targetState = selectedTimeSpanIndex,
+                                            transitionSpec = {
+                                                (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                                                        slideIntoContainer(towards = Up, initialOffset = { it / 3 }))
+                                                    .togetherWith(
+                                                        fadeOut(animationSpec = tween(90)) +
+                                                                slideOutOfContainer(towards = Down, targetOffset =  { it / 3 })
+                                                    )
+                                            }
+                                        ) {
                                             val selectedList = media.rankings[it]
                                             if (selectedList.second.isEmpty()) {
                                                 Box(
