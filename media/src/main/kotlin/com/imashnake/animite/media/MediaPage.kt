@@ -266,138 +266,23 @@ fun MediaPage(
                                     )
 
                                 if (!media.rankings.isNullOrEmpty()) {
-                                    Column(
-                                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                    MediaRankings(
+                                        selectedTimeSpanIndex = selectedTimeSpanIndex,
+                                        onCheckedChange = {
+                                            selectedTimeSpanIndex = it
+                                            haptic.performHapticFeedback(
+                                                HapticFeedbackType.SegmentTick
+                                            )
+                                        },
+                                        rankings = media.rankings,
+                                        year = media.year,
+                                        season = media.season,
                                         modifier = Modifier
                                             .skipToLookaheadSize()
                                             .fillMaxWidth()
                                             .padding(horizontal = LocalPaddings.current.large)
                                             .padding(horizontalInsets)
-                                    ) {
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(
-                                                ButtonGroupDefaults.ConnectedSpaceBetween
-                                            )
-                                        ) {
-                                            Media.Ranking.TimeSpan.entries.forEach { timeSpan ->
-                                                ToggleButton(
-                                                    checked = selectedTimeSpanIndex == timeSpan.index,
-                                                    onCheckedChange = {
-                                                        selectedTimeSpanIndex = timeSpan.index
-                                                        haptic.performHapticFeedback(
-                                                            HapticFeedbackType.SegmentTick
-                                                        )
-                                                    },
-                                                    shapes = when (timeSpan.index) {
-                                                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                                        2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                                                    },
-                                                    modifier = Modifier.weight(1f)
-                                                ) {
-                                                    Row(
-                                                        verticalAlignment = Alignment.Bottom,
-                                                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
-                                                        Text(text = stringResource(timeSpan.res), Modifier.alignByBaseline())
-                                                        when(timeSpan.index) {
-                                                            1 -> media.year?.let {
-                                                                Text(
-                                                                    text = it,
-                                                                    fontSize = 10.sp,
-                                                                    modifier = Modifier.graphicsLayer { alpha = 0.5f }.alignByBaseline()
-                                                                )
-                                                            }
-                                                            2 -> media.season?.let {
-                                                                Icon(
-                                                                    imageVector = ImageVector.vectorResource(it.icon),
-                                                                    contentDescription = stringResource(it.res),
-                                                                    modifier = Modifier
-                                                                        .graphicsLayer { alpha = 0.5f }
-                                                                        .height(14.dp)
-                                                                        .align(Alignment.CenterVertically)
-                                                                )
-                                                            }
-                                                            else -> {}
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        AnimatedContent(
-                                            targetState = selectedTimeSpanIndex,
-                                            transitionSpec = {
-                                                (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
-                                                        slideIntoContainer(towards = Up, initialOffset = { it / 3 }))
-                                                    .togetherWith(
-                                                        fadeOut(animationSpec = tween(90)) +
-                                                                slideOutOfContainer(towards = Down, targetOffset =  { it / 3 })
-                                                    )
-                                            }
-                                        ) {
-                                            val selectedList = media.rankings[it]
-                                            if (selectedList.second.isEmpty()) {
-                                                Box(
-                                                    contentAlignment = Alignment.Center,
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    Column(verticalArrangement = Arrangement.SpaceEvenly) {
-                                                        Text(
-                                                            text = " ",
-                                                            style = MaterialTheme.typography.labelSmall
-                                                        )
-                                                        Text(
-                                                            text = " ",
-                                                            style = MaterialTheme.typography.displaySmall
-                                                        )
-                                                    }
-                                                    Text(
-                                                        text = stringResource(R.string.no_rankings),
-                                                        color = MaterialTheme.colorScheme.onBackground.copy(
-                                                            alpha = 0.74f
-                                                        ),
-                                                        style = MaterialTheme.typography.bodyMedium,
-                                                    )
-                                                }
-                                            } else {
-                                                StatsRow(
-                                                    stats = selectedList.second,
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) { ranking ->
-                                                    val textColor = when (ranking.type) {
-                                                        Media.Ranking.Type.SCORE -> MaterialTheme.colorScheme.onBackground
-                                                        Media.Ranking.Type.RATED,
-                                                        Media.Ranking.Type.POPULAR -> when (ranking.rank) {
-                                                            1 -> Color(0xFFEFBF04)
-                                                            2 -> Color(0xFFC4C4C4)
-                                                            3 -> Color(0xFFA45100)
-                                                            else -> MaterialTheme.colorScheme.onBackground
-                                                        }
-                                                    }
-
-                                                    Text(
-                                                        text = stringResource(ranking.type.res),
-                                                        color = textColor,
-                                                        style = MaterialTheme.typography.labelSmall
-                                                    )
-
-                                                    Text(
-                                                        text = when (ranking.type) {
-                                                            Media.Ranking.Type.SCORE -> "${ranking.rank}%"
-                                                            Media.Ranking.Type.RATED,
-                                                            Media.Ranking.Type.POPULAR -> when (ranking.rank) {
-                                                                1 -> "\uD83E\uDD47"
-                                                                2 -> "\uD83E\uDD48"
-                                                                3 -> "\uD83E\uDD49"
-                                                                else -> "#${ranking.rank}"
-                                                            }
-                                                        },
-                                                        color = textColor,
-                                                        style = MaterialTheme.typography.displaySmall
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
+                                    )
                                 }
                             }
 
@@ -1062,6 +947,141 @@ private fun MediaInfo(
                             style = MaterialTheme.typography.labelSmallEmphasized
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun MediaRankings(
+    selectedTimeSpanIndex: Int,
+    onCheckedChange: (Int) -> Unit,
+    rankings: ImmutableList<Pair<Media.Ranking.TimeSpan, ImmutableList<Media.Ranking>>>,
+    year: String?,
+    season: Media.Season?,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(
+                ButtonGroupDefaults.ConnectedSpaceBetween
+            )
+        ) {
+            Media.Ranking.TimeSpan.entries.forEach { timeSpan ->
+                ToggleButton(
+                    checked = selectedTimeSpanIndex == timeSpan.index,
+                    onCheckedChange = { onCheckedChange(timeSpan.index) },
+                    shapes = when (timeSpan.index) {
+                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                        Text(text = stringResource(timeSpan.res), Modifier.alignByBaseline())
+                        when (timeSpan.index) {
+                            1 -> year?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = 10.sp,
+                                    modifier = Modifier.graphicsLayer { alpha = 0.5f }.alignByBaseline()
+                                )
+                            }
+                            2 -> season?.let {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(it.icon),
+                                    contentDescription = stringResource(it.res),
+                                    modifier = Modifier
+                                        .graphicsLayer { alpha = 0.5f }
+                                        .height(14.dp)
+                                        .align(Alignment.CenterVertically)
+                                )
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            }
+        }
+        AnimatedContent(
+            targetState = selectedTimeSpanIndex,
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(220, delayMillis = 90)) +
+                        slideIntoContainer(towards = Up, initialOffset = { it / 3 }))
+                    .togetherWith(
+                        fadeOut(animationSpec = tween(90)) +
+                                slideOutOfContainer(towards = Down, targetOffset =  { it / 3 })
+                    )
+            }
+        ) {
+            val selectedList = rankings[it]
+            if (selectedList.second.isEmpty()) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(verticalArrangement = Arrangement.SpaceEvenly) {
+                        Text(
+                            text = " ",
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                        Text(
+                            text = " ",
+                            style = MaterialTheme.typography.displaySmall
+                        )
+                    }
+                    Text(
+                        text = stringResource(R.string.no_rankings),
+                        color = MaterialTheme.colorScheme.onBackground.copy(
+                            alpha = 0.74f
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            } else {
+                StatsRow(
+                    stats = selectedList.second,
+                    modifier = Modifier.fillMaxWidth()
+                ) { ranking ->
+                    val textColor = when (ranking.type) {
+                        Media.Ranking.Type.SCORE -> MaterialTheme.colorScheme.onBackground
+                        Media.Ranking.Type.RATED,
+                        Media.Ranking.Type.POPULAR -> when (ranking.rank) {
+                            1 -> Color(0xFFEFBF04)
+                            2 -> Color(0xFFC4C4C4)
+                            3 -> Color(0xFFA45100)
+                            else -> MaterialTheme.colorScheme.onBackground
+                        }
+                    }
+
+                    Text(
+                        text = stringResource(ranking.type.res),
+                        color = textColor,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+
+                    Text(
+                        text = when (ranking.type) {
+                            Media.Ranking.Type.SCORE -> "${ranking.rank}%"
+                            Media.Ranking.Type.RATED,
+                            Media.Ranking.Type.POPULAR -> when (ranking.rank) {
+                                1 -> "\uD83E\uDD47"
+                                2 -> "\uD83E\uDD48"
+                                3 -> "\uD83E\uDD49"
+                                else -> "#${ranking.rank}"
+                            }
+                        },
+                        color = textColor,
+                        style = MaterialTheme.typography.displaySmall
+                    )
                 }
             }
         }

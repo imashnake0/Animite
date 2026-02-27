@@ -3,6 +3,7 @@ package com.imashnake.animite.api.anilist.sanitize.media
 import android.graphics.Color
 import android.util.Log
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.core.graphics.toColorInt
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
@@ -393,6 +394,7 @@ data class Media(
         DIVIDER,
     }
 
+    @Stable
     data class Ranking(
         /** @see MediaQuery.Ranking.rank */
         val rank: Int,
