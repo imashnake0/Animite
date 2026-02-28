@@ -44,6 +44,13 @@ val Media.Season.res get() = when(this) {
     Media.Season.FALL -> R.string.fall
 }
 
+val Media.Season.icon get() = when(this) {
+    Media.Season.WINTER -> R.drawable.winter
+    Media.Season.SPRING -> R.drawable.spring
+    Media.Season.SUMMER -> R.drawable.summer
+    Media.Season.FALL -> R.drawable.fall
+}
+
 val Media.Source.res get() = when(this) {
     Media.Source.ORIGINAL -> R.string.original
     Media.Source.MANGA -> R.string.manga
@@ -76,4 +83,16 @@ val Media.Relation.res get() = when(this) {
     Media.Relation.SOURCE -> R.string.source_relation
     Media.Relation.COMPILATION -> R.string.compilation_relation
     Media.Relation.CONTAINS -> R.string.contains_relation
+}
+
+val Media.Ranking.TimeSpan.res get() = when(this) {
+    Media.Ranking.TimeSpan.ALL_TIME -> R.string.all_time
+    Media.Ranking.TimeSpan.YEAR -> R.string.year
+    Media.Ranking.TimeSpan.SEASON -> R.string.season
+}
+
+val Media.Ranking.Type.res get() = when(this) {
+    Media.Ranking.Type.RATED -> R.string.rated
+    Media.Ranking.Type.POPULAR -> R.string.popular
+    Media.Ranking.Type.SCORE -> R.string.score
 }

@@ -142,7 +142,7 @@ private fun UserMediaLists(
                                 )
                             ),
                             animatedVisibilityScope,
-                        ),
+                        ).skipToLookaheadSize(),
                     )
                 }
             }

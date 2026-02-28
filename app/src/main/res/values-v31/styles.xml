@@ -2,5 +2,7 @@
 <resources>
     <style name="AnimiteTheme" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:windowSplashScreenBackground">#0A1625</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/animite_avd</item>
+        <item name="android:windowSplashScreenAnimationDuration">500</item>
     </style>
 </resources>
