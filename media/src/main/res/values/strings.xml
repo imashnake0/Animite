@@ -91,4 +91,8 @@
     <string name="source_relation">source</string>
     <string name="compilation_relation">compilation</string>
     <string name="contains_relation">contains</string>
+
+    <string name="search_placeholder">Search</string>
+    <string name="search_results_empty">No results found</string>
+    <string name="search_results_error">Unknown error</string>
 </resources>

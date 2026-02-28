@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.compose.ui)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+    implementation(libs.compose.material3.adaptive)
 
     // Hilt
     implementation(libs.hilt.android)
