@@ -105,7 +105,8 @@ fun AdaptiveSearchBar(
             SearchInputField(
                 searchTextState = searchTextState,
                 searchBarState = searchBarState,
-                onSearch = onSearch
+                onSearch = onSearch,
+                isForExpanded = false,
             )
         },
         modifier = modifier,
@@ -117,7 +118,8 @@ fun AdaptiveSearchBar(
                 SearchInputField(
                     searchTextState = searchTextState,
                     searchBarState = searchBarState,
-                    onSearch = onSearch
+                    onSearch = onSearch,
+                    isForExpanded = true,
                 )
             },
             content = searchContent,
@@ -129,7 +131,8 @@ fun AdaptiveSearchBar(
                 SearchInputField(
                     searchTextState = searchTextState,
                     searchBarState = searchBarState,
-                    onSearch = onSearch
+                    onSearch = onSearch,
+                    isForExpanded = true
                 )
             },
             content = searchContent
@@ -143,6 +146,7 @@ internal fun SearchInputField(
     searchTextState: TextFieldState,
     searchBarState: SearchBarState,
     onSearch: (String) -> Unit,
+    isForExpanded: Boolean,
     modifier: Modifier = Modifier,
 ) {
     SearchBarDefaults.InputField(
@@ -162,6 +166,7 @@ internal fun SearchInputField(
             imeAction = ImeAction.Search,
             hintLocales = LocaleList(Locale("en"), Locale("jp"))
         ),
+        readOnly = !isForExpanded, // Read only when collapsed to prevent keyboard focus
         modifier = modifier,
     )
 }
