@@ -7,8 +7,8 @@ import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
-import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.data.Resource.Companion.asResource
+import com.imashnake.animite.core.resource.Resource
+import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.navigation.ProfileRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

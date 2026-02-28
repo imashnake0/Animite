@@ -38,8 +38,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.horizontalOnly
+import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
