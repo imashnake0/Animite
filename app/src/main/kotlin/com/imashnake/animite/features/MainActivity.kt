@@ -20,9 +20,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -42,9 +42,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.anime.AnimeScreen
-import com.imashnake.animite.api.anilist.sanitize.media.MediaList
-import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.features.theme.manropeFontFamily
 import com.imashnake.animite.manga.MangaScreen
@@ -135,6 +132,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
+    val windowSizeClass = currentWindowAdaptiveInfo(true).windowSizeClass
 
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val isNavBarVisible = rememberSaveable(currentBackStackEntry) {
@@ -155,6 +153,7 @@ fun MainScreen(
                 NavHost(navController = navController, startDestination = AnimeRoute) {
                     composable<AnimeRoute> {
                         AnimeScreen(
+                            windowSizeClass = windowSizeClass,
                             onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
@@ -162,6 +161,7 @@ fun MainScreen(
                     }
                     composable<MangaRoute> {
                         MangaScreen(
+                            windowSizeClass = windowSizeClass,
                             onNavigateToMediaItem = navController::navigate,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
@@ -220,28 +220,5 @@ fun MainScreen(
                 ) { NavigationBar(navController = navController) }
             }
         }
-
-        SearchFrontDrop(
-            hasExtraPadding = isNavBarVisible &&
-                    LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT,
-            onItemClick = { id, mediaType, title ->
-                navController.navigate(
-                    MediaPage(
-                        id = id,
-                        source = MediaList.Type.SEARCH.name,
-                        mediaType = mediaType.rawValue,
-                        title = title,
-                    )
-                )
-            },
-            isFabVisible = currentBackStackEntry?.destination?.hasRoute<SettingsPage>() == false,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(
-                    start = LocalPaddings.current.large,
-                    end = LocalPaddings.current.large,
-                    bottom = LocalPaddings.current.large,
-                )
-        )
     }
 }
