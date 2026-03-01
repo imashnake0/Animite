@@ -23,7 +23,6 @@ import com.imashnake.animite.api.anilist.type.MediaRelation
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSource
 import com.imashnake.animite.api.anilist.type.MediaStatus
-import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -655,3 +654,5 @@ data class Media(
         )
     }
 }
+
+internal fun String.addNewlineAfterParagraph() = replace("</p>", "</p><br>")
