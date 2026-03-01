@@ -1,8 +1,5 @@
 package com.imashnake.animite.media
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,76 +7,83 @@ import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.core.data.Resource
+import com.imashnake.animite.core.data.Resource.Companion.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-@Suppress("SwallowedException")
 class MediaPageViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mediaRepository: AnilistMediaRepository
 ) : ViewModel() {
     private val navArgs = savedStateHandle.toRoute<MediaPage>()
-    var uiState by mutableStateOf(MediaUiState(
-            source = navArgs.source,
-            id = navArgs.id,
-            type = navArgs.mediaType,
-            title = navArgs.title
-        ))
-        private set
+    private val _genreTitleListState = MutableStateFlow<MediaUiState?>(null)
+    val genreTitleList: StateFlow<MediaUiState?> = _genreTitleListState
 
-    init {
-        viewModelScope.launch {
-            try {
-                val mediaType = MediaType.safeValueOf(navArgs.mediaType)
-                // TODO: Switch to StateFlows.
-                val media = mediaRepository
-                    .fetchMedia(navArgs.id, mediaType)
-                    .firstOrNull()
-                    ?.getOrNull()
+    private val mediaType = MediaType.safeValueOf(navArgs.mediaType)
 
-                uiState = uiState.copy(
-                    bannerImage = media?.bannerImage,
-                    coverImage = media?.coverImage,
-                    color = media?.color,
-                    description = media?.description,
-                    dayHoursToNextEpisode = media?.timeToEpisode?.first,
-                    nextEpisode = media?.timeToEpisode?.second,
-                    info = media?.info,
-                    year = media?.year,
-                    season = media?.season,
-                    rankings = media?.rankings,
-                    genres = media?.genres,
-                    characters = media?.characters,
-                    staff = media?.staff,
-                    trailer = media?.trailer,
-                    streamingEpisodes = media?.streamingEpisodes,
-                    relations = media?.relations,
-                    recommendations = media?.recommendations
-                )
-            } catch(_: IOException) {
-                TODO()
-            }
+    val uiState: StateFlow<Resource<MediaUiState>> = mediaRepository
+        .fetchMedia(navArgs.id, mediaType)
+        .asResource { media ->
+            MediaUiState(
+                source = navArgs.source,
+                id = navArgs.id,
+                type = navArgs.mediaType,
+                title = navArgs.title,
+                bannerImage = media.bannerImage,
+                coverImage = media.coverImage,
+                color = media.color,
+                description = media.description,
+                dayHoursToNextEpisode = media.timeToEpisode?.first,
+                nextEpisode = media.timeToEpisode?.second,
+                info = media.info,
+                year = media.year,
+                season = media.season,
+                rankings = media.rankings,
+                genres = media.genres,
+                characters = media.characters,
+                staff = media.staff,
+                trailer = media.trailer,
+                streamingEpisodes = media.streamingEpisodes,
+                relations = media.relations,
+                recommendations = media.recommendations
+            )
         }
-    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = Resource.loading()
+        )
+
 
     fun getGenreMediaMediums(genre: String?) = viewModelScope.launch {
         if (genre == null) {
-            uiState = uiState.copy(genreTitleList = uiState.genreTitleList?.first.orEmpty() to persistentListOf())
+            _genreTitleListState.value = _genreTitleListState.value?.copy(
+                genreTitleList = _genreTitleListState.value?.genreTitleList?.first.orEmpty() to persistentListOf()
+            )
             return@launch
         }
+        val mediaType = uiState.value.data?.type?.let {
+            MediaType.safeValueOf(it)
+        } ?: MediaType.UNKNOWN__
+
         val list = mediaRepository.fetchMediaMediumList(
-            mediaType = uiState.type?.let {
-                MediaType.safeValueOf(it)
-            } ?: MediaType.UNKNOWN__,
+            mediaType = mediaType,
             sort = listOf(MediaSort.SCORE_DESC),
             genre = genre,
         ).firstOrNull()?.getOrNull()
 
-        uiState = uiState.copy(genreTitleList = list?.let { genre to it })
+        _genreTitleListState.update { current ->
+            (current ?: uiState.value.data)?.copy(genreTitleList = list?.let { genre to it })
+        }
     }
 }
