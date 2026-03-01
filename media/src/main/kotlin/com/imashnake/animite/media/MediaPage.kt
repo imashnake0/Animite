@@ -80,6 +80,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -151,9 +152,14 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import com.imashnake.animite.core.R as coreR
 
 private const val RECOMMENDATIONS = "Recommendations"
@@ -239,9 +245,8 @@ fun MediaPage(
                         content = {
                             MediaDetails(
                                 title = media.title,
-                                nextEpisodeIn = if (media.nextEpisode != null && media.dayHoursToNextEpisode != null) {
-                                    "Ep ${media.nextEpisode} in ${media.dayHoursToNextEpisode}"
-                                } else null,
+                                nextAiringAt = media.nextAiringAt,
+                                nextEpisode = media.nextEpisode,
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
                                     .skipToLookaheadSize()
@@ -773,16 +778,75 @@ private fun MediaBanner(
     )
 }
 
+/**
+ * Formats a [Duration] into a human-readable countdown string.
+ *
+ * The format adapts based on the remaining time:
+ * - Days > 0: "2d 3h"
+ * - Days = 0, Hours > 0: "3h 45m"
+ * - Hours = 0: "45m 30s"
+ *
+ * @param remaining The duration remaining until the event.
+ * @return A formatted countdown string, or null if the duration is zero or negative.
+ */
+@Composable
+private fun formatCountdown(remaining: Duration): String? {
+    if (remaining <= Duration.ZERO) return null
+
+    return remaining.toComponents { days, hours, minutes, seconds, _ ->
+        buildString {
+            if (days > 0) append(stringResource(R.string.countdown_days, days)).append(" ")
+            if (hours > 0 || days > 0) append(stringResource(R.string.countdown_hours, hours)).append(" ")
+            if (days == 0L) {
+                append(stringResource(R.string.countdown_minutes, minutes)).append(" ")
+                if (hours == 0) append(stringResource(R.string.countdown_seconds, seconds))
+            }
+        }.trim()
+    }
+}
+
+/**
+ * Creates a running countdown text from an [Instant].
+ * Updates every second while the countdown is active.
+ *
+ * This composable follows the principle of separation of concerns:
+ * - Timing logic is handled here via [LaunchedEffect]
+ * - Formatting is delegated to [formatCountdown]
+ *
+ * @param airingAt The precise time when the episode airs.
+ * @param episode The episode number that will air.
+ * @return A formatted countdown string like "Ep 5 in 2d 3h", or null if the time has passed.
+ */
+@Composable
+private fun rememberCountdownText(airingAt: Instant?, episode: Int?): String? {
+    if (airingAt == null || episode == null) return null
+
+    var remaining by remember(airingAt) { mutableStateOf(airingAt - Clock.System.now()) }
+
+    LaunchedEffect(airingAt) {
+        while (true) {
+            remaining = airingAt - Clock.System.now()
+            if (remaining <= Duration.ZERO) break
+            delay(1.seconds)
+        }
+    }
+
+    val countdownDuration = formatCountdown(remaining) ?: return null
+    return stringResource(R.string.episode_airing_countdown, episode, countdownDuration)
+}
+
 @Composable
 private fun MediaDetails(
     title: String?,
-    nextEpisodeIn: String?,
+    nextAiringAt: Instant?,
+    nextEpisode: Int?,
     description: String,
     isSheetOpen: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier
 ) {
+    val countdownText = rememberCountdownText(nextAiringAt, nextEpisode)
     Box(modifier = modifier) {
         Column(
             modifier = Modifier
@@ -808,13 +872,12 @@ private fun MediaDetails(
                 )
             }
 
-            if (nextEpisodeIn != null) {
+            if (countdownText != null) {
                 Box(contentAlignment = Alignment.Center) {
                     Chip(
                         color = Color(0xFF80DF87),
                         icon = ImageVector.vectorResource(R.drawable.hourglass),
-                        // TODO: Use string resources.
-                        text = nextEpisodeIn,
+                        text = countdownText,
                         modifier = Modifier.padding(
                             top = LocalPaddings.current.small,
                             bottom = LocalPaddings.current.tiny,

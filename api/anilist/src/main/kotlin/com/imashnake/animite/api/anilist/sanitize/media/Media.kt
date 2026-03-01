@@ -32,7 +32,6 @@ import java.util.Locale
 import kotlin.collections.mapNotNull
 import kotlin.collections.orEmpty
 import kotlin.time.Clock
-import kotlin.time.Duration
 import kotlin.time.Instant
 
 private const val HQ_DEFAULT = "hqdefault"
@@ -54,11 +53,8 @@ data class Media(
     val title: String?,
     /** @see MediaQuery.Media.description */
     val description: String,
-    /**
-     *  For example: "5d 19h" to 2
-     *  @see AnimeInfo.NextAiringEpisode
-     * */
-    val timeToEpisode: Pair<String, Int>?,
+    /** @see AnimeInfo.NextAiringEpisode */
+    val nextAiring: NextAiring?,
     /** @see MediaQuery.Media */
     val info: ImmutableList<Info>,
     /** @see AnimeInfo.seasonYear */
@@ -97,17 +93,15 @@ data class Media(
             return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
         }
 
-        fun getTimeToEpisode(nextAiringEpisode: AnimeInfo.NextAiringEpisode?) = nextAiringEpisode?.let nextEp@{ nextEp ->
-            nextEp.airingAt.let {
-                val difference = Instant.fromEpochSeconds(it.toLong()) - Clock.System.now()
-                if (difference < Duration.ZERO) return@nextEp null
-                difference
-            }.let {
-                it.toComponents { days, hours, _, _, _ ->
-                    if (days == 0L && hours == 0) return@nextEp null
-                    if (days == 0L) "${hours}h" else "${days}d ${hours}h"
-                }
-            } to nextEp.episode
+        fun getNextAiring(nextAiringEpisode: AnimeInfo.NextAiringEpisode?): NextAiring? {
+            return nextAiringEpisode?.let { nextEp ->
+                val airingAt = Instant.fromEpochSeconds(nextEp.airingAt.toLong())
+                if (airingAt <= Clock.System.now()) return null
+                NextAiring(
+                    airingAt = airingAt,
+                    episode = nextEp.episode
+                )
+            }
         }
 
         fun getAnimeInfo(animeInfo: AnimeInfo?) = buildList {
@@ -414,6 +408,22 @@ data class Media(
         }
     }
 
+    /**
+     * Represents the next airing episode information.
+     *
+     * This class stores the raw [Instant] for the airing time, allowing the UI layer
+     * to compute and display a running countdown that updates in real-time.
+     *
+     * @property airingAt The precise time when the episode airs.
+     * @property episode The episode number that will air.
+     * @see AnimeInfo.NextAiringEpisode
+     */
+    @Immutable
+    data class NextAiring(
+        val airingAt: Instant,
+        val episode: Int
+    )
+
     @Immutable
     data class Credit(
         /** @see CharacterSmall.id */
@@ -543,8 +553,7 @@ data class Media(
         color = query.coverImage?.color?.toColorInt() ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
-        // TODO: Make this a proper countdown.
-        timeToEpisode = getTimeToEpisode(query.animeInfo.nextAiringEpisode),
+        nextAiring = getNextAiring(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
         year = query.animeInfo.seasonYear?.toString(),
         season = query.animeInfo.season?.sanitize(),

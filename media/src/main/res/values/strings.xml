@@ -91,4 +91,11 @@
     <string name="source_relation">source</string>
     <string name="compilation_relation">compilation</string>
     <string name="contains_relation">contains</string>
+
+    <!-- Countdown -->
+    <string name="episode_airing_countdown">Ep %1$d in %2$s</string>
+    <string name="countdown_days">%1$dd</string>
+    <string name="countdown_hours">%1$dh</string>
+    <string name="countdown_minutes">%1$dm</string>
+    <string name="countdown_seconds">%1$ds</string>
 </resources>
