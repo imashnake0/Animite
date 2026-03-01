@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
@@ -80,7 +81,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.core.extensions.DayPart
 import com.imashnake.animite.core.extensions.horizontalOnly
-import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.extensions.toDayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
