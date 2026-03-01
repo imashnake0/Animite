@@ -122,6 +122,7 @@ import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -180,7 +181,9 @@ fun MediaPage(
 
     val scrollState = rememberScrollState()
 
-    val media = viewModel.uiState
+    val mediaResource by viewModel.uiState.collectAsStateWithLifecycle()
+    val media = mediaResource.data ?: MediaUiState()
+    val genreTitleListState by viewModel.genreTitleList.collectAsStateWithLifecycle()
 
     var showDetailsSheet by remember { mutableStateOf(false) }
     val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
@@ -644,7 +647,7 @@ fun MediaPage(
 
             // TODO: Add progress indicator.
             AnimatedVisibility(
-                visible = media.genreTitleList?.second?.isNotEmpty() ?: false,
+                visible = genreTitleListState?.genreTitleList?.second?.isNotEmpty() ?: false,
                 enter = fadeIn(tween(750)),
                 exit = fadeOut(tween(750)),
             ) {
@@ -659,7 +662,7 @@ fun MediaPage(
                             .padding(vertical = LocalPaddings.current.medium)
                     ) {
                         Text(
-                            text = media.genreTitleList?.first.orEmpty(),
+                            text = genreTitleListState?.genreTitleList?.first.orEmpty(),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleLarge,
                             textAlign = TextAlign.Center,
@@ -712,7 +715,7 @@ fun MediaPage(
                     ) {
                         if (it) {
                             MediaMediumGrid(
-                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
+                                mediaMediumList = genreTitleListState?.genreTitleList?.second ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(
@@ -726,7 +729,7 @@ fun MediaPage(
                             )
                         } else {
                             MediaMediumList(
-                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
+                                mediaMediumList = genreTitleListState?.genreTitleList?.second ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(
@@ -745,7 +748,7 @@ fun MediaPage(
         }
     }
 
-    BackHandler(!media.genreTitleList?.second.isNullOrEmpty()) {
+    BackHandler(!genreTitleListState?.genreTitleList?.second.isNullOrEmpty()) {
         viewModel.getGenreMediaMediums(null)
         isExpanded = false
     }
