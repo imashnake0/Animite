@@ -28,6 +28,12 @@ class PreferencesRepository @Inject constructor(
     suspend fun setViewerId(viewerId: Int?) {
         dataStore.setValue(viewerIdKey, viewerId.toString())
     }
+
+    private val viewerAvatarKey = stringPreferencesKey("viewer_avatar")
+    val viewerAvatar = dataStore.getValue(viewerAvatarKey, null)
+    suspend fun setViewerAvatar(avatarUrl: String?) {
+        dataStore.setValue(viewerAvatarKey, avatarUrl)
+    }
     // endregion
 
     // region settings

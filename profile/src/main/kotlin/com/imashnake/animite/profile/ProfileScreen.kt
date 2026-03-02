@@ -51,6 +51,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -123,6 +124,7 @@ fun ProfileScreen(
     val allPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
+    val viewerAvatar by viewModel.viewerAvatar.collectAsState(initial = "")
     val viewer by viewModel.viewer.collectAsState()
     val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
     val viewerMangaLists by viewModel.viewerMangaLists.collectAsState()
@@ -141,6 +143,9 @@ fun ProfileScreen(
         when {
             isLoggedIn -> when {
                 data.all { it is Resource.Success } -> viewer.data?.run {
+                    LaunchedEffect(Unit) {
+                        if (viewerAvatar == null) viewModel.saveViewerAvatar(avatar)
+                    }
                     BannerLayout(
                         banner = { modifier ->
                             Box {

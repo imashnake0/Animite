@@ -87,8 +87,11 @@ class ProfileViewModel @Inject constructor(
     )
 
     fun logOut() = viewModelScope.launch(Dispatchers.IO) {
-        preferencesRepository.setAccessToken(null)
-        preferencesRepository.setViewerId(null)
+        with(preferencesRepository) {
+            setAccessToken(null)
+            setViewerId(null)
+            setViewerAvatar(null)
+        }
     }
 
     fun refresh(onRefresh: () -> Unit) = viewModelScope.launch {
@@ -96,6 +99,11 @@ class ProfileViewModel @Inject constructor(
         useNetwork = true
         refreshTrigger.emit(Unit)
         useNetwork = false
+    }
+
+    val viewerAvatar = preferencesRepository.viewerAvatar
+    fun saveViewerAvatar(avatarUrl: String?) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setViewerAvatar(avatarUrl)
     }
 
     init {

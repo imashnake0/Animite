@@ -57,6 +57,7 @@ import com.imashnake.animite.navigation.NavigationRail
 import com.imashnake.animite.navigation.ProfileRoute
 import com.imashnake.animite.navigation.SocialRoute
 import com.imashnake.animite.profile.ProfileScreen
+import com.imashnake.animite.profile.ProfileViewModel
 import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
@@ -68,6 +69,7 @@ import kotlinx.coroutines.flow.filterNotNull
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
     var showSplashScreen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +100,8 @@ class MainActivity : ComponentActivity() {
 
             val dayHour by settingsViewModel.dayHour.collectAsState(initial = null)
 
+            val avatar by profileViewModel.viewerAvatar.collectAsState(initial = null)
+
             AnimiteTheme(
                 useDarkTheme = useDarkTheme,
                 useSystemColorScheme = useSystemColorScheme,
@@ -106,6 +110,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
                     useDarkTheme = useDarkTheme,
+                    avatar = avatar,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
@@ -132,6 +137,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
+    avatar: String?,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
@@ -209,7 +215,7 @@ fun MainScreen(
                     modifier = Modifier.align(Alignment.CenterStart),
                     enter = slideInHorizontally { -it },
                     exit = slideOutHorizontally { -it }
-                ) { NavigationRail(navController = navController) }
+                ) { NavigationRail(navController, avatar) }
             }
             else -> {
                 AnimatedVisibility(
@@ -217,7 +223,7 @@ fun MainScreen(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     enter = slideInVertically { it },
                     exit = slideOutVertically { it }
-                ) { NavigationBar(navController = navController) }
+                ) { NavigationBar(navController, avatar) }
             }
         }
 

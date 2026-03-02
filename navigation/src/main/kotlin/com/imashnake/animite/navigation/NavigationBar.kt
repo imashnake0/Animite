@@ -28,6 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Composable
 fun NavigationBar(
     navController: NavController,
+    avatar: String?,
     modifier: Modifier = Modifier,
     containerColor: Color = NavigationBarDefaults.containerColor,
     contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),
@@ -59,7 +60,7 @@ fun NavigationBar(
                 NavigationBarItem(
                     selected = selected,
                     onClick = { if (!selected) destination.navigateTo(navController) },
-                    icon = { destination.icon.invoke(selected) },
+                    icon = { destination.icon.invoke(selected, avatar) },
                     modifier = Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
                 )
             }
