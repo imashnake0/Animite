@@ -408,16 +408,6 @@ data class Media(
         }
     }
 
-    /**
-     * Represents the next airing episode information.
-     *
-     * This class stores the raw [Instant] for the airing time, allowing the UI layer
-     * to compute and display a running countdown that updates in real-time.
-     *
-     * @property airingAt The precise time when the episode airs.
-     * @property episode The episode number that will air.
-     * @see AnimeInfo.NextAiringEpisode
-     */
     @Immutable
     data class NextAiring(
         val airingAt: Instant,
