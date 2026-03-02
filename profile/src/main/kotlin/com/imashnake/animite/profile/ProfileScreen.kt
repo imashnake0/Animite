@@ -77,13 +77,13 @@ import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.maxHeight
+import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen

@@ -36,6 +36,7 @@ dependencies {
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
     implementation(projects.core)
+    implementation(projects.core.resource)
     implementation(projects.navigation)
 
     implementation(libs.kotlinx.collectionsImmutable)
