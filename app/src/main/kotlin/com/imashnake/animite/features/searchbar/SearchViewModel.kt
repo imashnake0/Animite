@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistSearchRepository
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.data.Resource.Companion.asResource
 import com.imashnake.animite.core.Constants
+import com.imashnake.animite.core.resource.Resource
+import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi

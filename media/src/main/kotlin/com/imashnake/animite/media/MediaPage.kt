@@ -80,6 +80,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -152,9 +153,13 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlin.math.absoluteValue
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import com.imashnake.animite.core.R as coreR
 
 private const val RECOMMENDATIONS = "Recommendations"
@@ -241,9 +246,7 @@ fun MediaPage(
                         content = {
                             MediaDetails(
                                 title = media.title,
-                                nextEpisodeIn = if (media.nextEpisode != null && media.dayHoursToNextEpisode != null) {
-                                    "Ep ${media.nextEpisode} in ${media.dayHoursToNextEpisode}"
-                                } else null,
+                                nextAiring = media.nextAiring,
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
                                     .skipToLookaheadSize()
@@ -778,13 +781,14 @@ private fun MediaBanner(
 @Composable
 private fun MediaDetails(
     title: String?,
-    nextEpisodeIn: String?,
+    nextAiring: Media.NextAiring?,
     description: String,
     isSheetOpen: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textModifier: Modifier = Modifier
 ) {
+    val countdownText = rememberCountdownText(nextAiring)
     Box(modifier = modifier) {
         Column(
             modifier = Modifier
@@ -810,13 +814,12 @@ private fun MediaDetails(
                 )
             }
 
-            if (nextEpisodeIn != null) {
+            if (countdownText != null) {
                 Box(contentAlignment = Alignment.Center) {
                     Chip(
                         color = Color(0xFF80DF87),
                         icon = ImageVector.vectorResource(R.drawable.hourglass),
-                        // TODO: Use string resources.
-                        text = nextEpisodeIn,
+                        text = countdownText,
                         modifier = Modifier.padding(
                             top = LocalPaddings.current.small,
                             bottom = LocalPaddings.current.tiny,
@@ -844,6 +847,41 @@ private fun MediaDetails(
                 .padding(top = LocalPaddings.current.small)
                 .requiredSize(LocalPaddings.current.medium)
         )
+    }
+}
+
+@Composable
+private fun rememberCountdownText(nextAiring: Media.NextAiring?): String? {
+    nextAiring ?: return null
+
+    val airingAt = nextAiring.airingAt
+    var remaining by remember(airingAt) { mutableStateOf(airingAt - Clock.System.now()) }
+
+    LaunchedEffect(airingAt) {
+        while (true) {
+            remaining = airingAt - Clock.System.now()
+            if (remaining <= Duration.ZERO) break
+            delay(1.seconds)
+        }
+    }
+
+    val countdownDuration = formatCountdown(remaining) ?: return null
+    return stringResource(R.string.episode_airing_countdown, nextAiring.episode, countdownDuration)
+}
+
+@Composable
+private fun formatCountdown(remaining: Duration): String? {
+    if (remaining <= Duration.ZERO) return null
+
+    return remaining.toComponents { days, hours, minutes, seconds, _ ->
+        buildString {
+            if (days > 0) append(stringResource(R.string.countdown_days, days)).append(" ")
+            if (hours > 0 || days > 0) append(stringResource(R.string.countdown_hours, hours)).append(" ")
+            if (days == 0L) {
+                append(stringResource(R.string.countdown_minutes, minutes)).append(" ")
+                append(stringResource(R.string.countdown_seconds, seconds))
+            }
+        }.trim()
     }
 }
 
