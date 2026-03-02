@@ -37,6 +37,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Composable
 fun NavigationRail(
     navController: NavController,
+    avatar: String?,
     modifier: Modifier = Modifier,
     containerColor: Color = NavigationBarDefaults.containerColor,
     contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),
@@ -73,7 +74,7 @@ fun NavigationRail(
                 NavigationRailItem(
                     selected = selected,
                     onClick = { if (!selected) destination.navigateTo(navController) },
-                    icon = { destination.icon.invoke(selected) },
+                    icon = { destination.icon.invoke(selected, avatar) },
                     modifier = Modifier.width(dimensionResource(R.dimen.navigation_rail_width))
                 )
             }

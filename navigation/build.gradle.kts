@@ -24,6 +24,7 @@ kotlin {
 
 dependencies {
     api(libs.androidx.navigationCompose)
+    implementation(libs.bundles.coil)
     implementation(libs.bundles.compose)
     implementation(libs.compose.material)
     implementation(libs.compose.animation.graphics)

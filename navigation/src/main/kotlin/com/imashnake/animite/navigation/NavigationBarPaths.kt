@@ -1,31 +1,39 @@
 package com.imashnake.animite.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import coil3.compose.AsyncImage
 
 enum class NavigationBarPaths(
     val navigateTo: (NavController) -> Unit,
     val matchesDestination: (NavBackStackEntry) -> Boolean,
-    val icon: @Composable (Boolean) -> Unit,
+    val icon: @Composable (selected: Boolean, avatar: String?) -> Unit,
     @param:StringRes val labelRes: Int
 ) {
     Social(
@@ -40,7 +48,7 @@ enum class NavigationBarPaths(
         matchesDestination = { navBackStackEntry ->
             navBackStackEntry.destination.hierarchy.any { it.hasRoute(SocialRoute::class) }
         },
-        icon = {
+        icon = { _, _ ->
             Icon(ImageVector.vectorResource(R.drawable.social), contentDescription = stringResource(R.string.social))
         },
         labelRes = R.string.social
@@ -58,8 +66,8 @@ enum class NavigationBarPaths(
         matchesDestination = { navBackStackEntry ->
             navBackStackEntry.destination.hierarchy.any { it.hasRoute(AnimeRoute::class) }
         },
-        icon = {
-            if (it) {
+        icon = { selected, _ ->
+            if (selected) {
                 val infiniteTransition = rememberInfiniteTransition()
                 val angle by infiniteTransition.animateFloat(
                     initialValue = 0f,
@@ -101,7 +109,7 @@ enum class NavigationBarPaths(
         matchesDestination = { navBackStackEntry ->
             navBackStackEntry.destination.hierarchy.any { it.hasRoute(MangaRoute::class) }
         },
-        icon = {
+        icon = { _, _ ->
             Icon(ImageVector.vectorResource(R.drawable.manga), contentDescription = stringResource(R.string.manga))
         },
         labelRes = R.string.manga
@@ -119,8 +127,24 @@ enum class NavigationBarPaths(
         matchesDestination = { navBackStackEntry ->
             navBackStackEntry.destination.hierarchy.any { it.hasRoute(ProfileRoute::class) }
         },
-        icon = {
-            Icon(ImageVector.vectorResource(R.drawable.profile), contentDescription = stringResource(R.string.profile))
+        icon = { _, avatar ->
+            AnimatedContent(targetState = avatar) {
+                if (it != null) {
+                    AsyncImage(
+                        model = it,
+                        contentDescription = "Avatar",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(0.1f))
+                    )
+                } else {
+                    Icon(
+                        ImageVector.vectorResource(R.drawable.profile),
+                        contentDescription = stringResource(R.string.profile)
+                    )
+                }
+            }
         },
         labelRes = R.string.profile
     ),
