@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="media_details_height">172dp</dimen>
+    <dimen name="media_card_width">140dp</dimen>
+    <dimen name="media_image_height">200dp</dimen>
+
+    <dimen name="character_image_height">137dp</dimen>
 
     <dimen name="media_type_selector_height">56dp</dimen>
     <dimen name="media_type_selector_width">96dp</dimen>

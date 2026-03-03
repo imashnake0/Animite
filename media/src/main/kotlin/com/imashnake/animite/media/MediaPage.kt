@@ -250,7 +250,7 @@ fun MediaPage(
                                 modifier = Modifier
                                     .skipToLookaheadSize()
                                     .padding(horizontal = LocalPaddings.current.large / 2)
-                                    .padding(start = dimensionResource(coreR.dimen.media_card_width) + LocalPaddings.current.large)
+                                    .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
                                     .padding(horizontalInsets)
                                     .height(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
@@ -398,7 +398,7 @@ fun MediaPage(
                         targetValue = if (isAtTop)
                             0.dp
                         else
-                            dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height),
+                            dimensionResource(R.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height),
                         animationSpec = tween(durationMillis = 750),
                         label = "media_card_height"
                     )
@@ -410,14 +410,14 @@ fun MediaPage(
                             .padding(
                                 top = dimensionResource(R.dimen.media_details_height)
                                         + LocalPaddings.current.medium
-                                        + dimensionResource(coreR.dimen.banner_height)
-                                        - dimensionResource(coreR.dimen.media_image_height)
+                                        + dimensionResource(coreUiR.dimen.banner_height)
+                                        - dimensionResource(R.dimen.media_image_height)
                                         - insetPaddingValues.calculateTopPadding()
                                         + offset,
                                 start = LocalPaddings.current.large,
                             )
                             .padding(horizontalInsets)
-                            .height(dimensionResource(coreR.dimen.media_image_height) - offset)
+                            .height(dimensionResource(R.dimen.media_image_height) - offset)
                     ) {
                         MediaCard(
                             image = media.coverImage,
@@ -541,7 +541,7 @@ fun MediaPage(
 
                                 Column(
                                     verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                    modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
+                                    modifier = Modifier.height(dimensionResource(R.dimen.character_image_height))
                                 ) {
                                     Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
                                         Text(
@@ -1330,9 +1330,9 @@ private fun MediaStreamingEpisode(
 ) {
     HorizontalMultiBrowseCarousel(
         state = rememberCarouselState { streamingEpisodes.size },
-        preferredItemWidth = dimensionResource(coreR.dimen.media_card_width),
+        preferredItemWidth = dimensionResource(R.dimen.media_card_width),
         itemSpacing = LocalPaddings.current.small,
-        maxSmallItemWidth = dimensionResource(coreR.dimen.media_card_width),
+        maxSmallItemWidth = dimensionResource(R.dimen.media_card_width),
         minSmallItemWidth = 0.dp,
         modifier = modifier.padding(contentPadding),
     ) { index ->
@@ -1345,7 +1345,7 @@ private fun MediaStreamingEpisode(
         with(streamingEpisodes[index]) {
             Box(
                 modifier = Modifier
-                    .width(dimensionResource(coreR.dimen.media_card_width))
+                    .width(dimensionResource(R.dimen.media_card_width))
                     .aspectRatio(4f / 3f)
                     .maskClip(
                         RoundedCornerShape(
