@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.extensions
+package com.imashnake.animite.core.ui
 
 import androidx.compose.ui.util.fastRoundToInt
 import kotlin.math.floor

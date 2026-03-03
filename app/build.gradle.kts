@@ -69,6 +69,7 @@ dependencies {
     implementation(projects.api.preferences)
     implementation(projects.core)
     implementation(projects.core.resource)
+    implementation(projects.core.ui)
     implementation(projects.media)
     implementation(projects.navigation)
     implementation(projects.profile)

@@ -17,14 +17,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.imashnake.animite.core.extensions.DayPart.AFTERNOON
-import com.imashnake.animite.core.extensions.DayPart.EVENING
-import com.imashnake.animite.core.extensions.DayPart.MORNING
-import com.imashnake.animite.core.extensions.DayPart.NIGHT
-import com.imashnake.animite.core.extensions.toDayPart
+import com.imashnake.animite.core.ui.DayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.Paddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import com.imashnake.animite.core.ui.toDayPart
 import com.imashnake.animite.media.ext.modify
 import com.materialkolor.PaletteStyle
 import com.materialkolor.ktx.animateColorScheme
@@ -53,10 +50,10 @@ fun AnimiteTheme(
     val currentDayHour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour.toFloat()
 
     val stops = when ((dayHour ?: currentDayHour).toDayPart()) {
-        MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
-        AFTERNOON -> Triple(0xFF7AAEDD, 0xFFA1C8F5, 0xFFD1E4F6)
-        EVENING -> Triple(0xFF5F81E2, 0xFFBF98B7, 0xFFCDACC2)
-        NIGHT -> Triple(0xFF001020, 0xFF112B3A, 0xFF112B3A)
+        DayPart.MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
+        DayPart.AFTERNOON -> Triple(0xFF7AAEDD, 0xFFA1C8F5, 0xFFD1E4F6)
+        DayPart.EVENING -> Triple(0xFF5F81E2, 0xFFBF98B7, 0xFFCDACC2)
+        DayPart.NIGHT -> Triple(0xFF001020, 0xFF112B3A, 0xFF112B3A)
     }
 
     val staticColorScheme = rememberDynamicColorScheme(

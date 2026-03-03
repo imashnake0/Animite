@@ -1,4 +1,4 @@
-package com.imashnake.animite.core
+package com.imashnake.animite.core.ui
 
 object Constants {
     const val CROSSFADE_DURATION = 500

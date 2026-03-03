@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.copy
+import com.imashnake.animite.core.ui.Constants
+import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.navigation.R as navigationR
 
