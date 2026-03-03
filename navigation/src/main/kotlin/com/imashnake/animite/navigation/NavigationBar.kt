@@ -31,7 +31,6 @@ import androidx.navigation3.runtime.NavKey
 
 @Composable
 fun NavigationBar(
-    avatar: String?,
     backStack: List<NavKey>,
     navigateTo: (NavKey) -> Unit,
     modifier: Modifier = Modifier,
@@ -64,9 +63,7 @@ fun NavigationBar(
                 }
                 NavigationBarItem(
                     selected = selected,
-                    onClick = {
-                        if (!selected) navigateTo(destination)
-                    },
+                    onClick = { if (!selected) navigateTo(destination) },
                     icon = {
                         // TODO: fix
                         Icon(

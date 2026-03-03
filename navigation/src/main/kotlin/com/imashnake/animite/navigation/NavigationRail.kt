@@ -42,7 +42,6 @@ import androidx.navigation3.runtime.NavKey
 fun NavigationRail(
     backStack: List<NavKey>,
     navigateTo: (NavKey) -> Unit,
-    avatar: String?,
     modifier: Modifier = Modifier,
     containerColor: Color = NavigationBarDefaults.containerColor,
     contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),

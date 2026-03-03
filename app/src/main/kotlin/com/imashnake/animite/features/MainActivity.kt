@@ -23,14 +23,11 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalFontFamilyResolver
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
@@ -42,16 +39,12 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
-import com.imashnake.animite.features.theme.manropeFontFamily
-import com.imashnake.animite.navigation.AnimeRoute
-import com.imashnake.animite.navigation.MangaRoute
 import com.imashnake.animite.navigation.LocalSharedTransitionScope
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationRail
 import com.imashnake.animite.navigation.Navigator
 import com.imashnake.animite.navigation.Nested
 import com.imashnake.animite.navigation.Nested.MediaRoute
-import com.imashnake.animite.profile.ProfileViewModel
 import com.imashnake.animite.navigation.Root
 import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
@@ -62,8 +55,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
-    private val profileViewModel: ProfileViewModel by viewModels()
-    var showSplashScreen = true
 
     @Inject
     internal lateinit var entryProviders: Set<@JvmSuppressWildcards EntryProviderScope<NavKey>.() -> Unit>
@@ -74,15 +65,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        installSplashScreen().setKeepOnScreenCondition { showSplashScreen }
         enableEdgeToEdge()
         setContent {
-            val fontFamilyResolver = LocalFontFamilyResolver.current
-            LaunchedEffect(Unit) {
-                fontFamilyResolver.preload(manropeFontFamily)
-                showSplashScreen = false
-            }
-
             val theme by settingsViewModel.theme
                 .filterNotNull()
                 .collectAsState(initial = Theme.DEVICE_THEME.name)
@@ -98,8 +82,6 @@ class MainActivity : ComponentActivity() {
             }
 
             val dayHour by settingsViewModel.dayHour.collectAsState(initial = null)
-
-            val avatar by profileViewModel.viewerAvatar.collectAsState(initial = null)
 
             // gross
             if (intent.action == Intent.ACTION_VIEW) {
@@ -120,7 +102,6 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     navigator = navigator,
                     navEntries = entryProviders,
-                    avatar = avatar,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
@@ -135,7 +116,6 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     navigator: Navigator,
     navEntries: Set<@JvmSuppressWildcards EntryProviderScope<NavKey>.() -> Unit>,
-    avatar: String?,
     modifier: Modifier = Modifier,
 ) {
     val isNavBarVisible = navigator.isCurrentScreenRoot()
@@ -173,7 +153,6 @@ fun MainScreen(
                 ) {
                     NavigationRail(
                         backStack = navigator.backStack,
-                        avatar = avatar,
                         navigateTo = navigator::navigateTo
                     )
                 }
@@ -188,7 +167,6 @@ fun MainScreen(
                 ) {
                     NavigationBar(
                         backStack = navigator.backStack,
-                        avatar = avatar,
                         navigateTo = navigator::navigateTo
                     )
                 }

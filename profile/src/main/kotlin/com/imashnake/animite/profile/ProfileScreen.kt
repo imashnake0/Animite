@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
@@ -51,7 +50,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -78,17 +76,18 @@ import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.banner.BannerLayout
+import com.imashnake.animite.core.data.Resource
 import com.imashnake.animite.core.extensions.animiteBlockQuoteStyle
 import com.imashnake.animite.core.extensions.animiteCodeBlockStyle
 import com.imashnake.animite.core.extensions.copy
 import com.imashnake.animite.core.extensions.crossfadeModel
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.maxHeight
-import com.imashnake.animite.core.resource.Resource
+import com.imashnake.animite.core.extensions.plus
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.ProgressIndicatorScreen
+import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.navigation.Nested.MediaRoute
 import com.imashnake.animite.navigation.Nested.SettingsRoute
 import com.imashnake.animite.profile.tabs.AboutTab
@@ -124,7 +123,6 @@ internal fun ProfileScreen(
     val allPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
-    val viewerAvatar by viewModel.viewerAvatar.collectAsState(initial = "")
     val viewer by viewModel.viewer.collectAsState()
     val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
     val viewerMangaLists by viewModel.viewerMangaLists.collectAsState()
@@ -143,9 +141,6 @@ internal fun ProfileScreen(
         when {
             isLoggedIn -> when {
                 data.all { it is Resource.Success } -> viewer.data?.run {
-                    LaunchedEffect(Unit) {
-                        if (viewerAvatar == null) viewModel.saveViewerAvatar(avatar)
-                    }
                     BannerLayout(
                         banner = { modifier ->
                             Box {

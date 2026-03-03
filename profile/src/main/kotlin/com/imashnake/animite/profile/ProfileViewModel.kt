@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
-import com.imashnake.animite.core.resource.Resource
-import com.imashnake.animite.core.resource.Resource.Companion.asResource
+import com.imashnake.animite.core.data.Resource
+import com.imashnake.animite.core.data.Resource.Companion.asResource
 import com.imashnake.animite.navigation.Root
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -44,9 +44,7 @@ class ProfileViewModel @AssistedInject constructor(
         .onStart { emit(Unit) }
         .flatMapLatest {
             userRepository.fetchViewer(useNetwork)
-        }
-        .asResource()
-        .onEach {
+        }.asResource().onEach {
             it.data?.let { user -> preferencesRepository.setViewerId(user.id) }
         }.stateIn(
             scope = viewModelScope,
@@ -87,11 +85,8 @@ class ProfileViewModel @AssistedInject constructor(
     )
 
     fun logOut() = viewModelScope.launch(Dispatchers.IO) {
-        with(preferencesRepository) {
-            setAccessToken(null)
-            setViewerId(null)
-            setViewerAvatar(null)
-        }
+        preferencesRepository.setAccessToken(null)
+        preferencesRepository.setViewerId(null)
     }
 
     fun refresh(onRefresh: () -> Unit) = viewModelScope.launch {
@@ -99,11 +94,6 @@ class ProfileViewModel @AssistedInject constructor(
         useNetwork = true
         refreshTrigger.emit(Unit)
         useNetwork = false
-    }
-
-    val viewerAvatar = preferencesRepository.viewerAvatar
-    fun saveViewerAvatar(avatarUrl: String?) = viewModelScope.launch(Dispatchers.IO) {
-        preferencesRepository.setViewerAvatar(avatarUrl)
     }
 
     init {
