@@ -11,25 +11,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,6 +90,53 @@ fun <T> MediaSmallRow(
     }
 }
 
+@Composable
+fun LoadingMediaSmallRow(
+    count: Int,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+) {
+    Column(
+        modifier = modifier.padding(
+            top = contentPadding.calculateTopPadding(),
+            bottom = contentPadding.calculateBottomPadding()
+        ),
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
+    ) {
+        val layoutDirection = LocalLayoutDirection.current
+        val startPadding = contentPadding.calculateStartPadding(layoutDirection)
+        val endPadding = contentPadding.calculateEndPadding(layoutDirection)
+        Text(
+            text = " ",
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(
+                    start = startPadding,
+                    end = endPadding,
+                )
+                .clip(CircleShape)
+                .requiredWidth(140.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            contentPadding = PaddingValues(
+                start = startPadding,
+                end = endPadding,
+            ),
+            userScrollEnabled = false
+        ) {
+            items(count) {
+                LoadingMediaSmall(
+                    imageHeight = 200.dp,
+                    cardWidth = 140.dp,
+                )
+            }
+        }
+    }
+}
+
 /**
  * A [Card] that displays media (anime or manga) thumbnail, and an optional label.
  *
@@ -127,6 +178,7 @@ fun MediaCard(
 fun CharacterCard(
     image: String?,
     tag: String?,
+    tagMinLines: Int,
     label: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -142,6 +194,7 @@ fun CharacterCard(
         imageModifier = imageModifier,
         textModifier = textModifier,
         tag = tag,
+        tagMinLines = tagMinLines,
         label = label
     )
 }
@@ -167,6 +220,7 @@ internal fun MediaSmall(
     modifier: Modifier = Modifier,
     imageModifier: Modifier = Modifier,
     textModifier: Modifier = Modifier,
+    tagMinLines: Int = 1,
 ) {
     Card(
         onClick = onClick,
@@ -187,22 +241,38 @@ internal fun MediaSmall(
             )
 
             if (tag != null)
-                Text(
-                    text = tag,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .graphicsLayer {
-                            translationY = 10f
+                            translationY = 7f
                         }
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
                         .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
                         .padding(vertical = LocalPaddings.current.tiny)
-                )
+                        // Because the cropping is being weird
+                        .padding(bottom = LocalPaddings.current.tiny)
+                        .padding(horizontal = LocalPaddings.current.medium)
+                ) {
+                    if (tagMinLines > 1) {
+                        Text(
+                            text = " \n ",
+                            fontSize = 10.sp,
+                            maxLines = tagMinLines,
+                            minLines = tagMinLines,
+                            lineHeight = 16.sp,
+                        )
+                    }
+                    Text(
+                        text = tag,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 10.sp,
+                        textAlign = TextAlign.Center,
+                        maxLines = tagMinLines,
+                        lineHeight = 16.sp,
+                    )
+                }
         }
 
         if (label != null)
@@ -239,5 +309,100 @@ internal fun MediaSmall(
                     )
                 }
             }
+    }
+}
+
+@Composable
+internal fun LoadingMediaSmall(
+    imageHeight: Dp,
+    cardWidth: Dp,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)),
+        modifier = modifier.width(cardWidth),
+    ) {
+        Box(
+            modifier = Modifier
+                .height(imageHeight)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
+        )
+
+        Text(
+            text = " \n ",
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.padding(
+                vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewCharacterCard() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        CharacterCard(
+            image = null,
+            tag = "tag",
+            label = "label",
+            tagMinLines = 1,
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewCharacterCardShortTag() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        CharacterCard(
+            image = null,
+            tag = "tag",
+            tagMinLines = 2,
+            label = "label",
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewCharacterCardLongTag() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        CharacterCard(
+            image = null,
+            tag = "long\ntag",
+            tagMinLines = 2,
+            label = "long\nlabel",
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewLoadingMediaSmall() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        LoadingMediaSmall(
+            imageHeight = 200.dp,
+            cardWidth = 140.dp,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewMediaSmall() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        MediaSmall(
+            imageHeight = 200.dp,
+            cardWidth = 140.dp,
+            image = "",
+            tag = "tag",
+            label = "",
+            onClick = {},
+        )
     }
 }

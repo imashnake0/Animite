@@ -17,3 +17,23 @@ fragment CharacterSmall on Character {
     age
     favourites
 }
+
+fragment StaffSmall on Staff {
+    id
+    image {
+        large
+    }
+    name {
+        full
+        alternative
+    }
+    description(asHtml: true)
+    gender
+    dateOfBirth {
+        year
+        month
+        day
+    }
+    age
+    favourites
+}

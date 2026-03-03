@@ -7,8 +7,8 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
-import com.imashnake.animite.core.data.Resource
-import com.imashnake.animite.core.data.Resource.Companion.asResource
+import com.imashnake.animite.core.resource.Resource
+import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -27,7 +27,6 @@ class MangaViewModel @Inject constructor(
     private val mediaListRepository: AnilistMediaRepository,
     preferencesRepository: PreferencesRepository
 ) : ViewModel() {
-
     private val refreshTrigger = MutableSharedFlow<Unit>()
     val dayHour = preferencesRepository.dayHour
 

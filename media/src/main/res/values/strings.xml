@@ -55,7 +55,18 @@
     <string name="multimedia_project">Multimedia Project</string>
     <string name="picture_book">Picture Book</string>
 
+    <string name="all_time">All Time</string>
+    <string name="year">Year</string>
+<!--    <string name="season">Season</string>-->
+
+    <string name="rated">RATED</string>
+    <string name="popular">POPULAR</string>
+    <string name="score">SCORE</string>
+
+    <string name="no_rankings">No rankings available</string>
+
     <string name="characters">Characters</string>
+    <string name="staff">Staff</string>
     <string name="trailer">Trailer</string>
     <string name="watch">Watch</string>
     <string name="relations">Relations</string>
@@ -80,4 +91,11 @@
     <string name="source_relation">source</string>
     <string name="compilation_relation">compilation</string>
     <string name="contains_relation">contains</string>
+
+    <!-- Countdown -->
+    <string name="episode_airing_countdown">Ep %1$d in %2$s</string>
+    <string name="countdown_days">%1$dd</string>
+    <string name="countdown_hours">%1$dh</string>
+    <string name="countdown_minutes">%1$dm</string>
+    <string name="countdown_seconds">%1$ds</string>
 </resources>

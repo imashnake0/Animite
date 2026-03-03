@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName", "unused")
-
 package com.imashnake.animite.core.extensions
 
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,21 +8,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-// Stolen from:
-// https://github.com/uragiristereo/Mikansei/blob/main/core/ui/src/main/java/com/uragiristereo/mikansei/core/ui/extension/PaddingValues.kt
-
-@Composable
-operator fun PaddingValues.plus(other: PaddingValues): PaddingValues {
-    val direction = LocalLayoutDirection.current
-
-    return PaddingValues(
-        start = calculateStartPadding(direction) + other.calculateStartPadding(direction),
-        top = calculateTopPadding() + other.calculateTopPadding(),
-        end = calculateEndPadding(direction) + other.calculateEndPadding(direction),
-        bottom = calculateBottomPadding() + other.calculateBottomPadding(),
-    )
-}
 
 @Composable
 @Stable

@@ -3,12 +3,14 @@ package com.imashnake.animite.api.anilist.sanitize.media
 import android.graphics.Color
 import android.util.Log
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.core.graphics.toColorInt
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaMedium
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
+import com.imashnake.animite.api.anilist.fragment.StaffSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
@@ -21,7 +23,6 @@ import com.imashnake.animite.api.anilist.type.MediaRelation
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSource
 import com.imashnake.animite.api.anilist.type.MediaStatus
-import com.imashnake.animite.core.extensions.addNewlineAfterParagraph
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -31,7 +32,6 @@ import java.util.Locale
 import kotlin.collections.mapNotNull
 import kotlin.collections.orEmpty
 import kotlin.time.Clock
-import kotlin.time.Duration
 import kotlin.time.Instant
 
 private const val HQ_DEFAULT = "hqdefault"
@@ -53,19 +53,22 @@ data class Media(
     val title: String?,
     /** @see MediaQuery.Media.description */
     val description: String,
-    /**
-     *  For example: "5d 19h" to 2
-     *  @see AnimeInfo.NextAiringEpisode
-     * */
-    val timeToEpisode: Pair<String, Int>?,
+    /** @see AnimeInfo.NextAiringEpisode */
+    val nextAiring: NextAiring?,
     /** @see MediaQuery.Media */
     val info: ImmutableList<Info>,
+    /** @see AnimeInfo.seasonYear */
+    val year: String?,
+    /** @see AnimeInfo.season */
+    val season: Season?,
     /** @see MediaQuery.Media.rankings */
-    val rankings: ImmutableList<Ranking>,
+    val rankings: ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>>,
     /** @see MediaQuery.Media.genres */
     val genres: ImmutableList<String>,
     /** @see MediaQuery.Media.characters */
-    val characters: ImmutableList<Character>,
+    val characters: ImmutableList<Credit>,
+    /** @see MediaQuery.Media.staff */
+    val staff: ImmutableList<Credit>,
     /** @see MediaQuery.Media.trailer */
     val trailer: Trailer?,
     /** @see MediaQuery.Media.streamingEpisodes */
@@ -90,17 +93,15 @@ data class Media(
             return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
         }
 
-        fun getTimeToEpisode(nextAiringEpisode: AnimeInfo.NextAiringEpisode?) = nextAiringEpisode?.let nextEp@{ nextEp ->
-            nextEp.airingAt.let {
-                val difference = Instant.fromEpochSeconds(it.toLong()) - Clock.System.now()
-                if (difference < Duration.ZERO) return@nextEp null
-                difference
-            }.let {
-                it.toComponents { days, hours, _, _, _ ->
-                    if (days == 0L && hours == 0) return@nextEp null
-                    if (days == 0L) "${hours}h" else "${days}d ${hours}h"
-                }
-            } to nextEp.episode
+        fun getNextAiring(nextAiringEpisode: AnimeInfo.NextAiringEpisode?): NextAiring? {
+            return nextAiringEpisode?.let { nextEp ->
+                val airingAt = Instant.fromEpochSeconds(nextEp.airingAt.toLong())
+                if (airingAt <= Clock.System.now()) return null
+                NextAiring(
+                    airingAt = airingAt,
+                    episode = nextEp.episode
+                )
+            }
         }
 
         fun getAnimeInfo(animeInfo: AnimeInfo?) = buildList {
@@ -140,6 +141,75 @@ data class Media(
                 removeLastOrNull()
             }
         }.toImmutableList()
+
+        fun getRankings(
+            rankings: List<MediaQuery.Ranking?>?,
+            averageScore: Int?
+        ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
+            if (rankings == null) return persistentListOf()
+            val (allTimeRankings, yearSeasonRankings) = rankings.filterNotNull().partition { it.allTime == true }
+
+            return persistentListOf(getAllTimeRankings(allTimeRankings, averageScore)).addAll(
+                elements = getYearSeasonRankings(yearSeasonRankings)
+            )
+        }
+
+        fun getAllTimeRankings(
+            rankings: List<MediaQuery.Ranking>,
+            averageScore: Int?
+        ): Pair<Ranking.TimeSpan, ImmutableList<Ranking>> {
+            val rankings = rankings.mapNotNull {
+                if (it.type == MediaRankType.UNKNOWN__) return@mapNotNull null
+                Ranking(
+                    rank = it.rank,
+                    type = when (it.type) {
+                        MediaRankType.RATED -> Ranking.Type.RATED
+                        MediaRankType.POPULAR -> Ranking.Type.POPULAR
+                    }
+                )
+            } + listOfNotNull(
+                element = averageScore?.let {
+                    Ranking(rank = it, type = Ranking.Type.SCORE)
+                }
+            )
+
+            return Ranking.TimeSpan.ALL_TIME to rankings.toImmutableList()
+        }
+
+        fun getYearSeasonRankings(
+            rankings: List<MediaQuery.Ranking>,
+        ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
+            val rankings = rankings.filter { it.type != MediaRankType.UNKNOWN__ }
+            val (ratedList, popularList) = rankings.partition { it.type == MediaRankType.RATED }
+
+            // We're assuming that rankings are returned in this order
+            // All time, Year, Season
+            return listOf(Ranking.TimeSpan.YEAR, Ranking.TimeSpan.SEASON).map { timeSpan ->
+                getTimeSpanToList(timeSpan, ratedList, popularList)
+            }.toImmutableList()
+        }
+
+        private fun getTimeSpanToList(
+            timeSpan: Ranking.TimeSpan,
+            ratedList: List<MediaQuery.Ranking>,
+            popularList: List<MediaQuery.Ranking>,
+        ): Pair<Ranking.TimeSpan, ImmutableList<Ranking>> {
+            val timeSpanIndex = timeSpan.index - 1
+            return timeSpan to listOfNotNull(
+                ratedList.getOrNull(timeSpanIndex)?.let {
+                    Ranking(
+                        rank = it.rank,
+                        type = Ranking.Type.RATED,
+                    )
+                },
+                popularList.getOrNull(timeSpanIndex)?.let {
+                    Ranking(
+                        rank = it.rank,
+                        type = Ranking.Type.POPULAR,
+                    )
+                },
+            ).toImmutableList()
+        }
 
         fun getStreamingEpisodes(streamingEpisodes: List<MediaQuery.StreamingEpisode?>?): ImmutableList<Episode> {
             if (streamingEpisodes.isNullOrEmpty()) return persistentListOf()
@@ -317,6 +387,7 @@ data class Media(
         DIVIDER,
     }
 
+    @Stable
     data class Ranking(
         /** @see MediaQuery.Ranking.rank */
         val rank: Int,
@@ -324,15 +395,27 @@ data class Media(
         val type: Type,
     ) {
         /** @see MediaQuery.Ranking.type */
-        enum class Type(val string: String) {
-            RATED("Rated"),
-            POPULAR("Popular"),
-            SCORE("Score")
+        enum class Type {
+            RATED,
+            POPULAR,
+            SCORE,
+        }
+
+        enum class TimeSpan(val index: Int) {
+            ALL_TIME(0),
+            YEAR(1),
+            SEASON(2),
         }
     }
 
     @Immutable
-    data class Character(
+    data class NextAiring(
+        val airingAt: Instant,
+        val episode: Int
+    )
+
+    @Immutable
+    data class Credit(
         /** @see CharacterSmall.id */
         val id: Int,
         /** @see CharacterSmall.image */
@@ -401,6 +484,25 @@ data class Media(
                 description = query.description,
             ),
         )
+
+        internal constructor(query: StaffSmall, role: String? = null) : this(
+            id = query.id,
+            image = query.image?.large,
+            name = query.name?.full,
+            role = role,
+            dob = getFormattedDate(
+                year = query.dateOfBirth?.year,
+                month = query.dateOfBirth?.month,
+                day = query.dateOfBirth?.day
+            ),
+            favourites = getFormattedFavourites(query.favourites),
+            alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
+            description = getDescription(
+                age = query.age?.toString(),
+                gender = query.gender,
+                description = query.description,
+            ),
+        )
     }
 
     @Immutable
@@ -441,33 +543,26 @@ data class Media(
         color = query.coverImage?.color?.toColorInt() ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
-        // TODO: Make this a proper countdown.
-        timeToEpisode = getTimeToEpisode(query.animeInfo.nextAiringEpisode),
+        nextAiring = getNextAiring(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
-        // TODO: Clean this up and add other rank info.
-        rankings = if (query.rankings == null) { emptyList() } else {
-            // TODO: Is this filter valid?
-            query.rankings.filter {
-                it?.allTime == true && it.type != MediaRankType.UNKNOWN__
-            }.map {
-                Ranking(
-                    rank = it!!.rank,
-                    type = Ranking.Type.valueOf(it.type.name)
-                )
-            } + listOfNotNull(
-                query.averageScore?.let {
-                    Ranking(rank = it, type = Ranking.Type.SCORE)
-                }
-            )
-        }.toImmutableList(),
+        year = query.animeInfo.seasonYear?.toString(),
+        season = query.animeInfo.season?.sanitize(),
+        rankings = getRankings(query.rankings, query.averageScore),
         genres = query.genres?.filterNotNull().orEmpty().toImmutableList(),
         characters = query.characters?.edges.orEmpty().mapNotNull {
             if (it?.node?.characterSmall?.name == null) return@mapNotNull null
-            Character(
+            Credit(
                 query = it.node.characterSmall,
                 role = it.role.takeUnless {
                     role -> role == CharacterRole.UNKNOWN__
                 }?.name?.lowercase()
+            )
+        }.toImmutableList(),
+        staff = query.staff?.edges.orEmpty().mapNotNull {
+            if (it?.node?.staffSmall?.name == null) return@mapNotNull null
+            Credit(
+                query = it.node.staffSmall,
+                role = it.role?.lowercase()
             )
         }.toImmutableList(),
         trailer = if(query.trailer?.site == null || query.trailer.id == null) {
@@ -558,3 +653,5 @@ data class Media(
         )
     }
 }
+
+internal fun String.addNewlineAfterParagraph() = replace("</p>", "</p><br>")

@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.layouts.banner
+package com.imashnake.animite.banner
 
 import android.annotation.SuppressLint
 import android.graphics.RuntimeShader
@@ -48,7 +48,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.imashnake.animite.core.R
+import com.imashnake.animite.banner.shaders.nightSky
+import com.imashnake.animite.banner.shaders.sun
 import com.imashnake.animite.core.extensions.DayPart.AFTERNOON
 import com.imashnake.animite.core.extensions.DayPart.EVENING
 import com.imashnake.animite.core.extensions.DayPart.MORNING
@@ -58,12 +59,13 @@ import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.toDayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.imashnake.animite.core.ui.shaders.sun
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.PI
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+
+private const val PI_FLOAT = PI.toFloat()
 
 @OptIn(ExperimentalTime::class)
 @Composable
@@ -80,16 +82,20 @@ fun MountFuji(
     val dayHour = rememberSaveable(setDayHour, currentDayHour) {
         setDayHour ?: currentDayHour
     }
-    val sunShader = if (
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-        dayHour.toDayPart() != NIGHT
-    ) {
-        remember(dayHour) {
-            RuntimeShader(sun)
+
+    val isNotNight = remember(dayHour) { dayHour.toDayPart() != NIGHT }
+    val sunShader = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        remember(isNotNight) {
+            RuntimeShader(
+                when {
+                    isNotNight -> sun
+                    else -> nightSky
+                }
+            )
         }
     } else null
 
-    val time by animateFloatAsState(dayHour * 2f * PI.toFloat() / 24)
+    val time by animateFloatAsState(dayHour * 2f * PI_FLOAT / 24)
 
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
     val infiniteTransition = rememberInfiniteTransition(label = "clouds")
@@ -113,6 +119,10 @@ fun MountFuji(
         ),
         label = "delayed_cloud_position"
     )
+
+    val cloud1 = ImageVector.vectorResource(R.drawable.cloud_1)
+    val cloud2 = ImageVector.vectorResource(R.drawable.cloud_2)
+    val cloud3 = ImageVector.vectorResource(R.drawable.cloud_3)
 
     AnimatedContent(
         targetState = dayHour.toDayPart(),
@@ -172,7 +182,8 @@ fun MountFuji(
                                     size.height / 2.7f,
                                 )
                                 setFloatUniform("time", time)
-                                setFloatUniform("PI", PI.toFloat())
+                                setFloatUniform("PI", PI_FLOAT)
+                                setFloatUniform("sparsity", 0.99f)
                                 onDrawBehind {
                                     drawRect(ShaderBrush(this@run))
                                 }
@@ -183,7 +194,7 @@ fun MountFuji(
             }
 
             Image(
-                imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
+                imageVector = cloud2,
                 contentDescription = null,
                 modifier = Modifier
                     .height(40.dp)
@@ -196,7 +207,7 @@ fun MountFuji(
 
 
             Image(
-                imageVector = ImageVector.vectorResource(R.drawable.cloud_3),
+                imageVector = cloud3,
                 contentDescription = null,
                 modifier = Modifier
                     .height(45.dp)
@@ -209,7 +220,7 @@ fun MountFuji(
 
             if (it == AFTERNOON) {
                 Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
+                    imageVector = cloud1,
                     contentDescription = null,
                     modifier = Modifier
                         .height(35.dp)
@@ -261,7 +272,7 @@ fun MountFuji(
 
             if (it == AFTERNOON || it == MORNING) {
                 Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.cloud_2),
+                    imageVector = cloud2,
                     contentDescription = null,
                     modifier = Modifier
                         .height(40.dp)
@@ -276,7 +287,7 @@ fun MountFuji(
             if (it == AFTERNOON) {
                 // TODO: This doesn't show for landscape.
                 Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.cloud_1),
+                    imageVector = cloud1,
                     contentDescription = null,
                     modifier = Modifier
                         .height(35.dp)

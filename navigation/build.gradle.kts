@@ -30,16 +30,23 @@ kotlin {
 dependencies {
     api(libs.bundles.nav3)
 
+    // Graphics
+    implementation(libs.bundles.coil)
+    implementation(libs.compose.animation.graphics)
+
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
 
+    // Compose
     implementation(libs.bundles.compose)
     implementation(libs.compose.material)
-    implementation(libs.compose.ui.toolingPreview)
 
+    // Serialization
     implementation(libs.kotlinx.serialization.core)
 
+    // Previews
+    implementation(libs.compose.ui.toolingPreview)
     debugImplementation(libs.compose.ui.tooling)
 }

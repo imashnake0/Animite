@@ -22,6 +22,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -29,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -37,12 +40,14 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
+import com.imashnake.animite.features.theme.manropeFontFamily
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationRail
 import com.imashnake.animite.navigation.Navigator
 import com.imashnake.animite.navigation.di.EntryInstaller
+import com.imashnake.animite.profile.ProfileViewModel
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
@@ -60,12 +65,21 @@ class MainActivity : ComponentActivity() {
     internal lateinit var navigator: Navigator
 
     private val settingsViewModel: SettingsViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
+    var showSplashScreen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        installSplashScreen().setKeepOnScreenCondition { showSplashScreen }
         enableEdgeToEdge()
         setContent {
+            val fontFamilyResolver = LocalFontFamilyResolver.current
+            LaunchedEffect(Unit) {
+                fontFamilyResolver.preload(manropeFontFamily)
+                showSplashScreen = false
+            }
+
             val theme by settingsViewModel.theme
                 .filterNotNull()
                 .collectAsState(initial = Theme.DEVICE_THEME.name)
@@ -82,6 +96,8 @@ class MainActivity : ComponentActivity() {
 
             val dayHour by settingsViewModel.dayHour.collectAsState(initial = null)
 
+            val avatar by profileViewModel.viewerAvatar.collectAsState(initial = null)
+
             AnimiteTheme(
                 useDarkTheme = useDarkTheme,
                 useSystemColorScheme = useSystemColorScheme,
@@ -90,6 +106,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     navigator = navigator,
                     navEntries = entryProviders,
+                    avatar = avatar,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
@@ -104,6 +121,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     navigator: Navigator,
     navEntries: Set<EntryInstaller>,
+    avatar: String?,
     modifier: Modifier = Modifier,
 ) {
     val isNavBarVisible by remember(navigator.backStack) {

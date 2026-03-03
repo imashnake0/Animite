@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.shaders
+package com.imashnake.animite.banner.shaders
 
 import android.graphics.RuntimeShader
 import android.os.Build
@@ -22,6 +22,9 @@ import kotlin.math.PI
 
 @Language("AGSL")
 val sun = """
+  // dummy var for night sky
+  uniform float sparsity;
+    
   uniform float2 resolution;
   // 0 -> 2 * PI
   uniform float radius;

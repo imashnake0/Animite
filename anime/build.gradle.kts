@@ -32,10 +32,12 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
+    implementation(projects.banner)
     implementation(projects.media)
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
     implementation(projects.core)
+    implementation(projects.core.resource)
     implementation(projects.navigation)
 
     implementation(libs.kotlinx.collectionsImmutable)
