@@ -159,7 +159,6 @@ import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import com.imashnake.animite.core.R as coreR
 import com.imashnake.animite.core.ui.R as coreUiR
 
 private const val RECOMMENDATIONS = "Recommendations"
