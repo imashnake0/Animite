@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.layouts.banner
+package com.imashnake.animite.banner
 
 import android.annotation.SuppressLint
 import android.graphics.RuntimeShader
@@ -48,7 +48,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.imashnake.animite.core.R
+import com.imashnake.animite.banner.shaders.nightSky
+import com.imashnake.animite.banner.shaders.sun
 import com.imashnake.animite.core.extensions.DayPart.AFTERNOON
 import com.imashnake.animite.core.extensions.DayPart.EVENING
 import com.imashnake.animite.core.extensions.DayPart.MORNING
@@ -58,8 +59,6 @@ import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.extensions.toDayPart
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.imashnake.animite.core.ui.shaders.nightSky
-import com.imashnake.animite.core.ui.shaders.sun
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.PI

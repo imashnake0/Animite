@@ -36,6 +36,7 @@ dependencies {
     implementation(projects.api.preferences)
     implementation(projects.core)
     implementation(projects.core.resource)
+    implementation(projects.banner)
     implementation(projects.media)
     implementation(projects.navigation)
     implementation(projects.settings)

@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.shaders
+package com.imashnake.animite.banner.shaders
 
 import android.graphics.RuntimeShader
 import android.os.Build
