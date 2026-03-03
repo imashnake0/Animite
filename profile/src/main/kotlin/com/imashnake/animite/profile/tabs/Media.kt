@@ -19,8 +19,8 @@ import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.ext.verticalOnly
 import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaCard
-import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.core.ui.component.MediaCard
+import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card

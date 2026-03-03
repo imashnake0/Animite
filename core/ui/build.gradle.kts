@@ -35,6 +35,7 @@ dependencies {
     implementation(libs.bundles.coil)
 
     // Kotlin
+    implementation(libs.kotlinx.collectionsImmutable)
     implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.test.junit)

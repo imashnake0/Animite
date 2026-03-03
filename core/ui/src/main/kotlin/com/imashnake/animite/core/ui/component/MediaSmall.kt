@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui
+package com.imashnake.animite.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,8 +37,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.imashnake.animite.core.R
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.R
 import com.imashnake.animite.core.ui.ext.crossfadeModel
+import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import kotlinx.collections.immutable.ImmutableList
 
 /**

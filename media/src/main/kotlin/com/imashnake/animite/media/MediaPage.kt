@@ -133,14 +133,14 @@ import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.core.ui.ext.bannerParallax
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
-import com.imashnake.animite.core.ui.BottomSheet
-import com.imashnake.animite.core.ui.CharacterCard
+import com.imashnake.animite.core.ui.component.BottomSheet
+import com.imashnake.animite.core.ui.component.CharacterCard
 import com.imashnake.animite.core.ui.Constants
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaCard
-import com.imashnake.animite.core.ui.MediaSmallRow
-import com.imashnake.animite.core.ui.NestedScrollableContent
-import com.imashnake.animite.core.ui.StatsRow
+import com.imashnake.animite.core.ui.component.MediaCard
+import com.imashnake.animite.core.ui.component.MediaSmallRow
+import com.imashnake.animite.core.ui.layout.NestedScrollableContent
+import com.imashnake.animite.core.ui.component.StatsRow
 import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.ext.icon
@@ -160,6 +160,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.core.ui.R as coreUiR
 
 private const val RECOMMENDATIONS = "Recommendations"
 private const val RELATIONS = "Relations"
@@ -1339,7 +1340,7 @@ private fun MediaStreamingEpisode(
         val topCornerRadius = if (isTrailerPresent) {
             LocalPaddings.current.small
         } else {
-            dimensionResource(coreR.dimen.media_card_corner_radius)
+            dimensionResource(coreUiR.dimen.media_card_corner_radius)
         }
         with(streamingEpisodes[index]) {
             Box(
@@ -1350,8 +1351,8 @@ private fun MediaStreamingEpisode(
                         RoundedCornerShape(
                             topStart = topCornerRadius,
                             topEnd = topCornerRadius,
-                            bottomStart = dimensionResource(coreR.dimen.media_card_corner_radius),
-                            bottomEnd = dimensionResource(coreR.dimen.media_card_corner_radius),
+                            bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            bottomEnd = dimensionResource(coreUiR.dimen.media_card_corner_radius),
                         )
                     )
                     .clickable {
@@ -1374,7 +1375,7 @@ private fun MediaStreamingEpisode(
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         modifier = Modifier
-                            .padding(dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
+                            .padding(dimensionResource(coreUiR.dimen.media_card_corner_radius) / 2)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
                             .padding(horizontal = LocalPaddings.current.small)
@@ -1388,7 +1389,7 @@ private fun MediaStreamingEpisode(
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                            .padding(horizontal = dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
+                            .padding(horizontal = dimensionResource(coreUiR.dimen.media_card_corner_radius) / 2)
                             .padding(vertical = LocalPaddings.current.ultraTiny)
                     ) {
                         Text(

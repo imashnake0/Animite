@@ -42,10 +42,10 @@ import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.resource.Resource
-import com.imashnake.animite.core.ui.LoadingMediaSmallRow
+import com.imashnake.animite.core.ui.component.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaCard
-import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.core.ui.component.MediaCard
+import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
