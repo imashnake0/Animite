@@ -32,7 +32,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName(
                 if (System.getenv("Animite") == "true") "release" else "debug"
             )
@@ -81,7 +84,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycleRuntimeKtx)
-    implementation(libs.androidx.navigationCompose)
 
     // Compose
     implementation(libs.bundles.compose)

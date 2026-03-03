@@ -71,7 +71,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
@@ -108,14 +107,15 @@ fun ProfileScreen(
     onNavigateToSettings: (SettingsPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: ProfileViewModel,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
-    viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
-    val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
+    val navigationComponentPaddingValues = when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(
             bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
         )
+
         else -> PaddingValues(
             start = dimensionResource(navigationR.dimen.navigation_rail_width)
         )
@@ -206,8 +206,10 @@ fun ProfileScreen(
                         contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
                     )
                 }
+
                 else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
             }
+
             else -> {
                 SettingsIcon(
                     onNavigateToSettings = onNavigateToSettings,
@@ -531,6 +533,7 @@ private fun UserTabs(
                         user = user,
                         contentPadding = tabContentPadding,
                     )
+
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
@@ -538,6 +541,7 @@ private fun UserTabs(
                         animatedVisibilityScope = animatedVisibilityScope,
                         contentPadding = tabContentPadding,
                     )
+
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
@@ -545,6 +549,7 @@ private fun UserTabs(
                         animatedVisibilityScope = animatedVisibilityScope,
                         contentPadding = tabContentPadding,
                     )
+
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
                         onNavigateToMediaItem = onNavigateToMediaItem,

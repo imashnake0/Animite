@@ -4,13 +4,17 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.hilt)
 }
 
 android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -25,6 +29,7 @@ kotlin {
 
 dependencies {
     implementation(projects.core)
+    implementation(projects.navigation)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
@@ -45,6 +50,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.core)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigationCompose)
+    ksp(libs.hilt.android.compiler)
 
     testImplementation(libs.test.junit)
 

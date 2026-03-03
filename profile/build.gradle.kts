@@ -12,7 +12,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -43,9 +46,6 @@ dependencies {
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
-
-    // Navigation
-    implementation(libs.androidx.navigationCommon)
 
     // Compose
     implementation(libs.compose.animation)
