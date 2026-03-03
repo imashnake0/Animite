@@ -129,6 +129,7 @@ import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
 import com.imashnake.animite.core.extensions.copy
@@ -142,7 +143,6 @@ import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.NestedScrollableContent
 import com.imashnake.animite.core.ui.StatsRow
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.media.ext.title

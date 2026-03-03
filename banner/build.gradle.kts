@@ -18,7 +18,7 @@ android {
 
     buildFeatures { compose = true }
 
-    namespace = "com.imashnake.animite.media"
+    namespace = "com.imashnake.animite.banner"
 }
 
 kotlin {
@@ -32,25 +32,11 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-    implementation(projects.banner)
-    implementation(projects.navigation)
     implementation(projects.core)
-    implementation(projects.api.anilist)
-    implementation(projects.api.preferences)
-
-    // AndroidX
-    implementation(libs.androidx.activityCompose)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycleRuntimeKtx)
-
-    // Coil
-    implementation(libs.bundles.coil)
 
     // Compose
     implementation(libs.compose.animation)
     implementation(libs.compose.foundation)
-    implementation(libs.compose.material)
-    implementation(libs.compose.material.icons.core)
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
@@ -58,14 +44,6 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.navigationCompose)
-    ksp(libs.hilt.android.compiler)
-
-    // Kotlin
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.kotlinx.collectionsImmutable)
-
-    implementation(libs.materialKolor)
+    // KotlinX
+    implementation(libs.kotlinx.datetime)
 }

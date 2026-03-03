@@ -41,6 +41,7 @@ include(
     ":api:mal",
     ":api:preferences",
     ":app",
+    ":banner",
     ":core:resource",
     ":manga",
     ":media",

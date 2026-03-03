@@ -38,6 +38,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.banner.BannerLayout
+import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.extensions.horizontalOnly
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LoadingMediaSmallRow
@@ -45,8 +47,6 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.MediaCard
 import com.imashnake.animite.core.ui.MediaSmallRow
 import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
-import com.imashnake.animite.core.ui.layouts.banner.BannerLayout
-import com.imashnake.animite.core.ui.layouts.banner.MountFuji
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card

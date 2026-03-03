@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui.layouts.banner
+package com.imashnake.animite.banner
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
-import com.imashnake.animite.core.R
 import com.imashnake.animite.core.ui.LocalPaddings
 
 /**
