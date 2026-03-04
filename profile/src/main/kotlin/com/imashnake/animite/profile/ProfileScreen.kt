@@ -116,7 +116,6 @@ fun ProfileScreen(
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(
             bottom = dimensionResource(navigationR.dimen.navigation_bar_height)
         )
-
         else -> PaddingValues(
             start = dimensionResource(navigationR.dimen.navigation_rail_width)
         )
@@ -211,10 +210,8 @@ fun ProfileScreen(
                         contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
                     )
                 }
-
                 else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
             }
-
             else -> {
                 SettingsIcon(
                     onNavigateToSettings = onNavigateToSettings,
@@ -538,7 +535,6 @@ private fun UserTabs(
                         user = user,
                         contentPadding = tabContentPadding,
                     )
-
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
@@ -546,7 +542,6 @@ private fun UserTabs(
                         animatedVisibilityScope = animatedVisibilityScope,
                         contentPadding = tabContentPadding,
                     )
-
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
@@ -554,7 +549,6 @@ private fun UserTabs(
                         animatedVisibilityScope = animatedVisibilityScope,
                         contentPadding = tabContentPadding,
                     )
-
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
                         onNavigateToMediaItem = onNavigateToMediaItem,

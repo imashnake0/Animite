@@ -112,17 +112,14 @@ fun SettingsPage(
 
     val scrollState = rememberScrollState()
 
-    val selectedTheme by viewModel.theme.filterNotNull()
-        .collectAsState(initial = Theme.DEVICE_THEME.name)
-    val useSystemColorScheme by viewModel.useSystemColorScheme.filterNotNull()
-        .collectAsState(initial = true)
+    val selectedTheme by viewModel.theme.filterNotNull().collectAsState(initial = Theme.DEVICE_THEME.name)
+    val useSystemColorScheme by viewModel.useSystemColorScheme.filterNotNull().collectAsState(initial = true)
     val haptic = LocalHapticFeedback.current
 
-    val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.filterNotNull()
-        .collectAsState(initial = false)
+    val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.filterNotNull().collectAsState(initial = false)
 
-    val isDarkMode = selectedTheme == Theme.DARK.name ||
-            (selectedTheme == Theme.DEVICE_THEME.name && isSystemInDarkTheme())
+    val isDarkMode =
+        selectedTheme == Theme.DARK.name || (selectedTheme == Theme.DEVICE_THEME.name && isSystemInDarkTheme())
 
     var devOptionsCount by remember { mutableIntStateOf(0) }
 
@@ -300,9 +297,7 @@ fun SettingsPage(
 
                                     1 -> {
                                         Column(
-                                            verticalArrangement = Arrangement.spacedBy(
-                                                LocalPaddings.current.small
-                                            )
+                                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
                                         ) {
                                             DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART)
                                                 .forEach {
