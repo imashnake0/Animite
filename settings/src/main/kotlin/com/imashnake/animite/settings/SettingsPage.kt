@@ -118,8 +118,8 @@ fun SettingsPage(
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.filterNotNull().collectAsState(initial = false)
 
-    val isDarkMode =
-        selectedTheme == Theme.DARK.name || (selectedTheme == Theme.DEVICE_THEME.name && isSystemInDarkTheme())
+    val isDarkMode = selectedTheme == Theme.DARK.name ||
+            (selectedTheme == Theme.DEVICE_THEME.name && isSystemInDarkTheme())
 
     var devOptionsCount by remember { mutableIntStateOf(0) }
 
@@ -396,7 +396,6 @@ private fun Items(
                     ) {
                         itemContent(index)
                     }
-
                     Item.Orientation.VERTICAL -> VerticalItem(
                         item = index to item,
                         shape = RoundedCornerShape(
@@ -557,11 +556,7 @@ private fun AboutItem(
                             toast?.cancel()
                         }
                         if (isDevOptionsEnabled) {
-                            toast = Toast.makeText(
-                                context,
-                                R.string.already_developer,
-                                Toast.LENGTH_SHORT
-                            )
+                            toast = Toast.makeText(context, R.string.already_developer, Toast.LENGTH_SHORT)
                             toast?.show()
                             return@combinedClickable
                         }
@@ -575,8 +570,7 @@ private fun AboutItem(
                         } else if (devOptionsCount == 10) {
                             enableDevOptions()
                             onClick()
-                            toast =
-                                Toast.makeText(context, R.string.now_developer, Toast.LENGTH_SHORT)
+                            toast = Toast.makeText(context, R.string.now_developer, Toast.LENGTH_SHORT)
                         }
                         toast?.show()
                     },
@@ -586,11 +580,7 @@ private fun AboutItem(
                                 toast?.cancel()
                             }
                             disableDevOptions()
-                            toast = Toast.makeText(
-                                context,
-                                R.string.disabled_dev_options,
-                                Toast.LENGTH_SHORT
-                            )
+                            toast = Toast.makeText(context, R.string.disabled_dev_options, Toast.LENGTH_SHORT)
                             toast?.show()
                         }
                     }

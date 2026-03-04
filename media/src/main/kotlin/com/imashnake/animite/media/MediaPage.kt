@@ -512,9 +512,8 @@ fun MediaPage(
                                     .padding(paddingValues)
                                     .padding(bottom = LocalPaddings.current.large)
                                     .graphicsLayer {
-                                        val pageOffset = (
-                                                creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
-                                                ).absoluteValue
+                                        val pageOffset =
+                                            (creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction).absoluteValue
 
                                         alpha = lerp(
                                             start = 0f,
@@ -1069,7 +1068,7 @@ private fun MediaRankings(
                         slideIntoContainer(towards = Up, initialOffset = { it / 3 }))
                     .togetherWith(
                         fadeOut(animationSpec = tween(90)) +
-                                slideOutOfContainer(towards = Down, targetOffset =  { it / 3 })
+                                slideOutOfContainer(towards = Down, targetOffset = { it / 3 })
                     )
             }
         ) {
