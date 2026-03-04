@@ -1,5 +1,6 @@
 package com.imashnake.animite.features
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,13 +43,13 @@ import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.features.theme.manropeFontFamily
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.DeeplinkHandler
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationRail
 import com.imashnake.animite.navigation.Navigator
 import com.imashnake.animite.navigation.di.EntryInstaller
 import com.imashnake.animite.profile.AvatarViewModel
-import com.imashnake.animite.profile.ProfileViewModel
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
@@ -65,6 +66,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     internal lateinit var navigator: Navigator
 
+    @Inject
+    internal lateinit var deeplinkHandler: DeeplinkHandler
+
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val avatarViewModel: AvatarViewModel by viewModels()
 
@@ -72,6 +76,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (intent.data != null) {
+            parseDeeplink(intent)
+        }
 
         installSplashScreen().setKeepOnScreenCondition { showSplashScreen }
         enableEdgeToEdge()
@@ -113,6 +121,21 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
                 )
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        parseDeeplink(intent)
+    }
+
+    private fun parseDeeplink(intent: Intent) {
+        if (intent.data != null) {
+            val route = deeplinkHandler.parseIntent(intent)
+            if (route != null) {
+                navigator.navigate(route)
             }
         }
     }
