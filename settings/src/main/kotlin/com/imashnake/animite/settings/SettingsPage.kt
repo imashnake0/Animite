@@ -101,7 +101,7 @@ private const val ANIMITE = "Animite"
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsPage(
+internal fun SettingsPage(
     versionName: String,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),

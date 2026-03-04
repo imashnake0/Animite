@@ -173,7 +173,7 @@ private const val RELATIONS = "Relations"
     "CognitiveComplexMethod",
     "LongMethod"
 )
-fun MediaPage(
+internal fun MediaPage(
     onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     useDarkTheme: Boolean,

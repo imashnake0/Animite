@@ -103,7 +103,7 @@ private const val DROP_DOWN_ITEMS_COUNT = 2
 
 @Suppress("LongMethod")
 @Composable
-fun ProfileScreen(
+internal fun ProfileScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     onNavigateToSettings: (SettingsPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,

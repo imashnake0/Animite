@@ -58,7 +58,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Suppress("LongMethod")
-fun AnimeScreen(
+internal fun AnimeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,

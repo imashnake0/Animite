@@ -10,7 +10,7 @@ import com.imashnake.animite.core.ui.FallbackScreen
 import com.imashnake.animite.core.R as coreR
 
 @Composable
-fun SocialScreen() {
+internal fun SocialScreen() {
     FallbackScreen(
         message = stringResource(coreR.string.coming_soon),
         modifier = Modifier
