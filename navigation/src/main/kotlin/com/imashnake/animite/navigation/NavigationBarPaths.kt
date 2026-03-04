@@ -2,9 +2,6 @@ package com.imashnake.animite.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation3.runtime.NavKey
 
 enum class NavigationBarPaths(

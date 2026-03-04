@@ -47,6 +47,7 @@ import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationRail
 import com.imashnake.animite.navigation.Navigator
 import com.imashnake.animite.navigation.di.EntryInstaller
+import com.imashnake.animite.profile.AvatarViewModel
 import com.imashnake.animite.profile.ProfileViewModel
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
@@ -65,7 +66,8 @@ class MainActivity : ComponentActivity() {
     internal lateinit var navigator: Navigator
 
     private val settingsViewModel: SettingsViewModel by viewModels()
-    private val profileViewModel: ProfileViewModel by viewModels()
+    private val avatarViewModel: AvatarViewModel by viewModels()
+
     var showSplashScreen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,7 +98,7 @@ class MainActivity : ComponentActivity() {
 
             val dayHour by settingsViewModel.dayHour.collectAsState(initial = null)
 
-            val avatar by profileViewModel.viewerAvatar.collectAsState(initial = null)
+            val avatar by avatarViewModel.viewerAvatar.collectAsState(initial = null)
 
             AnimiteTheme(
                 useDarkTheme = useDarkTheme,
@@ -162,6 +164,7 @@ fun MainScreen(
                 ) {
                     NavigationRail(
                         backStack = navigator.backStack,
+                        avatar = avatar,
                         onNavigate = navigator::navigate,
                     )
                 }
@@ -176,6 +179,7 @@ fun MainScreen(
                 ) {
                     NavigationBar(
                         backStack = navigator.backStack,
+                        avatar = avatar,
                         onNavigate = navigator::navigate,
                     )
                 }

@@ -30,6 +30,7 @@ import androidx.navigation3.runtime.NavKey
 fun NavigationBar(
     backStack: List<NavKey>,
     onNavigate: (NavKey) -> Unit,
+    avatar: String?,
     modifier: Modifier = Modifier,
     containerColor: Color = NavigationBarDefaults.containerColor,
     contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),
@@ -53,14 +54,28 @@ fun NavigationBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             NavigationBarPaths.entries.forEach { destination ->
+                val isSelected = backStack.contains(destination.route)
+
                 NavigationBarItem(
-                    selected = backStack.contains(destination.route),
+                    selected = isSelected,
                     onClick = { onNavigate(destination.route) },
                     icon = {
-                        Icon(
-                            ImageVector.vectorResource(destination.icon),
-                            contentDescription = stringResource(destination.iconDescription)
-                        )
+                        when (destination) {
+                            NavigationBarPaths.Profile if avatar != null -> {
+                                AnimatedProfileIcon(avatar)
+                            }
+
+                            NavigationBarPaths.Anime if isSelected -> {
+                                AnimatedAnimeIcon()
+                            }
+
+                            else -> {
+                                Icon(
+                                    ImageVector.vectorResource(destination.icon),
+                                    contentDescription = stringResource(destination.iconDescription)
+                                )
+                            }
+                        }
                     },
                     modifier = Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
                 )

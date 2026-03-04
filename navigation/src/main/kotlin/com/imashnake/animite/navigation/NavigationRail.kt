@@ -39,6 +39,7 @@ import androidx.navigation3.runtime.NavKey
 fun NavigationRail(
     backStack: List<NavKey>,
     onNavigate: (NavKey) -> Unit,
+    avatar: String?,
     modifier: Modifier = Modifier,
     containerColor: Color = NavigationBarDefaults.containerColor,
     contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),
@@ -68,14 +69,28 @@ fun NavigationRail(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             NavigationBarPaths.entries.forEach { destination ->
+                val isSelected = backStack.contains(destination.route)
+
                 NavigationRailItem(
-                    selected = backStack.contains(destination.route),
+                    selected = isSelected,
                     onClick = { onNavigate(destination.route) },
                     icon = {
-                        Icon(
-                            ImageVector.vectorResource(destination.icon),
-                            contentDescription = stringResource(destination.iconDescription)
-                        )
+                        when (destination) {
+                            NavigationBarPaths.Profile if avatar != null -> {
+                                AnimatedProfileIcon(avatar)
+                            }
+
+                            NavigationBarPaths.Anime if isSelected -> {
+                                AnimatedAnimeIcon()
+                            }
+
+                            else -> {
+                                Icon(
+                                    ImageVector.vectorResource(destination.icon),
+                                    contentDescription = stringResource(destination.iconDescription)
+                                )
+                            }
+                        }
                     },
                     modifier = Modifier.width(dimensionResource(R.dimen.navigation_rail_width))
                 )
