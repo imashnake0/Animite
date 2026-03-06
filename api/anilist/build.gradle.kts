@@ -44,3 +44,9 @@ apollo {
         packageName = "com.imashnake.animite.api.anilist"
     }
 }
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("$rootDir/config/detekt/detekt.yml")
+    basePath = rootDir.absolutePath
+}

@@ -32,3 +32,9 @@ dependencies {
     implementation(libs.compose.ui.toolingPreview)
     implementation(libs.kotlinx.serialization.core)
 }
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("$rootDir/config/detekt/detekt.yml")
+    basePath = rootDir.absolutePath
+}
