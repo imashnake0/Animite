@@ -125,6 +125,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -132,6 +133,7 @@ import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.preferences.domain.Theme
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.core.Constants
 import com.imashnake.animite.core.extensions.bannerParallax
@@ -176,7 +178,6 @@ private const val RELATIONS = "Relations"
 internal fun MediaPage(
     onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    useDarkTheme: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: MediaPageViewModel,
@@ -185,6 +186,14 @@ internal fun MediaPage(
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
     val horizontalInsets = insetPaddingValues.horizontalOnly
+
+    val theme by viewModel.theme.collectAsStateWithLifecycle()
+    val isSystemDarkTheme = isSystemInDarkTheme()
+    val useDarkTheme by remember(theme, isSystemDarkTheme) {
+        derivedStateOf {
+            theme == Theme.DARK || (theme == Theme.DEVICE_THEME && isSystemDarkTheme)
+        }
+    }
 
     val scrollState = rememberScrollState()
 
@@ -1045,6 +1054,7 @@ private fun MediaRankings(
                                         .alignByBaseline()
                                 )
                             }
+
                             2 -> season?.let {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(it.icon),
@@ -1055,6 +1065,7 @@ private fun MediaRankings(
                                         .align(Alignment.CenterVertically)
                                 )
                             }
+
                             else -> {}
                         }
                     }

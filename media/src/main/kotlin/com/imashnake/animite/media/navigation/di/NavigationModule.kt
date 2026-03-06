@@ -27,7 +27,6 @@ object NavigationModule {
             MediaPage(
                 onBack = navigator::popBack,
                 onNavigateToMediaItem = navigator::navigate,
-                useDarkTheme = true, // fix?
                 sharedTransitionScope = sharedScope,
                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                 viewModel = hiltViewModel<MediaPageViewModel, MediaPageViewModel.Factory> { factory ->

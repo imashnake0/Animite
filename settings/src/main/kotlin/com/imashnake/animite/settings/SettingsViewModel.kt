@@ -3,6 +3,8 @@ package com.imashnake.animite.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.preferences.PreferencesRepository
+import com.imashnake.animite.api.preferences.domain.ObserveThemeUseCase
+import com.imashnake.animite.api.preferences.domain.Theme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -11,8 +13,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
+    observeTheme: ObserveThemeUseCase,
 ) : ViewModel() {
-    val theme = preferencesRepository.theme
+    val theme = observeTheme()
     val useSystemColorScheme = preferencesRepository.useSystemColorScheme
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled
     val dayHour = preferencesRepository.dayHour

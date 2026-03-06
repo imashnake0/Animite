@@ -33,11 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.api.preferences.domain.Theme
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
@@ -52,7 +54,6 @@ import com.imashnake.animite.navigation.di.EntryInstaller
 import com.imashnake.animite.profile.AvatarViewModel
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
-import com.imashnake.animite.settings.Theme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
 import javax.inject.Inject
@@ -77,12 +78,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        installSplashScreen().setKeepOnScreenCondition { showSplashScreen }
+        enableEdgeToEdge()
+
         if (intent.data != null) {
             parseDeeplink(intent)
         }
 
-        installSplashScreen().setKeepOnScreenCondition { showSplashScreen }
-        enableEdgeToEdge()
         setContent {
             val fontFamilyResolver = LocalFontFamilyResolver.current
             LaunchedEffect(Unit) {
@@ -92,13 +94,13 @@ class MainActivity : ComponentActivity() {
 
             val theme by settingsViewModel.theme
                 .filterNotNull()
-                .collectAsState(initial = Theme.DEVICE_THEME.name)
+                .collectAsStateWithLifecycle(initialValue = Theme.DEVICE_THEME)
 
             val useSystemColorScheme by settingsViewModel.useSystemColorScheme
                 .filterNotNull()
-                .collectAsState(initial = false)
+                .collectAsStateWithLifecycle(initialValue = false)
 
-            val useDarkTheme = when (Theme.valueOf(theme)) {
+            val useDarkTheme = when (theme) {
                 Theme.DARK -> true
                 Theme.LIGHT -> false
                 Theme.DEVICE_THEME -> isSystemInDarkTheme()

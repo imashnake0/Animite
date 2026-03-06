@@ -80,6 +80,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
+import com.imashnake.animite.api.preferences.domain.Theme
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.extensions.DayPart
@@ -198,7 +199,7 @@ internal fun SettingsPage(
                                             ),
                                             modifier = Modifier.weight(1f)
                                         ) {
-                                            Text(stringResource(theme.theme))
+                                            Text(getThemeText(theme))
                                         }
                                     }
                                 }
@@ -664,6 +665,16 @@ private fun AboutItem(
     }
 }
 
+@Composable
+private fun getThemeText(theme: Theme): String {
+    val resource = when(theme) {
+        Theme.DEVICE_THEME -> R.string.palette
+        Theme.DARK -> R.string.dark
+        Theme.LIGHT -> R.string.light
+    }
+    return stringResource(resource)
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun PrivacyPolicyItem(
@@ -769,7 +780,7 @@ private fun PreviewItems() {
                             },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(stringResource(theme.theme))
+                            Text(text = getThemeText(theme))
                         }
                     }
                 }
@@ -815,13 +826,6 @@ private data class Item(
     enum class Orientation {
         HORIZONTAL, VERTICAL
     }
-}
-
-
-enum class Theme(@param:StringRes val theme: Int) {
-    DARK(R.string.dark),
-    LIGHT(R.string.light),
-    DEVICE_THEME(R.string.system),
 }
 
 @Serializable

@@ -8,12 +8,16 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.preferences.domain.ObserveThemeUseCase
+import com.imashnake.animite.api.preferences.domain.Theme
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -21,8 +25,12 @@ import java.io.IOException
 @Suppress("SwallowedException")
 class MediaPageViewModel @AssistedInject constructor(
     @Assisted navArgs: MediaPage,
-    private val mediaRepository: AnilistMediaRepository
+    getThemeUseCase: ObserveThemeUseCase,
+    private val mediaRepository: AnilistMediaRepository,
 ) : ViewModel() {
+
+    val theme = getThemeUseCase()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), Theme.DEVICE_THEME)
 
     var uiState by mutableStateOf(
         MediaUiState(
