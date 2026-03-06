@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -33,6 +34,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
@@ -46,9 +49,7 @@ import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationRail
 import com.imashnake.animite.navigation.Navigator
-import com.imashnake.animite.navigation.di.EntryInstaller
 import com.imashnake.animite.profile.AvatarViewModel
-import com.imashnake.animite.profile.ProfileViewModel
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
@@ -60,7 +61,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    internal lateinit var entryProviders: Set<@JvmSuppressWildcards EntryInstaller>
+    internal lateinit var entryProviders: Set<@JvmSuppressWildcards EntryProviderScope<NavKey>.(SharedTransitionScope) -> Unit>
 
     @Inject
     internal lateinit var navigator: Navigator
@@ -122,7 +123,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     navigator: Navigator,
-    navEntries: Set<EntryInstaller>,
+    navEntries: Set<EntryProviderScope<NavKey>.(SharedTransitionScope) -> Unit>,
     avatar: String?,
     modifier: Modifier = Modifier,
 ) {
