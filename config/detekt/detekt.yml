@@ -214,7 +214,7 @@ style:
     active: true
   MaxChainedCallsOnSameLine:
     active: true
-    maxChainedCalls: 5
+    maxChainedCalls: 2
   MultilineLambdaItParameter:
     active: true
   MultilineRawStringIndentation:
