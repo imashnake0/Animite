@@ -9,8 +9,19 @@ plugins {
     alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.detekt) apply false
 }
 
 tasks.register("clean", Delete::class) {
     delete(rootProject.layout.buildDirectory)
+}
+
+val detektMerge by tasks.registering(io.gitlab.arturbosch.detekt.report.ReportMergeTask::class) {
+    output.set(rootProject.layout.buildDirectory.file("reports/detekt/merge.sarif"))
+}
+
+subprojects {
+    detektMerge {
+        input.from(tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().map { it.sarifReportFile })
+    }
 }
