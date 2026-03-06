@@ -50,15 +50,12 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.banner.shaders.nightSky
 import com.imashnake.animite.banner.shaders.sun
-import com.imashnake.animite.core.extensions.DayPart.AFTERNOON
-import com.imashnake.animite.core.extensions.DayPart.EVENING
-import com.imashnake.animite.core.extensions.DayPart.MORNING
-import com.imashnake.animite.core.extensions.DayPart.NIGHT
-import com.imashnake.animite.core.extensions.copy
-import com.imashnake.animite.core.extensions.horizontalOnly
-import com.imashnake.animite.core.extensions.toDayPart
+import com.imashnake.animite.core.ui.DayPart
+import com.imashnake.animite.core.ui.ext.copy
+import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import com.imashnake.animite.core.ui.toDayPart
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.PI
@@ -83,7 +80,7 @@ fun MountFuji(
         setDayHour ?: currentDayHour
     }
 
-    val isNotNight = remember(dayHour) { dayHour.toDayPart() != NIGHT }
+    val isNotNight = remember(dayHour) { dayHour.toDayPart() != DayPart.NIGHT }
     val sunShader = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         remember(isNotNight) {
             RuntimeShader(
@@ -134,24 +131,24 @@ fun MountFuji(
         modifier = Modifier
     ) {
         val stops = when (it) {
-            MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
-            AFTERNOON -> Triple(0xFF7AAEDD, 0xFFA1C8F5, 0xFFD1E4F6)
-            EVENING -> Triple(0xFF5F81E2, 0xFFBF98B7, 0xFFCDACC2)
-            NIGHT -> Triple(0xFF001020, 0xFF112B3A, 0xFF32434B)
+            DayPart.MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
+            DayPart.AFTERNOON -> Triple(0xFF7AAEDD, 0xFFA1C8F5, 0xFFD1E4F6)
+            DayPart.EVENING -> Triple(0xFF5F81E2, 0xFFBF98B7, 0xFFCDACC2)
+            DayPart.NIGHT -> Triple(0xFF001020, 0xFF112B3A, 0xFF32434B)
         }
 
         val mountFujiDrawable = when (it) {
-            MORNING -> R.drawable.mount_fuji_morning
-            AFTERNOON -> R.drawable.mount_fuji_afternoon
-            EVENING -> R.drawable.mount_fuji_evening
-            NIGHT -> R.drawable.mount_fuji_night
+            DayPart.MORNING -> R.drawable.mount_fuji_morning
+            DayPart.AFTERNOON -> R.drawable.mount_fuji_afternoon
+            DayPart.EVENING -> R.drawable.mount_fuji_evening
+            DayPart.NIGHT -> R.drawable.mount_fuji_night
         }
 
         val headerColor = when (it) {
-            MORNING -> 0xFFFFFAE2
-            AFTERNOON -> 0xFFFAFAFA
-            EVENING -> 0xFFE0E0FF
-            NIGHT -> 0xFFAEACA7
+            DayPart.MORNING -> 0xFFFFFAE2
+            DayPart.AFTERNOON -> 0xFFFAFAFA
+            DayPart.EVENING -> 0xFFE0E0FF
+            DayPart.NIGHT -> 0xFFAEACA7
         }
 
         Box(
@@ -218,7 +215,7 @@ fun MountFuji(
                     },
             )
 
-            if (it == AFTERNOON) {
+            if (it == DayPart.AFTERNOON) {
                 Image(
                     imageVector = cloud1,
                     contentDescription = null,
@@ -270,7 +267,7 @@ fun MountFuji(
                 }
             }
 
-            if (it == AFTERNOON || it == MORNING) {
+            if (it == DayPart.AFTERNOON || it == DayPart.MORNING) {
                 Image(
                     imageVector = cloud2,
                     contentDescription = null,
@@ -284,7 +281,7 @@ fun MountFuji(
                 )
             }
 
-            if (it == AFTERNOON) {
+            if (it == DayPart.AFTERNOON) {
                 // TODO: This doesn't show for landscape.
                 Image(
                     imageVector = cloud1,

@@ -25,7 +25,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.core)
+    implementation(projects.core.ui)
     implementation(projects.navigation)
 
     // AndroidX

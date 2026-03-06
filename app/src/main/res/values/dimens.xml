@@ -3,4 +3,5 @@
     <dimen name="search_bar_icon_padding">16dp</dimen>
     <dimen name="search_list_padding">14dp</dimen>
     <dimen name="search_bar_height">56dp</dimen>
+    <dimen name="search_icon_size">56dp</dimen>
 </resources>

@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaCard
+import com.imashnake.animite.core.ui.component.MediaCard
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

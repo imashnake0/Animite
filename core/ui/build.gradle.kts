@@ -14,7 +14,7 @@ android {
 
     buildFeatures { compose = true }
 
-    namespace = "com.imashnake.animite.core"
+    namespace = "com.imashnake.animite.core.ui"
 }
 
 kotlin {
@@ -22,14 +22,8 @@ kotlin {
 }
 
 dependencies {
-    // AndroidX
-    implementation(libs.androidx.activityCompose)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycleRuntimeKtx)
-
     // Compose
     implementation(libs.bundles.compose)
-    implementation(libs.compose.material)
     implementation(libs.compose.animation.graphics)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
@@ -42,8 +36,6 @@ dependencies {
 
     // Kotlin
     implementation(libs.kotlinx.collectionsImmutable)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.test.junit)

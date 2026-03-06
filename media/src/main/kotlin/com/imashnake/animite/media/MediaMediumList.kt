@@ -42,10 +42,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaCard
+import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
-import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.core.ui.R as coreUiR
 
 @Composable
 fun MediaMediumList(
@@ -93,7 +93,7 @@ private fun MediaMediumItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(dimensionResource(coreR.dimen.media_card_corner_radius)))
+            .clip(RoundedCornerShape(dimensionResource(coreUiR.dimen.media_card_corner_radius)))
             .clickable { onClick(item.id, item.title) }
     ) {
         MediaCard(

@@ -127,7 +127,7 @@ internal fun ExpandedSearchBarContent(
         leadingIcon = {
             IconButton(
                 onClick = collapse,
-                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size))
+                modifier = Modifier.size(dimensionResource(R.dimen.search_icon_size))
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
@@ -145,7 +145,7 @@ internal fun ExpandedSearchBarContent(
                         clearText()
                     }
                 },
-                modifier = Modifier.size(dimensionResource(com.imashnake.animite.core.R.dimen.icon_size))
+                modifier = Modifier.size(dimensionResource(R.dimen.search_icon_size))
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
