@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.imashnake.animite.core.R
+import com.imashnake.animite.banner.R
 import org.intellij.lang.annotations.Language
 import kotlin.math.PI
 

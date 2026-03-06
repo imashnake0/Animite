@@ -2,4 +2,6 @@
 <resources>
     <dimen name="user_about_height">200dp</dimen>
     <dimen name="user_about_height_landscape">50dp</dimen>
+
+    <dimen name="markdown_block_corner_radius">3dp</dimen>
 </resources>

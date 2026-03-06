@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.StatsRow
+import com.imashnake.animite.core.ui.component.StatsRow
 import com.imashnake.animite.profile.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch

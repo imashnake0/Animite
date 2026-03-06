@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.extensions
+package com.imashnake.animite.profile.ext
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.boswelja.markdown.style.BlockQuoteStyle
 import com.boswelja.markdown.style.CodeBlockStyle
-import com.imashnake.animite.core.R
+import com.imashnake.animite.profile.R
 
 @Composable
 fun animiteBlockQuoteStyle(

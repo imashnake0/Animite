@@ -15,12 +15,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.core.extensions.horizontalOnly
-import com.imashnake.animite.core.extensions.verticalOnly
-import com.imashnake.animite.core.ui.FallbackScreen
+import com.imashnake.animite.core.ui.ext.horizontalOnly
+import com.imashnake.animite.core.ui.ext.verticalOnly
+import com.imashnake.animite.core.ui.screen.FallbackScreen
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaCard
-import com.imashnake.animite.core.ui.MediaSmallRow
+import com.imashnake.animite.core.ui.component.MediaCard
+import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card

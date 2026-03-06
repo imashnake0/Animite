@@ -32,7 +32,7 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-    implementation(projects.core)
+    implementation(projects.core.ui)
 
     // Compose
     implementation(libs.compose.animation)

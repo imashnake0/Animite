@@ -1,4 +1,4 @@
-package com.imashnake.animite.core.ui
+package com.imashnake.animite.core.ui.component
 
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -27,8 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.imashnake.animite.core.R
-import com.imashnake.animite.core.extensions.thenIf
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.R
+import com.imashnake.animite.core.ui.ext.thenIf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

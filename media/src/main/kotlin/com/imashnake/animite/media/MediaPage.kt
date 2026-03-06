@@ -130,19 +130,19 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
-import com.imashnake.animite.core.Constants
-import com.imashnake.animite.core.extensions.bannerParallax
-import com.imashnake.animite.core.extensions.copy
-import com.imashnake.animite.core.extensions.crossfadeModel
-import com.imashnake.animite.core.extensions.horizontalOnly
-import com.imashnake.animite.core.ui.BottomSheet
-import com.imashnake.animite.core.ui.CharacterCard
+import com.imashnake.animite.core.ui.ext.bannerParallax
+import com.imashnake.animite.core.ui.ext.copy
+import com.imashnake.animite.core.ui.ext.horizontalOnly
+import com.imashnake.animite.core.ui.component.BottomSheet
+import com.imashnake.animite.core.ui.component.CharacterCard
+import com.imashnake.animite.core.ui.Constants
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.MediaCard
-import com.imashnake.animite.core.ui.MediaSmallRow
-import com.imashnake.animite.core.ui.NestedScrollableContent
-import com.imashnake.animite.core.ui.StatsRow
-import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.core.ui.component.MediaCard
+import com.imashnake.animite.core.ui.component.MediaSmallRow
+import com.imashnake.animite.core.ui.layout.NestedScrollableContent
+import com.imashnake.animite.core.ui.component.StatsRow
+import com.imashnake.animite.core.ui.ext.crossfadeModel
+import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.media.ext.title
@@ -159,7 +159,7 @@ import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import com.imashnake.animite.core.R as coreR
+import com.imashnake.animite.core.ui.R as coreUiR
 
 private const val RECOMMENDATIONS = "Recommendations"
 private const val RELATIONS = "Relations"
@@ -249,7 +249,7 @@ fun MediaPage(
                                 modifier = Modifier
                                     .skipToLookaheadSize()
                                     .padding(horizontal = LocalPaddings.current.large / 2)
-                                    .padding(start = dimensionResource(coreR.dimen.media_card_width) + LocalPaddings.current.large)
+                                    .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
                                     .padding(horizontalInsets)
                                     .height(
                                         dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
@@ -397,7 +397,7 @@ fun MediaPage(
                         targetValue = if (isAtTop)
                             0.dp
                         else
-                            dimensionResource(coreR.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height),
+                            dimensionResource(R.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height),
                         animationSpec = tween(durationMillis = 750),
                         label = "media_card_height"
                     )
@@ -409,14 +409,14 @@ fun MediaPage(
                             .padding(
                                 top = dimensionResource(R.dimen.media_details_height)
                                         + LocalPaddings.current.medium
-                                        + dimensionResource(coreR.dimen.banner_height)
-                                        - dimensionResource(coreR.dimen.media_image_height)
+                                        + dimensionResource(coreUiR.dimen.banner_height)
+                                        - dimensionResource(R.dimen.media_image_height)
                                         - insetPaddingValues.calculateTopPadding()
                                         + offset,
                                 start = LocalPaddings.current.large,
                             )
                             .padding(horizontalInsets)
-                            .height(dimensionResource(coreR.dimen.media_image_height) - offset)
+                            .height(dimensionResource(R.dimen.media_image_height) - offset)
                     ) {
                         MediaCard(
                             image = media.coverImage,
@@ -540,7 +540,7 @@ fun MediaPage(
 
                                 Column(
                                     verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                    modifier = Modifier.height(dimensionResource(coreR.dimen.character_image_height))
+                                    modifier = Modifier.height(dimensionResource(R.dimen.character_image_height))
                                 ) {
                                     Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
                                         Text(
@@ -1329,9 +1329,9 @@ private fun MediaStreamingEpisode(
 ) {
     HorizontalMultiBrowseCarousel(
         state = rememberCarouselState { streamingEpisodes.size },
-        preferredItemWidth = dimensionResource(coreR.dimen.media_card_width),
+        preferredItemWidth = dimensionResource(R.dimen.media_card_width),
         itemSpacing = LocalPaddings.current.small,
-        maxSmallItemWidth = dimensionResource(coreR.dimen.media_card_width),
+        maxSmallItemWidth = dimensionResource(R.dimen.media_card_width),
         minSmallItemWidth = 0.dp,
         modifier = modifier.padding(contentPadding),
     ) { index ->
@@ -1339,19 +1339,19 @@ private fun MediaStreamingEpisode(
         val topCornerRadius = if (isTrailerPresent) {
             LocalPaddings.current.small
         } else {
-            dimensionResource(coreR.dimen.media_card_corner_radius)
+            dimensionResource(coreUiR.dimen.media_card_corner_radius)
         }
         with(streamingEpisodes[index]) {
             Box(
                 modifier = Modifier
-                    .width(dimensionResource(coreR.dimen.media_card_width))
+                    .width(dimensionResource(R.dimen.media_card_width))
                     .aspectRatio(4f / 3f)
                     .maskClip(
                         RoundedCornerShape(
                             topStart = topCornerRadius,
                             topEnd = topCornerRadius,
-                            bottomStart = dimensionResource(coreR.dimen.media_card_corner_radius),
-                            bottomEnd = dimensionResource(coreR.dimen.media_card_corner_radius),
+                            bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            bottomEnd = dimensionResource(coreUiR.dimen.media_card_corner_radius),
                         )
                     )
                     .clickable {
@@ -1374,7 +1374,7 @@ private fun MediaStreamingEpisode(
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         modifier = Modifier
-                            .padding(dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
+                            .padding(dimensionResource(coreUiR.dimen.media_card_corner_radius) / 2)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
                             .padding(horizontal = LocalPaddings.current.small)
@@ -1388,7 +1388,7 @@ private fun MediaStreamingEpisode(
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                            .padding(horizontal = dimensionResource(coreR.dimen.media_card_corner_radius) / 2)
+                            .padding(horizontal = dimensionResource(coreUiR.dimen.media_card_corner_radius) / 2)
                             .padding(vertical = LocalPaddings.current.ultraTiny)
                     ) {
                         Text(

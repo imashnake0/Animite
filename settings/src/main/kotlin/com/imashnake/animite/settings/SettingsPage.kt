@@ -81,12 +81,12 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
-import com.imashnake.animite.core.extensions.DayPart
-import com.imashnake.animite.core.extensions.horizontalOnly
-import com.imashnake.animite.core.extensions.toDayPart
+import com.imashnake.animite.core.ui.DayPart
+import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.layouts.TranslucentStatusBarLayout
+import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import com.imashnake.animite.core.ui.toDayPart
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.filterNotNull

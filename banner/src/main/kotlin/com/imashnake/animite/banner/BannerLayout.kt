@@ -21,7 +21,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
  * Most screens and pages follow a banner-style layout in Animite.
  *
  * @param banner A banner [Composable] that is usually an image with
- * [com.imashnake.animite.core.extensions.bannerParallax] and other components.
+ * [com.imashnake.animite.core.ui.ext.bannerParallax] and other components.
  * @param content The content that appears in a [Column] below the banner.
  * @param modifier Modifier for [BannerLayout].
  * @param bannerHeight The height of the banner in [Dp]s.

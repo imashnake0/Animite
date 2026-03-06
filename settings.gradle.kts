@@ -43,6 +43,7 @@ include(
     ":app",
     ":banner",
     ":core:resource",
+    ":core:ui",
     ":manga",
     ":media",
     ":navigation",
