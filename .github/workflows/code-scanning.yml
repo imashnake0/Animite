@@ -1,4 +1,4 @@
-name: Code scanning
+name: code-scanning
 
 on:
   push:
