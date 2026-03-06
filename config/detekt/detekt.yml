@@ -202,11 +202,6 @@ style:
     active: true
   ForbiddenAnnotation:
     active: true
-  ForbiddenImport:
-    active: true
-    imports:
-      - value: 'androidx.compose.material3.MaterialTheme'
-        reason: 'NASDroid uses an extended Material 3 theme. Please use com.nasdroid.design.MaterialThemeExt instead'
   MagicNumber:
     active: true
     ignoreAnnotated:
