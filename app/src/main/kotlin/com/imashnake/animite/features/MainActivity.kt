@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -154,7 +155,8 @@ fun MainScreen(
                         navEntries.forEach { builder ->
                             builder(this@SharedTransitionLayout)
                         }
-                    }
+                    },
+                    sharedTransitionScope = this,
                 )
             }
         }
