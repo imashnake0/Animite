@@ -231,6 +231,14 @@ style:
     active: true
   UnusedImports:
     active: true
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
+      - 'PreviewScreenSize'
+      - 'PreviewFontScale'
+      - 'PreviewLightDark'
+      - 'PreviewDynamicColors'
   UseDataClass:
     active: true
     allowVars: false
