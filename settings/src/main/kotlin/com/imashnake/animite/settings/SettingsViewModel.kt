@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -12,9 +13,9 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
-    val theme = preferencesRepository.theme
-    val useSystemColorScheme = preferencesRepository.useSystemColorScheme
-    val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled
+    val theme = preferencesRepository.theme.filterNotNull()
+    val useSystemColorScheme = preferencesRepository.useSystemColorScheme.filterNotNull()
+    val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
 
     fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {

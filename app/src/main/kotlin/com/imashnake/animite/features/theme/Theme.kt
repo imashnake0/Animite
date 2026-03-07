@@ -31,10 +31,7 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.rememberDynamicColorScheme
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlin.math.floor
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @OptIn(
@@ -54,7 +51,12 @@ fun AnimiteTheme(
     val timeContext by if (dayHour != null) {
         remember(dayHour) {
             derivedStateOf {
-                TimeContext.calculateFromTime(LocalTime(floor(dayHour).toInt(), 30))
+                TimeContext.calculateFromTime(
+                    LocalTime(
+                        hour = floor(dayHour).toInt(),
+                        minute = ((dayHour - floor(dayHour).toInt()) * 60).toInt()
+                    )
+                )
             }
         }
     } else {
