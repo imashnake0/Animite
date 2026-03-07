@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -25,6 +26,7 @@ kotlin {
 
 dependencies {
     implementation(projects.core.ui)
+    implementation(projects.navigation)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
@@ -45,6 +47,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.core)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigationCompose)
+    ksp(libs.hilt.android.compiler)
 
     testImplementation(libs.test.junit)
 

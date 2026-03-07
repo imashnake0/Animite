@@ -45,9 +45,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
-    // Navigation
-    implementation(libs.androidx.navigationCommon)
-
     // Compose
     implementation(libs.compose.animation)
     implementation(libs.compose.foundation)

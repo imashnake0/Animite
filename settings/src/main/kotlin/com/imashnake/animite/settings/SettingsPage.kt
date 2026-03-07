@@ -79,6 +79,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation3.runtime.NavKey
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.DayPart
@@ -293,45 +294,51 @@ fun SettingsPage(
                                             valueRange = 0f..24f,
                                         )
                                     }
+
                                     1 -> {
-                                        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
-                                            DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART).forEach {
-                                                Row(
-                                                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    modifier = Modifier
-                                                        .padding(start = LocalPaddings.current.large)
-                                                        .clip(CircleShape)
-                                                        .clickable {
-                                                            if (it != SYSTEM_DAY_PART) {
-                                                                viewModel.setDayHour(
-                                                                    when(DayPart.valueOf(it)) {
-                                                                        DayPart.MORNING -> 6f
-                                                                        DayPart.AFTERNOON -> 12f
-                                                                        DayPart.EVENING -> 18f
-                                                                        DayPart.NIGHT -> 21f
-                                                                    }
-                                                                )
-                                                            } else viewModel.setDayHour(null)
-                                                        }
-                                                        .padding(
-                                                            top = LocalPaddings.current.tiny,
-                                                            bottom = LocalPaddings.current.tiny,
-                                                            start = LocalPaddings.current.tiny,
-                                                            end = LocalPaddings.current.medium
+                                        Column(
+                                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                                        ) {
+                                            DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART)
+                                                .forEach {
+                                                    Row(
+                                                        horizontalArrangement = Arrangement.spacedBy(
+                                                            LocalPaddings.current.small
+                                                        ),
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        modifier = Modifier
+                                                            .padding(start = LocalPaddings.current.large)
+                                                            .clip(CircleShape)
+                                                            .clickable {
+                                                                if (it != SYSTEM_DAY_PART) {
+                                                                    viewModel.setDayHour(
+                                                                        when (DayPart.valueOf(it)) {
+                                                                            DayPart.MORNING -> 6f
+                                                                            DayPart.AFTERNOON -> 12f
+                                                                            DayPart.EVENING -> 18f
+                                                                            DayPart.NIGHT -> 21f
+                                                                        }
+                                                                    )
+                                                                } else viewModel.setDayHour(null)
+                                                            }
+                                                            .padding(
+                                                                top = LocalPaddings.current.tiny,
+                                                                bottom = LocalPaddings.current.tiny,
+                                                                start = LocalPaddings.current.tiny,
+                                                                end = LocalPaddings.current.medium
+                                                            )
+                                                    ) {
+                                                        RadioButton(
+                                                            selected = if (dayHour == null) it == SYSTEM_DAY_PART else it == dayHour?.toDayPart()?.name,
+                                                            onClick = null,
                                                         )
-                                                ) {
-                                                    RadioButton(
-                                                        selected = if (dayHour == null) it == SYSTEM_DAY_PART else it == dayHour?.toDayPart()?.name,
-                                                        onClick = null,
-                                                    )
-                                                    Text(
-                                                        text = it,
-                                                        style = MaterialTheme.typography.labelSmallEmphasized,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
+                                                        Text(
+                                                            text = it,
+                                                            style = MaterialTheme.typography.labelSmallEmphasized,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                        )
+                                                    }
                                                 }
-                                            }
                                         }
                                     }
                                 }
@@ -603,7 +610,9 @@ private fun AboutItem(
 
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxHeight().weight(1f)
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
             ) {
                 Text(
                     text = ANIMITE,
@@ -741,7 +750,9 @@ private fun PreviewItems() {
             ),
             onItemClick = {},
             isDarkMode = false,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = padding)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = padding)
         ) { index ->
             when (index) {
                 0 -> Row(
@@ -814,4 +825,4 @@ enum class Theme(@param:StringRes val theme: Int) {
 }
 
 @Serializable
-data object SettingsPage
+data object SettingsPage : NavKey

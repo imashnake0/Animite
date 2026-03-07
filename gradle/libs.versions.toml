@@ -32,7 +32,6 @@ coreSplashscreen = "1.2.0"
 lifecycle = "2.10.0"
 extJunit = "1.3.0"
 espresso = "3.7.0"
-navigation = "2.9.7"
 
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
@@ -104,6 +103,10 @@ materialKolor = "4.1.1"
 # https://github.com/saket/cascade/releases
 saketCascade = "2.3.0"
 
+# Nav3
+nav3Core = "1.1.0-alpha05"
+lifecycleViewmodelNav3 = "2.10.0"
+
 [libraries]
 
 android-desugaring = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugaring" }
@@ -111,8 +114,6 @@ androidx-activityCompose = { group = "androidx.activity", name = "activity-compo
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-lifecycleRuntimeKtx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
-androidx-navigationCommon = { group = "androidx.navigation", name = "navigation-common", version.ref = "navigation" }
-androidx-navigationCompose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "extJunit" }
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
@@ -155,6 +156,9 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-contentNegotation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 saket-cascade = { group = "me.saket.cascade", name = "cascade-compose", version.ref = "saketCascade" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+androidx-navigation3-vm = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 
 [bundles]
 
@@ -178,4 +182,10 @@ ktor = [
     "ktor-logging",
     "ktor-contentNegotation",
     "ktor-serialization"
+]
+
+nav3 = [
+    "androidx-navigation3-runtime",
+    "androidx-navigation3-ui",
+    "androidx-navigation3-vm",
 ]

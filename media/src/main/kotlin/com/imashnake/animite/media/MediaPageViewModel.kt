@@ -3,33 +3,35 @@ package com.imashnake.animite.media
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.io.IOException
-import javax.inject.Inject
 
-@HiltViewModel
+@HiltViewModel(assistedFactory = MediaPageViewModel.Factory::class)
 @Suppress("SwallowedException")
-class MediaPageViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+class MediaPageViewModel @AssistedInject constructor(
+    @Assisted navArgs: MediaPage,
     private val mediaRepository: AnilistMediaRepository
 ) : ViewModel() {
-    private val navArgs = savedStateHandle.toRoute<MediaPage>()
-    var uiState by mutableStateOf(MediaUiState(
+
+    var uiState by mutableStateOf(
+        MediaUiState(
             source = navArgs.source,
             id = navArgs.id,
             type = navArgs.mediaType,
             title = navArgs.title
-        ))
+        )
+    )
         private set
 
     init {
@@ -60,7 +62,7 @@ class MediaPageViewModel @Inject constructor(
                     relations = media?.relations,
                     recommendations = media?.recommendations
                 )
-            } catch(_: IOException) {
+            } catch (_: IOException) {
                 TODO()
             }
         }
@@ -68,7 +70,8 @@ class MediaPageViewModel @Inject constructor(
 
     fun getGenreMediaMediums(genre: String?) = viewModelScope.launch {
         if (genre == null) {
-            uiState = uiState.copy(genreTitleList = uiState.genreTitleList?.first.orEmpty() to persistentListOf())
+            uiState =
+                uiState.copy(genreTitleList = uiState.genreTitleList?.first.orEmpty() to persistentListOf())
             return@launch
         }
         val list = mediaRepository.fetchMediaMediumList(
@@ -80,5 +83,10 @@ class MediaPageViewModel @Inject constructor(
         ).firstOrNull()?.getOrNull()
 
         uiState = uiState.copy(genreTitleList = list?.let { genre to it })
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navArgs: MediaPage): MediaPageViewModel
     }
 }

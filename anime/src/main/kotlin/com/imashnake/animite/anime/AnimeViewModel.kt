@@ -1,6 +1,5 @@
 package com.imashnake.animite.anime
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -30,11 +30,10 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class AnimeViewModel @Inject constructor(
     private val mediaListRepository: AnilistMediaRepository,
-    savedStateHandle: SavedStateHandle,
     preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
-    private val now = savedStateHandle.getStateFlow(NOW, LocalDate.now())
+    private val now = flowOf(LocalDate.now())
     private val refreshTrigger = MutableSharedFlow<Unit>()
     val dayHour = preferencesRepository.dayHour
 
@@ -125,9 +124,5 @@ class AnimeViewModel @Inject constructor(
         delay(1500L)
         useNetwork = false
         setIsRefreshing(false)
-    }
-
-    companion object {
-        const val NOW = "now"
     }
 }

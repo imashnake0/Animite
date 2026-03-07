@@ -1,5 +1,6 @@
 package com.imashnake.animite.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,13 +12,13 @@ data class ProfileRoute(
     val tokenType: String? = null,
     @SerialName("expiresIn")
     val expiresIn: Int = -1
-)
+) : NavKey
 
 @Serializable
-data object SocialRoute
+data object SocialRoute : NavKey
 
 @Serializable
-data object AnimeRoute
+data object AnimeRoute : NavKey
 
 @Serializable
-data object MangaRoute
+data object MangaRoute : NavKey

@@ -3,7 +3,10 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
+import android.os.Build
+import android.view.RoundedCorner
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
@@ -105,6 +108,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -122,7 +126,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation3.runtime.NavKey
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -171,17 +175,17 @@ private const val RELATIONS = "Relations"
     "LongMethod"
 )
 fun MediaPage(
-    onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: MediaPageViewModel,
+    deviceScreenCornerRadius: Int = getTopRightRadius(),
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
-    viewModel: MediaPageViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
     val horizontalInsets = insetPaddingValues.horizontalOnly
+    val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     val scrollState = rememberScrollState()
 
@@ -448,7 +452,7 @@ fun MediaPage(
                                 top = LocalPaddings.current.small
                             )
                             .clip(CircleShape)
-                            .clickable(enabled = !isExpanded) { onBack() }
+                            .clickable(enabled = !isExpanded) { dispatcher?.onBackPressed() }
                             .padding(LocalPaddings.current.small),
                         tint = if (isSystemInDarkTheme()) Color.White else Color.Black
                     )
@@ -509,9 +513,8 @@ fun MediaPage(
                                     .padding(paddingValues)
                                     .padding(bottom = LocalPaddings.current.large)
                                     .graphicsLayer {
-                                        val pageOffset = (
-                                            creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
-                                        ).absoluteValue
+                                        val pageOffset =
+                                            (creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction).absoluteValue
 
                                         alpha = lerp(
                                             start = 0f,
@@ -584,8 +587,11 @@ fun MediaPage(
                                 MediaDescription(
                                     html = description,
                                     onLinkClick = onLinkClick@{
-                                        val id = it?.split("/")?.getOrNull(4)?.toIntOrNull() ?: return@onLinkClick null
-                                        val character = media.characters?.find { character -> character.id == id } ?: return@onLinkClick null
+                                        val id = it?.split("/")?.getOrNull(4)?.toIntOrNull()
+                                            ?: return@onLinkClick null
+                                        val character =
+                                            media.characters?.find { character -> character.id == id }
+                                                ?: return@onLinkClick null
                                         val index = media.characters.indexOf(character)
                                         if (index != -1) {
                                             coroutineScope.launch {
@@ -600,8 +606,8 @@ fun MediaPage(
                                         .padding(top = LocalPaddings.current.medium)
                                         .graphicsLayer {
                                             val pageOffset = (
-                                                creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
-                                            ).absoluteValue
+                                                    creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
+                                                    ).absoluteValue
 
                                             alpha = lerp(
                                                 start = 0f,
@@ -715,7 +721,8 @@ fun MediaPage(
                     ) {
                         if (it) {
                             MediaMediumGrid(
-                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
+                                mediaMediumList = media.genreTitleList?.second
+                                    ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(
@@ -729,7 +736,8 @@ fun MediaPage(
                             )
                         } else {
                             MediaMediumList(
-                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
+                                mediaMediumList = media.genreTitleList?.second
+                                    ?: persistentListOf(),
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(
@@ -951,6 +959,7 @@ private fun MediaInfo(
                             )
                     )
                 }
+
                 else -> {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -968,13 +977,14 @@ private fun MediaInfo(
                             style = MaterialTheme.typography.labelSmallEmphasized
                         )
                         Text(
-                            text = when(it) {
+                            text = when (it) {
                                 is Media.Info.Item -> it.value
                                 is Media.Info.Season -> listOfNotNull(
                                     stringResource(it.season.res), it.year
                                 ).joinToString(" ")
+
                                 else -> stringResource(
-                                    when(it) {
+                                    when (it) {
                                         is Media.Info.Format -> it.format.res
                                         is Media.Info.Status -> it.status.res
                                         is Media.Info.Source -> it.source.res
@@ -1023,14 +1033,17 @@ private fun MediaRankings(
                 ) {
                     Row(
                         verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
+                    ) {
                         Text(text = stringResource(timeSpan.res), Modifier.alignByBaseline())
                         when (timeSpan.index) {
                             1 -> year?.let {
                                 Text(
                                     text = it,
                                     fontSize = 10.sp,
-                                    modifier = Modifier.graphicsLayer { alpha = 0.5f }.alignByBaseline()
+                                    modifier = Modifier
+                                        .graphicsLayer { alpha = 0.5f }
+                                        .alignByBaseline()
                                 )
                             }
                             2 -> season?.let {
@@ -1056,7 +1069,7 @@ private fun MediaRankings(
                         slideIntoContainer(towards = Up, initialOffset = { it / 3 }))
                     .togetherWith(
                         fadeOut(animationSpec = tween(90)) +
-                                slideOutOfContainer(towards = Down, targetOffset =  { it / 3 })
+                                slideOutOfContainer(towards = Down, targetOffset = { it / 3 })
                     )
             }
         ) {
@@ -1456,10 +1469,25 @@ private fun MediaRecommendations(
     }
 }
 
+@Composable
+private fun getTopRightRadius(): Int {
+    val view = LocalView.current
+    // Use remember to avoid recalculating on every recomposition
+    // but observe the view's layout/insets if necessary.
+    return remember(view) {
+        val insets = view.rootWindowInsets
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            insets?.getRoundedCorner(RoundedCorner.POSITION_TOP_RIGHT)?.radius ?: 0
+        } else {
+            0
+        }
+    }
+}
+
 @Serializable
 data class MediaPage(
     val id: Int,
     val source: String,
     val mediaType: String,
     val title: String?,
-)
+) : NavKey
