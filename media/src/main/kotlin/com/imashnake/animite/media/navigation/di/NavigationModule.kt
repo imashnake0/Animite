@@ -25,7 +25,6 @@ object NavigationModule {
     ): EntryProviderScope<NavKey>.(SharedTransitionScope) -> Unit = { sharedScope ->
         entry<MediaPage> { args ->
             MediaPage(
-                onBack = navigator::popBack,
                 onNavigateToMediaItem = navigator::navigate,
                 useDarkTheme = true, // fix?
                 sharedTransitionScope = sharedScope,

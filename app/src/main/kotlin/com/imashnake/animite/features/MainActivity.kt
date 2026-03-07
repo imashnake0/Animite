@@ -127,7 +127,7 @@ fun MainScreen(
     avatar: String?,
     modifier: Modifier = Modifier,
 ) {
-    val isNavBarVisible by remember(navigator.backStack) {
+    val isNavBarVisible by remember(navigator.backStack.size) {
         derivedStateOf {
             NavigationBarPaths.entries.any { it.route == navigator.backStack.lastOrNull() }
         }
@@ -140,12 +140,16 @@ fun MainScreen(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
             SharedTransitionLayout {
+                val backstack = navigator.backStack
+                if (backstack.isEmpty()) return@SharedTransitionLayout
+
                 NavDisplay(
+                    onBack = navigator::onBackPressed,
                     entryDecorators = listOf(
                         rememberSaveableStateHolderNavEntryDecorator(),
                         rememberViewModelStoreNavEntryDecorator()
                     ),
-                    backStack = navigator.backStack,
+                    backStack = backstack,
                     entryProvider = entryProvider {
                         navEntries.forEach { builder ->
                             builder(this@SharedTransitionLayout)

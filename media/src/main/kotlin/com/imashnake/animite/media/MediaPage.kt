@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.view.RoundedCorner
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
@@ -174,7 +175,6 @@ private const val RELATIONS = "Relations"
     "LongMethod"
 )
 fun MediaPage(
-    onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     useDarkTheme: Boolean,
     sharedTransitionScope: SharedTransitionScope,
@@ -185,6 +185,7 @@ fun MediaPage(
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
     val horizontalInsets = insetPaddingValues.horizontalOnly
+    val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
 
     val scrollState = rememberScrollState()
 
@@ -451,7 +452,7 @@ fun MediaPage(
                                 top = LocalPaddings.current.small
                             )
                             .clip(CircleShape)
-                            .clickable(enabled = !isExpanded) { onBack() }
+                            .clickable(enabled = !isExpanded) { dispatcher?.onBackPressed() }
                             .padding(LocalPaddings.current.small),
                         tint = if (isSystemInDarkTheme()) Color.White else Color.Black
                     )

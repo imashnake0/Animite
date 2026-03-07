@@ -54,7 +54,7 @@ fun NavigationBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             NavigationBarPaths.entries.forEach { destination ->
-                val isSelected = backStack.contains(destination.route)
+                val isSelected = backStack.lastOrNull() == destination.route
 
                 NavigationBarItem(
                     selected = isSelected,

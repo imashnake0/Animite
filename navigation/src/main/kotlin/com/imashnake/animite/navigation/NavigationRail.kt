@@ -69,7 +69,7 @@ fun NavigationRail(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             NavigationBarPaths.entries.forEach { destination ->
-                val isSelected = backStack.contains(destination.route)
+                val isSelected = backStack.lastOrNull() == destination.route
 
                 NavigationRailItem(
                     selected = isSelected,
