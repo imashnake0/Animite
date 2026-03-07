@@ -84,9 +84,10 @@ import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.DayPart
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.LocalTimeContext
+import com.imashnake.animite.core.ui.TimeContext
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.imashnake.animite.core.ui.toDayPart
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.filterNotNull
@@ -105,6 +106,7 @@ fun SettingsPage(
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: SettingsViewModel = hiltViewModel(),
+    timeContext: TimeContext = LocalTimeContext.current
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
     val horizontalInsets = insetPaddingValues.horizontalOnly
@@ -129,7 +131,6 @@ fun SettingsPage(
             BannerLayout(
                 banner = { bannerModifier ->
                     MountFuji(
-                        setDayHour = dayHour,
                         header = stringResource(R.string.settings),
                         insetPaddingValues = insetPaddingValues,
                         modifier = bannerModifier,
@@ -288,9 +289,9 @@ fun SettingsPage(
                                 when (index) {
                                     0 -> {
                                         Slider(
-                                            value = animateFloatAsState(dayHour ?: 0f).value,
+                                            value = timeContext.dayProgress * 23,
                                             onValueChange = { viewModel.setDayHour(it) },
-                                            valueRange = 0f..24f,
+                                            valueRange = 0f..23f,
                                         )
                                     }
                                     1 -> {
@@ -322,7 +323,7 @@ fun SettingsPage(
                                                         )
                                                 ) {
                                                     RadioButton(
-                                                        selected = if (dayHour == null) it == SYSTEM_DAY_PART else it == dayHour?.toDayPart()?.name,
+                                                        selected = it == timeContext.dayPart.name,
                                                         onClick = null,
                                                     )
                                                     Text(

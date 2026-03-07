@@ -29,6 +29,6 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun setDayHour(dayHour: Float?) = viewModelScope.launch(Dispatchers.IO) {
-        preferencesRepository.setDayHour(dayHour)
+        preferencesRepository.setDayHour(dayHour?.coerceIn(0f, 23f))
     }
 }
