@@ -76,8 +76,6 @@ fun AnimeScreen(
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
-    val dayHour by viewModel.dayHour.collectAsState(initial = null)
-
     val trendingList by viewModel.trendingMedia.collectAsState()
     val popularList by viewModel.popularMediaThisSeason.collectAsState()
     val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
@@ -104,7 +102,6 @@ fun AnimeScreen(
                 BannerLayout(
                     banner = { bannerModifier ->
                         MountFuji(
-                            setDayHour = dayHour,
                             header = stringResource(R.string.okaeri),
                             insetPaddingValues = insetPaddingValues,
                             navigationComponentPaddingValues = navigationComponentPaddingValues,

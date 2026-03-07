@@ -14,20 +14,26 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.imashnake.animite.core.ui.DayPart
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.LocalTimeContext
 import com.imashnake.animite.core.ui.Paddings
+import com.imashnake.animite.core.ui.TimeContext
+import com.imashnake.animite.core.ui.produceTimeContext
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.imashnake.animite.core.ui.toDayPart
 import com.imashnake.animite.media.ext.modify
 import com.materialkolor.PaletteStyle
 import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.rememberDynamicColorScheme
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.math.floor
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -45,11 +51,17 @@ fun AnimiteTheme(
 ) {
     val dynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && useSystemColorScheme
     val context = LocalContext.current
+    val timeContext by if (dayHour != null) {
+        remember(dayHour) {
+            derivedStateOf {
+                TimeContext.calculateFromTime(LocalTime(floor(dayHour).toInt(), 30))
+            }
+        }
+    } else {
+        produceTimeContext()
+    }
 
-    // TODO: Make a top level function.
-    val currentDayHour = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour.toFloat()
-
-    val stops = when ((dayHour ?: currentDayHour).toDayPart()) {
+    val stops = when (timeContext.dayPart) {
         DayPart.MORNING -> Triple(0xFF007695, 0xFFC8C4A3, 0xFFFFE8A5)
         DayPart.AFTERNOON -> Triple(0xFF7AAEDD, 0xFFA1C8F5, 0xFFD1E4F6)
         DayPart.EVENING -> Triple(0xFF5F81E2, 0xFFBF98B7, 0xFFCDACC2)
@@ -90,6 +102,7 @@ fun AnimiteTheme(
         CompositionLocalProvider(
             LocalRippleConfiguration provides animiteRippleTheme,
             LocalPaddings provides paddings,
+            LocalTimeContext provides timeContext,
             content = content,
         )
     }
