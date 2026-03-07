@@ -28,3 +28,9 @@ dependencies {
     // DataStore
     implementation(libs.datastore)
 }
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("$rootDir/config/detekt/detekt.yml")
+    basePath = rootDir.absolutePath
+}
