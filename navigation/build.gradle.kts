@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -23,14 +25,27 @@ kotlin {
 }
 
 dependencies {
-    api(libs.androidx.navigationCompose)
+    api(libs.bundles.nav3)
+
+    // Graphics
     implementation(libs.bundles.coil)
+    implementation(libs.compose.animation.graphics)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigationCompose)
+    ksp(libs.hilt.android.compiler)
+
+    // Compose
     implementation(libs.bundles.compose)
     implementation(libs.compose.material)
-    implementation(libs.compose.animation.graphics)
-    debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.compose.ui.toolingPreview)
+
+    // Serialization
     implementation(libs.kotlinx.serialization.core)
+
+    // Previews
+    implementation(libs.compose.ui.toolingPreview)
+    debugImplementation(libs.compose.ui.tooling)
 }
 
 detekt {

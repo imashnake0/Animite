@@ -78,6 +78,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation3.runtime.NavKey
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.DayPart
@@ -291,6 +292,7 @@ fun SettingsPage(
                                             valueRange = 0f..1f,
                                         )
                                     }
+
                                     1 -> {
                                         Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
                                             DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART).forEach {
@@ -329,7 +331,6 @@ fun SettingsPage(
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
                                                 }
-                                            }
                                         }
                                     }
                                 }
@@ -601,7 +602,9 @@ private fun AboutItem(
 
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxHeight().weight(1f)
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
             ) {
                 Text(
                     text = ANIMITE,
@@ -739,7 +742,9 @@ private fun PreviewItems() {
             ),
             onItemClick = {},
             isDarkMode = false,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = padding)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = padding)
         ) { index ->
             when (index) {
                 0 -> Row(
@@ -812,4 +817,4 @@ enum class Theme(@param:StringRes val theme: Int) {
 }
 
 @Serializable
-data object SettingsPage
+data object SettingsPage : NavKey

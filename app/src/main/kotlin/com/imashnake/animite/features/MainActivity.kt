@@ -1,16 +1,15 @@
 package com.imashnake.animite.features
 
-import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
-import android.view.RoundedCorner
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -27,49 +26,50 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navDeepLink
-import com.imashnake.animite.BuildConfig
-import com.imashnake.animite.anime.AnimeScreen
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.features.theme.manropeFontFamily
-import com.imashnake.animite.manga.MangaScreen
 import com.imashnake.animite.media.MediaPage
-import com.imashnake.animite.navigation.AnimeRoute
-import com.imashnake.animite.navigation.MangaRoute
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
 import com.imashnake.animite.navigation.NavigationRail
-import com.imashnake.animite.navigation.ProfileRoute
-import com.imashnake.animite.navigation.SocialRoute
-import com.imashnake.animite.profile.ProfileScreen
-import com.imashnake.animite.profile.ProfileViewModel
-import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
+import com.imashnake.animite.navigation.Navigator
+import com.imashnake.animite.profile.AvatarViewModel
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
-import com.imashnake.animite.social.SocialScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    internal lateinit var entryProviders: Set<@JvmSuppressWildcards EntryProviderScope<NavKey>.(SharedTransitionScope) -> Unit>
+
+    @Inject
+    internal lateinit var navigator: Navigator
+
     private val settingsViewModel: SettingsViewModel by viewModels()
-    private val profileViewModel: ProfileViewModel by viewModels()
+    private val avatarViewModel: AvatarViewModel by viewModels()
+
     var showSplashScreen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
 
             val useSystemColorScheme by settingsViewModel.useSystemColorScheme.collectAsState(initial = false)
 
-            val useDarkTheme = when(Theme.valueOf(theme)) {
+            val useDarkTheme = when (Theme.valueOf(theme)) {
                 Theme.DARK -> true
                 Theme.LIGHT -> false
                 Theme.DEVICE_THEME -> isSystemInDarkTheme()
@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
 
             val dayHour by settingsViewModel.dayHour.collectAsState(initial = null)
 
-            val avatar by profileViewModel.viewerAvatar.collectAsState(initial = null)
+            val avatar by avatarViewModel.viewerAvatar.collectAsState(initial = null)
 
             AnimiteTheme(
                 useDarkTheme = useDarkTheme,
@@ -104,8 +104,8 @@ class MainActivity : ComponentActivity() {
                 dayHour = dayHour
             ) {
                 MainScreen(
-                    deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
-                    useDarkTheme = useDarkTheme,
+                    navigator = navigator,
+                    navEntries = entryProviders,
                     avatar = avatar,
                     modifier = Modifier
                         .fillMaxSize()
@@ -114,37 +114,20 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private fun getDeviceScreenCornerRadius(): Int {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return windowManager
-                .currentWindowMetrics
-                .windowInsets
-                .getRoundedCorner(RoundedCorner.POSITION_TOP_RIGHT)
-                ?.radius
-                ?: 0
-        }
-        return 0
-    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(
-    deviceScreenCornerRadius: Int,
-    useDarkTheme: Boolean,
+    navigator: Navigator,
+    navEntries: Set<EntryProviderScope<NavKey>.(SharedTransitionScope) -> Unit>,
     avatar: String?,
     modifier: Modifier = Modifier,
 ) {
-    val navController = rememberNavController()
-
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val isNavBarVisible = rememberSaveable(currentBackStackEntry) {
-        if (currentBackStackEntry != null) {
-            NavigationBarPaths.entries.any {
-                it.matchesDestination(currentBackStackEntry!!)
-            }
-        } else false
+    val isNavBarVisible by remember(navigator.backStack.size) {
+        derivedStateOf {
+            NavigationBarPaths.entries.any { it.route == navigator.backStack.lastOrNull() }
+        }
     }
 
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
@@ -154,72 +137,55 @@ fun MainScreen(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
             SharedTransitionLayout {
-                NavHost(navController = navController, startDestination = AnimeRoute) {
-                    composable<AnimeRoute> {
-                        AnimeScreen(
-                            onNavigateToMediaItem = navController::navigate,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedVisibilityScope = this,
-                        )
-                    }
-                    composable<MangaRoute> {
-                        MangaScreen(
-                            onNavigateToMediaItem = navController::navigate,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedVisibilityScope = this,
-                        )
-                    }
-                    composable<MediaPage> {
-                        MediaPage(
-                            onBack = navController::navigateUp,
-                            onNavigateToMediaItem = navController::navigate,
-                            useDarkTheme = useDarkTheme,
-                            deviceScreenCornerRadius = deviceScreenCornerRadius,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedVisibilityScope = this,
-                        )
-                    }
-                    composable<ProfileRoute>(
-                        deepLinks = listOf(
-                            navDeepLink {
-                                uriPattern = ANILIST_AUTH_DEEPLINK
-                                action = Intent.ACTION_VIEW
-                            }
-                        )
-                    ) {
-                        ProfileScreen(
-                            onNavigateToMediaItem = navController::navigate,
-                            onNavigateToSettings = navController::navigate,
-                            sharedTransitionScope = this@SharedTransitionLayout,
-                            animatedVisibilityScope = this,
-                        )
-                    }
-                    composable<SettingsPage> {
-                        SettingsPage(versionName = BuildConfig.VERSION_NAME)
-                    }
-                    composable<SocialRoute> {
-                        SocialScreen()
-                    }
-                }
+                val backstack = navigator.backStack
+                if (backstack.isEmpty()) return@SharedTransitionLayout
+
+                NavDisplay(
+                    onBack = navigator::onBackPressed,
+                    entryDecorators = listOf(
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        rememberViewModelStoreNavEntryDecorator()
+                    ),
+                    backStack = backstack,
+                    entryProvider = entryProvider {
+                        navEntries.forEach { builder ->
+                            builder(this@SharedTransitionLayout)
+                        }
+                    },
+                    sharedTransitionScope = this,
+                )
             }
         }
 
-        when(LocalConfiguration.current.orientation) {
+        when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
                 AnimatedVisibility(
                     visible = isNavBarVisible,
                     modifier = Modifier.align(Alignment.CenterStart),
                     enter = slideInHorizontally { -it },
                     exit = slideOutHorizontally { -it }
-                ) { NavigationRail(navController, avatar) }
+                ) {
+                    NavigationRail(
+                        backStack = navigator.backStack,
+                        avatar = avatar,
+                        onNavigate = navigator::navigate,
+                    )
+                }
             }
+
             else -> {
                 AnimatedVisibility(
                     visible = isNavBarVisible,
                     modifier = Modifier.align(Alignment.BottomCenter),
                     enter = slideInVertically { it },
                     exit = slideOutVertically { it }
-                ) { NavigationBar(navController, avatar) }
+                ) {
+                    NavigationBar(
+                        backStack = navigator.backStack,
+                        avatar = avatar,
+                        onNavigate = navigator::navigate,
+                    )
+                }
             }
         }
 
@@ -227,16 +193,15 @@ fun MainScreen(
             hasExtraPadding = isNavBarVisible &&
                     LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT,
             onItemClick = { id, mediaType, title ->
-                navController.navigate(
-                    MediaPage(
-                        id = id,
-                        source = MediaList.Type.SEARCH.name,
-                        mediaType = mediaType.rawValue,
-                        title = title,
-                    )
+                val route = MediaPage(
+                    id = id,
+                    source = MediaList.Type.SEARCH.name,
+                    mediaType = mediaType.rawValue,
+                    title = title,
                 )
+                navigator.navigate(route)
             },
-            isFabVisible = currentBackStackEntry?.destination?.hasRoute<SettingsPage>() == false,
+            isFabVisible = !navigator.backStack.contains(SettingsPage),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
