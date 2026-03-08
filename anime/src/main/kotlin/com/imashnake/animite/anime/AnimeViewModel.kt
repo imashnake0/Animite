@@ -6,7 +6,6 @@ import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.media.ext.nextSeason
@@ -30,12 +29,10 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 class AnimeViewModel @Inject constructor(
     private val mediaListRepository: AnilistMediaRepository,
-    preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val now = flowOf(LocalDate.now())
     private val refreshTrigger = MutableSharedFlow<Unit>()
-    val dayHour = preferencesRepository.dayHour
 
     var useNetwork = false
 

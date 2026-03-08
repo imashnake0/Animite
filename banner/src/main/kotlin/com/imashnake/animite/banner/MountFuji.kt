@@ -29,9 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -51,15 +51,14 @@ import androidx.compose.ui.unit.dp
 import com.imashnake.animite.banner.shaders.nightSky
 import com.imashnake.animite.banner.shaders.sun
 import com.imashnake.animite.core.ui.DayPart
+import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.LocalTimeContext
+import com.imashnake.animite.core.ui.TimeContext
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
-import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.produceTimeContext
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.imashnake.animite.core.ui.toDayPart
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlin.math.PI
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 private const val PI_FLOAT = PI.toFloat()
@@ -67,20 +66,17 @@ private const val PI_FLOAT = PI.toFloat()
 @OptIn(ExperimentalTime::class)
 @Composable
 fun MountFuji(
-    setDayHour: Float?,
     header: String?,
     modifier: Modifier = Modifier,
     insetPaddingValues: PaddingValues = PaddingValues(),
     navigationComponentPaddingValues: PaddingValues = PaddingValues(),
+    timeContext: TimeContext = LocalTimeContext.current,
 ) {
-    val localDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-    val currentDayHour = localDateTime.hour + (localDateTime.minute / 60f)
-
-    val dayHour = rememberSaveable(setDayHour, currentDayHour) {
-        setDayHour ?: currentDayHour
+    val isNotNight by remember(timeContext) {
+        derivedStateOf {
+            timeContext.dayPart != DayPart.NIGHT
+        }
     }
-
-    val isNotNight = remember(dayHour) { dayHour.toDayPart() != DayPart.NIGHT }
     val sunShader = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         remember(isNotNight) {
             RuntimeShader(
@@ -92,7 +88,7 @@ fun MountFuji(
         }
     } else null
 
-    val time by animateFloatAsState(dayHour * 2f * PI_FLOAT / 24)
+    val time by animateFloatAsState(timeContext.dayProgress * 2f * PI_FLOAT)
 
     val extendedScreenWidth = LocalWindowInfo.current.containerSize.width + 100
     val infiniteTransition = rememberInfiniteTransition(label = "clouds")
@@ -122,7 +118,7 @@ fun MountFuji(
     val cloud3 = ImageVector.vectorResource(R.drawable.cloud_3)
 
     AnimatedContent(
-        targetState = dayHour.toDayPart(),
+        targetState = timeContext.dayPart,
         transitionSpec = {
             fadeIn(animationSpec = tween(700)).togetherWith(
                 fadeOut(animationSpec = tween(700))
@@ -304,11 +300,11 @@ fun MountFuji(
 fun PreviewMountFujiMorning() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            setDayHour = 6f,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            timeContext = TimeContext(0.3f, DayPart.MORNING)
         )
     }
 }
@@ -318,11 +314,11 @@ fun PreviewMountFujiMorning() {
 fun PreviewMountFujiAfternoon() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            setDayHour = 12f,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            timeContext = TimeContext(0.5f, DayPart.AFTERNOON)
         )
     }
 }
@@ -332,11 +328,11 @@ fun PreviewMountFujiAfternoon() {
 fun PreviewMountFujiEvening() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            setDayHour = 18f,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            timeContext = TimeContext(0.7f, DayPart.EVENING)
         )
     }
 }
@@ -346,11 +342,11 @@ fun PreviewMountFujiEvening() {
 fun PreviewMountFujiNight() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            setDayHour = 21f,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            timeContext = TimeContext(0.9f, DayPart.NIGHT)
         )
     }
 }
@@ -360,11 +356,11 @@ fun PreviewMountFujiNight() {
 fun PreviewMountFuji() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         MountFuji(
-            setDayHour = null,
             header = "Settings",
             modifier = Modifier
                 .height(dimensionResource(R.dimen.banner_height))
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            timeContext = produceTimeContext().value
         )
     }
 }

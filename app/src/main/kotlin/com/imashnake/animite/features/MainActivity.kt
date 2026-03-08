@@ -84,13 +84,9 @@ class MainActivity : ComponentActivity() {
                 showSplashScreen = false
             }
 
-            val theme by settingsViewModel.theme
-                .filterNotNull()
-                .collectAsState(initial = Theme.DEVICE_THEME.name)
+            val theme by settingsViewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
 
-            val useSystemColorScheme by settingsViewModel.useSystemColorScheme
-                .filterNotNull()
-                .collectAsState(initial = false)
+            val useSystemColorScheme by settingsViewModel.useSystemColorScheme.collectAsState(initial = false)
 
             val useDarkTheme = when (Theme.valueOf(theme)) {
                 Theme.DARK -> true

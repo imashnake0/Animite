@@ -6,7 +6,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -83,11 +82,12 @@ import androidx.navigation3.runtime.NavKey
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.DayPart
-import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.LocalTimeContext
+import com.imashnake.animite.core.ui.TimeContext
+import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.imashnake.animite.core.ui.toDayPart
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.filterNotNull
@@ -105,6 +105,7 @@ fun SettingsPage(
     versionName: String,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
+    timeContext: TimeContext = LocalTimeContext.current,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val insetPaddingValues = contentWindowInsets.asPaddingValues()
@@ -112,25 +113,22 @@ fun SettingsPage(
 
     val scrollState = rememberScrollState()
 
-    val selectedTheme by viewModel.theme.filterNotNull().collectAsState(initial = Theme.DEVICE_THEME.name)
-    val useSystemColorScheme by viewModel.useSystemColorScheme.filterNotNull().collectAsState(initial = true)
+    val selectedTheme by viewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
+    val useSystemColorScheme by viewModel.useSystemColorScheme.collectAsState(initial = true)
     val haptic = LocalHapticFeedback.current
 
-    val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.filterNotNull().collectAsState(initial = false)
+    val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
     val isDarkMode = selectedTheme == Theme.DARK.name ||
             (selectedTheme == Theme.DEVICE_THEME.name && isSystemInDarkTheme())
 
     var devOptionsCount by remember { mutableIntStateOf(0) }
 
-    val dayHour by viewModel.dayHour.collectAsState(initial = null)
-
     TranslucentStatusBarLayout(scrollState) {
         Box(modifier.verticalScroll(scrollState)) {
             BannerLayout(
                 banner = { bannerModifier ->
                     MountFuji(
-                        setDayHour = dayHour,
                         header = stringResource(R.string.settings),
                         insetPaddingValues = insetPaddingValues,
                         modifier = bannerModifier,
@@ -289,55 +287,49 @@ fun SettingsPage(
                                 when (index) {
                                     0 -> {
                                         Slider(
-                                            value = animateFloatAsState(dayHour ?: 0f).value,
-                                            onValueChange = { viewModel.setDayHour(it) },
-                                            valueRange = 0f..24f,
+                                            value = timeContext.dayProgress,
+                                            onValueChange = { viewModel.setDayHour(it * 23f) },
+                                            valueRange = 0f..1f,
                                         )
                                     }
 
                                     1 -> {
-                                        Column(
-                                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-                                        ) {
-                                            DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART)
-                                                .forEach {
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.spacedBy(
-                                                            LocalPaddings.current.small
-                                                        ),
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        modifier = Modifier
-                                                            .padding(start = LocalPaddings.current.large)
-                                                            .clip(CircleShape)
-                                                            .clickable {
-                                                                if (it != SYSTEM_DAY_PART) {
-                                                                    viewModel.setDayHour(
-                                                                        when (DayPart.valueOf(it)) {
-                                                                            DayPart.MORNING -> 6f
-                                                                            DayPart.AFTERNOON -> 12f
-                                                                            DayPart.EVENING -> 18f
-                                                                            DayPart.NIGHT -> 21f
-                                                                        }
-                                                                    )
-                                                                } else viewModel.setDayHour(null)
-                                                            }
-                                                            .padding(
-                                                                top = LocalPaddings.current.tiny,
-                                                                bottom = LocalPaddings.current.tiny,
-                                                                start = LocalPaddings.current.tiny,
-                                                                end = LocalPaddings.current.medium
-                                                            )
-                                                    ) {
-                                                        RadioButton(
-                                                            selected = if (dayHour == null) it == SYSTEM_DAY_PART else it == dayHour?.toDayPart()?.name,
-                                                            onClick = null,
+                                        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+                                            DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART).forEach {
+                                                Row(
+                                                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    modifier = Modifier
+                                                        .padding(start = LocalPaddings.current.large)
+                                                        .clip(CircleShape)
+                                                        .clickable {
+                                                            if (it != SYSTEM_DAY_PART) {
+                                                                viewModel.setDayHour(
+                                                                    when (DayPart.valueOf(it)) {
+                                                                        DayPart.MORNING -> 6f
+                                                                        DayPart.AFTERNOON -> 12f
+                                                                        DayPart.EVENING -> 18f
+                                                                        DayPart.NIGHT -> 21f
+                                                                    }
+                                                                )
+                                                            } else viewModel.setDayHour(null)
+                                                        }
+                                                        .padding(
+                                                            top = LocalPaddings.current.tiny,
+                                                            bottom = LocalPaddings.current.tiny,
+                                                            start = LocalPaddings.current.tiny,
+                                                            end = LocalPaddings.current.medium
                                                         )
-                                                        Text(
-                                                            text = it,
-                                                            style = MaterialTheme.typography.labelSmallEmphasized,
-                                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                        )
-                                                    }
+                                                ) {
+                                                    RadioButton(
+                                                        selected = it == timeContext.dayPart.name,
+                                                        onClick = null,
+                                                    )
+                                                    Text(
+                                                        text = it,
+                                                        style = MaterialTheme.typography.labelSmallEmphasized,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
                                                 }
                                         }
                                     }
