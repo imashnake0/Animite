@@ -21,7 +21,7 @@ internal val fontProvider = GoogleFont.Provider(
 internal val manropeFont = GoogleFont("Manrope")
 
 /**
- * [Manrope](https://manropefont.com/).
+ * [Manrope](https://fonts.google.com/specimen/Manrope).
  */
 val manropeFontFamily = FontFamily(
     Font(manropeFont, fontProvider, FontWeight.ExtraBold),

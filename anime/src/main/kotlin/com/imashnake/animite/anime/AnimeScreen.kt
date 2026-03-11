@@ -48,11 +48,12 @@ import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.media.ext.icon
+import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
-import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,8 +122,7 @@ fun AnimeScreen(
                                     val mediaList = (row as? Resource.Success)?.data
                                     if (mediaList?.list.orEmpty().isNotEmpty()) {
                                         AnimeRow(
-                                            items = mediaList!!.list,
-                                            type = mediaList.type,
+                                            mediaList = mediaList!!,
                                             onItemClicked = { media ->
                                                 onNavigateToMediaItem(
                                                     MediaPage(
@@ -167,8 +167,7 @@ fun AnimeScreen(
 
 @Composable
 private fun AnimeRow(
-    items: ImmutableList<Media.Small>,
-    type: MediaList.Type,
+    mediaList: MediaList,
     onItemClicked: (Media.Small) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -176,9 +175,12 @@ private fun AnimeRow(
     contentPadding: PaddingValues = PaddingValues()
 ) {
     MediaSmallRow(
-        title = type.title,
-        mediaList = items,
+        title = mediaList.type.title,
+        mediaList = mediaList.list,
         modifier = modifier,
+        icon = mediaList.season?.icon,
+        label = "${mediaList.season?.let { stringResource(it.res) }.orEmpty()} " +
+                mediaList.year?.toString().orEmpty(),
         contentPadding = contentPadding,
     ) { _, media ->
         with(sharedTransitionScope) {
@@ -191,7 +193,7 @@ private fun AnimeRow(
                     sharedContentState = rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = type.name,
+                            source = mediaList.type.name,
                             sharedComponents = Card to Page,
                         )
                     ),
@@ -204,7 +206,7 @@ private fun AnimeRow(
                     rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = type.name,
+                            source = mediaList.type.name,
                             sharedComponents = Image to Image,
                         )
                     ),

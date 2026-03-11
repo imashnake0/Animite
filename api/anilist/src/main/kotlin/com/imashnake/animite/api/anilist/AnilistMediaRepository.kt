@@ -5,6 +5,7 @@ import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
@@ -62,7 +63,9 @@ class AnilistMediaRepository @Inject constructor(
                     type = mediaListType,
                     list = it.page!!.media.orEmpty().filterNotNull().map { query ->
                         Media.Small(query.mediaSmall)
-                    }.toImmutableList()
+                    }.toImmutableList(),
+                    season = season?.sanitize(),
+                    year = seasonYear,
                 )
             }
     }
