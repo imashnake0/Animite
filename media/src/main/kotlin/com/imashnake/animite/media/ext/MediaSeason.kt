@@ -1,8 +1,8 @@
 package com.imashnake.animite.media.ext
 
 import com.imashnake.animite.api.anilist.type.MediaSeason
-import java.time.LocalDate
-import java.time.Month
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Month
 
 /**
  * Returns the season after [this] season based on the current time.
@@ -10,7 +10,7 @@ import java.time.Month
  * @param now The current time.
  * @return A [Pair], [Pair.first] is the next season and [Pair.second] season's year.
  */
-fun MediaSeason.nextSeason(now: LocalDate): Pair<MediaSeason, Int> {
+fun MediaSeason.nextSeason(now: LocalDateTime): Pair<MediaSeason, Int> {
     return when (this) {
         MediaSeason.SPRING -> MediaSeason.SUMMER to now.year
         MediaSeason.SUMMER -> MediaSeason.FALL to now.year

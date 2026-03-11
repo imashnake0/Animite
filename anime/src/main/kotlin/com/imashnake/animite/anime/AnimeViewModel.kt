@@ -22,8 +22,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
+import kotlin.time.Clock
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,7 +34,10 @@ class AnimeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val now = savedStateHandle.getStateFlow(NOW, LocalDate.now())
+    private val now = savedStateHandle.getStateFlow(
+        key = NOW,
+        initialValue = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    )
     private val refreshTrigger = MutableSharedFlow<Unit>()
 
     var useNetwork = false
