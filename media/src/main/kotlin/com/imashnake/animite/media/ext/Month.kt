@@ -1,7 +1,7 @@
 package com.imashnake.animite.media.ext
 
 import com.imashnake.animite.api.anilist.type.MediaSeason
-import java.time.Month
+import kotlinx.datetime.Month
 
 /**
  * Gets the [Month]'s season.

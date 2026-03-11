@@ -66,6 +66,7 @@ dependencies {
     // Kotlin
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.collectionsImmutable)
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.materialKolor)
 }
