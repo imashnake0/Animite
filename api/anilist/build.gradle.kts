@@ -33,6 +33,9 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
+    // Kotlin
+    implementation(libs.kotlinx.datetime)
+
     implementation(libs.kotlinx.collectionsImmutable)
     implementation(libs.compose.runtime.annotation)
 

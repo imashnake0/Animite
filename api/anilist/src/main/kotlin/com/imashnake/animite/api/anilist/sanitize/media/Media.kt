@@ -26,8 +26,8 @@ import com.imashnake.animite.api.anilist.type.MediaStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import java.time.Month
-import java.time.format.TextStyle
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format.MonthNames
 import java.util.Locale
 import kotlin.collections.mapNotNull
 import kotlin.collections.orEmpty
@@ -87,9 +87,8 @@ data class Media(
             if (year == null && month == null) return null
             if (year != null && month == null && day != null) return year.toString()
             val formattedDayYear = listOfNotNull(day, year).joinToString().ifEmpty { null }
-            val formattedMonth = month?.let {
-                Month.of(it)
-            }?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+            val format = LocalDate.Format { monthName(MonthNames.ENGLISH_ABBREVIATED) }
+            val formattedMonth = month?.let { format.format(LocalDate(0, month, 1)) }
             return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
         }
 
