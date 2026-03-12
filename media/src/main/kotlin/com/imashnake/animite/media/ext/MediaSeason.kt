@@ -1,32 +1,31 @@
 package com.imashnake.animite.media.ext
 
 import com.imashnake.animite.api.anilist.type.MediaSeason
+import com.imashnake.animite.api.anilist.type.MediaSeason.FALL
+import com.imashnake.animite.api.anilist.type.MediaSeason.SPRING
+import com.imashnake.animite.api.anilist.type.MediaSeason.SUMMER
+import com.imashnake.animite.api.anilist.type.MediaSeason.UNKNOWN__
+import com.imashnake.animite.api.anilist.type.MediaSeason.WINTER
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.Month
 
 /**
- * Returns the season after [this] season based on the current time.
- *
- * @param now The current time.
- * @return A [Pair], [Pair.first] is the next season and [Pair.second] season's year.
+ * Returns the season after [this] season.
  */
-fun MediaSeason.nextSeason(now: LocalDateTime): Pair<MediaSeason, Int> {
-    return when (this) {
-        MediaSeason.SPRING -> MediaSeason.SUMMER to now.year
-        MediaSeason.SUMMER -> MediaSeason.FALL to now.year
-        MediaSeason.FALL -> MediaSeason.WINTER to now.year + 1
-        MediaSeason.WINTER -> MediaSeason.SPRING to if (now.month == Month.DECEMBER) {
-            now.year + 1
-        } else {
-            now.year
-        }
-        else -> MediaSeason.UNKNOWN__ to 0
-    }
+val MediaSeason.nextSeason get() = when (this) {
+    SPRING -> SUMMER
+    SUMMER -> FALL
+    FALL -> WINTER
+    WINTER -> SPRING
+    else -> UNKNOWN__
 }
 
 /**
- * Returns a capitalized [MediaSeason.rawValue].
- * TODO: Make a UI model instead.
+ * Returns the year of [this] season.
  */
-val MediaSeason.string
-    get() = this.rawValue.lowercase().replaceFirstChar { it.uppercase() }
+fun MediaSeason.nextSeasonYear(now: LocalDateTime) = when (this) {
+    SPRING,
+    SUMMER,
+    WINTER -> now.year
+    FALL -> now.year + 1
+    UNKNOWN__ -> 0
+}

@@ -112,7 +112,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -137,6 +136,7 @@ import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.CharacterCard
 import com.imashnake.animite.core.ui.Constants
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.Chip
 import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.core.ui.layout.NestedScrollableContent
@@ -1191,40 +1191,6 @@ private fun MediaCredits(
             tagMinLines = tagMinLines,
             label = credit.name,
             onClick = { onCreditClick(index, credit) },
-        )
-    }
-}
-
-@Composable
-private fun Chip(
-    color: Color,
-    icon: ImageVector,
-    text: String,
-    modifier: Modifier = Modifier,
-    iconPadding: PaddingValues = PaddingValues(),
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .clip(CircleShape)
-            .background(color.copy(alpha = 0.2f))
-            .padding(horizontal = LocalPaddings.current.small)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = color,
-            modifier = Modifier
-                .padding(iconPadding)
-                .size(15.dp)
-        )
-        Text(
-            text = text,
-            color = color,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
         )
     }
 }

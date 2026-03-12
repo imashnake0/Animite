@@ -1,10 +1,12 @@
 package com.imashnake.animite.core.ui.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,6 +57,8 @@ fun <T> MediaSmallRow(
     title: String?,
     mediaList: ImmutableList<T>,
     modifier: Modifier = Modifier,
+    @DrawableRes icon: Int? = null,
+    label: String? = null,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable LazyItemScope.(Int, T) -> Unit
 ) {
@@ -66,16 +72,28 @@ fun <T> MediaSmallRow(
         val layoutDirection = LocalLayoutDirection.current
         val startPadding = contentPadding.calculateStartPadding(layoutDirection)
         val endPadding = contentPadding.calculateEndPadding(layoutDirection)
-        if (title != null) {
-            Text(
-                text = title,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(
-                    start = startPadding,
-                    end = endPadding,
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = startPadding, end = endPadding)
+                .fillMaxWidth()
+        ) {
+            if (title != null) {
+                Text(
+                    text = title,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
                 )
-            )
+            }
+
+            if (icon != null && label != null) {
+                Chip(
+                    color = MaterialTheme.colorScheme.primary,
+                    icon = ImageVector.vectorResource(icon),
+                    text = label
+                )
+            }
         }
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),

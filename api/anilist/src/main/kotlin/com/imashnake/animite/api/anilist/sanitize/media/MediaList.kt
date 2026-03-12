@@ -1,10 +1,14 @@
 package com.imashnake.animite.api.anilist.sanitize.media
 
+import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 
+@Stable
 data class MediaList(
     val type: Type,
-    val list: ImmutableList<Media.Small>
+    val list: ImmutableList<Media.Small>,
+    val season: Media.Season? = null,
+    val year: Int? = null,
 ) {
     enum class Type(val title: String? = null) {
         TRENDING_NOW("Trending Now"),

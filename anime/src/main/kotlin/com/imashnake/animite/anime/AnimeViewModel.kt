@@ -10,6 +10,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.media.ext.nextSeason
+import com.imashnake.animite.media.ext.nextSeasonYear
 import com.imashnake.animite.media.ext.season
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -83,12 +84,13 @@ class AnimeViewModel @Inject constructor(
         flow2 = now,
         transform = ::Pair,
     ).flatMapLatest { (_, now) ->
+        val season = now.month.season
         mediaListRepository.fetchMediaList(
             mediaListType = Type.UPCOMING_NEXT_SEASON,
             mediaType = MediaType.ANIME,
             sort = listOf(MediaSort.POPULARITY_DESC),
-            season = now.month.season.nextSeason(now).first,
-            seasonYear = now.month.season.nextSeason(now).second,
+            season = season.nextSeason,
+            seasonYear = season.nextSeasonYear(now),
             useNetwork = useNetwork,
         )
     }.asResource().stateIn(
