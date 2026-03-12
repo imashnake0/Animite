@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,6 +31,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -75,37 +78,26 @@ fun <T> MediaSmallRow(
         val startPadding = contentPadding.calculateStartPadding(layoutDirection)
         val endPadding = contentPadding.calculateEndPadding(layoutDirection)
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(start = startPadding, end = endPadding).fillMaxWidth()
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(start = startPadding, end = endPadding)
+                .fillMaxWidth()
         ) {
             if (title != null) {
                 Text(
                     text = title,
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
-                if (icon != null) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(icon),
-                        contentDescription = label,
-                        modifier = Modifier
-                            .graphicsLayer { alpha = 0.5f }
-                            .height(14.dp)
-                            .align(Alignment.CenterVertically)
-                    )
-                }
 
-                if (label != null) {
-                    Text(
-                        text = label,
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            baselineShift = null
-                        ),
-                        modifier = Modifier.graphicsLayer { alpha = 0.5f }.alignByBaseline()
-                    )
-                }
+            if (icon != null && label != null) {
+                Chip(
+                    color = MaterialTheme.colorScheme.primary,
+                    icon = ImageVector.vectorResource(icon),
+                    text = label
+                )
             }
         }
         LazyRow(
