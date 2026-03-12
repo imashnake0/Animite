@@ -40,7 +40,7 @@ apollo = "4.4.1"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore.
-datastore = "1.2.0"
+datastore = "1.2.1"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
