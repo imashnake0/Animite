@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -37,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
@@ -145,15 +147,16 @@ private fun SortFab(
                     .size(LocalPaddings.current.large)
             )
         }
+        val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
         CascadeDropdownMenu(
             expanded = expanded,
             onDismissRequest = { setExpanded(false) },
             state = cascadeState,
             shape = RoundedCornerShape(
-                topStartPercent = 50 / 5,
-                topEndPercent = 50 / 5,
-                bottomEndPercent = 10 / 5,
-                bottomStartPercent = 50 / 5,
+                topStart = cornerRadius,
+                topEnd = cornerRadius,
+                bottomEnd = LocalPaddings.current.small,
+                bottomStart = cornerRadius,
             ),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
         ) {
@@ -177,7 +180,7 @@ private fun SortFab(
             sorts.forEach { sort ->
                 val backgroundColor by animateColorAsState(
                     targetValue = if (sort == selectedSort)
-                        MaterialTheme.colorScheme.primary
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
                     else Color.Transparent
                 )
                 val textColor by animateColorAsState(
@@ -215,7 +218,10 @@ private fun SortFab(
                         vertical = LocalPaddings.current.small,
                         horizontal = LocalPaddings.current.medium
                     ),
-                    modifier = Modifier.background(color = backgroundColor)
+                    modifier = Modifier
+                        .padding(LocalPaddings.current.tiny)
+                        .clip(RoundedCornerShape(LocalPaddings.current.large))
+                        .background(color = backgroundColor)
                 )
             }
         }
