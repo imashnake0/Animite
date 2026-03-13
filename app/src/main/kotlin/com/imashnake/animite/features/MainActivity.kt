@@ -202,7 +202,18 @@ fun MainScreen(
                         SocialScreen()
                     }
                     composable<ExploreRoute> {
-                        ExploreScreen()
+                        ExploreScreen(
+                            onItemClick = { id, mediaType, title ->
+                                navController.navigate(
+                                    MediaPage(
+                                        id = id,
+                                        source = MediaList.Type.SEARCH.name,
+                                        mediaType = mediaType.rawValue,
+                                        title = title,
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
             }

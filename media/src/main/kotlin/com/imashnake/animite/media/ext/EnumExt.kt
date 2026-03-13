@@ -104,3 +104,11 @@ val Media.Sort.res get() = when (this) {
     Media.Sort.SCORE_DESC -> R.string.sort_score
     Media.Sort.EPISODES_DESC -> R.string.sort_episodes
 }
+
+val Media.Sort.icon get() = when (this) {
+    Media.Sort.POPULARITY_DESC -> R.drawable.popularity
+    Media.Sort.TRENDING_DESC -> R.drawable.trending
+    Media.Sort.FAVOURITES_DESC -> R.drawable.favourites
+    Media.Sort.SCORE_DESC -> R.drawable.score
+    Media.Sort.EPISODES_DESC -> R.drawable.episodes
+}

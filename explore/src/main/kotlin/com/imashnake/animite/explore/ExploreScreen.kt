@@ -2,12 +2,15 @@ package com.imashnake.animite.explore
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
@@ -44,9 +47,11 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.media.MediaMediumList
+import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -57,6 +62,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExploreScreen(
+    onItemClick: (Int, MediaType, String?) -> Unit,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars
         .exclude(WindowInsets.navigationBars)
@@ -78,39 +84,34 @@ fun ExploreScreen(
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
             is Resource.Success -> {
-                Box {
-                    MediaMediumList(
-                        mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
-                        onItemClick = { _, _ -> },
-                        contentPadding = insetAndNavigationPaddingValues,
-                    )
+                MediaMediumList(
+                    mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
+                    onItemClick = { id, title  -> onItemClick(id, MediaType.ANIME, title) },
+                    contentPadding = insetAndNavigationPaddingValues,
+                )
 
-                    Sort(
-                        sorts = Media.Sort.entries.toImmutableList(),
-                        selectedSort = sort,
-                        onSortSelected = { viewModel.setMediaSort(it) },
-                        expanded = isDropdownExpanded,
-                        setExpanded = { isDropdownExpanded = it },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(insetAndNavigationPaddingValues)
-                            .padding(WindowInsets.navigationBars.asPaddingValues())
-                            .padding(LocalPaddings.current.large)
-                    )
-                }
+                SortFab(
+                    sorts = Media.Sort.entries.toImmutableList(),
+                    selectedSort = sort,
+                    onSortSelected = { viewModel.setMediaSort(it) },
+                    expanded = isDropdownExpanded,
+                    setExpanded = { isDropdownExpanded = it },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(insetAndNavigationPaddingValues)
+                        .padding(WindowInsets.navigationBars.asPaddingValues())
+                        .padding(LocalPaddings.current.large)
+                )
             }
-            is Resource.Loading -> {
-
-            }
-            is Resource.Error -> {
-
-            }
+            // TODO: Add loading and error states.
+            is Resource.Loading -> {}
+            is Resource.Error -> {}
         }
     }
 }
 
 @Composable
-private fun Sort(
+private fun SortFab(
     sorts: ImmutableList<Media.Sort>,
     selectedSort: Media.Sort,
     onSortSelected: (Media.Sort) -> Unit,
@@ -156,6 +157,7 @@ private fun Sort(
             ),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
         ) {
+            // TODO: Add sort trend and more filters
 //            Row(
 //                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
 //                verticalAlignment = Alignment.CenterVertically,
@@ -183,14 +185,32 @@ private fun Sort(
                         MaterialTheme.colorScheme.onPrimary
                     else MaterialTheme.colorScheme.onBackground
                 )
+                val iconSize by animateDpAsState(
+                    targetValue = if (sort == selectedSort)
+                        LocalPaddings.current.medium
+                    else 0.dp
+                )
+
                 DropdownMenuItem(
-                    text = { Text(stringResource(sort.res)) },
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(sort.icon),
+                                contentDescription = stringResource(sort.res),
+                                modifier = Modifier.size(iconSize)
+                            )
+                            Text(stringResource(sort.res))
+                        }
+                    },
                     leadingIcon = null,
                     colors = MenuDefaults.itemColors(
                         textColor = textColor,
                         leadingIconColor = MaterialTheme.colorScheme.primary
                     ),
-                    onClick = { onSortSelected(sort); setExpanded(false) },
+                    onClick = { onSortSelected(sort) },
                     contentPadding = PaddingValues(
                         vertical = LocalPaddings.current.small,
                         horizontal = LocalPaddings.current.medium
