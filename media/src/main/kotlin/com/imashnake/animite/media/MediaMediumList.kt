@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
@@ -32,11 +33,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -44,7 +46,8 @@ import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.CharacterCard
-import com.imashnake.animite.core.ui.component.MediaCard
+import com.imashnake.animite.core.ui.component.Chip
+import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.core.ui.R as coreUiR
@@ -79,8 +82,23 @@ fun MediaMediumList(
             MediaMediumItem(
                 item = mediaMediumList[index],
                 onClick = onItemClick,
-                background = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.05f),
-                modifier = Modifier.animateItem()
+                modifier = Modifier
+                    .animateItem()
+                    .height(137.dp)
+                    .fillMaxWidth()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            topEnd = if (index == 0) {
+                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                            } else LocalPaddings.current.small,
+                            bottomEnd = if (index == mediaMediumList.lastIndex) {
+                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                            } else LocalPaddings.current.small,
+                        )
+                    )
+                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.03f))
             )
         }
     }
@@ -91,15 +109,10 @@ fun MediaMediumList(
 private fun MediaMediumItem(
     item: Media.Medium,
     onClick: (Int, String?) -> Unit,
-    background: Color,
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(dimensionResource(coreUiR.dimen.media_card_corner_radius)))
-            .background(background)
-            .clickable { onClick(item.id, item.title) }
+        modifier = modifier.clickable { onClick(item.id, item.title) }
     ) {
         CharacterCard(
             image = item.coverImage,
@@ -109,18 +122,27 @@ private fun MediaMediumItem(
             tagMinLines = 1
         )
 
-        Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {
+        Column(
+            Modifier.padding(
+                horizontal = LocalPaddings.current.large / 2,
+                vertical = LocalPaddings.current.small
+            )
+        ) {
             Text(
                 text = item.title.orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                 maxLines = 2
             )
-            if (item.seasonYear != null) {
-                Text(
-                    text = item.seasonYear.toString(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall
+
+            Spacer(Modifier.size(LocalPaddings.current.small))
+
+            item.season?.let {
+                Chip(
+                    color = MaterialTheme.colorScheme.primary,
+                    icon = ImageVector.vectorResource(it.icon),
+                    text = stringResource(it.res) +
+                            " ${item.seasonYear?.toString().orEmpty()}",
                 )
             }
 
