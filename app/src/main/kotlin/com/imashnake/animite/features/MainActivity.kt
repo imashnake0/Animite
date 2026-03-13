@@ -240,7 +240,8 @@ fun MainScreen(
                     )
                 )
             },
-            isFabVisible = currentBackStackEntry?.destination?.hasRoute<SettingsPage>() == false,
+            isFabVisible = currentBackStackEntry?.destination?.hasRoute<SettingsPage>() == false
+                    && currentBackStackEntry?.destination?.hasRoute<ExploreRoute>() == false,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(

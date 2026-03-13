@@ -98,4 +98,10 @@
     <string name="countdown_hours">%1$dh</string>
     <string name="countdown_minutes">%1$dm</string>
     <string name="countdown_seconds">%1$ds</string>
+
+    <string name ="sort_popularity">Popularity</string>
+    <string name ="sort_trending">Trending</string>
+    <string name ="sort_favourites">Favourites</string>
+    <string name ="sort_score">Score</string>
+    <string name ="sort_episodes">Episodes</string>
 </resources>

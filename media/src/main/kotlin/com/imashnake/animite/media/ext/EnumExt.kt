@@ -96,3 +96,11 @@ val Media.Ranking.Type.res get() = when(this) {
     Media.Ranking.Type.POPULAR -> R.string.popular
     Media.Ranking.Type.SCORE -> R.string.score
 }
+
+val Media.Sort.res get() = when (this) {
+    Media.Sort.POPULARITY_DESC -> R.string.sort_popularity
+    Media.Sort.TRENDING_DESC -> R.string.sort_trending
+    Media.Sort.FAVOURITES_DESC -> R.string.sort_favourites
+    Media.Sort.SCORE_DESC -> R.string.sort_score
+    Media.Sort.EPISODES_DESC -> R.string.sort_episodes
+}

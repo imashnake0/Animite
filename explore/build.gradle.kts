@@ -39,11 +39,15 @@ dependencies {
     implementation(libs.compose.animation)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material)
+    implementation(libs.compose.material.icons.core)
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
+
+    // Cascade Compose
+    implementation(libs.saket.cascade)
 
     // Kotlin
     implementation(libs.kotlinx.coroutines.android)
