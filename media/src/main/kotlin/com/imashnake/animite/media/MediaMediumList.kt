@@ -132,7 +132,7 @@ private fun MediaMediumItem(
                 text = item.title.orEmpty(),
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                maxLines = 2
+                maxLines = 1
             )
 
             Spacer(Modifier.size(LocalPaddings.current.small))
@@ -161,7 +161,7 @@ private fun MediaMediumItem(
                     Text(
                         text = stringResource(it.res),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.labelSmall,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -182,7 +182,7 @@ private fun MediaMediumItem(
                         modifier = Modifier
                             .graphicsLayer { rotationZ = angle }
                             .padding(horizontal = LocalPaddings.current.small)
-                            .size(6.dp)
+                            .size(4.dp)
                             .background(
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
                                 shape = MaterialShapes.Cookie4Sided.toShape()
@@ -198,7 +198,7 @@ private fun MediaMediumItem(
                             formatArgs = arrayOf(it)
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.labelSmall,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
