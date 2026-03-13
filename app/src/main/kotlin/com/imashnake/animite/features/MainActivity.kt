@@ -1,5 +1,6 @@
 package com.imashnake.animite.features
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
@@ -33,7 +34,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFontFamilyResolver
+import androidx.compose.ui.platform.LocalView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -64,7 +67,6 @@ import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
 import com.imashnake.animite.social.SocialScreen
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.filterNotNull
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -92,6 +94,14 @@ class MainActivity : ComponentActivity() {
                 Theme.DARK -> true
                 Theme.LIGHT -> false
                 Theme.DEVICE_THEME -> isSystemInDarkTheme()
+            }
+
+            val view = LocalView.current
+            LaunchedEffect(theme) {
+                val window = (view.context as Activity).window
+                WindowCompat
+                    .getInsetsController(window, view)
+                    .isAppearanceLightStatusBars = !useDarkTheme
             }
 
             val dayHour by settingsViewModel.dayHour.collectAsState(initial = null)

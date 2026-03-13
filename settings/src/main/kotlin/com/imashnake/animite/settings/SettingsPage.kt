@@ -89,7 +89,6 @@ import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
 private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
