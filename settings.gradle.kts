@@ -50,6 +50,7 @@ include(
     ":profile",
     ":settings",
     ":social",
+    ":explore",
 )
 
 android {

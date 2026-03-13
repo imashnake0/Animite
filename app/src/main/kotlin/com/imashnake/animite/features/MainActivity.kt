@@ -44,12 +44,14 @@ import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.anime.AnimeScreen
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.explore.ExploreScreen
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
 import com.imashnake.animite.features.theme.manropeFontFamily
 import com.imashnake.animite.manga.MangaScreen
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.AnimeRoute
+import com.imashnake.animite.navigation.ExploreRoute
 import com.imashnake.animite.navigation.MangaRoute
 import com.imashnake.animite.navigation.NavigationBar
 import com.imashnake.animite.navigation.NavigationBarPaths
@@ -64,7 +66,6 @@ import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
 import com.imashnake.animite.social.SocialScreen
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.filterNotNull
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -199,6 +200,9 @@ fun MainScreen(
                     }
                     composable<SocialRoute> {
                         SocialScreen()
+                    }
+                    composable<ExploreRoute> {
+                        ExploreScreen()
                     }
                 }
             }

@@ -53,6 +53,23 @@ enum class NavigationBarPaths(
         },
         labelRes = R.string.social
     ),
+    Explore(
+        navigateTo = {
+            it.navigate(ExploreRoute) {
+                popUpTo(id = it.graph.findStartDestination().id) {
+                    saveState = true
+                }
+                launchSingleTop = true
+            }
+        },
+        matchesDestination = { navBackStackEntry ->
+            navBackStackEntry.destination.hierarchy.any { it.hasRoute(ExploreRoute::class) }
+        },
+        icon = { _, _ ->
+            Icon(ImageVector.vectorResource(R.drawable.explore), contentDescription = stringResource(R.string.explore))
+        },
+        labelRes = R.string.explore
+    ),
     Anime(
         navigateTo = {
             it.navigate(AnimeRoute) {
@@ -114,7 +131,6 @@ enum class NavigationBarPaths(
         },
         labelRes = R.string.manga
     ),
-
     Profile(
         navigateTo = {
             it.navigate(ProfileRoute()) {

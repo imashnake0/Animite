@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.CharacterCard
 import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
@@ -77,6 +79,7 @@ fun MediaMediumList(
             MediaMediumItem(
                 item = mediaMediumList[index],
                 onClick = onItemClick,
+                background = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.05f),
                 modifier = Modifier.animateItem()
             )
         }
@@ -88,19 +91,22 @@ fun MediaMediumList(
 private fun MediaMediumItem(
     item: Media.Medium,
     onClick: (Int, String?) -> Unit,
+    background: Color,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(dimensionResource(coreUiR.dimen.media_card_corner_radius)))
+            .background(background)
             .clickable { onClick(item.id, item.title) }
     ) {
-        MediaCard(
+        CharacterCard(
             image = item.coverImage,
             tag = null,
             label = null,
             onClick = { onClick(item.id, item.title) },
+            tagMinLines = 1
         )
 
         Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {
