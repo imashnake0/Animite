@@ -10,7 +10,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
-import javax.inject.Inject
 
 /**
  * Repository for fetching media search results (e.g., search bar).
@@ -18,7 +17,7 @@ import javax.inject.Inject
  * @param apolloClient Default apollo client.
  * @property fetchSearch Fetch a list of `search`es.
  */
-class AnilistSearchRepository @Inject constructor(
+class AnilistSearchRepository(
     private val apolloClient: ApolloClient
 ) {
     fun fetchSearch(

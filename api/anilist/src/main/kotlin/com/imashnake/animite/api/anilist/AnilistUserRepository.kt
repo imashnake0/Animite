@@ -8,7 +8,6 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
-import javax.inject.Inject
 
 /**
  * Repository for anything user related. Including the [ViewerQuery.Viewer].
@@ -17,8 +16,8 @@ import javax.inject.Inject
  * @property fetchViewer Fetches the current user with an authorized [apolloClient].
  * @property fetchUserMediaList Fetches a chunked list of media associated with the user.
  */
-class AnilistUserRepository @Inject constructor(
-    @param:AuthorizedClient private val apolloClient: ApolloClient
+class AnilistUserRepository(
+    private val apolloClient: ApolloClient
 ) {
     fun fetchViewer(useNetwork: Boolean): Flow<Result<User>> {
         return apolloClient
