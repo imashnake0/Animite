@@ -21,12 +21,6 @@ private const val IS_DEV_OPTIONS_ENABLED = false
 class PreferencesRepository internal constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    constructor(context: Context) : this(
-        PreferenceDataStoreFactory.create(
-            produceFile = { context.preferencesDataStoreFile("default") }
-        )
-    )
-
     // region profile
     private val accessTokenKey = stringPreferencesKey("access_token")
     val accessToken = dataStore.getValue(accessTokenKey, null)
@@ -78,4 +72,6 @@ class PreferencesRepository internal constructor(
     // endregion
 
     // endregion
+
+    companion object
 }

@@ -1,26 +1,21 @@
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.libraryMultiplatform)
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.detekt)
-}
-
-android {
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-    }
-
-    namespace = "com.imashnake.animite.api.preferences"
 }
 
 kotlin {
     jvmToolchain(21)
-}
 
-dependencies {
-    // DataStore
-    implementation(libs.datastore)
+    android {
+        namespace = "com.imashnake.animite.api.preferences"
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.datastore)
+        }
+    }
 }
 
 detekt {

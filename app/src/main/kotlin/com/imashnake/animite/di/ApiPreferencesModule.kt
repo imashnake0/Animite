@@ -2,6 +2,7 @@ package com.imashnake.animite.di
 
 import android.content.Context
 import com.imashnake.animite.api.preferences.PreferencesRepository
+import com.imashnake.animite.api.preferences.create
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,6 +16,6 @@ object ApiPreferencesModule {
     @Singleton
     @Provides
     fun providePreferencesRepository(@ApplicationContext appContext: Context): PreferencesRepository {
-        return PreferencesRepository(appContext)
+        return PreferencesRepository.create(appContext)
     }
 }
