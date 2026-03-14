@@ -134,7 +134,7 @@ private fun MediaMediumItem(
                     text = rank.toString(),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier
                         .padding(horizontal = LocalPaddings.current.tiny)
                         .requiredWidth(LocalPaddings.current.large)
@@ -167,7 +167,7 @@ private fun MediaMediumItem(
 
                 item.season?.let {
                     Chip(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.tertiary,
                         icon = ImageVector.vectorResource(it.icon),
                         text = stringResource(it.res) +
                                 " ${item.seasonYear?.toString().orEmpty()}",
