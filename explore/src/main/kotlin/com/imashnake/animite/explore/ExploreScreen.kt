@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
@@ -28,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
@@ -46,7 +49,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +65,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -124,6 +127,15 @@ fun ExploreScreen(
                         mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
                         onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
                         shouldShowRank = true,
+                        modifier = Modifier
+                            .consumeWindowInsets(
+                                insetAndNavigationPaddingValues
+                                        + PaddingValues(bottom = LocalPaddings.current.large)
+                            )
+                            .imePadding(),
+                        contentPadding = PaddingValues(
+                            LocalPaddings.current.large
+                        ) + PaddingValues(bottom = LocalPaddings.current.large)
                     )
                 }
 
@@ -284,8 +296,9 @@ private fun SearchBar(
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
-
     var text by rememberSaveable { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     TextField(
         value = text,
         onValueChange = {
@@ -303,6 +316,7 @@ private fun SearchBar(
         singleLine = true,
         colors = searchTextFieldColors(),
         keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
         leadingIcon = {
             IconButton(
                 onClick = {},
@@ -316,7 +330,10 @@ private fun SearchBar(
         },
         trailingIcon = {
             IconButton(
-                onClick = { text = "" },
+                onClick = {
+                    text = ""
+                    onSearch(null)
+                },
                 modifier = Modifier.size(56.dp)
             ) {
                 Icon(
