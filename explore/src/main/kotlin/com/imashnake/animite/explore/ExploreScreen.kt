@@ -28,26 +28,36 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSearchBarState
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -56,6 +66,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -103,10 +114,10 @@ fun ExploreScreen(
                     modifier = Modifier.padding(insetAndNavigationPaddingValues)
                 ) {
                     SearchBar(
-                        onSearch = {
-                            viewModel.setSearchQuery(it)
-                        },
-                        modifier = Modifier.padding(LocalPaddings.current.large)
+                        onSearch = { viewModel.setSearchQuery(it) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = LocalPaddings.current.large)
                     )
 
                     MediaMediumList(
@@ -272,28 +283,76 @@ private fun SearchBar(
     onSearch: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val textFieldState = rememberTextFieldState()
-    val searchBarState = rememberSearchBarState()
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(focusRequester) {
+        focusRequester.requestFocus()
+    }
 
-    SearchBar(
-        state = searchBarState,
-        inputField = {
-            SearchBarDefaults.InputField(
-                query = textFieldState.text.toString(),
-                onQueryChange = {
-                    textFieldState.edit {
-                        replace(0, length, it)
-                    }
-                    onSearch(it.ifEmpty { null })
-                },
-                onSearch = {
-                    onSearch(textFieldState.text.toString().ifEmpty { null })
-                },
-                expanded = false,
-                onExpandedChange = {},
-                placeholder = { Text("Search") }
+    var text by rememberSaveable { mutableStateOf("") }
+    TextField(
+        value = text,
+        onValueChange = {
+            text = it
+            onSearch(it.ifEmpty { null })
+        },
+        modifier = modifier.focusRequester(focusRequester),
+        textStyle = MaterialTheme.typography.labelLarge,
+        placeholder = {
+            Text(
+                text = "Search",
+                style = MaterialTheme.typography.labelLarge
             )
         },
-        modifier = modifier
+        singleLine = true,
+        colors = searchTextFieldColors(),
+        keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Search),
+        leadingIcon = {
+            IconButton(
+                onClick = {},
+                modifier = Modifier.size(56.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = null
+                )
+            }
+        },
+        trailingIcon = {
+            IconButton(
+                onClick = { text = "" },
+                modifier = Modifier.size(56.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = null
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun searchTextFieldColors(
+    contentColor: Color = LocalContentColor.current
+): TextFieldColors {
+    return TextFieldDefaults.colors(
+        unfocusedTextColor = contentColor,
+        focusedTextColor = contentColor,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
+        cursorColor = contentColor,
+        selectionColors = TextSelectionColors(
+            handleColor = contentColor,
+            backgroundColor = contentColor.copy(alpha = 0.3f)
+        ),
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        focusedLeadingIconColor = contentColor,
+        unfocusedLeadingIconColor = contentColor,
+        focusedTrailingIconColor = contentColor,
+        unfocusedTrailingIconColor = contentColor,
+        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
+        focusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
     )
 }
