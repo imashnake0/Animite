@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import androidx.core.graphics.toColorInt
 import com.imashnake.animite.api.anilist.MediaQuery
 import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
@@ -561,7 +560,7 @@ data class Media(
         id = query.id,
         bannerImage = query.bannerImage,
         coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
-        color = query.coverImage?.color?.toColorInt() ?: Color.TRANSPARENT,
+        color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
         title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
         description = query.description.orEmpty(),
         nextAiring = getNextAiring(query.animeInfo.nextAiringEpisode),

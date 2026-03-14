@@ -1,13 +1,10 @@
 package com.imashnake.animite.api.preferences
 
-import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStoreFile
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
 

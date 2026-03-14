@@ -1,8 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.apolloKotlin)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
 }
 
@@ -25,13 +23,9 @@ dependencies {
     implementation(projects.api.preferences)
 
     // Apollo Kotlin
-    implementation(libs.apollo.runtime)
+    api(libs.apollo.runtime)
     implementation(libs.apollo.cache.memory)
     implementation(libs.apollo.cache.sqlite)
-
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
 
     // Kotlin
     implementation(libs.kotlinx.datetime)

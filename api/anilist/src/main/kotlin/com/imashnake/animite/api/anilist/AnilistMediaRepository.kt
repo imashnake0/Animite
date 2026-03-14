@@ -14,7 +14,6 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
-import javax.inject.Inject
 import kotlin.collections.filterNotNull
 import kotlin.collections.orEmpty
 
@@ -26,7 +25,7 @@ import kotlin.collections.orEmpty
  * @property fetchMedia Fetches detailed media: [MediaQuery.Media].
  */
 @Suppress("LongParameterList")
-class AnilistMediaRepository @Inject constructor(
+class AnilistMediaRepository(
     private val apolloClient: ApolloClient
 ) {
 
