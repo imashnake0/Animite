@@ -143,8 +143,8 @@ fun ProfileScreen(
         when {
             isLoggedIn -> when {
                 data.all { it is Resource.Success } -> viewer.data?.run {
-                    LaunchedEffect(Unit) {
-                        if (viewerAvatar == null) viewModel.saveViewerAvatar(avatar)
+                    LaunchedEffect(avatar) {
+                        if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
                     }
                     BannerLayout(
                         banner = { modifier ->
