@@ -4,6 +4,7 @@ query MediaMediumListQuery(
     $perPage: Int,
     $sort: [MediaSort],
     $genre: String
+    $search: String
 ) {
     page: Page (
         page: $page,
@@ -13,6 +14,7 @@ query MediaMediumListQuery(
             type: $type,
             sort: $sort,
             genre: $genre,
+            search: $search,
             isAdult: false
         ) {
             ...MediaMedium

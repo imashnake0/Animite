@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
@@ -11,45 +12,67 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -57,6 +80,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
@@ -92,12 +116,50 @@ fun ExploreScreen(
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
             is Resource.Success -> {
-                MediaMediumList(
-                    mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
-                    onItemClick = { id, title  -> onItemClick(id, MediaType.ANIME, title) },
-                    shouldShowRank = true,
-                    contentPadding = insetAndNavigationPaddingValues,
+                val listState = rememberLazyListState()
+                val isAtTop by remember { derivedStateOf { listState.firstVisibleItemScrollOffset == 0 } }
+                val barBackgroundColor by animateColorAsState(
+                    targetValue = if (isAtTop) {
+                        MaterialTheme.colorScheme.background
+                    } else MaterialTheme.colorScheme.surfaceContainer,
+                    animationSpec = tween(500)
                 )
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(insetAndNavigationPaddingValues.copy(top = 0.dp))
+                ) {
+                    SearchBar(
+                        onSearch = { viewModel.setSearchQuery(it) },
+                        modifier = Modifier
+                            .background(barBackgroundColor)
+                            .padding(top = insetAndNavigationPaddingValues.calculateTopPadding())
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = LocalPaddings.current.large,
+                                vertical = LocalPaddings.current.small
+                            )
+                    )
+
+                    MediaMediumList(
+                        mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
+                        onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
+                        shouldShowRank = true,
+                        modifier = Modifier
+                            .consumeWindowInsets(
+                                insetAndNavigationPaddingValues
+                                        + PaddingValues(bottom = LocalPaddings.current.large)
+                            )
+                            .imePadding(),
+                        state = listState,
+                        contentPadding = PaddingValues(
+                            top = LocalPaddings.current.medium,
+                            bottom = LocalPaddings.current.large,
+                            start = LocalPaddings.current.large,
+                            end = LocalPaddings.current.large,
+                        ) + PaddingValues(bottom = LocalPaddings.current.large)
+                    )
+                }
 
                 SortFab(
                     sorts = Media.Sort.entries.toImmutableList(),
@@ -247,4 +309,86 @@ private fun SortFab(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchBar(
+    onSearch: (String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val focusRequester = remember { FocusRequester() }
+    var text by rememberSaveable { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    TextField(
+        value = text,
+        onValueChange = {
+            text = it
+            onSearch(it.ifEmpty { null })
+        },
+        modifier = modifier.focusRequester(focusRequester),
+        textStyle = MaterialTheme.typography.labelLarge,
+        placeholder = {
+            Text(
+                text = "Search",
+                style = MaterialTheme.typography.labelLarge
+            )
+        },
+        singleLine = true,
+        colors = searchTextFieldColors(),
+        keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
+        leadingIcon = {
+            IconButton(
+                onClick = {},
+                modifier = Modifier.size(56.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = null
+                )
+            }
+        },
+        trailingIcon = {
+            IconButton(
+                onClick = {
+                    text = ""
+                    onSearch(null)
+                },
+                modifier = Modifier.size(56.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = null
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun searchTextFieldColors(
+    contentColor: Color = LocalContentColor.current
+): TextFieldColors {
+    return TextFieldDefaults.colors(
+        unfocusedTextColor = contentColor,
+        focusedTextColor = contentColor,
+        focusedContainerColor = Color.Transparent,
+        unfocusedContainerColor = Color.Transparent,
+        disabledContainerColor = Color.Transparent,
+        cursorColor = contentColor,
+        selectionColors = TextSelectionColors(
+            handleColor = contentColor,
+            backgroundColor = contentColor.copy(alpha = 0.3f)
+        ),
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        focusedLeadingIconColor = contentColor,
+        unfocusedLeadingIconColor = contentColor,
+        focusedTrailingIconColor = contentColor,
+        unfocusedTrailingIconColor = contentColor,
+        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
+        focusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
+    )
 }

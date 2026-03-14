@@ -14,17 +14,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialShapes
@@ -45,7 +44,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -62,25 +60,13 @@ fun MediaMediumList(
     onItemClick: (Int, String?) -> Unit,
     shouldShowRank: Boolean,
     modifier: Modifier = Modifier,
-    searchBarHeight: Dp = 0.dp,
-    searchBarBottomPadding: Dp = 0.dp,
+    state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     LazyColumn(
-        modifier = modifier
-            .consumeWindowInsets(
-                PaddingValues(
-                    bottom = searchBarBottomPadding + contentPadding.calculateBottomPadding()
-                )
-            )
-            .imePadding(),
-        contentPadding = PaddingValues(
-            LocalPaddings.current.large
-        ) + PaddingValues(
-            bottom = LocalPaddings.current.large +
-                    searchBarHeight +
-                    searchBarBottomPadding
-        ) + contentPadding,
+        state = state,
+        modifier = modifier,
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
         items(mediaMediumList.size, key = { mediaMediumList[it].id }) { index ->

@@ -26,14 +26,17 @@ class ExploreViewModel @Inject constructor(
 ) : ViewModel() {
     val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, Media.Sort.POPULARITY)
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, true)
+    val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
 
     val exploreList = selectedSort
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
-        .flatMapLatest { sort ->
+        .combine(searchQuery, ::Pair)
+        .flatMapLatest { (sort, searchQuery) ->
             mediaListRepository.fetchMediaMediumList(
                 mediaType = MediaType.ANIME,
-                sort = listOf(sort)
+                sort = listOf(sort),
+                search = searchQuery
             ).asResource()
         }
         .stateIn(
@@ -48,5 +51,13 @@ class ExploreViewModel @Inject constructor(
 
     fun setIsDescending(isDescending: Boolean) {
         savedStateHandle[Constants.ORDER] = isDescending
+    }
+
+    fun setSearchQuery(searchQuery: String?) {
+        savedStateHandle[SEARCH_QUERY] = searchQuery
+    }
+
+    companion object {
+        private const val SEARCH_QUERY = "searchQuery"
     }
 }

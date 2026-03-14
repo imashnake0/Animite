@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.ui.Constants
+import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.navigation.R as navigationR
@@ -102,10 +104,20 @@ fun SearchFrontDrop(
                     onItemClick(id, searchMediaType, title)
                 },
                 shouldShowRank = false,
-                modifier = Modifier.imeNestedScroll(),
-                searchBarHeight = dimensionResource(R.dimen.search_bar_height),
-                searchBarBottomPadding = searchBarBottomPadding,
-                contentPadding = insetPaddingValues,
+                modifier = Modifier
+                    .imeNestedScroll()
+                    .consumeWindowInsets(
+                        PaddingValues(
+                            bottom = searchBarBottomPadding + insetPaddingValues.calculateBottomPadding()
+                        )
+                    ).imePadding(),
+                contentPadding = PaddingValues(
+                    LocalPaddings.current.large
+                ) + PaddingValues(
+                    bottom = LocalPaddings.current.large +
+                            dimensionResource(R.dimen.search_bar_height) +
+                            searchBarBottomPadding
+                ) + insetPaddingValues,
             )
         }
     }
