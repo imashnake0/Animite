@@ -1,32 +1,21 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.android.libraryMultiplatform)
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.detekt)
-}
-
-android {
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-    }
-
-    namespace = "com.imashnake.animite.api.preferences"
 }
 
 kotlin {
     jvmToolchain(21)
-}
 
-dependencies {
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
+    android {
+        namespace = "com.imashnake.animite.api.preferences"
+    }
 
-    // DataStore
-    implementation(libs.datastore)
+    sourceSets {
+        commonMain.dependencies {
+            implementation(libs.datastore)
+        }
+    }
 }
 
 detekt {
