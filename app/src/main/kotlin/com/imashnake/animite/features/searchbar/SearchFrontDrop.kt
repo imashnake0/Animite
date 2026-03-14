@@ -101,6 +101,7 @@ fun SearchFrontDrop(
                     viewModel.setQuery(null)
                     onItemClick(id, searchMediaType, title)
                 },
+                shouldShowRank = false,
                 modifier = Modifier.imeNestedScroll(),
                 searchBarHeight = dimensionResource(R.dimen.search_bar_height),
                 searchBarBottomPadding = searchBarBottomPadding,

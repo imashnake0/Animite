@@ -95,6 +95,7 @@ fun ExploreScreen(
                 MediaMediumList(
                     mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
                     onItemClick = { id, title  -> onItemClick(id, MediaType.ANIME, title) },
+                    shouldShowRank = true,
                     contentPadding = insetAndNavigationPaddingValues,
                 )
 
