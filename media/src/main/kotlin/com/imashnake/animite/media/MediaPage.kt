@@ -122,6 +122,7 @@ import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -185,7 +186,8 @@ fun MediaPage(
 
     val scrollState = rememberScrollState()
 
-    val media = viewModel.uiState
+    val mediaResource by viewModel.uiState.collectAsStateWithLifecycle()
+    val media = mediaResource.data ?: MediaUiState()
 
     var showDetailsSheet by remember { mutableStateOf(false) }
     val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
