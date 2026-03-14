@@ -284,9 +284,6 @@ private fun SearchBar(
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(focusRequester) {
-        focusRequester.requestFocus()
-    }
 
     var text by rememberSaveable { mutableStateOf("") }
     TextField(
