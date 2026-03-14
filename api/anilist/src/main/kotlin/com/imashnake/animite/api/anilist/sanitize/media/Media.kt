@@ -348,11 +348,11 @@ data class Media(
     }
 
     enum class Sort {
-        POPULARITY_DESC,
-        TRENDING_DESC,
-        FAVOURITES_DESC,
-        SCORE_DESC,
-        EPISODES_DESC;
+        POPULARITY,
+        TRENDING,
+        FAVOURITES,
+        SCORE,
+        EPISODES;
 
         companion object {
             fun safeValueOf(rawValue: String): Sort? = try {
@@ -362,7 +362,9 @@ data class Media(
                 null
             }
 
-            fun MediaSort.sanitize() = safeValueOf(this.name)
+            fun pollute(sort: Sort, isDescending: Boolean): MediaSort {
+                return MediaSort.valueOf(sort.name + if (isDescending) "_DESC" else "")
+            }
         }
     }
 

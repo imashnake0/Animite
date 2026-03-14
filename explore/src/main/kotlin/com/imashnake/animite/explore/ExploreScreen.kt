@@ -4,6 +4,9 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,13 +19,13 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -41,7 +44,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -74,6 +79,7 @@ fun ExploreScreen(
     var isDropdownExpanded by remember { mutableStateOf(false) }
 
     val sort by viewModel.selectedSort.collectAsState()
+    val isDescending by viewModel.isDescending.collectAsState()
 
     val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(bottom = dimensionResource(navigationR.dimen.navigation_bar_height))
@@ -96,6 +102,8 @@ fun ExploreScreen(
                     sorts = Media.Sort.entries.toImmutableList(),
                     selectedSort = sort,
                     onSortSelected = { viewModel.setMediaSort(it) },
+                    isDescending = isDescending,
+                    toggleOrder = { viewModel.setIsDescending(!isDescending) },
                     expanded = isDropdownExpanded,
                     setExpanded = { isDropdownExpanded = it },
                     modifier = Modifier
@@ -117,6 +125,8 @@ private fun SortFab(
     sorts: ImmutableList<Media.Sort>,
     selectedSort: Media.Sort,
     onSortSelected: (Media.Sort) -> Unit,
+    isDescending: Boolean,
+    toggleOrder: () -> Unit,
     expanded: Boolean,
     setExpanded: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -126,6 +136,7 @@ private fun SortFab(
         targetValue = if (expanded) 10 else 50,
         label = "corner_radius_animation",
     )
+    val haptic = LocalHapticFeedback.current
 
     Box(modifier) {
         Surface(
@@ -160,23 +171,6 @@ private fun SortFab(
             ),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
         ) {
-            // TODO: Add sort trend and more filters
-//            Row(
-//                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier.padding(LocalPaddings.current.small),
-//            ) {
-//                Icon(
-//                    imageVector = ImageVector.vectorResource(R.drawable.descending),
-//                    contentDescription = stringResource(R.string.descending),
-//                    modifier = Modifier.size(LocalPaddings.current.medium)
-//                )
-//                Text(
-//                    text = stringResource(R.string.descending),
-//                    style = MaterialTheme.typography.bodyMedium,
-//                    fontSize = 12.sp
-//                )
-//            }
             sorts.forEach { sort ->
                 val backgroundColor by animateColorAsState(
                     targetValue = if (sort == selectedSort)
@@ -198,14 +192,33 @@ private fun SortFab(
                     text = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(sort.icon),
-                                contentDescription = stringResource(sort.res),
-                                modifier = Modifier.size(iconSize)
-                            )
-                            Text(stringResource(sort.res))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(sort.icon),
+                                    contentDescription = stringResource(sort.res),
+                                    modifier = Modifier.size(iconSize)
+                                )
+                                Text(stringResource(sort.res))
+                            }
+                            if (sort == selectedSort) {
+                                val expandToCollapse = AnimatedImageVector.animatedVectorResource(
+                                    R.drawable.order
+                                )
+                                Icon(
+                                    painter = rememberAnimatedVectorPainter(
+                                        animatedImageVector = expandToCollapse,
+                                        atEnd = isDescending,
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(iconSize)
+                                )
+                            }
                         }
                     },
                     leadingIcon = null,
@@ -213,7 +226,14 @@ private fun SortFab(
                         textColor = textColor,
                         leadingIconColor = MaterialTheme.colorScheme.primary
                     ),
-                    onClick = { onSortSelected(sort) },
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        if (sort == selectedSort) {
+                            toggleOrder()
+                        } else {
+                            onSortSelected(sort)
+                        }
+                    },
                     contentPadding = PaddingValues(
                         vertical = LocalPaddings.current.small,
                         horizontal = LocalPaddings.current.medium

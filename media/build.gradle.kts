@@ -48,13 +48,13 @@ dependencies {
 
     // Compose
     implementation(libs.compose.animation)
+    implementation(libs.compose.animation.graphics)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material)
     implementation(libs.compose.material.icons.core)
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
-    implementation(libs.compose.animation.graphics)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 

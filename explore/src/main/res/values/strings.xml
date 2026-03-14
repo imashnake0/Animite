@@ -2,5 +2,4 @@
 <resources>
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
-    <string name="descending">Descending</string>
 </resources>
