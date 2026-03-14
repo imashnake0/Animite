@@ -75,6 +75,7 @@ class AnilistMediaRepository(
         page: Int = 0,
         perPage: Int = 10,
         genre: String? = null,
+        search: String? = null,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
         return apolloClient
             .query(
@@ -83,7 +84,8 @@ class AnilistMediaRepository(
                     page = Optional.presentIfNotNull(page),
                     perPage = Optional.presentIfNotNull(perPage),
                     sort = Optional.presentIfNotNull(sort),
-                    genre = Optional.presentIfNotNull(genre)
+                    genre = Optional.presentIfNotNull(genre),
+                    search = Optional.presentIfNotNull(search)
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)

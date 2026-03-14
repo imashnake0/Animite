@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,12 +28,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -92,12 +98,23 @@ fun ExploreScreen(
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
             is Resource.Success -> {
-                MediaMediumList(
-                    mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
-                    onItemClick = { id, title  -> onItemClick(id, MediaType.ANIME, title) },
-                    shouldShowRank = true,
-                    contentPadding = insetAndNavigationPaddingValues,
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(insetAndNavigationPaddingValues)
+                ) {
+                    SearchBar(
+                        onSearch = {
+                            viewModel.setSearchQuery(it)
+                        },
+                        modifier = Modifier.padding(LocalPaddings.current.large)
+                    )
+
+                    MediaMediumList(
+                        mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
+                        onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
+                        shouldShowRank = true,
+                    )
+                }
 
                 SortFab(
                     sorts = Media.Sort.entries.toImmutableList(),
@@ -247,4 +264,36 @@ private fun SortFab(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchBar(
+    onSearch: (String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val textFieldState = rememberTextFieldState()
+    val searchBarState = rememberSearchBarState()
+
+    SearchBar(
+        state = searchBarState,
+        inputField = {
+            SearchBarDefaults.InputField(
+                query = textFieldState.text.toString(),
+                onQueryChange = {
+                    textFieldState.edit {
+                        replace(0, length, it)
+                    }
+                    onSearch(it.ifEmpty { null })
+                },
+                onSearch = {
+                    onSearch(textFieldState.text.toString().ifEmpty { null })
+                },
+                expanded = false,
+                onExpandedChange = {},
+                placeholder = { Text("Search") }
+            )
+        },
+        modifier = modifier
+    )
 }
