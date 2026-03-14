@@ -1,21 +1,32 @@
 package com.imashnake.animite.api.preferences
 
+import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStoreFile
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
-import javax.inject.Inject
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
 private const val USE_SYSTEM_COLOR_SCHEME = true
 private const val IS_DEV_OPTIONS_ENABLED = false
 
-class PreferencesRepository @Inject constructor(
+/**
+ * Stores API-specific state in an on-disk cache, and exposes the values as a Flow.
+ */
+class PreferencesRepository internal constructor(
     private val dataStore: DataStore<Preferences>
 ) {
+    constructor(context: Context) : this(
+        PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile("default") }
+        )
+    )
+
     // region profile
     private val accessTokenKey = stringPreferencesKey("access_token")
     val accessToken = dataStore.getValue(accessTokenKey, null)

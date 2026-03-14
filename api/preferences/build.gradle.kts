@@ -1,7 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
 }
 
@@ -21,10 +19,6 @@ kotlin {
 }
 
 dependencies {
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-
     // DataStore
     implementation(libs.datastore)
 }
