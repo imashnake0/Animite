@@ -138,8 +138,8 @@ private fun SortFab(
             ),
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.filter),
-                contentDescription = stringResource(R.string.filter),
+                imageVector = ImageVector.vectorResource(R.drawable.sort),
+                contentDescription = stringResource(R.string.sort),
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .clickable { setExpanded(!expanded) }
