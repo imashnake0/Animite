@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -50,6 +52,7 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,6 +80,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
@@ -112,15 +116,29 @@ fun ExploreScreen(
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
             is Resource.Success -> {
+                val listState = rememberLazyListState()
+                val isAtTop by remember { derivedStateOf { listState.firstVisibleItemScrollOffset == 0 } }
+                val barBackgroundColor by animateColorAsState(
+                    targetValue = if (isAtTop) {
+                        MaterialTheme.colorScheme.background
+                    } else MaterialTheme.colorScheme.surfaceContainer,
+                    animationSpec = tween(500)
+                )
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(insetAndNavigationPaddingValues)
+                    modifier = Modifier.padding(insetAndNavigationPaddingValues.copy(top = 0.dp))
                 ) {
                     SearchBar(
                         onSearch = { viewModel.setSearchQuery(it) },
                         modifier = Modifier
+                            .background(barBackgroundColor)
+                            .padding(top = insetAndNavigationPaddingValues.calculateTopPadding())
                             .fillMaxWidth()
-                            .padding(horizontal = LocalPaddings.current.large)
+                            .padding(
+                                horizontal = LocalPaddings.current.large,
+                                vertical = LocalPaddings.current.small
+                            )
                     )
 
                     MediaMediumList(
@@ -133,8 +151,12 @@ fun ExploreScreen(
                                         + PaddingValues(bottom = LocalPaddings.current.large)
                             )
                             .imePadding(),
+                        state = listState,
                         contentPadding = PaddingValues(
-                            LocalPaddings.current.large
+                            top = LocalPaddings.current.medium,
+                            bottom = LocalPaddings.current.large,
+                            start = LocalPaddings.current.large,
+                            end = LocalPaddings.current.large,
                         ) + PaddingValues(bottom = LocalPaddings.current.large)
                     )
                 }
