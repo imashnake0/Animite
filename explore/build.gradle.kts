@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
@@ -18,33 +16,24 @@ android {
 
     buildFeatures { compose = true }
 
-    namespace = "com.imashnake.animite.media"
+    namespace = "com.imashnake.animite.explore"
 }
 
 kotlin {
     jvmToolchain(21)
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions.freeCompilerArgs.addAll(
-        "-opt-in=androidx.compose.animation.ExperimentalSharedTransitionApi"
-    )
-}
-
 dependencies {
-    implementation(projects.banner)
-    implementation(projects.navigation)
     implementation(projects.core.ui)
+    implementation(projects.core.resource)
+    implementation(projects.media)
     implementation(projects.api.anilist)
-    implementation(projects.api.preferences)
+    implementation(projects.navigation)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
-
-    // Coil
-    implementation(libs.bundles.coil)
 
     // Compose
     implementation(libs.compose.animation)
@@ -58,17 +47,25 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
+    // Cascade Compose
+    implementation(libs.saket.cascade)
+
+    // Kotlin
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.collectionsImmutable)
+
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
 
-    // Kotlin
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.kotlinx.collectionsImmutable)
-    implementation(libs.kotlinx.datetime)
+    testImplementation(libs.test.junit)
 
-    implementation(libs.materialKolor)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.espressoCore)
+    androidTestImplementation(libs.compose.test.ui.testJunit4)
 }
 
 detekt {

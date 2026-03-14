@@ -82,6 +82,7 @@ dependencies {
     implementation(projects.social)
     implementation(projects.anime)
     implementation(projects.manga)
+    implementation(projects.explore)
 
     // AndroidX
     implementation(libs.androidx.activityCompose)

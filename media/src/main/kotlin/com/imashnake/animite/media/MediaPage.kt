@@ -730,6 +730,7 @@ fun MediaPage(
                         } else {
                             MediaMediumList(
                                 mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
+                                shouldShowRank = false,
                                 onItemClick = { id, title ->
                                     onNavigateToMediaItem(
                                         MediaPage(

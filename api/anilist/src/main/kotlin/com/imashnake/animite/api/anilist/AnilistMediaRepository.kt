@@ -75,7 +75,7 @@ class AnilistMediaRepository @Inject constructor(
         sort: List<MediaSort>,
         page: Int = 0,
         perPage: Int = 10,
-        genre: String,
+        genre: String? = null,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
         return apolloClient
             .query(

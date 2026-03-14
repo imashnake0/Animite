@@ -15,11 +15,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -33,16 +37,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.component.MediaCard
+import com.imashnake.animite.core.ui.component.CharacterCard
+import com.imashnake.animite.core.ui.component.Chip
+import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.core.ui.R as coreUiR
@@ -51,6 +60,7 @@ import com.imashnake.animite.core.ui.R as coreUiR
 fun MediaMediumList(
     mediaMediumList: ImmutableList<Media.Medium>,
     onItemClick: (Int, String?) -> Unit,
+    shouldShowRank: Boolean,
     modifier: Modifier = Modifier,
     searchBarHeight: Dp = 0.dp,
     searchBarBottomPadding: Dp = 0.dp,
@@ -77,7 +87,24 @@ fun MediaMediumList(
             MediaMediumItem(
                 item = mediaMediumList[index],
                 onClick = onItemClick,
-                modifier = Modifier.animateItem()
+                rank = (index + 1).takeIf { shouldShowRank },
+                modifier = Modifier
+                    .animateItem()
+                    .height(137.dp)
+                    .fillMaxWidth()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            topEnd = if (index == 0) {
+                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                            } else LocalPaddings.current.small,
+                            bottomEnd = if (index == mediaMediumList.lastIndex) {
+                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                            } else LocalPaddings.current.small,
+                        )
+                    )
+                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.03f))
             )
         }
     }
@@ -88,92 +115,122 @@ fun MediaMediumList(
 private fun MediaMediumItem(
     item: Media.Medium,
     onClick: (Int, String?) -> Unit,
+    rank: Int?,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(dimensionResource(coreUiR.dimen.media_card_corner_radius)))
-            .clickable { onClick(item.id, item.title) }
-    ) {
-        MediaCard(
-            image = item.coverImage,
-            tag = null,
-            label = null,
-            onClick = { onClick(item.id, item.title) },
-        )
-
-        Column(Modifier.padding(horizontal = LocalPaddings.current.small)) {
-            Text(
-                text = item.title.orEmpty(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                maxLines = 2
+    Box(modifier = modifier.clickable { onClick(item.id, item.title) }) {
+        if (rank != null) {
+            Box(
+                Modifier
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                    .fillMaxHeight()
+                    .width(LocalPaddings.current.large * 3)
             )
-            if (item.seasonYear != null) {
+        }
+
+        Row {
+            rank?.let {
                 Text(
-                    text = item.seasonYear.toString(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.labelSmall
+                    text = rank.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier
+                        .padding(horizontal = LocalPaddings.current.tiny)
+                        .requiredWidth(LocalPaddings.current.large)
+                        .align(Alignment.CenterVertically)
                 )
             }
 
-            Spacer(Modifier.size(LocalPaddings.current.medium))
-
-            Text(
-                text = item.studios.joinToString(),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+            CharacterCard(
+                image = item.coverImage,
+                tag = null,
+                label = null,
+                onClick = { onClick(item.id, item.title) },
+                tagMinLines = 1
             )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                item.format?.let {
-                    Text(
-                        text = stringResource(it.res),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+            Column(
+                Modifier.padding(
+                    horizontal = LocalPaddings.current.large / 2,
+                    vertical = LocalPaddings.current.small
+                )
+            ) {
+                Text(
+                    text = item.title.orEmpty(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1
+                )
+
+                Spacer(Modifier.size(LocalPaddings.current.small))
+
+                item.season?.let {
+                    Chip(
+                        color = MaterialTheme.colorScheme.tertiary,
+                        icon = ImageVector.vectorResource(it.icon),
+                        text = stringResource(it.res) +
+                                " ${item.seasonYear?.toString().orEmpty()}",
                     )
                 }
 
-                if (item.format != null && item.episodes != null) {
-                    val infiniteTransition = rememberInfiniteTransition(label = "divider")
-                    val angle by infiniteTransition.animateFloat(
-                        initialValue = 0f,
-                        targetValue = 360f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(6000, easing = LinearEasing),
-                            repeatMode = RepeatMode.Restart
-                        ),
-                        label = "rotation"
-                    )
-                    Box(
-                        modifier = Modifier
-                            .graphicsLayer { rotationZ = angle }
-                            .padding(horizontal = LocalPaddings.current.small)
-                            .size(6.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                                shape = MaterialShapes.Cookie4Sided.toShape()
-                            )
-                    )
-                }
+                Spacer(Modifier.size(LocalPaddings.current.medium))
 
-                item.episodes?.let {
-                    Text(
-                        text = pluralStringResource(
-                            id = R.plurals.episode_count,
-                            count = it,
-                            formatArgs = arrayOf(it)
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                Text(
+                    text = item.studios.joinToString(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    item.format?.let {
+                        Text(
+                            text = stringResource(it.res),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    if (item.format != null && item.episodes != null) {
+                        val infiniteTransition = rememberInfiniteTransition(label = "divider")
+                        val angle by infiniteTransition.animateFloat(
+                            initialValue = 0f,
+                            targetValue = 360f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(6000, easing = LinearEasing),
+                                repeatMode = RepeatMode.Restart
+                            ),
+                            label = "rotation"
+                        )
+                        Box(
+                            modifier = Modifier
+                                .graphicsLayer { rotationZ = angle }
+                                .padding(horizontal = LocalPaddings.current.small)
+                                .size(4.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                                    shape = MaterialShapes.Cookie4Sided.toShape()
+                                )
+                        )
+                    }
+
+                    item.episodes?.let {
+                        Text(
+                            text = pluralStringResource(
+                                id = R.plurals.episode_count,
+                                count = it,
+                                formatArgs = arrayOf(it)
+                            ),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         }

@@ -24,7 +24,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 fun Chip(
     color: Color,
     icon: ImageVector,
-    text: String,
+    text: String?,
     modifier: Modifier = Modifier,
     iconPadding: PaddingValues = PaddingValues(),
 ) {
@@ -44,12 +44,14 @@ fun Chip(
                 .padding(iconPadding)
                 .size(15.dp)
         )
-        Text(
-            text = text,
-            color = color,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-        )
+        text?.let {
+            Text(
+                text = text,
+                color = color,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+            )
+        }
     }
 }

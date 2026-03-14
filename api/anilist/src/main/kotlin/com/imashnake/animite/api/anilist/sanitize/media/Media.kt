@@ -21,6 +21,7 @@ import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaRankType
 import com.imashnake.animite.api.anilist.type.MediaRelation
 import com.imashnake.animite.api.anilist.type.MediaSeason
+import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaSource
 import com.imashnake.animite.api.anilist.type.MediaStatus
 import kotlinx.collections.immutable.ImmutableList
@@ -343,6 +344,27 @@ data class Media(
             }
 
             fun MediaRelation.sanitize() = safeValueOf(this.name)
+        }
+    }
+
+    enum class Sort {
+        POPULARITY,
+        TRENDING,
+        FAVOURITES,
+        SCORE,
+        EPISODES;
+
+        companion object {
+            fun safeValueOf(rawValue: String): Sort? = try {
+                Sort.valueOf(rawValue)
+            } catch (e: IllegalArgumentException) {
+                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Source $rawValue not found.")
+                null
+            }
+
+            fun pollute(sort: Sort, isDescending: Boolean): MediaSort {
+                return MediaSort.valueOf(sort.name + if (isDescending) "_DESC" else "")
+            }
         }
     }
 

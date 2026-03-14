@@ -73,7 +73,7 @@ fun <T> MediaSmallRow(
         val startPadding = contentPadding.calculateStartPadding(layoutDirection)
         val endPadding = contentPadding.calculateEndPadding(layoutDirection)
         Row(
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(start = startPadding, end = endPadding)
@@ -91,7 +91,7 @@ fun <T> MediaSmallRow(
                 Chip(
                     color = MaterialTheme.colorScheme.primary,
                     icon = ImageVector.vectorResource(icon),
-                    text = label
+                    text = label,
                 )
             }
         }
