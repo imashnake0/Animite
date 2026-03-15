@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
@@ -38,19 +39,24 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -311,7 +317,7 @@ private fun SortFab(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun SearchBar(
     onSearch: (String?) -> Unit,
@@ -320,6 +326,9 @@ private fun SearchBar(
     val focusRequester = remember { FocusRequester() }
     var text by rememberSaveable { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val closeIconSize by animateDpAsState(
+        targetValue = if (text.isNotEmpty()) 20.dp else 0.dp
+    )
 
     TextField(
         value = text,
@@ -340,28 +349,51 @@ private fun SearchBar(
         keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
         leadingIcon = {
-            IconButton(
-                onClick = {},
-                modifier = Modifier.size(56.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Search,
-                    contentDescription = null
-                )
-            }
+            Icon(
+                imageVector = Icons.Rounded.Search,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
         },
         trailingIcon = {
-            IconButton(
-                onClick = {
-                    text = ""
-                    onSearch(null)
-                },
-                modifier = Modifier.size(56.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = null
-                )
+            Row {
+                CompositionLocalProvider(
+                    LocalRippleConfiguration provides RippleConfiguration(
+                        rippleAlpha = RippleAlpha(
+                            draggedAlpha = 0f,
+                            focusedAlpha = 0f,
+                            hoveredAlpha = 0f,
+                            pressedAlpha = 0f
+                        )
+                    )
+                ) {
+                    IconButton(
+                        onClick = {
+                            text = ""
+                            onSearch(null)
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(),
+                        enabled = text.isNotEmpty(),
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = null,
+                            modifier = Modifier.size(closeIconSize)
+                        )
+                    }
+                }
+                IconButton(
+                    onClick = { keyboardController?.hide() },
+                    enabled = WindowInsets.isImeVisible,
+                    modifier = Modifier.size(40.dp),
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.hide_keyboard),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     )
