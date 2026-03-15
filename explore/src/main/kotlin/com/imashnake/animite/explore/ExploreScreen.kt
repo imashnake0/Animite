@@ -150,7 +150,7 @@ fun ExploreScreen(
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.surfaceContainerLow)
                             .padding(horizontal = LocalPaddings.current.small)
-                            .zIndex(100f)
+                            .zIndex(Float.MAX_VALUE)
                     )
 
                     MediaMediumList(
