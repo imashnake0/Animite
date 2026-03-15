@@ -36,11 +36,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -48,8 +46,6 @@ import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.CharacterCard
-import com.imashnake.animite.core.ui.component.Chip
-import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.core.ui.R as coreUiR
@@ -90,7 +86,7 @@ fun MediaMediumList(
                             } else LocalPaddings.current.small,
                         )
                     )
-                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.03f))
+                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
             )
         }
     }
@@ -149,14 +145,13 @@ private fun MediaMediumItem(
                     maxLines = 1
                 )
 
-                Spacer(Modifier.size(LocalPaddings.current.small))
-
                 item.season?.let {
-                    Chip(
-                        color = MaterialTheme.colorScheme.tertiary,
-                        icon = ImageVector.vectorResource(it.icon),
+                    Text(
                         text = stringResource(it.res) +
                                 " ${item.seasonYear?.toString().orEmpty()}",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1
                     )
                 }
 
