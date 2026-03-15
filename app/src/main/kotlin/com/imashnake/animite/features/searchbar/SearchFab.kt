@@ -183,7 +183,7 @@ fun searchTextFieldColors(
         unfocusedLeadingIconColor = contentColor,
         focusedTrailingIconColor = contentColor,
         unfocusedTrailingIconColor = contentColor,
-        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
-        focusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
+        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
+        focusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
     )
 }

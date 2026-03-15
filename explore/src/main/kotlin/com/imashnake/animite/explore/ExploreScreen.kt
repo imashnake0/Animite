@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -127,7 +128,7 @@ fun ExploreScreen(
                 val barBackgroundColor by animateColorAsState(
                     targetValue = if (isAtTop) {
                         MaterialTheme.colorScheme.background
-                    } else MaterialTheme.colorScheme.surfaceContainer,
+                    } else MaterialTheme.colorScheme.surfaceContainerHighest,
                     animationSpec = tween(500)
                 )
 
@@ -145,6 +146,9 @@ fun ExploreScreen(
                                 horizontal = LocalPaddings.current.large,
                                 vertical = LocalPaddings.current.small
                             )
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                            .padding(horizontal = LocalPaddings.current.small)
                     )
 
                     MediaMediumList(
@@ -420,7 +424,7 @@ fun searchTextFieldColors(
         unfocusedLeadingIconColor = contentColor,
         focusedTrailingIconColor = contentColor,
         unfocusedTrailingIconColor = contentColor,
-        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
-        focusedPlaceholderColor = contentColor.copy(alpha = 0.5F),
+        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
+        focusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
     )
 }
