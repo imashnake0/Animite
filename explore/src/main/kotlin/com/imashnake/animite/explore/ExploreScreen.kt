@@ -82,6 +82,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -149,6 +150,7 @@ fun ExploreScreen(
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.surfaceContainerLow)
                             .padding(horizontal = LocalPaddings.current.small)
+                            .zIndex(100f)
                     )
 
                     MediaMediumList(
