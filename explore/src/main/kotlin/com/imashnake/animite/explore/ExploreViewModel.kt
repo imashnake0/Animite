@@ -25,26 +25,32 @@ class ExploreViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, Media.Sort.POPULARITY)
-    val selectedGenre = savedStateHandle.getStateFlow<String?>(Constants.GENRE, null)
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, true)
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
+    val selectedGenre = savedStateHandle.getStateFlow<String?>(Constants.GENRE, null)
 
-    val exploreList = selectedSort
+    val mediaSort = selectedSort
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
-        .combine(searchQuery, ::Pair)
-        .flatMapLatest { (sort, searchQuery) ->
-            mediaListRepository.fetchMediaMediumList(
-                mediaType = MediaType.ANIME,
-                sort = listOf(sort),
-                search = searchQuery
-            ).asResource()
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(1000),
-            initialValue = Resource.loading()
-        )
+
+    val exploreList = combine(
+        flow = mediaSort,
+        flow2 = searchQuery,
+        flow3 = selectedGenre,
+        transform = ::Triple,
+    ).flatMapLatest { (sort, searchQuery, genre) ->
+        mediaListRepository.fetchMediaMediumList(
+            mediaType = MediaType.ANIME,
+            sort = listOf(sort),
+            search = searchQuery,
+            genre = genre,
+        ).asResource()
+    }
+    .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading()
+    )
 
     val genres = mediaListRepository
         .fetchMediaGenres()
