@@ -82,6 +82,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
@@ -129,14 +130,11 @@ fun ExploreScreen(
                 val barBackgroundColor by animateColorAsState(
                     targetValue = if (isAtTop) {
                         MaterialTheme.colorScheme.background
-                    } else MaterialTheme.colorScheme.surfaceContainerHighest,
+                    } else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.9f),
                     animationSpec = tween(500)
                 )
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(insetAndNavigationPaddingValues.copy(top = 0.dp))
-                ) {
+                Box(modifier = Modifier.padding(insetAndNavigationPaddingValues.copy(top = 0.dp))) {
                     SearchBar(
                         onSearch = { viewModel.setSearchQuery(it) },
                         modifier = Modifier
@@ -169,7 +167,13 @@ fun ExploreScreen(
                             bottom = LocalPaddings.current.large,
                             start = LocalPaddings.current.large,
                             end = LocalPaddings.current.large,
-                        ) + PaddingValues(bottom = LocalPaddings.current.large)
+                        ) + PaddingValues(
+                            bottom = LocalPaddings.current.large
+                        ) + PaddingValues(
+                            top = insetAndNavigationPaddingValues.calculateTopPadding()
+                                    + TextFieldDefaults.MinHeight
+                                    + 2 * LocalPaddings.current.small
+                        )
                     )
                 }
 
