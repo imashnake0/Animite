@@ -45,6 +45,15 @@ class ExploreViewModel @Inject constructor(
             initialValue = Resource.loading()
         )
 
+    val genres = mediaListRepository
+        .fetchMediaGenres()
+        .asResource()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = Resource.loading()
+        )
+
     fun setMediaSort(sort: Media.Sort) {
         savedStateHandle[Constants.SORT] = sort
     }

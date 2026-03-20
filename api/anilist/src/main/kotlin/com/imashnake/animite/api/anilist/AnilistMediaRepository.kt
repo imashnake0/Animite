@@ -116,4 +116,16 @@ class AnilistMediaRepository(
             .filter { it.exception == null }
             .asResult { Media(it.media!!) }
     }
+
+    fun fetchMediaGenres() = apolloClient
+        .query(GenresQuery())
+        .fetchPolicy(FetchPolicy.CacheFirst)
+        .toFlow()
+        .filter { it.exception == null }
+        .asResult {
+            it.GenreCollection
+                .orEmpty()
+                .filterNotNull()
+                .toImmutableList()
+        }
 }
