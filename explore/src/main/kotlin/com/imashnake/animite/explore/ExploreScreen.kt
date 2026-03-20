@@ -2,6 +2,7 @@ package com.imashnake.animite.explore
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -58,6 +59,7 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -71,6 +73,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
@@ -98,6 +101,7 @@ import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
 import com.imashnake.animite.navigation.R as navigationR
@@ -128,13 +132,24 @@ fun ExploreScreen(
 
     val exploreList by viewModel.exploreList.collectAsState()
 
+    val fabSize = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        delay(200)
+        fabSize.animateTo(1f)
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
             is Resource.Success -> {
                 val listState = rememberLazyListState()
-                val isAtTop by remember { derivedStateOf { listState.firstVisibleItemScrollOffset == 0 } }
+                val isNotAtTop by remember {
+                    derivedStateOf {
+                        listState.firstVisibleItemScrollOffset != 0
+                                || listState.firstVisibleItemIndex != 0
+                    }
+                }
                 val barBackgroundColor by animateColorAsState(
-                    targetValue = if (isAtTop) {
+                    targetValue = if (!isNotAtTop) {
                         MaterialTheme.colorScheme.background
                     } else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.9f),
                     animationSpec = tween(500)
@@ -190,6 +205,9 @@ fun ExploreScreen(
                         .padding(insetAndNavigationPaddingValues)
                         .padding(WindowInsets.navigationBars.asPaddingValues())
                         .padding(LocalPaddings.current.large)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+                        .padding(LocalPaddings.current.small)
                 ) {
                     if (genres is Resource.Success) {
                         genres.data?.let { genres ->
@@ -199,6 +217,9 @@ fun ExploreScreen(
                                 onGenreSelected = { viewModel.setMediaGenre(it) },
                                 expanded = isGenreDropdownExpanded,
                                 setExpanded = { isGenreDropdownExpanded = it },
+                                modifier = Modifier.graphicsLayer {
+                                    scaleX = fabSize.value; scaleY = fabSize.value
+                                }
                             )
                         }
                     }
@@ -211,6 +232,9 @@ fun ExploreScreen(
                         toggleOrder = { viewModel.setIsDescending(!isDescending) },
                         expanded = isSortDropdownExpanded,
                         setExpanded = { isSortDropdownExpanded = it },
+                        modifier = Modifier.graphicsLayer {
+                            scaleX = fabSize.value; scaleY = fabSize.value
+                        }
                     )
                 }
             }
@@ -255,7 +279,7 @@ private fun SortFab(
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .clickable { setExpanded(!expanded) }
-                    .padding(LocalPaddings.current.medium)
+                    .padding(LocalPaddings.current.small)
                     .size(LocalPaddings.current.large)
             )
         }
@@ -383,7 +407,7 @@ private fun GenreFilter(
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .clickable { setExpanded(!expanded) }
-                    .padding(LocalPaddings.current.medium)
+                    .padding(LocalPaddings.current.small)
                     .size(LocalPaddings.current.large)
             )
         }
