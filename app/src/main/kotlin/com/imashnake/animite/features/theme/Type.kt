@@ -38,6 +38,7 @@ val manropeFontFamily = FontFamily(
     Font(R.font.manrope_medium_italic, FontWeight.Medium, FontStyle.Italic),
     Font(R.font.manrope_extra_light_italic, FontWeight.ExtraLight, FontStyle.Italic),
     Font(R.font.manrope_semi_bold_italic, FontWeight.SemiBold, FontStyle.Italic),
+    Font(R.font.manrope) // fallback?
 )
 
 const val BASELINE_SHIFT = 0.2f
