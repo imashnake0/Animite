@@ -25,6 +25,7 @@ class ExploreViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, Media.Sort.POPULARITY)
+    val selectedGenre = savedStateHandle.getStateFlow<String?>(Constants.GENRE, null)
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, true)
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
 
@@ -64,6 +65,10 @@ class ExploreViewModel @Inject constructor(
 
     fun setSearchQuery(searchQuery: String?) {
         savedStateHandle[SEARCH_QUERY] = searchQuery
+    }
+
+    fun setMediaGenre(genre: String?) {
+        savedStateHandle[Constants.GENRE] = genre
     }
 
     companion object {

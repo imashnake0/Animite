@@ -76,6 +76,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -83,6 +84,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
@@ -90,6 +92,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.ext.copy
+import com.imashnake.animite.core.ui.ext.maxHeight
 import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
@@ -109,10 +112,13 @@ fun ExploreScreen(
         .union(WindowInsets.displayCutout),
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
-    var isDropdownExpanded by remember { mutableStateOf(false) }
-
+    var isSortDropdownExpanded by remember { mutableStateOf(false) }
     val sort by viewModel.selectedSort.collectAsState()
     val isDescending by viewModel.isDescending.collectAsState()
+
+    var isGenreDropdownExpanded by remember { mutableStateOf(false) }
+    val genres by viewModel.genres.collectAsState()
+    val selectedGenre by viewModel.selectedGenre.collectAsState()
 
     val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(bottom = dimensionResource(navigationR.dimen.navigation_bar_height))
@@ -177,20 +183,36 @@ fun ExploreScreen(
                     )
                 }
 
-                SortFab(
-                    sorts = Media.Sort.entries.toImmutableList(),
-                    selectedSort = sort,
-                    onSortSelected = { viewModel.setMediaSort(it) },
-                    isDescending = isDescending,
-                    toggleOrder = { viewModel.setIsDescending(!isDescending) },
-                    expanded = isDropdownExpanded,
-                    setExpanded = { isDropdownExpanded = it },
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(insetAndNavigationPaddingValues)
                         .padding(WindowInsets.navigationBars.asPaddingValues())
                         .padding(LocalPaddings.current.large)
-                )
+                ) {
+                    if (genres is Resource.Success) {
+                        genres.data?.let { genres ->
+                            GenreFilter(
+                                genres = genres,
+                                selectedGenre = selectedGenre,
+                                onGenreSelected = { viewModel.setMediaGenre(it) },
+                                expanded = isGenreDropdownExpanded,
+                                setExpanded = { isGenreDropdownExpanded = it },
+                            )
+                        }
+                    }
+
+                    SortFab(
+                        sorts = Media.Sort.entries.toImmutableList(),
+                        selectedSort = sort,
+                        onSortSelected = { viewModel.setMediaSort(it) },
+                        isDescending = isDescending,
+                        toggleOrder = { viewModel.setIsDescending(!isDescending) },
+                        expanded = isSortDropdownExpanded,
+                        setExpanded = { isSortDropdownExpanded = it },
+                    )
+                }
             }
             // TODO: Add loading and error states.
             is Resource.Loading -> {}
@@ -249,20 +271,22 @@ private fun SortFab(
                 bottomStart = cornerRadius,
             ),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+            modifier = Modifier.align(Alignment.TopStart)
         ) {
-            sorts.forEach { sort ->
+            sorts.fastForEach { sort ->
+                val isSortSelected = sort == selectedSort
                 val backgroundColor by animateColorAsState(
-                    targetValue = if (sort == selectedSort)
+                    targetValue = if (isSortSelected)
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
                     else Color.Transparent
                 )
                 val textColor by animateColorAsState(
-                    targetValue = if (sort == selectedSort)
+                    targetValue = if (isSortSelected)
                         MaterialTheme.colorScheme.onPrimary
                     else MaterialTheme.colorScheme.onBackground
                 )
                 val iconSize by animateDpAsState(
-                    targetValue = if (sort == selectedSort)
+                    targetValue = if (isSortSelected)
                         LocalPaddings.current.medium
                     else 0.dp
                 )
@@ -285,7 +309,7 @@ private fun SortFab(
                                 )
                                 Text(stringResource(sort.res))
                             }
-                            if (sort == selectedSort) {
+                            if (isSortSelected) {
                                 val expandToCollapse = AnimatedImageVector.animatedVectorResource(
                                     R.drawable.order
                                 )
@@ -307,10 +331,111 @@ private fun SortFab(
                     ),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                        if (sort == selectedSort) {
+                        if (isSortSelected) {
                             toggleOrder()
                         } else {
                             onSortSelected(sort)
+                        }
+                    },
+                    contentPadding = PaddingValues(
+                        vertical = LocalPaddings.current.small,
+                        horizontal = LocalPaddings.current.medium
+                    ),
+                    modifier = Modifier
+                        .padding(LocalPaddings.current.tiny)
+                        .clip(RoundedCornerShape(LocalPaddings.current.large))
+                        .background(color = backgroundColor)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun GenreFilter(
+    genres: ImmutableList<String>,
+    selectedGenre: String?,
+    onGenreSelected: (String?) -> Unit,
+    expanded: Boolean,
+    setExpanded: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val cascadeState = rememberCascadeState()
+    val cornerRadius by animateIntAsState(
+        targetValue = if (expanded) 10 else 50,
+        label = "corner_radius_animation",
+    )
+    val haptic = LocalHapticFeedback.current
+
+    Box(modifier) {
+        Surface(
+            color = MaterialTheme.colorScheme.primary,
+            shape = RoundedCornerShape(
+                topStartPercent = 50,
+                topEndPercent = cornerRadius,
+                bottomEndPercent = 50,
+                bottomStartPercent = 50,
+            ),
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.genres),
+                contentDescription = stringResource(R.string.genres),
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .clickable { setExpanded(!expanded) }
+                    .padding(LocalPaddings.current.medium)
+                    .size(LocalPaddings.current.large)
+            )
+        }
+        val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
+        val windowInfo = LocalWindowInfo.current
+        CascadeDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { setExpanded(false) },
+            state = cascadeState,
+            shape = RoundedCornerShape(
+                topStart = cornerRadius,
+                topEnd = cornerRadius,
+                bottomEnd = LocalPaddings.current.small,
+                bottomStart = cornerRadius,
+            ),
+            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+            modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
+        ) {
+            genres.fastForEach { genre ->
+                val isGenreSelected = genre == selectedGenre
+                val backgroundColor by animateColorAsState(
+                    targetValue = if (isGenreSelected)
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+                    else Color.Transparent
+                )
+                val textColor by animateColorAsState(
+                    targetValue = if (isGenreSelected)
+                        MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onBackground
+                )
+
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(genre)
+                        }
+                    },
+                    leadingIcon = null,
+                    colors = MenuDefaults.itemColors(
+                        textColor = textColor,
+                        leadingIconColor = MaterialTheme.colorScheme.primary
+                    ),
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        if (isGenreSelected) {
+                            onGenreSelected(null)
+                        } else {
+                            onGenreSelected(genre)
                         }
                     },
                     contentPadding = PaddingValues(
