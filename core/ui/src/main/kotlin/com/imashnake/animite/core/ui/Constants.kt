@@ -5,4 +5,5 @@ object Constants {
     const val MEDIA_TYPE = "mediaType"
     const val SORT = "sort"
     const val ORDER = "order"
+    const val GENRE = "genre"
 }

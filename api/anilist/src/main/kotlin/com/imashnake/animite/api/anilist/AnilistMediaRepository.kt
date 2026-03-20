@@ -17,6 +17,9 @@ import kotlinx.coroutines.flow.filter
 import kotlin.collections.filterNotNull
 import kotlin.collections.orEmpty
 
+// TODO: Add preference for adult content.
+private const val HENTAI = "Hentai"
+
 /**
  * Repository for fetching [MediaQuery.Media] or a list of [MediaListQuery.Medium].
  *
@@ -116,4 +119,17 @@ class AnilistMediaRepository(
             .filter { it.exception == null }
             .asResult { Media(it.media!!) }
     }
+
+    fun fetchMediaGenres() = apolloClient
+        .query(GenresQuery())
+        .fetchPolicy(FetchPolicy.CacheFirst)
+        .toFlow()
+        .filter { it.exception == null }
+        .asResult {
+            it.GenreCollection
+                .orEmpty()
+                .filterNotNull()
+                .filterNot { genre -> genre == HENTAI }
+                .toImmutableList()
+        }
 }

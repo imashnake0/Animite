@@ -2,4 +2,5 @@
 <resources>
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
+    <string name="genres">Genres</string>
 </resources>

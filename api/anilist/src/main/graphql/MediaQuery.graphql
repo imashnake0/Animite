@@ -92,3 +92,7 @@ query MediaQuery(
         }
     }
 }
+
+query Genres {
+    GenreCollection
+}
