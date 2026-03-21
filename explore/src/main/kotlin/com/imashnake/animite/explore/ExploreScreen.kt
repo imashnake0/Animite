@@ -82,9 +82,12 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
@@ -338,6 +341,17 @@ private fun SortFab(
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
             modifier = Modifier.align(Alignment.TopStart)
         ) {
+            Text(
+                text = stringResource(R.string.sort),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.padding(
+                    start = LocalPaddings.current.medium
+                            + LocalPaddings.current.tiny,
+                    top = LocalPaddings.current.small,
+                )
+            )
             sorts.fastForEach { sort ->
                 val isSortSelected = sort == selectedSort
                 val backgroundColor by animateColorAsState(
@@ -463,8 +477,20 @@ private fun GenreFilter(
             state = cascadeState,
             shape = RoundedCornerShape(cornerRadius),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+            fixedWidth = 150.dp,
             modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
         ) {
+            Text(
+                text = stringResource(R.string.genres),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.padding(
+                    start = LocalPaddings.current.medium
+                            + LocalPaddings.current.tiny,
+                    top = LocalPaddings.current.small
+                )
+            )
             genres.fastForEach { genre ->
                 val isGenreSelected = genre == selectedGenre
                 val backgroundColor by animateColorAsState(
@@ -562,8 +588,19 @@ private fun YearFilter(
             state = cascadeState,
             shape = RoundedCornerShape(cornerRadius),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+            fixedWidth = LocalPaddings.current.large * 4,
             modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
         ) {
+            Text(
+                text = stringResource(R.string.year),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.tertiary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = LocalPaddings.current.tiny)
+            )
             years.fastForEach { year ->
                 val isYearSelected = year == selectedYear
                 val backgroundColor by animateColorAsState(
@@ -584,7 +621,11 @@ private fun YearFilter(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(year.toString())
+                            Text(
+                                text = year.toString(),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
                         }
                     },
                     leadingIcon = null,
