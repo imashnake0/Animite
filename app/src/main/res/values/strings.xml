@@ -2,7 +2,7 @@
     <string name="app_name">Animite</string>
 
     <!-- SearchFrontDrop -->
-    <string name="search">Search</string>
+    <string name="quick_search">Quick Search</string>
     <string name="collapse">Collapse</string>
     <string name="close">Close</string>
     <plurals name="episodes">

@@ -87,7 +87,7 @@ internal fun CollapsedSearchBarContent(
 ) {
     Icon(
         imageVector = ImageVector.vectorResource(R.drawable.search),
-        contentDescription = stringResource(R.string.search),
+        contentDescription = stringResource(R.string.quick_search),
         modifier = Modifier
             .clickable(onClick = expand)
             .then(modifier)
@@ -117,7 +117,7 @@ internal fun ExpandedSearchBarContent(
         textStyle = MaterialTheme.typography.labelLarge,
         placeholder = {
             Text(
-                text = stringResource(R.string.search),
+                text = stringResource(R.string.quick_search),
                 style = MaterialTheme.typography.labelLarge
             )
         },
