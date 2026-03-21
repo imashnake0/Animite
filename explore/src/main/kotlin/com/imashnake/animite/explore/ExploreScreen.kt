@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -212,29 +211,37 @@ fun ExploreScreen(
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
                         .padding(LocalPaddings.current.small)
                 ) {
-                    YearFilter(
-                        years = (1940..viewModel.getCurrentYear()).toImmutableList(),
-                        selectedYear = selectedYear,
-                        onYearSelected = { viewModel.setMediaYear(it) },
-                        expanded = isYearDropdownExpanded,
-                        setExpanded = { isYearDropdownExpanded = it },
-                        modifier = Modifier.graphicsLayer {
-                            scaleX = fabSize.value; scaleY = fabSize.value
-                        }
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .clickable(enabled = false) {}
+                            .background(MaterialTheme.colorScheme.primary)
+                    ) {
+                        YearFilter(
+                            years = viewModel.yearRange,
+                            selectedYear = selectedYear,
+                            onYearSelected = { viewModel.setMediaYear(it) },
+                            expanded = isYearDropdownExpanded,
+                            setExpanded = { isYearDropdownExpanded = it },
+                            modifier = Modifier.graphicsLayer {
+                                scaleX = fabSize.value; scaleY = fabSize.value
+                            }
+                        )
 
-                    if (genres is Resource.Success) {
-                        genres.data?.let { genres ->
-                            GenreFilter(
-                                genres = genres,
-                                selectedGenre = selectedGenre,
-                                onGenreSelected = { viewModel.setMediaGenre(it) },
-                                expanded = isGenreDropdownExpanded,
-                                setExpanded = { isGenreDropdownExpanded = it },
-                                modifier = Modifier.graphicsLayer {
-                                    scaleX = fabSize.value; scaleY = fabSize.value
-                                }
-                            )
+                        if (genres is Resource.Success) {
+                            genres.data?.let { genres ->
+                                GenreFilter(
+                                    genres = genres,
+                                    selectedGenre = selectedGenre,
+                                    onGenreSelected = { viewModel.setMediaGenre(it) },
+                                    expanded = isGenreDropdownExpanded,
+                                    setExpanded = { isGenreDropdownExpanded = it },
+                                    modifier = Modifier.graphicsLayer {
+                                        scaleX = fabSize.value; scaleY = fabSize.value
+                                    }
+                                )
+                            }
                         }
                     }
 
@@ -271,21 +278,12 @@ private fun SortFab(
     modifier: Modifier = Modifier,
 ) {
     val cascadeState = rememberCascadeState()
-    val cornerRadius by animateIntAsState(
-        targetValue = if (expanded) 10 else 50,
-        label = "corner_radius_animation",
-    )
     val haptic = LocalHapticFeedback.current
 
     Box(modifier) {
         Surface(
             color = MaterialTheme.colorScheme.primary,
-            shape = RoundedCornerShape(
-                topStartPercent = 50,
-                topEndPercent = cornerRadius,
-                bottomEndPercent = 50,
-                bottomStartPercent = 50,
-            ),
+            shape = CircleShape,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.sort),
@@ -302,12 +300,7 @@ private fun SortFab(
             expanded = expanded,
             onDismissRequest = { setExpanded(false) },
             state = cascadeState,
-            shape = RoundedCornerShape(
-                topStart = cornerRadius,
-                topEnd = cornerRadius,
-                bottomEnd = LocalPaddings.current.small,
-                bottomStart = cornerRadius,
-            ),
+            shape = RoundedCornerShape(cornerRadius),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
             modifier = Modifier.align(Alignment.TopStart)
         ) {
@@ -400,21 +393,12 @@ private fun GenreFilter(
     modifier: Modifier = Modifier
 ) {
     val cascadeState = rememberCascadeState()
-    val cornerRadius by animateIntAsState(
-        targetValue = if (expanded) 10 else 50,
-        label = "corner_radius_animation",
-    )
     val haptic = LocalHapticFeedback.current
 
     Box(modifier) {
         Surface(
             color = MaterialTheme.colorScheme.primary,
-            shape = RoundedCornerShape(
-                topStartPercent = 50,
-                topEndPercent = cornerRadius,
-                bottomEndPercent = 50,
-                bottomStartPercent = 50,
-            ),
+            shape = CircleShape,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.genres),
@@ -432,12 +416,7 @@ private fun GenreFilter(
             expanded = expanded,
             onDismissRequest = { setExpanded(false) },
             state = cascadeState,
-            shape = RoundedCornerShape(
-                topStart = cornerRadius,
-                topEnd = cornerRadius,
-                bottomEnd = LocalPaddings.current.small,
-                bottomStart = cornerRadius,
-            ),
+            shape = RoundedCornerShape(cornerRadius),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
             modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
         ) {
@@ -501,21 +480,12 @@ private fun YearFilter(
     modifier: Modifier = Modifier
 ) {
     val cascadeState = rememberCascadeState()
-    val cornerRadius by animateIntAsState(
-        targetValue = if (expanded) 10 else 50,
-        label = "corner_radius_animation",
-    )
     val haptic = LocalHapticFeedback.current
 
     Box(modifier) {
         Surface(
             color = MaterialTheme.colorScheme.primary,
-            shape = RoundedCornerShape(
-                topStartPercent = 50,
-                topEndPercent = cornerRadius,
-                bottomEndPercent = 50,
-                bottomStartPercent = 50,
-            ),
+            shape = CircleShape,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.year),
@@ -533,12 +503,7 @@ private fun YearFilter(
             expanded = expanded,
             onDismissRequest = { setExpanded(false) },
             state = cascadeState,
-            shape = RoundedCornerShape(
-                topStart = cornerRadius,
-                topEnd = cornerRadius,
-                bottomEnd = LocalPaddings.current.small,
-                bottomStart = cornerRadius,
-            ),
+            shape = RoundedCornerShape(cornerRadius),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
             modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
         ) {

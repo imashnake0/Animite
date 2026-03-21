@@ -10,6 +10,8 @@ import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -87,18 +89,22 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.YEAR] = year
     }
 
-    fun getCurrentYear(): Int {
+    val yearRange = getYears()
+
+    private fun getYears(): ImmutableList<Int> {
         val now = Clock.System.now()
         val timeZone = TimeZone.currentSystemDefault()
         val currentYear = now.toLocalDateTime(timeZone).year
-        return currentYear
+        return (currentYear + 1 downTo EARLIEST_YEAR).toImmutableList()
     }
 
     companion object {
         private const val SEARCH_QUERY = "searchQuery"
+        private const val EARLIEST_YEAR = 1940
     }
 }
 
+// TODO: Move this to core?
 data class Quatruple<out A, out B, out C, out D>(
     val first: A,
     val second: B,
@@ -106,7 +112,8 @@ data class Quatruple<out A, out B, out C, out D>(
     val fourth: D
 ) {
     /**
-     * Returns string representation of the [Quatruple] including its [first], [second], [third], and [fourth] values.
+     * Returns string representation of the [Quatruple] including its
+     * [first], [second], [third], and [fourth] values.
      */
-    override fun toString(): String = "($first, $second, $third)"
+    override fun toString(): String = "($first, $second, $third, $fourth)"
 }

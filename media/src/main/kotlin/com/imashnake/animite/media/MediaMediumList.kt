@@ -65,6 +65,8 @@ fun MediaMediumList(
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
+        // Needed to prevent scrolling after item animations
+        item(key = 0) {}
         items(mediaMediumList.size, key = { mediaMediumList[it].id }) { index ->
             MediaMediumItem(
                 item = mediaMediumList[index],
