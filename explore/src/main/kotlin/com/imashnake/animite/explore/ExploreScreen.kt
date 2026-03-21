@@ -134,6 +134,8 @@ fun ExploreScreen(
 
     val exploreList by viewModel.exploreList.collectAsState()
 
+    val haptic = LocalHapticFeedback.current
+
     val fabSize = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
         delay(200)
@@ -223,7 +225,10 @@ fun ExploreScreen(
                             selectedYear = selectedYear,
                             onYearSelected = { viewModel.setMediaYear(it) },
                             expanded = isYearDropdownExpanded,
-                            setExpanded = { isYearDropdownExpanded = it },
+                            setExpanded = {
+                                haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                isYearDropdownExpanded = it
+                            },
                             modifier = Modifier.graphicsLayer {
                                 scaleX = fabSize.value; scaleY = fabSize.value
                             }
@@ -236,7 +241,10 @@ fun ExploreScreen(
                                     selectedGenre = selectedGenre,
                                     onGenreSelected = { viewModel.setMediaGenre(it) },
                                     expanded = isGenreDropdownExpanded,
-                                    setExpanded = { isGenreDropdownExpanded = it },
+                                    setExpanded = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                        isGenreDropdownExpanded = it
+                                    },
                                     modifier = Modifier.graphicsLayer {
                                         scaleX = fabSize.value; scaleY = fabSize.value
                                     }
@@ -252,7 +260,10 @@ fun ExploreScreen(
                         isDescending = isDescending,
                         toggleOrder = { viewModel.setIsDescending(!isDescending) },
                         expanded = isSortDropdownExpanded,
-                        setExpanded = { isSortDropdownExpanded = it },
+                        setExpanded = {
+                            haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                            isSortDropdownExpanded = it
+                        },
                         modifier = Modifier.graphicsLayer {
                             scaleX = fabSize.value; scaleY = fabSize.value
                         }
@@ -280,15 +291,26 @@ private fun SortFab(
     val cascadeState = rememberCascadeState()
     val haptic = LocalHapticFeedback.current
 
+    val iconTint by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.primary
+        } else MaterialTheme.colorScheme.onPrimary
+    )
+    val iconBackground by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.onPrimary
+        } else MaterialTheme.colorScheme.primary
+    )
+
     Box(modifier) {
         Surface(
-            color = MaterialTheme.colorScheme.primary,
+            color = iconBackground,
             shape = CircleShape,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.sort),
                 contentDescription = stringResource(R.string.sort),
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = iconTint,
                 modifier = Modifier
                     .clickable { setExpanded(!expanded) }
                     .padding(LocalPaddings.current.small)
@@ -382,7 +404,7 @@ private fun SortFab(
     }
 }
 
-// TODO: This is a copy of SortFab, make it reusable.
+// TODO: This is a copy of SortFab, make it reusable; same for YearFilter.
 @Composable
 private fun GenreFilter(
     genres: ImmutableList<String>,
@@ -395,15 +417,26 @@ private fun GenreFilter(
     val cascadeState = rememberCascadeState()
     val haptic = LocalHapticFeedback.current
 
+    val iconTint by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.primary
+        } else MaterialTheme.colorScheme.onPrimary
+    )
+    val iconBackground by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.onPrimary
+        } else MaterialTheme.colorScheme.primary
+    )
+
     Box(modifier) {
         Surface(
-            color = MaterialTheme.colorScheme.primary,
+            color = iconBackground,
             shape = CircleShape,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.genres),
                 contentDescription = stringResource(R.string.genres),
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = iconTint,
                 modifier = Modifier
                     .clickable { setExpanded(!expanded) }
                     .padding(LocalPaddings.current.small)
@@ -482,15 +515,26 @@ private fun YearFilter(
     val cascadeState = rememberCascadeState()
     val haptic = LocalHapticFeedback.current
 
+    val iconTint by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.primary
+        } else MaterialTheme.colorScheme.onPrimary
+    )
+    val iconBackground by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.onPrimary
+        } else MaterialTheme.colorScheme.primary
+    )
+
     Box(modifier) {
         Surface(
-            color = MaterialTheme.colorScheme.primary,
+            color = iconBackground,
             shape = CircleShape,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.year),
                 contentDescription = stringResource(R.string.genres),
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = iconTint,
                 modifier = Modifier
                     .clickable { setExpanded(!expanded) }
                     .padding(LocalPaddings.current.small)
