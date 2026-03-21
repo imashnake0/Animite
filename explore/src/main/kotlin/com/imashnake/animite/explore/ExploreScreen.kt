@@ -226,7 +226,11 @@ fun ExploreScreen(
                             onYearSelected = { viewModel.setMediaYear(it) },
                             expanded = isYearDropdownExpanded,
                             setExpanded = {
-                                haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                haptic.performHapticFeedback(
+                                    if (it) {
+                                        HapticFeedbackType.ToggleOn
+                                    } else HapticFeedbackType.ToggleOff
+                                )
                                 isYearDropdownExpanded = it
                             },
                             modifier = Modifier.graphicsLayer {
@@ -242,7 +246,11 @@ fun ExploreScreen(
                                     onGenreSelected = { viewModel.setMediaGenre(it) },
                                     expanded = isGenreDropdownExpanded,
                                     setExpanded = {
-                                        haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                        haptic.performHapticFeedback(
+                                            if (it) {
+                                                HapticFeedbackType.ToggleOn
+                                            } else HapticFeedbackType.ToggleOff
+                                        )
                                         isGenreDropdownExpanded = it
                                     },
                                     modifier = Modifier.graphicsLayer {
@@ -261,7 +269,11 @@ fun ExploreScreen(
                         toggleOrder = { viewModel.setIsDescending(!isDescending) },
                         expanded = isSortDropdownExpanded,
                         setExpanded = {
-                            haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                            haptic.performHapticFeedback(
+                                if (it) {
+                                    HapticFeedbackType.ToggleOn
+                                } else HapticFeedbackType.ToggleOff
+                            )
                             isSortDropdownExpanded = it
                         },
                         modifier = Modifier.graphicsLayer {
@@ -482,10 +494,11 @@ private fun GenreFilter(
                         leadingIconColor = MaterialTheme.colorScheme.primary
                     ),
                     onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
                         if (isGenreSelected) {
+                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
                             onGenreSelected(null)
                         } else {
+                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
                             onGenreSelected(genre)
                         }
                     },
@@ -552,14 +565,14 @@ private fun YearFilter(
             modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
         ) {
             years.fastForEach { year ->
-                val isGenreSelected = year == selectedYear
+                val isYearSelected = year == selectedYear
                 val backgroundColor by animateColorAsState(
-                    targetValue = if (isGenreSelected)
+                    targetValue = if (isYearSelected)
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
                     else Color.Transparent
                 )
                 val textColor by animateColorAsState(
-                    targetValue = if (isGenreSelected)
+                    targetValue = if (isYearSelected)
                         MaterialTheme.colorScheme.onPrimary
                     else MaterialTheme.colorScheme.onBackground
                 )
@@ -580,10 +593,11 @@ private fun YearFilter(
                         leadingIconColor = MaterialTheme.colorScheme.primary
                     ),
                     onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                        if (isGenreSelected) {
+                        if (isYearSelected) {
+                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
                             onYearSelected(null)
                         } else {
+                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
                             onYearSelected(year)
                         }
                     },

@@ -287,7 +287,10 @@ fun SettingsPage(
                                     0 -> {
                                         Slider(
                                             value = timeContext.dayProgress,
-                                            onValueChange = { viewModel.setDayHour(it * 23f) },
+                                            onValueChange = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                                                viewModel.setDayHour(it * 23f)
+                                            },
                                             valueRange = 0f..1f,
                                         )
                                     }
