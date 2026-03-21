@@ -481,7 +481,7 @@ private fun GenreFilter(
             modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
         ) {
             Text(
-                text = stringResource(R.string.genres),
+                text = stringResource(R.string.genres).uppercase(),
                 fontSize = 10.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.tertiary,
