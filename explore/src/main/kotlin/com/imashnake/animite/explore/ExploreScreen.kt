@@ -124,6 +124,9 @@ fun ExploreScreen(
     val genres by viewModel.genres.collectAsState()
     val selectedGenre by viewModel.selectedGenre.collectAsState()
 
+    var isYearDropdownExpanded by remember { mutableStateOf(false) }
+    val selectedYear by viewModel.selectedYear.collectAsState()
+
     val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(bottom = dimensionResource(navigationR.dimen.navigation_bar_height))
         else -> PaddingValues(start = dimensionResource(navigationR.dimen.navigation_rail_width))
@@ -209,6 +212,17 @@ fun ExploreScreen(
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
                         .padding(LocalPaddings.current.small)
                 ) {
+                    YearFilter(
+                        years = (1940..viewModel.getCurrentYear()).toImmutableList(),
+                        selectedYear = selectedYear,
+                        onYearSelected = { viewModel.setMediaYear(it) },
+                        expanded = isYearDropdownExpanded,
+                        setExpanded = { isYearDropdownExpanded = it },
+                        modifier = Modifier.graphicsLayer {
+                            scaleX = fabSize.value; scaleY = fabSize.value
+                        }
+                    )
+
                     if (genres is Resource.Success) {
                         genres.data?.let { genres ->
                             GenreFilter(
@@ -375,6 +389,7 @@ private fun SortFab(
     }
 }
 
+// TODO: This is a copy of SortFab, make it reusable.
 @Composable
 private fun GenreFilter(
     genres: ImmutableList<String>,
@@ -460,6 +475,107 @@ private fun GenreFilter(
                             onGenreSelected(null)
                         } else {
                             onGenreSelected(genre)
+                        }
+                    },
+                    contentPadding = PaddingValues(
+                        vertical = LocalPaddings.current.small,
+                        horizontal = LocalPaddings.current.medium
+                    ),
+                    modifier = Modifier
+                        .padding(LocalPaddings.current.tiny)
+                        .clip(RoundedCornerShape(LocalPaddings.current.large))
+                        .background(color = backgroundColor)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun YearFilter(
+    years: ImmutableList<Int>,
+    selectedYear: Int?,
+    onYearSelected: (Int?) -> Unit,
+    expanded: Boolean,
+    setExpanded: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val cascadeState = rememberCascadeState()
+    val cornerRadius by animateIntAsState(
+        targetValue = if (expanded) 10 else 50,
+        label = "corner_radius_animation",
+    )
+    val haptic = LocalHapticFeedback.current
+
+    Box(modifier) {
+        Surface(
+            color = MaterialTheme.colorScheme.primary,
+            shape = RoundedCornerShape(
+                topStartPercent = 50,
+                topEndPercent = cornerRadius,
+                bottomEndPercent = 50,
+                bottomStartPercent = 50,
+            ),
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.year),
+                contentDescription = stringResource(R.string.genres),
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .clickable { setExpanded(!expanded) }
+                    .padding(LocalPaddings.current.small)
+                    .size(LocalPaddings.current.large)
+            )
+        }
+        val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
+        val windowInfo = LocalWindowInfo.current
+        CascadeDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { setExpanded(false) },
+            state = cascadeState,
+            shape = RoundedCornerShape(
+                topStart = cornerRadius,
+                topEnd = cornerRadius,
+                bottomEnd = LocalPaddings.current.small,
+                bottomStart = cornerRadius,
+            ),
+            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+            modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
+        ) {
+            years.fastForEach { year ->
+                val isGenreSelected = year == selectedYear
+                val backgroundColor by animateColorAsState(
+                    targetValue = if (isGenreSelected)
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+                    else Color.Transparent
+                )
+                val textColor by animateColorAsState(
+                    targetValue = if (isGenreSelected)
+                        MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onBackground
+                )
+
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(year.toString())
+                        }
+                    },
+                    leadingIcon = null,
+                    colors = MenuDefaults.itemColors(
+                        textColor = textColor,
+                        leadingIconColor = MaterialTheme.colorScheme.primary
+                    ),
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        if (isGenreSelected) {
+                            onYearSelected(null)
+                        } else {
+                            onYearSelected(year)
                         }
                     },
                     contentPadding = PaddingValues(

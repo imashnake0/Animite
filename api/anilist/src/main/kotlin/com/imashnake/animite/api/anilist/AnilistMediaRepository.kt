@@ -78,6 +78,7 @@ class AnilistMediaRepository(
         page: Int = 0,
         perPage: Int = 10,
         genre: String? = null,
+        year: Int? = null,
         search: String? = null,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
         return apolloClient
@@ -88,7 +89,11 @@ class AnilistMediaRepository(
                     perPage = Optional.presentIfNotNull(perPage),
                     sort = Optional.presentIfNotNull(sort),
                     genre = Optional.presentIfNotNull(genre),
-                    search = Optional.presentIfNotNull(search)
+                    search = Optional.presentIfNotNull(search),
+                    // Start FuzzyDateInt has to be YYYYMMDD -> YYYY0101
+                    startDate = Optional.presentIfNotNull(year?.times(10000)?.plus(101)),
+                    // End FuzzyDateInt has to be YYYYMMDD -> YYYY1231
+                    endDate = Optional.presentIfNotNull(year?.times(10000)?.plus(1231))
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)

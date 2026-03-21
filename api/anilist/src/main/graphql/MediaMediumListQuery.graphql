@@ -3,8 +3,10 @@ query MediaMediumListQuery(
     $page: Int,
     $perPage: Int,
     $sort: [MediaSort],
-    $genre: String
-    $search: String
+    $genre: String,
+    $startDate: FuzzyDateInt,
+    $endDate: FuzzyDateInt,
+    $search: String,
 ) {
     page: Page (
         page: $page,
@@ -14,6 +16,8 @@ query MediaMediumListQuery(
             type: $type,
             sort: $sort,
             genre: $genre,
+            startDate_greater: $startDate,
+            startDate_lesser: $endDate,
             search: $search,
             isAdult: false
         ) {
