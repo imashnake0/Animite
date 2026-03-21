@@ -6,4 +6,5 @@ object Constants {
     const val SORT = "sort"
     const val ORDER = "order"
     const val GENRE = "genre"
+    const val YEAR = "year"
 }

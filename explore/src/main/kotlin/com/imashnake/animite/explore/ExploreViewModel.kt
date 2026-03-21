@@ -10,13 +10,18 @@ import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
+import kotlin.time.Clock
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -28,6 +33,7 @@ class ExploreViewModel @Inject constructor(
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, true)
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
     val selectedGenre = savedStateHandle.getStateFlow<String?>(Constants.GENRE, null)
+    val selectedYear = savedStateHandle.getStateFlow<Int?>(Constants.YEAR, null)
 
     val mediaSort = selectedSort
         .combine(isDescending, ::Pair)
@@ -37,13 +43,15 @@ class ExploreViewModel @Inject constructor(
         flow = mediaSort,
         flow2 = searchQuery,
         flow3 = selectedGenre,
-        transform = ::Triple,
-    ).flatMapLatest { (sort, searchQuery, genre) ->
+        flow4 = selectedYear,
+        transform = ::Quatruple,
+    ).flatMapLatest { (sort, searchQuery, genre, year) ->
         mediaListRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
             sort = listOf(sort),
             search = searchQuery,
             genre = genre,
+            year = year
         ).asResource()
     }
     .stateIn(
@@ -77,7 +85,43 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.GENRE] = genre
     }
 
+    fun setMediaYear(year: Int?) {
+        savedStateHandle[Constants.YEAR] = year
+    }
+
+    fun reset() {
+        savedStateHandle[Constants.SORT] = Media.Sort.POPULARITY
+        savedStateHandle[Constants.ORDER] = true
+        savedStateHandle[Constants.GENRE] = null
+        savedStateHandle[Constants.YEAR] = null
+        savedStateHandle[SEARCH_QUERY] = null
+    }
+
+    val yearRange = getYears()
+
+    private fun getYears(): ImmutableList<Int> {
+        val now = Clock.System.now()
+        val timeZone = TimeZone.currentSystemDefault()
+        val currentYear = now.toLocalDateTime(timeZone).year
+        return (currentYear + 1 downTo EARLIEST_YEAR).toImmutableList()
+    }
+
     companion object {
         private const val SEARCH_QUERY = "searchQuery"
+        private const val EARLIEST_YEAR = 1940
     }
+}
+
+// TODO: Move this to core?
+data class Quatruple<out A, out B, out C, out D>(
+    val first: A,
+    val second: B,
+    val third: C,
+    val fourth: D
+) {
+    /**
+     * Returns string representation of the [Quatruple] including its
+     * [first], [second], [third], and [fourth] values.
+     */
+    override fun toString(): String = "($first, $second, $third, $fourth)"
 }

@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
@@ -83,9 +82,12 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
@@ -124,6 +126,9 @@ fun ExploreScreen(
     val genres by viewModel.genres.collectAsState()
     val selectedGenre by viewModel.selectedGenre.collectAsState()
 
+    var isYearDropdownExpanded by remember { mutableStateOf(false) }
+    val selectedYear by viewModel.selectedYear.collectAsState()
+
     val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(bottom = dimensionResource(navigationR.dimen.navigation_bar_height))
         else -> PaddingValues(start = dimensionResource(navigationR.dimen.navigation_rail_width))
@@ -131,6 +136,8 @@ fun ExploreScreen(
     val insetAndNavigationPaddingValues = contentWindowInsets.asPaddingValues() + navigationComponentPaddingValues
 
     val exploreList by viewModel.exploreList.collectAsState()
+
+    val haptic = LocalHapticFeedback.current
 
     val fabSize = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
@@ -209,18 +216,51 @@ fun ExploreScreen(
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
                         .padding(LocalPaddings.current.small)
                 ) {
-                    if (genres is Resource.Success) {
-                        genres.data?.let { genres ->
-                            GenreFilter(
-                                genres = genres,
-                                selectedGenre = selectedGenre,
-                                onGenreSelected = { viewModel.setMediaGenre(it) },
-                                expanded = isGenreDropdownExpanded,
-                                setExpanded = { isGenreDropdownExpanded = it },
-                                modifier = Modifier.graphicsLayer {
-                                    scaleX = fabSize.value; scaleY = fabSize.value
-                                }
-                            )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .clickable(enabled = false) {}
+                            .background(MaterialTheme.colorScheme.primary)
+                    ) {
+                        YearFilter(
+                            years = viewModel.yearRange,
+                            selectedYear = selectedYear,
+                            onYearSelected = { viewModel.setMediaYear(it) },
+                            expanded = isYearDropdownExpanded,
+                            setExpanded = {
+                                haptic.performHapticFeedback(
+                                    if (it) {
+                                        HapticFeedbackType.ToggleOn
+                                    } else HapticFeedbackType.ToggleOff
+                                )
+                                isYearDropdownExpanded = it
+                            },
+                            modifier = Modifier.graphicsLayer {
+                                scaleX = fabSize.value; scaleY = fabSize.value
+                            }
+                        )
+
+                        if (genres is Resource.Success) {
+                            genres.data?.let { genres ->
+                                GenreFilter(
+                                    genres = genres,
+                                    selectedGenre = selectedGenre,
+                                    onGenreSelected = { viewModel.setMediaGenre(it) },
+                                    expanded = isGenreDropdownExpanded,
+                                    setExpanded = {
+                                        haptic.performHapticFeedback(
+                                            if (it) {
+                                                HapticFeedbackType.ToggleOn
+                                            } else HapticFeedbackType.ToggleOff
+                                        )
+                                        isGenreDropdownExpanded = it
+                                    },
+                                    modifier = Modifier.graphicsLayer {
+                                        scaleX = fabSize.value; scaleY = fabSize.value
+                                    }
+                                )
+                            }
                         }
                     }
 
@@ -231,7 +271,24 @@ fun ExploreScreen(
                         isDescending = isDescending,
                         toggleOrder = { viewModel.setIsDescending(!isDescending) },
                         expanded = isSortDropdownExpanded,
-                        setExpanded = { isSortDropdownExpanded = it },
+                        setExpanded = {
+                            haptic.performHapticFeedback(
+                                if (it) {
+                                    HapticFeedbackType.ToggleOn
+                                } else HapticFeedbackType.ToggleOff
+                            )
+                            isSortDropdownExpanded = it
+                        },
+                        modifier = Modifier.graphicsLayer {
+                            scaleX = fabSize.value; scaleY = fabSize.value
+                        }
+                    )
+
+                    ResetFab(
+                        onReset = {
+                            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+                            viewModel.reset()
+                        },
                         modifier = Modifier.graphicsLayer {
                             scaleX = fabSize.value; scaleY = fabSize.value
                         }
@@ -257,26 +314,28 @@ private fun SortFab(
     modifier: Modifier = Modifier,
 ) {
     val cascadeState = rememberCascadeState()
-    val cornerRadius by animateIntAsState(
-        targetValue = if (expanded) 10 else 50,
-        label = "corner_radius_animation",
-    )
     val haptic = LocalHapticFeedback.current
+
+    val iconTint by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.primary
+        } else MaterialTheme.colorScheme.onPrimary
+    )
+    val iconBackground by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.onPrimary
+        } else MaterialTheme.colorScheme.primary
+    )
 
     Box(modifier) {
         Surface(
-            color = MaterialTheme.colorScheme.primary,
-            shape = RoundedCornerShape(
-                topStartPercent = 50,
-                topEndPercent = cornerRadius,
-                bottomEndPercent = 50,
-                bottomStartPercent = 50,
-            ),
+            color = iconBackground,
+            shape = CircleShape,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.sort),
                 contentDescription = stringResource(R.string.sort),
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = iconTint,
                 modifier = Modifier
                     .clickable { setExpanded(!expanded) }
                     .padding(LocalPaddings.current.small)
@@ -288,15 +347,21 @@ private fun SortFab(
             expanded = expanded,
             onDismissRequest = { setExpanded(false) },
             state = cascadeState,
-            shape = RoundedCornerShape(
-                topStart = cornerRadius,
-                topEnd = cornerRadius,
-                bottomEnd = LocalPaddings.current.small,
-                bottomStart = cornerRadius,
-            ),
+            shape = RoundedCornerShape(cornerRadius),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
             modifier = Modifier.align(Alignment.TopStart)
         ) {
+            Text(
+                text = stringResource(R.string.sort),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.padding(
+                    start = LocalPaddings.current.medium
+                            + LocalPaddings.current.tiny,
+                    top = LocalPaddings.current.small,
+                )
+            )
             sorts.fastForEach { sort ->
                 val isSortSelected = sort == selectedSort
                 val backgroundColor by animateColorAsState(
@@ -375,6 +440,7 @@ private fun SortFab(
     }
 }
 
+// TODO: This is a copy of SortFab, make it reusable; same for YearFilter.
 @Composable
 private fun GenreFilter(
     genres: ImmutableList<String>,
@@ -385,26 +451,28 @@ private fun GenreFilter(
     modifier: Modifier = Modifier
 ) {
     val cascadeState = rememberCascadeState()
-    val cornerRadius by animateIntAsState(
-        targetValue = if (expanded) 10 else 50,
-        label = "corner_radius_animation",
-    )
     val haptic = LocalHapticFeedback.current
+
+    val iconTint by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.primary
+        } else MaterialTheme.colorScheme.onPrimary
+    )
+    val iconBackground by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.onPrimary
+        } else MaterialTheme.colorScheme.primary
+    )
 
     Box(modifier) {
         Surface(
-            color = MaterialTheme.colorScheme.primary,
-            shape = RoundedCornerShape(
-                topStartPercent = 50,
-                topEndPercent = cornerRadius,
-                bottomEndPercent = 50,
-                bottomStartPercent = 50,
-            ),
+            color = iconBackground,
+            shape = CircleShape,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.genres),
                 contentDescription = stringResource(R.string.genres),
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = iconTint,
                 modifier = Modifier
                     .clickable { setExpanded(!expanded) }
                     .padding(LocalPaddings.current.small)
@@ -417,15 +485,22 @@ private fun GenreFilter(
             expanded = expanded,
             onDismissRequest = { setExpanded(false) },
             state = cascadeState,
-            shape = RoundedCornerShape(
-                topStart = cornerRadius,
-                topEnd = cornerRadius,
-                bottomEnd = LocalPaddings.current.small,
-                bottomStart = cornerRadius,
-            ),
+            shape = RoundedCornerShape(cornerRadius),
             offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+            fixedWidth = 150.dp,
             modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
         ) {
+            Text(
+                text = stringResource(R.string.genres).uppercase(),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier.padding(
+                    start = LocalPaddings.current.medium
+                            + LocalPaddings.current.tiny,
+                    top = LocalPaddings.current.small
+                )
+            )
             genres.fastForEach { genre ->
                 val isGenreSelected = genre == selectedGenre
                 val backgroundColor by animateColorAsState(
@@ -455,10 +530,11 @@ private fun GenreFilter(
                         leadingIconColor = MaterialTheme.colorScheme.primary
                     ),
                     onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
                         if (isGenreSelected) {
+                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
                             onGenreSelected(null)
                         } else {
+                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
                             onGenreSelected(genre)
                         }
                     },
@@ -473,6 +549,142 @@ private fun GenreFilter(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun YearFilter(
+    years: ImmutableList<Int>,
+    selectedYear: Int?,
+    onYearSelected: (Int?) -> Unit,
+    expanded: Boolean,
+    setExpanded: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val cascadeState = rememberCascadeState()
+    val haptic = LocalHapticFeedback.current
+
+    val iconTint by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.primary
+        } else MaterialTheme.colorScheme.onPrimary
+    )
+    val iconBackground by animateColorAsState(
+        if (expanded) {
+            MaterialTheme.colorScheme.onPrimary
+        } else MaterialTheme.colorScheme.primary
+    )
+
+    Box(modifier) {
+        Surface(
+            color = iconBackground,
+            shape = CircleShape,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.year),
+                contentDescription = stringResource(R.string.genres),
+                tint = iconTint,
+                modifier = Modifier
+                    .clickable { setExpanded(!expanded) }
+                    .padding(LocalPaddings.current.small)
+                    .size(LocalPaddings.current.large)
+            )
+        }
+        val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
+        val windowInfo = LocalWindowInfo.current
+        CascadeDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { setExpanded(false) },
+            state = cascadeState,
+            shape = RoundedCornerShape(cornerRadius),
+            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+            fixedWidth = LocalPaddings.current.large * 4,
+            modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
+        ) {
+            Text(
+                text = stringResource(R.string.year),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.tertiary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = LocalPaddings.current.tiny)
+            )
+            years.fastForEach { year ->
+                val isYearSelected = year == selectedYear
+                val backgroundColor by animateColorAsState(
+                    targetValue = if (isYearSelected)
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+                    else Color.Transparent
+                )
+                val textColor by animateColorAsState(
+                    targetValue = if (isYearSelected)
+                        MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onBackground
+                )
+
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = year.toString(),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    },
+                    leadingIcon = null,
+                    colors = MenuDefaults.itemColors(
+                        textColor = textColor,
+                        leadingIconColor = MaterialTheme.colorScheme.primary
+                    ),
+                    onClick = {
+                        if (isYearSelected) {
+                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                            onYearSelected(null)
+                        } else {
+                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            onYearSelected(year)
+                        }
+                    },
+                    contentPadding = PaddingValues(
+                        vertical = LocalPaddings.current.small,
+                        horizontal = LocalPaddings.current.medium
+                    ),
+                    modifier = Modifier
+                        .padding(LocalPaddings.current.tiny)
+                        .clip(RoundedCornerShape(LocalPaddings.current.large))
+                        .background(color = backgroundColor)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ResetFab(
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        shape = CircleShape,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.reset),
+            contentDescription = stringResource(R.string.genres),
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .clickable { onReset() }
+                .padding(LocalPaddings.current.small)
+                .size(LocalPaddings.current.large)
+        )
     }
 }
 
