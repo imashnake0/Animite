@@ -89,6 +89,14 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.YEAR] = year
     }
 
+    fun reset() {
+        savedStateHandle[Constants.SORT] = Media.Sort.POPULARITY
+        savedStateHandle[Constants.ORDER] = true
+        savedStateHandle[Constants.GENRE] = null
+        savedStateHandle[Constants.YEAR] = null
+        savedStateHandle[SEARCH_QUERY] = null
+    }
+
     val yearRange = getYears()
 
     private fun getYears(): ImmutableList<Int> {

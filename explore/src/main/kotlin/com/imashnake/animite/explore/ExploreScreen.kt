@@ -283,6 +283,16 @@ fun ExploreScreen(
                             scaleX = fabSize.value; scaleY = fabSize.value
                         }
                     )
+
+                    ResetFab(
+                        onReset = {
+                            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+                            viewModel.reset()
+                        },
+                        modifier = Modifier.graphicsLayer {
+                            scaleX = fabSize.value; scaleY = fabSize.value
+                        }
+                    )
                 }
             }
             // TODO: Add loading and error states.
@@ -653,6 +663,28 @@ private fun YearFilter(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ResetFab(
+    onReset: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        shape = CircleShape,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.reset),
+            contentDescription = stringResource(R.string.genres),
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .clickable { onReset() }
+                .padding(LocalPaddings.current.small)
+                .size(LocalPaddings.current.large)
+        )
     }
 }
 
