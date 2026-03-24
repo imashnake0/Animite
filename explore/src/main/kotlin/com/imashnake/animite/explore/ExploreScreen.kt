@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -112,6 +112,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @Composable
 fun ExploreScreen(
     onItemClick: (Int, MediaType, String?) -> Unit,
+    listState: LazyListState,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars
         .exclude(WindowInsets.navigationBars)
@@ -148,7 +149,6 @@ fun ExploreScreen(
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
             is Resource.Success -> {
-                val listState = rememberLazyListState()
                 val isNotAtTop by remember {
                     derivedStateOf {
                         listState.firstVisibleItemScrollOffset != 0

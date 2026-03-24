@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -63,6 +64,7 @@ fun AnimeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    scrollState: ScrollState = rememberScrollState(),
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: AnimeViewModel = hiltViewModel(),
 ) {
@@ -92,7 +94,6 @@ fun AnimeScreen(
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
 
-    val scrollState = rememberScrollState()
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = { viewModel.refresh { isRefreshing = it } },

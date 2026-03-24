@@ -29,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 fun NavigationBar(
     navController: NavController,
     avatar: String?,
+    scrollToTop: (NavigationBarPaths) -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = NavigationBarDefaults.containerColor,
     contentColor: Color = MaterialTheme.colorScheme.contentColorFor(containerColor),
@@ -59,7 +60,10 @@ fun NavigationBar(
                 }
                 NavigationBarItem(
                     selected = selected,
-                    onClick = { if (!selected) destination.navigateTo(navController) },
+                    onClick = {
+                        scrollToTop(destination)
+                        if (!selected) destination.navigateTo(navController)
+                    },
                     icon = { destination.icon.invoke(selected, avatar) },
                     modifier = Modifier.height(dimensionResource(R.dimen.navigation_bar_height)),
                 )

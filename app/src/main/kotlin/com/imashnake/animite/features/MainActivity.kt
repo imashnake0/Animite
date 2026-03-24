@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -28,6 +30,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,6 +69,7 @@ import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
 import com.imashnake.animite.social.SocialScreen
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -151,6 +155,10 @@ fun MainScreen(
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
     //  see https://issuetracker.google.com/issues/258270139.
     Box(modifier) {
+        val animeScrollState = rememberScrollState()
+        val mangaScrollState = rememberScrollState()
+        val exploreScrollState = rememberLazyListState()
+
         CompositionLocalProvider(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
@@ -159,6 +167,7 @@ fun MainScreen(
                     composable<AnimeRoute> {
                         AnimeScreen(
                             onNavigateToMediaItem = navController::navigate,
+                            scrollState = animeScrollState,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
@@ -166,6 +175,7 @@ fun MainScreen(
                     composable<MangaRoute> {
                         MangaScreen(
                             onNavigateToMediaItem = navController::navigate,
+                            scrollState = mangaScrollState,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
@@ -203,6 +213,7 @@ fun MainScreen(
                     }
                     composable<ExploreRoute> {
                         ExploreScreen(
+                            listState = exploreScrollState,
                             onItemClick = { id, mediaType, title ->
                                 navController.navigate(
                                     MediaPage(
@@ -229,12 +240,28 @@ fun MainScreen(
                 ) { NavigationRail(navController, avatar) }
             }
             else -> {
+                val scope = rememberCoroutineScope()
                 AnimatedVisibility(
                     visible = isNavBarVisible,
                     modifier = Modifier.align(Alignment.BottomCenter),
                     enter = slideInVertically { it },
                     exit = slideOutVertically { it }
-                ) { NavigationBar(navController, avatar) }
+                ) {
+                    NavigationBar(
+                        navController = navController,
+                        avatar = avatar,
+                        scrollToTop = {
+                            scope.launch {
+                                when (it) {
+                                    NavigationBarPaths.Explore -> exploreScrollState.animateScrollToItem(0)
+                                    NavigationBarPaths.Anime -> animeScrollState.animateScrollTo(0)
+                                    NavigationBarPaths.Manga -> mangaScrollState.animateScrollTo(0)
+                                    else -> {}
+                                }
+                            }
+                        }
+                    )
+                }
             }
         }
 
