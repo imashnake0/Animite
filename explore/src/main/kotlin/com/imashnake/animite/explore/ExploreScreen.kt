@@ -14,15 +14,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
@@ -163,21 +167,45 @@ fun ExploreScreen(
                 )
 
                 Box(modifier = Modifier.padding(insetAndNavigationPaddingValues.copy(top = 0.dp))) {
-                    SearchBar(
-                        onSearch = { viewModel.setSearchQuery(it) },
-                        modifier = Modifier
-                            .background(barBackgroundColor)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.background(barBackgroundColor)
                             .padding(top = insetAndNavigationPaddingValues.calculateTopPadding())
                             .fillMaxWidth()
                             .padding(
                                 horizontal = LocalPaddings.current.large,
                                 vertical = LocalPaddings.current.small
                             )
+                            .zIndex(Float.MAX_VALUE)
+                            .height(IntrinsicSize.Max)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                            .padding(horizontal = LocalPaddings.current.small)
-                            .zIndex(Float.MAX_VALUE)
-                    )
+                    ) {
+                        SearchBar(
+                            onSearch = { viewModel.setSearchQuery(it) },
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                .padding(horizontal = LocalPaddings.current.small)
+                                .weight(1f)
+                        )
+
+                        Surface(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape,
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.tune),
+                                contentDescription = stringResource(R.string.tune),
+                                tint = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier
+                                    .clickable {  }
+                                    .padding(8.dp)
+                                    .size(24.dp)
+                            )
+                        }
+                    }
 
                     MediaMediumList(
                         mediaMediumList = exploreList.data.orEmpty().toImmutableList(),

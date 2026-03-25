@@ -4,4 +4,6 @@
     <string name="sort">SORT</string>
     <string name="genres">GENRES</string>
     <string name="year">YEAR</string>
+
+    <string name="tune">Tune</string>
 </resources>
