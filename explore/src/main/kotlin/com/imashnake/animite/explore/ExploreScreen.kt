@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
@@ -68,6 +68,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -237,8 +238,8 @@ private fun SearchBar(
     val focusRequester = remember { FocusRequester() }
     var text by rememberSaveable { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val closeIconSize by animateDpAsState(
-        targetValue = if (text.isNotEmpty()) 20.dp else 0.dp
+    val closeIconSize by animateFloatAsState(
+        targetValue = if (text.isNotEmpty()) 1f else 0f
     )
 
     TextField(
@@ -285,25 +286,19 @@ private fun SearchBar(
                         },
                         colors = IconButtonDefaults.iconButtonColors(),
                         enabled = text.isNotEmpty(),
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .graphicsLayer {
+                                scaleX = closeIconSize
+                                scaleY = closeIconSize
+                            }
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Close,
                             contentDescription = null,
-                            modifier = Modifier.size(closeIconSize)
+                            modifier = Modifier.size(20.dp)
                         )
                     }
-                }
-                IconButton(
-                    onClick = { keyboardController?.hide() },
-                    enabled = WindowInsets.isImeVisible,
-                    modifier = Modifier.size(40.dp),
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.hide_keyboard),
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
                 }
             }
         }
