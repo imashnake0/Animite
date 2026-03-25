@@ -5,12 +5,8 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.graphics.res.animatedVectorResource
-import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
-import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -19,11 +15,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.exclude
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,7 +31,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
@@ -45,7 +38,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,13 +45,13 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -76,64 +68,43 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
-import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.ext.copy
-import com.imashnake.animite.core.ui.ext.maxHeight
 import com.imashnake.animite.media.MediaMediumList
-import com.imashnake.animite.media.ext.icon
-import com.imashnake.animite.media.ext.res
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
-import me.saket.cascade.CascadeDropdownMenu
-import me.saket.cascade.rememberCascadeState
 import com.imashnake.animite.navigation.R as navigationR
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(
+    ExperimentalLayoutApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun ExploreScreen(
     onItemClick: (Int, MediaType, String?) -> Unit,
     listState: LazyListState,
+    deviceScreenCornerRadius: Int,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars
         .exclude(WindowInsets.navigationBars)
         .union(WindowInsets.displayCutout),
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
-    var isSortDropdownExpanded by remember { mutableStateOf(false) }
-    val sort by viewModel.selectedSort.collectAsState()
-    val isDescending by viewModel.isDescending.collectAsState()
-
-    var isGenreDropdownExpanded by remember { mutableStateOf(false) }
-    val genres by viewModel.genres.collectAsState()
-    val selectedGenre by viewModel.selectedGenre.collectAsState()
-
-    var isYearDropdownExpanded by remember { mutableStateOf(false) }
-    val selectedYear by viewModel.selectedYear.collectAsState()
-
     val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> PaddingValues(bottom = dimensionResource(navigationR.dimen.navigation_bar_height))
         else -> PaddingValues(start = dimensionResource(navigationR.dimen.navigation_rail_width))
@@ -142,12 +113,17 @@ fun ExploreScreen(
 
     val exploreList by viewModel.exploreList.collectAsState()
 
-    val haptic = LocalHapticFeedback.current
-
     val fabSize = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
         delay(200)
         fabSize.animateTo(1f)
+    }
+
+    var showFilterBottomSheet by remember { mutableStateOf(false) }
+    val filterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+
+    val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
+        deviceScreenCornerRadius.toDp()
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -200,7 +176,7 @@ fun ExploreScreen(
                                 contentDescription = stringResource(R.string.tune),
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier
-                                    .clickable {  }
+                                    .clickable { showFilterBottomSheet = true }
                                     .padding(8.dp)
                                     .size(24.dp)
                             )
@@ -233,486 +209,22 @@ fun ExploreScreen(
                     )
                 }
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(insetAndNavigationPaddingValues)
-                        .padding(WindowInsets.navigationBars.asPaddingValues())
-                        .padding(LocalPaddings.current.large)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
-                        .padding(LocalPaddings.current.small)
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .clickable(enabled = false) {}
-                            .background(MaterialTheme.colorScheme.primary)
-                    ) {
-                        YearFilter(
-                            years = viewModel.yearRange,
-                            selectedYear = selectedYear,
-                            onYearSelected = { viewModel.setMediaYear(it) },
-                            expanded = isYearDropdownExpanded,
-                            setExpanded = {
-                                haptic.performHapticFeedback(
-                                    if (it) {
-                                        HapticFeedbackType.ToggleOn
-                                    } else HapticFeedbackType.ToggleOff
-                                )
-                                isYearDropdownExpanded = it
-                            },
-                            modifier = Modifier.graphicsLayer {
-                                scaleX = fabSize.value; scaleY = fabSize.value
-                            }
-                        )
+                if (showFilterBottomSheet) {
+                    BottomSheet(
+                        sheetState = filterSheetState,
+                        onDismissRequest = { showFilterBottomSheet = false },
+                        deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
+                    ) { paddingValues, modifier ->
+                        Column(modifier) {
 
-                        if (genres is Resource.Success) {
-                            genres.data?.let { genres ->
-                                GenreFilter(
-                                    genres = genres,
-                                    selectedGenre = selectedGenre,
-                                    onGenreSelected = { viewModel.setMediaGenre(it) },
-                                    expanded = isGenreDropdownExpanded,
-                                    setExpanded = {
-                                        haptic.performHapticFeedback(
-                                            if (it) {
-                                                HapticFeedbackType.ToggleOn
-                                            } else HapticFeedbackType.ToggleOff
-                                        )
-                                        isGenreDropdownExpanded = it
-                                    },
-                                    modifier = Modifier.graphicsLayer {
-                                        scaleX = fabSize.value; scaleY = fabSize.value
-                                    }
-                                )
-                            }
                         }
                     }
-
-                    SortFab(
-                        sorts = Media.Sort.entries.toImmutableList(),
-                        selectedSort = sort,
-                        onSortSelected = { viewModel.setMediaSort(it) },
-                        isDescending = isDescending,
-                        toggleOrder = { viewModel.setIsDescending(!isDescending) },
-                        expanded = isSortDropdownExpanded,
-                        setExpanded = {
-                            haptic.performHapticFeedback(
-                                if (it) {
-                                    HapticFeedbackType.ToggleOn
-                                } else HapticFeedbackType.ToggleOff
-                            )
-                            isSortDropdownExpanded = it
-                        },
-                        modifier = Modifier.graphicsLayer {
-                            scaleX = fabSize.value; scaleY = fabSize.value
-                        }
-                    )
-
-                    ResetFab(
-                        onReset = {
-                            haptic.performHapticFeedback(HapticFeedbackType.Reject)
-                            viewModel.reset()
-                        },
-                        modifier = Modifier.graphicsLayer {
-                            scaleX = fabSize.value; scaleY = fabSize.value
-                        }
-                    )
                 }
             }
             // TODO: Add loading and error states.
             is Resource.Loading -> {}
             is Resource.Error -> {}
         }
-    }
-}
-
-@Composable
-private fun SortFab(
-    sorts: ImmutableList<Media.Sort>,
-    selectedSort: Media.Sort,
-    onSortSelected: (Media.Sort) -> Unit,
-    isDescending: Boolean,
-    toggleOrder: () -> Unit,
-    expanded: Boolean,
-    setExpanded: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val cascadeState = rememberCascadeState()
-    val haptic = LocalHapticFeedback.current
-
-    val iconTint by animateColorAsState(
-        if (expanded) {
-            MaterialTheme.colorScheme.primary
-        } else MaterialTheme.colorScheme.onPrimary
-    )
-    val iconBackground by animateColorAsState(
-        if (expanded) {
-            MaterialTheme.colorScheme.onPrimary
-        } else MaterialTheme.colorScheme.primary
-    )
-
-    Box(modifier) {
-        Surface(
-            color = iconBackground,
-            shape = CircleShape,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.sort),
-                contentDescription = stringResource(R.string.sort),
-                tint = iconTint,
-                modifier = Modifier
-                    .clickable { setExpanded(!expanded) }
-                    .padding(LocalPaddings.current.small)
-                    .size(LocalPaddings.current.large)
-            )
-        }
-        val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
-        CascadeDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { setExpanded(false) },
-            state = cascadeState,
-            shape = RoundedCornerShape(cornerRadius),
-            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
-            modifier = Modifier.align(Alignment.TopStart)
-        ) {
-            Text(
-                text = stringResource(R.string.sort),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.padding(
-                    start = LocalPaddings.current.medium
-                            + LocalPaddings.current.tiny,
-                    top = LocalPaddings.current.small,
-                )
-            )
-            sorts.fastForEach { sort ->
-                val isSortSelected = sort == selectedSort
-                val backgroundColor by animateColorAsState(
-                    targetValue = if (isSortSelected)
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
-                    else Color.Transparent
-                )
-                val textColor by animateColorAsState(
-                    targetValue = if (isSortSelected)
-                        MaterialTheme.colorScheme.onPrimary
-                    else MaterialTheme.colorScheme.onBackground
-                )
-                val iconSize by animateDpAsState(
-                    targetValue = if (isSortSelected)
-                        LocalPaddings.current.medium
-                    else 0.dp
-                )
-
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-                            ) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(sort.icon),
-                                    contentDescription = stringResource(sort.res),
-                                    modifier = Modifier.size(iconSize)
-                                )
-                                Text(stringResource(sort.res))
-                            }
-                            if (isSortSelected) {
-                                val expandToCollapse = AnimatedImageVector.animatedVectorResource(
-                                    R.drawable.order
-                                )
-                                Icon(
-                                    painter = rememberAnimatedVectorPainter(
-                                        animatedImageVector = expandToCollapse,
-                                        atEnd = isDescending,
-                                    ),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(iconSize)
-                                )
-                            }
-                        }
-                    },
-                    leadingIcon = null,
-                    colors = MenuDefaults.itemColors(
-                        textColor = textColor,
-                        leadingIconColor = MaterialTheme.colorScheme.primary
-                    ),
-                    onClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                        if (isSortSelected) {
-                            toggleOrder()
-                        } else {
-                            onSortSelected(sort)
-                        }
-                    },
-                    contentPadding = PaddingValues(
-                        vertical = LocalPaddings.current.small,
-                        horizontal = LocalPaddings.current.medium
-                    ),
-                    modifier = Modifier
-                        .padding(LocalPaddings.current.tiny)
-                        .clip(RoundedCornerShape(LocalPaddings.current.large))
-                        .background(color = backgroundColor)
-                )
-            }
-        }
-    }
-}
-
-// TODO: This is a copy of SortFab, make it reusable; same for YearFilter.
-@Composable
-private fun GenreFilter(
-    genres: ImmutableList<String>,
-    selectedGenre: String?,
-    onGenreSelected: (String?) -> Unit,
-    expanded: Boolean,
-    setExpanded: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val cascadeState = rememberCascadeState()
-    val haptic = LocalHapticFeedback.current
-
-    val iconTint by animateColorAsState(
-        if (expanded) {
-            MaterialTheme.colorScheme.primary
-        } else MaterialTheme.colorScheme.onPrimary
-    )
-    val iconBackground by animateColorAsState(
-        if (expanded) {
-            MaterialTheme.colorScheme.onPrimary
-        } else MaterialTheme.colorScheme.primary
-    )
-
-    Box(modifier) {
-        Surface(
-            color = iconBackground,
-            shape = CircleShape,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.genres),
-                contentDescription = stringResource(R.string.genres),
-                tint = iconTint,
-                modifier = Modifier
-                    .clickable { setExpanded(!expanded) }
-                    .padding(LocalPaddings.current.small)
-                    .size(LocalPaddings.current.large)
-            )
-        }
-        val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
-        val windowInfo = LocalWindowInfo.current
-        CascadeDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { setExpanded(false) },
-            state = cascadeState,
-            shape = RoundedCornerShape(cornerRadius),
-            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
-            fixedWidth = 150.dp,
-            modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
-        ) {
-            Text(
-                text = stringResource(R.string.genres).uppercase(),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.padding(
-                    start = LocalPaddings.current.medium
-                            + LocalPaddings.current.tiny,
-                    top = LocalPaddings.current.small
-                )
-            )
-            genres.fastForEach { genre ->
-                val isGenreSelected = genre == selectedGenre
-                val backgroundColor by animateColorAsState(
-                    targetValue = if (isGenreSelected)
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
-                    else Color.Transparent
-                )
-                val textColor by animateColorAsState(
-                    targetValue = if (isGenreSelected)
-                        MaterialTheme.colorScheme.onPrimary
-                    else MaterialTheme.colorScheme.onBackground
-                )
-
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(genre)
-                        }
-                    },
-                    leadingIcon = null,
-                    colors = MenuDefaults.itemColors(
-                        textColor = textColor,
-                        leadingIconColor = MaterialTheme.colorScheme.primary
-                    ),
-                    onClick = {
-                        if (isGenreSelected) {
-                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                            onGenreSelected(null)
-                        } else {
-                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            onGenreSelected(genre)
-                        }
-                    },
-                    contentPadding = PaddingValues(
-                        vertical = LocalPaddings.current.small,
-                        horizontal = LocalPaddings.current.medium
-                    ),
-                    modifier = Modifier
-                        .padding(LocalPaddings.current.tiny)
-                        .clip(RoundedCornerShape(LocalPaddings.current.large))
-                        .background(color = backgroundColor)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun YearFilter(
-    years: ImmutableList<Int>,
-    selectedYear: Int?,
-    onYearSelected: (Int?) -> Unit,
-    expanded: Boolean,
-    setExpanded: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val cascadeState = rememberCascadeState()
-    val haptic = LocalHapticFeedback.current
-
-    val iconTint by animateColorAsState(
-        if (expanded) {
-            MaterialTheme.colorScheme.primary
-        } else MaterialTheme.colorScheme.onPrimary
-    )
-    val iconBackground by animateColorAsState(
-        if (expanded) {
-            MaterialTheme.colorScheme.onPrimary
-        } else MaterialTheme.colorScheme.primary
-    )
-
-    Box(modifier) {
-        Surface(
-            color = iconBackground,
-            shape = CircleShape,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.year),
-                contentDescription = stringResource(R.string.genres),
-                tint = iconTint,
-                modifier = Modifier
-                    .clickable { setExpanded(!expanded) }
-                    .padding(LocalPaddings.current.small)
-                    .size(LocalPaddings.current.large)
-            )
-        }
-        val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
-        val windowInfo = LocalWindowInfo.current
-        CascadeDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { setExpanded(false) },
-            state = cascadeState,
-            shape = RoundedCornerShape(cornerRadius),
-            offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
-            fixedWidth = LocalPaddings.current.large * 4,
-            modifier = Modifier.maxHeight(windowInfo.containerDpSize.height / 2)
-        ) {
-            Text(
-                text = stringResource(R.string.year),
-                fontSize = 10.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = MaterialTheme.colorScheme.tertiary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = LocalPaddings.current.tiny)
-            )
-            years.fastForEach { year ->
-                val isYearSelected = year == selectedYear
-                val backgroundColor by animateColorAsState(
-                    targetValue = if (isYearSelected)
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
-                    else Color.Transparent
-                )
-                val textColor by animateColorAsState(
-                    targetValue = if (isYearSelected)
-                        MaterialTheme.colorScheme.onPrimary
-                    else MaterialTheme.colorScheme.onBackground
-                )
-
-                DropdownMenuItem(
-                    text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = year.toString(),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    },
-                    leadingIcon = null,
-                    colors = MenuDefaults.itemColors(
-                        textColor = textColor,
-                        leadingIconColor = MaterialTheme.colorScheme.primary
-                    ),
-                    onClick = {
-                        if (isYearSelected) {
-                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                            onYearSelected(null)
-                        } else {
-                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            onYearSelected(year)
-                        }
-                    },
-                    contentPadding = PaddingValues(
-                        vertical = LocalPaddings.current.small,
-                        horizontal = LocalPaddings.current.medium
-                    ),
-                    modifier = Modifier
-                        .padding(LocalPaddings.current.tiny)
-                        .clip(RoundedCornerShape(LocalPaddings.current.large))
-                        .background(color = backgroundColor)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ResetFab(
-    onReset: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        color = MaterialTheme.colorScheme.primary,
-        shape = CircleShape,
-        modifier = modifier
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.reset),
-            contentDescription = stringResource(R.string.genres),
-            tint = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier
-                .clickable { onReset() }
-                .padding(LocalPaddings.current.small)
-                .size(LocalPaddings.current.large)
-        )
     }
 }
 
