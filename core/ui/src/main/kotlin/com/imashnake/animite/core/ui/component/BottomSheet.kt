@@ -47,9 +47,11 @@ fun BottomSheet(
         dragHandle = {
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxWidth().thenIf(dragHandleBackgroundColor != null) {
-                    background(dragHandleBackgroundColor!!)
-                }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .thenIf(dragHandleBackgroundColor != null) {
+                        background(dragHandleBackgroundColor!!)
+                    }
             ) {
                 Image(
                     painter = rememberAnimatedVectorPainter(

@@ -7,12 +7,15 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -28,7 +31,9 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -38,6 +43,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -66,6 +72,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -84,6 +91,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.BottomSheet
+import com.imashnake.animite.core.ui.component.Chip
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.media.MediaMediumList
 import kotlinx.collections.immutable.toImmutableList
@@ -92,7 +100,7 @@ import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(
     ExperimentalLayoutApi::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
 fun ExploreScreen(
@@ -143,70 +151,132 @@ fun ExploreScreen(
                 )
 
                 Box(modifier = Modifier.padding(insetAndNavigationPaddingValues.copy(top = 0.dp))) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.background(barBackgroundColor)
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                        modifier = Modifier
+                            .background(barBackgroundColor)
                             .padding(top = insetAndNavigationPaddingValues.calculateTopPadding())
                             .fillMaxWidth()
-                            .padding(
-                                horizontal = LocalPaddings.current.large,
-                                vertical = LocalPaddings.current.small
-                            )
+                            .padding(vertical = LocalPaddings.current.small)
                             .zIndex(Float.MAX_VALUE)
-                            .height(IntrinsicSize.Max)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
                     ) {
-                        SearchBar(
-                            onSearch = { viewModel.setSearchQuery(it) },
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
+                                .padding(horizontal = LocalPaddings.current.large)
+                                .height(IntrinsicSize.Max)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                .padding(horizontal = LocalPaddings.current.small)
-                                .weight(1f)
-                        )
-
-                        Surface(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
-                            modifier = Modifier.padding(end = 8.dp)
                         ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.tune),
-                                contentDescription = stringResource(R.string.tune),
-                                tint = MaterialTheme.colorScheme.onPrimary,
+                            SearchBar(
+                                onSearch = { viewModel.setSearchQuery(it) },
                                 modifier = Modifier
-                                    .clickable { showFilterBottomSheet = true }
-                                    .padding(8.dp)
-                                    .size(24.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                    .padding(horizontal = LocalPaddings.current.small)
+                                    .weight(1f)
                             )
+
+                            Surface(
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = CircleShape,
+                                modifier = Modifier.padding(end = 8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.tune),
+                                    contentDescription = stringResource(R.string.tune),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier
+                                        .clickable { showFilterBottomSheet = true }
+                                        .padding(8.dp)
+                                        .size(24.dp)
+                                )
+                            }
+                        }
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                            modifier = Modifier.horizontalScroll(rememberScrollState())
+                        ) {
+                            Spacer(Modifier.width(LocalPaddings.current.large - LocalPaddings.current.small))
+                            Chip(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = null,
+                                text = "Genres"
+                            )
+
+                            Chip(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = null,
+                                text = "Year"
+                            )
+
+                            Chip(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = null,
+                                text = "Season"
+                            )
+
+                            Chip(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = null,
+                                text = "Format"
+                            )
+
+                            Chip(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = null,
+                                text = "Airing Status"
+                            )
+
+                            Chip(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = null,
+                                text = "Streaming On"
+                            )
+
+                            Chip(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = null,
+                                text = "Country Of Origin"
+                            )
+
+                            Chip(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                icon = null,
+                                text = "Source Material"
+                            )
+                            Spacer(Modifier.width(LocalPaddings.current.large - LocalPaddings.current.small))
                         }
                     }
 
-                    MediaMediumList(
-                        mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
-                        onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
-                        shouldShowRank = true,
-                        modifier = Modifier
-                            .consumeWindowInsets(
-                                insetAndNavigationPaddingValues
-                                        + PaddingValues(bottom = LocalPaddings.current.large)
+                    Column {
+                        Chip(color = Color.Transparent, icon = null, text = "")
+                        MediaMediumList(
+                            mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
+                            onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
+                            shouldShowRank = true,
+                            modifier = Modifier
+                                .consumeWindowInsets(
+                                    insetAndNavigationPaddingValues
+                                            + PaddingValues(bottom = LocalPaddings.current.large)
+                                )
+                                .imePadding(),
+                            state = listState,
+                            contentPadding = PaddingValues(
+                                top = LocalPaddings.current.medium,
+                                bottom = LocalPaddings.current.large,
+                                start = LocalPaddings.current.large,
+                                end = LocalPaddings.current.large,
+                            ) + PaddingValues(
+                                bottom = LocalPaddings.current.large
+                            ) + PaddingValues(
+                                top = insetAndNavigationPaddingValues.calculateTopPadding()
+                                        + TextFieldDefaults.MinHeight
+                                        + 2 * LocalPaddings.current.small
                             )
-                            .imePadding(),
-                        state = listState,
-                        contentPadding = PaddingValues(
-                            top = LocalPaddings.current.medium,
-                            bottom = LocalPaddings.current.large,
-                            start = LocalPaddings.current.large,
-                            end = LocalPaddings.current.large,
-                        ) + PaddingValues(
-                            bottom = LocalPaddings.current.large
-                        ) + PaddingValues(
-                            top = insetAndNavigationPaddingValues.calculateTopPadding()
-                                    + TextFieldDefaults.MinHeight
-                                    + 2 * LocalPaddings.current.small
                         )
-                    )
+                    }
                 }
 
                 if (showFilterBottomSheet) {
@@ -215,7 +285,16 @@ fun ExploreScreen(
                         onDismissRequest = { showFilterBottomSheet = false },
                         deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
                     ) { paddingValues, modifier ->
-                        Column(modifier) {
+                        Column(
+                            modifier = modifier
+                                .background(
+                                    Brush.verticalGradient(
+                                        0f to MaterialTheme.colorScheme.surfaceContainerHighest,
+                                        1f to MaterialTheme.colorScheme.background
+                                    )
+                                )
+                                .padding(paddingValues)
+                        ) {
 
                         }
                     }
