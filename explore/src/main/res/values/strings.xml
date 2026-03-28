@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="filter">Filter</string>
-    <string name="sort">SORT</string>
-    <string name="genres">GENRES</string>
-    <string name="year">YEAR</string>
+    <string name="sort">Sort</string>
+    <string name="genres">Genres</string>
+    <string name="year">Year</string>
 
     <string name="tune">Tune</string>
 </resources>

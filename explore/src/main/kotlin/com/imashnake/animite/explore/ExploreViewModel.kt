@@ -12,12 +12,14 @@ import com.imashnake.animite.core.ui.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
@@ -29,10 +31,18 @@ class ExploreViewModel @Inject constructor(
     mediaListRepository: AnilistMediaRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            setAllGenres(mediaListRepository.fetchMediaGenres().toSet())
+        }
+    }
+
     val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, Media.Sort.POPULARITY)
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, true)
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
-    val selectedGenre = savedStateHandle.getStateFlow<String?>(Constants.GENRE, null)
+    val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_GENRES, null)
+    val includedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_GENRES, emptySet())
+    val excludedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_GENRES, emptySet())
     val selectedYear = savedStateHandle.getStateFlow<Int?>(Constants.YEAR, null)
 
     val mediaSort = selectedSort
@@ -42,15 +52,17 @@ class ExploreViewModel @Inject constructor(
     val exploreList = combine(
         flow = mediaSort,
         flow2 = searchQuery,
-        flow3 = selectedGenre,
-        flow4 = selectedYear,
-        transform = ::Quatruple,
-    ).flatMapLatest { (sort, searchQuery, genre, year) ->
+        flow3 = includedGenres,
+        flow4 = excludedGenres,
+        flow5 = selectedYear,
+        transform = ::Pentuple,
+    ).flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, year) ->
         mediaListRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
             sort = listOf(sort),
             search = searchQuery,
-            genre = genre,
+            includedGenres = includedGenres.toList().ifEmpty { null },
+            excludedGenres = excludedGenres.toList().ifEmpty { null },
             year = year
         ).asResource()
     }
@@ -59,15 +71,6 @@ class ExploreViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(1000),
         initialValue = Resource.loading()
     )
-
-    val genres = mediaListRepository
-        .fetchMediaGenres()
-        .asResource()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(1000),
-            initialValue = Resource.loading()
-        )
 
     fun setMediaSort(sort: Media.Sort) {
         savedStateHandle[Constants.SORT] = sort
@@ -81,8 +84,23 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[SEARCH_QUERY] = searchQuery
     }
 
-    fun setMediaGenre(genre: String?) {
-        savedStateHandle[Constants.GENRE] = genre
+    fun setAllGenres(allGenres: Set<String>?) {
+        savedStateHandle[Constants.ALL_GENRES] = allGenres
+    }
+
+    fun includeMediaGenre(genre: String?) {
+        savedStateHandle[Constants.INCLUDED_GENRES] = includedGenres.value.plus(genre)
+        savedStateHandle[Constants.ALL_GENRES] = allGenres.value?.minus(genre)
+    }
+
+    fun excludeMediaGenre(genre: String?) {
+        savedStateHandle[Constants.EXCLUDED_GENRES] = excludedGenres.value.plus(genre)
+        savedStateHandle[Constants.INCLUDED_GENRES] = includedGenres.value.minus(genre)
+    }
+
+    fun clearMediaGenre(genre: String?) {
+        savedStateHandle[Constants.ALL_GENRES] = allGenres.value?.plus(genre)
+        savedStateHandle[Constants.EXCLUDED_GENRES] = excludedGenres.value.minus(genre)
     }
 
     fun setMediaYear(year: Int?) {
@@ -92,7 +110,7 @@ class ExploreViewModel @Inject constructor(
     fun reset() {
         savedStateHandle[Constants.SORT] = Media.Sort.POPULARITY
         savedStateHandle[Constants.ORDER] = true
-        savedStateHandle[Constants.GENRE] = null
+        savedStateHandle[Constants.INCLUDED_GENRES] = null
         savedStateHandle[Constants.YEAR] = null
         savedStateHandle[SEARCH_QUERY] = null
     }
@@ -113,15 +131,16 @@ class ExploreViewModel @Inject constructor(
 }
 
 // TODO: Move this to core?
-data class Quatruple<out A, out B, out C, out D>(
+data class Pentuple<out A, out B, out C, out D, out E>(
     val first: A,
     val second: B,
     val third: C,
-    val fourth: D
+    val fourth: D,
+    val fifth: E
 ) {
     /**
-     * Returns string representation of the [Quatruple] including its
-     * [first], [second], [third], and [fourth] values.
+     * Returns string representation of the [Pentuple] including its
+     * [first], [second], [third], [fourth], and [fifth] values.
      */
-    override fun toString(): String = "($first, $second, $third, $fourth)"
+    override fun toString(): String = "($first, $second, $third, $fourth, $fifth)"
 }

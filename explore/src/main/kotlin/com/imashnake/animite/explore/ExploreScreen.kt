@@ -2,20 +2,19 @@ package com.imashnake.animite.explore
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -31,9 +30,7 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -51,15 +48,14 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -83,8 +79,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -94,8 +92,8 @@ import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.Chip
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.media.MediaMediumList
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(
@@ -121,18 +119,16 @@ fun ExploreScreen(
 
     val exploreList by viewModel.exploreList.collectAsState()
 
-    val fabSize = remember { Animatable(0f) }
-    LaunchedEffect(Unit) {
-        delay(200)
-        fabSize.animateTo(1f)
-    }
-
     var showFilterBottomSheet by remember { mutableStateOf(false) }
     val filterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
         deviceScreenCornerRadius.toDp()
     }
+
+    val allGenres by viewModel.allGenres.collectAsState()
+    val includedGenres by viewModel.includedGenres.collectAsState()
+    val excludedGenres by viewModel.excludedGenres.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
@@ -194,64 +190,11 @@ fun ExploreScreen(
                             }
                         }
 
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            modifier = Modifier.horizontalScroll(rememberScrollState())
-                        ) {
-                            Spacer(Modifier.width(LocalPaddings.current.large - LocalPaddings.current.small))
-                            Chip(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                icon = null,
-                                text = "Genres"
-                            )
-
-                            Chip(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                icon = null,
-                                text = "Year"
-                            )
-
-                            Chip(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                icon = null,
-                                text = "Season"
-                            )
-
-                            Chip(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                icon = null,
-                                text = "Format"
-                            )
-
-                            Chip(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                icon = null,
-                                text = "Airing Status"
-                            )
-
-                            Chip(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                icon = null,
-                                text = "Streaming On"
-                            )
-
-                            Chip(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                icon = null,
-                                text = "Country Of Origin"
-                            )
-
-                            Chip(
-                                color = MaterialTheme.colorScheme.tertiary,
-                                icon = null,
-                                text = "Source Material"
-                            )
-                            Spacer(Modifier.width(LocalPaddings.current.large - LocalPaddings.current.small))
-                        }
+                        // TODO: Add filter chips here.
                     }
 
                     Column {
-                        Chip(color = Color.Transparent, icon = null, text = "")
+//                        Chip(color = Color.Transparent, icon = null, text = "")
                         MediaMediumList(
                             mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
                             onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
@@ -280,24 +223,17 @@ fun ExploreScreen(
                 }
 
                 if (showFilterBottomSheet) {
-                    BottomSheet(
+                    FilterBottomSheet(
                         sheetState = filterSheetState,
                         onDismissRequest = { showFilterBottomSheet = false },
                         deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
-                    ) { paddingValues, modifier ->
-                        Column(
-                            modifier = modifier
-                                .background(
-                                    Brush.verticalGradient(
-                                        0f to MaterialTheme.colorScheme.surfaceContainerHighest,
-                                        1f to MaterialTheme.colorScheme.background
-                                    )
-                                )
-                                .padding(paddingValues)
-                        ) {
-
-                        }
-                    }
+                        allGenres = allGenres.orEmpty().sorted().toImmutableList(),
+                        includedGenres = includedGenres.sorted().toImmutableList(),
+                        excludedGenres = excludedGenres.sorted().toImmutableList(),
+                        includeGenre = viewModel::includeMediaGenre,
+                        excludeGenre = viewModel::excludeMediaGenre,
+                        clearGenre = viewModel::clearMediaGenre,
+                    )
                 }
             }
             // TODO: Add loading and error states.
@@ -307,7 +243,10 @@ fun ExploreScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalLayoutApi::class
+)
 @Composable
 private fun SearchBar(
     onSearch: (String?) -> Unit,
@@ -383,28 +322,118 @@ private fun SearchBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun searchTextFieldColors(
-    contentColor: Color = LocalContentColor.current
-): TextFieldColors {
-    return TextFieldDefaults.colors(
-        unfocusedTextColor = contentColor,
-        focusedTextColor = contentColor,
-        focusedContainerColor = Color.Transparent,
-        unfocusedContainerColor = Color.Transparent,
-        disabledContainerColor = Color.Transparent,
-        cursorColor = contentColor,
-        selectionColors = TextSelectionColors(
-            handleColor = contentColor,
-            backgroundColor = contentColor.copy(alpha = 0.3f)
-        ),
-        focusedIndicatorColor = Color.Transparent,
-        unfocusedIndicatorColor = Color.Transparent,
-        focusedLeadingIconColor = contentColor,
-        unfocusedLeadingIconColor = contentColor,
-        focusedTrailingIconColor = contentColor,
-        unfocusedTrailingIconColor = contentColor,
-        unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
-        focusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
-    )
+private fun FilterBottomSheet(
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    deviceScreenCornerRadiusDp: Dp,
+    allGenres: ImmutableList<String>,
+    includedGenres: ImmutableList<String>,
+    excludedGenres: ImmutableList<String>,
+    includeGenre: (String) -> Unit,
+    excludeGenre: (String) -> Unit,
+    clearGenre: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = onDismissRequest,
+        deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
+        modifier = modifier,
+    ) { paddingValues, modifier ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            modifier = modifier
+                .background(
+                    Brush.verticalGradient(
+                        0f to MaterialTheme.colorScheme.surfaceContainerHighest,
+                        1f to MaterialTheme.colorScheme.background
+                    )
+                )
+                .padding(paddingValues)
+        ) {
+            Text(
+                text = stringResource(R.string.genres),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+            )
+
+            if (includedGenres.isNotEmpty()) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                ) {
+                    includedGenres.fastForEach {
+                        Chip(
+                            color = Color(0xFF80DF87),
+                            icon = null,
+                            text = it,
+                            modifier = Modifier
+                                .clickable { excludeGenre(it) }
+                                .animateContentSize()
+                        )
+                    }
+                }
+            }
+
+            if (excludedGenres.isNotEmpty()) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                ) {
+                    excludedGenres.fastForEach {
+                        Chip(
+                            color = Color(0xFFFF9999),
+                            icon = null,
+                            text = it,
+                            modifier = Modifier
+                                .clickable { clearGenre(it) }
+                                .animateContentSize()
+                        )
+                    }
+                }
+            }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+            ) {
+                allGenres.fastForEach {
+                    Chip(
+                        color = MaterialTheme.colorScheme.tertiary,
+                        icon = null,
+                        text = it,
+                        modifier = Modifier
+                            .clickable { includeGenre(it) }
+                            .animateContentSize()
+                    )
+                }
+            }
+        }
+    }
 }
+
+@Composable
+private fun searchTextFieldColors(
+    contentColor: Color = LocalContentColor.current
+) = TextFieldDefaults.colors(
+    unfocusedTextColor = contentColor,
+    focusedTextColor = contentColor,
+    focusedContainerColor = Color.Transparent,
+    unfocusedContainerColor = Color.Transparent,
+    disabledContainerColor = Color.Transparent,
+    cursorColor = contentColor,
+    selectionColors = TextSelectionColors(
+        handleColor = contentColor,
+        backgroundColor = contentColor.copy(alpha = 0.3f)
+    ),
+    focusedIndicatorColor = Color.Transparent,
+    unfocusedIndicatorColor = Color.Transparent,
+    focusedLeadingIconColor = contentColor,
+    unfocusedLeadingIconColor = contentColor,
+    focusedTrailingIconColor = contentColor,
+    unfocusedTrailingIconColor = contentColor,
+    unfocusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
+    focusedPlaceholderColor = contentColor.copy(alpha = 0.5f),
+)
