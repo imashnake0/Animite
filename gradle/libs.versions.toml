@@ -49,7 +49,7 @@ coil = "3.4.0"
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose.
 composeAnimation = "1.10.5"
-composeFoundation = "1.10.5"
+composeFoundation = "1.10.6"
 composeMaterial = "1.10.5"
 composeMaterial3 = "1.5.0-alpha16"
 composeRuntime = "1.10.5"
