@@ -53,7 +53,7 @@ composeFoundation = "1.10.6"
 composeMaterial = "1.10.5"
 composeMaterial3 = "1.5.0-alpha16"
 composeRuntime = "1.10.5"
-composeUi = "1.10.5"
+composeUi = "1.10.6"
 composeIcons = "1.7.8"
 
 # Dagger
