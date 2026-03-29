@@ -1,8 +1,8 @@
 package com.imashnake.animite.explore
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -359,54 +359,50 @@ private fun FilterBottomSheet(
                 style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
             )
 
-            if (includedGenres.isNotEmpty()) {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-                ) {
-                    includedGenres.fastForEach {
-                        Chip(
-                            color = Color(0xFF80DF87),
-                            icon = null,
-                            text = it,
-                            modifier = Modifier
-                                .clickable { excludeGenre(it) }
-                                .animateContentSize()
-                        )
-                    }
-                }
-            }
+            Column {
+                FlowGenres(
+                    genres = includedGenres,
+                    chipColor = Color(0xFF80DF87),
+                    onGenreClick = excludeGenre,
+                    modifier = Modifier.padding(bottom = LocalPaddings.current.small)
+                )
 
-            if (excludedGenres.isNotEmpty()) {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-                ) {
-                    excludedGenres.fastForEach {
-                        Chip(
-                            color = Color(0xFFFF9999),
-                            icon = null,
-                            text = it,
-                            modifier = Modifier
-                                .clickable { clearGenre(it) }
-                                .animateContentSize()
-                        )
-                    }
-                }
-            }
+                FlowGenres(
+                    genres = excludedGenres,
+                    chipColor = Color(0xFFFF9999),
+                    onGenreClick = clearGenre,
+                    modifier = Modifier.padding(bottom = LocalPaddings.current.small)
+                )
 
+                FlowGenres(
+                    genres = allGenres,
+                    onGenreClick = includeGenre,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FlowGenres(
+    genres: ImmutableList<String>,
+    onGenreClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    chipColor: Color= MaterialTheme.colorScheme.tertiary,
+) {
+    AnimatedContent(genres) {
+        if (it.isNotEmpty()) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                modifier = modifier.fillMaxWidth()
             ) {
-                allGenres.fastForEach {
+                it.fastForEach { genre ->
                     Chip(
-                        color = MaterialTheme.colorScheme.tertiary,
+                        color = chipColor,
                         icon = null,
-                        text = it,
-                        modifier = Modifier
-                            .clickable { includeGenre(it) }
-                            .animateContentSize()
+                        text = genre,
+                        modifier = Modifier.clickable { onGenreClick(genre) }
                     )
                 }
             }
