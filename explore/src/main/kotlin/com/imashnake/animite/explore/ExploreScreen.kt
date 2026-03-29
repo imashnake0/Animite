@@ -173,7 +173,9 @@ fun ExploreScreen(
 
                 Box(modifier = Modifier.padding(insetAndNavigationPaddingValues.copy(top = 0.dp))) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                        verticalArrangement = Arrangement.spacedBy(
+                            LocalPaddings.current.small + LocalPaddings.current.tiny
+                        ),
                         modifier = Modifier
                             .background(barBackgroundColor)
                             .padding(top = insetAndNavigationPaddingValues.calculateTopPadding())
