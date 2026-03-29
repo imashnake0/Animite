@@ -6,4 +6,8 @@
     <string name="year">Year</string>
 
     <string name="tune">Tune</string>
+
+    <string name="include_genre">Included</string>
+    <string name="exclude_genre">Excluded</string>
+    <string name="all_genres">All</string>
 </resources>

@@ -78,9 +78,11 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
@@ -362,20 +364,26 @@ private fun FilterBottomSheet(
             Column {
                 FlowGenres(
                     genres = includedGenres,
-                    chipColor = Color(0xFF80DF87),
                     onGenreClick = excludeGenre,
+                    icon = ImageVector.vectorResource(R.drawable.include_genre),
+                    title = stringResource(R.string.include_genre),
+                    chipColor = Color(0xFF80DF87),
                     modifier = Modifier.padding(bottom = LocalPaddings.current.small)
                 )
 
                 FlowGenres(
                     genres = excludedGenres,
-                    chipColor = Color(0xFFFF9999),
+                    icon = ImageVector.vectorResource(R.drawable.exclude_genre),
+                    title = stringResource(R.string.exclude_genre),
                     onGenreClick = clearGenre,
+                    chipColor = Color(0xFFFF9999),
                     modifier = Modifier.padding(bottom = LocalPaddings.current.small)
                 )
 
                 FlowGenres(
                     genres = allGenres,
+                    icon = ImageVector.vectorResource(R.drawable.all_genres),
+                    title = stringResource(R.string.all_genres),
                     onGenreClick = includeGenre,
                 )
             }
@@ -388,22 +396,48 @@ private fun FlowGenres(
     genres: ImmutableList<String>,
     onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    title: String? = null,
     chipColor: Color= MaterialTheme.colorScheme.tertiary,
 ) {
     AnimatedContent(genres) {
         if (it.isNotEmpty()) {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                modifier = modifier.fillMaxWidth()
-            ) {
-                it.fastForEach { genre ->
-                    Chip(
-                        color = chipColor,
-                        icon = null,
-                        text = genre,
-                        modifier = Modifier.clickable { onGenreClick(genre) }
-                    )
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                    modifier = Modifier.padding(bottom = LocalPaddings.current.tiny)
+                ) {
+                    icon?.let {
+                        Icon(
+                            imageVector = icon,
+                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            contentDescription = null,
+                            modifier = Modifier.size(11.dp)
+                        )
+                    }
+                    title?.let {
+                        Text(
+                            text = title,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
+                }
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    modifier = modifier.fillMaxWidth()
+                ) {
+                    it.fastForEach { genre ->
+                        Chip(
+                            color = chipColor,
+                            icon = null,
+                            text = genre,
+                            modifier = Modifier.clickable { onGenreClick(genre) }
+                        )
+                    }
                 }
             }
         }
