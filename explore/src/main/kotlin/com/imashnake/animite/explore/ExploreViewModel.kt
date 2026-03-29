@@ -111,6 +111,7 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.SORT] = Media.Sort.POPULARITY
         savedStateHandle[Constants.ORDER] = true
         savedStateHandle[Constants.INCLUDED_GENRES] = null
+        savedStateHandle[Constants.EXCLUDED_GENRES] = null
         savedStateHandle[Constants.YEAR] = null
         savedStateHandle[SEARCH_QUERY] = null
     }
