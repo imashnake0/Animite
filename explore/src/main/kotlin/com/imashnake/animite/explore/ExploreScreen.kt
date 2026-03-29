@@ -3,8 +3,12 @@ package com.imashnake.animite.explore
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +19,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -32,6 +37,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
@@ -39,6 +45,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -47,6 +54,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
@@ -72,21 +80,26 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -94,8 +107,12 @@ import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.Chip
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.media.MediaMediumList
+import com.imashnake.animite.media.ext.icon
+import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import me.saket.cascade.CascadeDropdownMenu
+import me.saket.cascade.rememberCascadeState
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(
@@ -127,6 +144,12 @@ fun ExploreScreen(
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
         deviceScreenCornerRadius.toDp()
     }
+
+    val haptic = LocalHapticFeedback.current
+
+    var isSortDropdownExpanded by remember { mutableStateOf(false) }
+    val selectedSort by viewModel.selectedSort.collectAsState()
+    val isDescending by viewModel.isDescending.collectAsState()
 
     val allGenres by viewModel.allGenres.collectAsState()
     val includedGenres by viewModel.includedGenres.collectAsState()
@@ -192,11 +215,40 @@ fun ExploreScreen(
                             }
                         }
 
+                        Sort(
+                            sorts = Media.Sort.entries.toImmutableList(),
+                            selectedSort = selectedSort,
+                            onSortSelected = { viewModel.setMediaSort(it) },
+                            isDescending = isDescending,
+                            toggleOrder = { viewModel.setIsDescending(!isDescending) },
+                            expanded = isSortDropdownExpanded,
+                            setExpanded = {
+                                haptic.performHapticFeedback(
+                                    if (it) {
+                                        HapticFeedbackType.ToggleOn
+                                    } else HapticFeedbackType.ToggleOff
+                                )
+                                isSortDropdownExpanded = it
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
                         // TODO: Add filter chips here.
                     }
 
                     Column {
-//                        Chip(color = Color.Transparent, icon = null, text = "")
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Spacer(modifier = Modifier.size(11.dp))
+                            Text(
+                                text = "",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+
                         MediaMediumList(
                             mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
                             onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
@@ -271,7 +323,7 @@ private fun SearchBar(
         textStyle = MaterialTheme.typography.labelLarge,
         placeholder = {
             Text(
-                text = "Search",
+                text = stringResource(R.string.search),
                 style = MaterialTheme.typography.labelLarge
             )
         },
@@ -322,6 +374,158 @@ private fun SearchBar(
             }
         }
     )
+}
+
+@Composable
+private fun Sort(
+    sorts: ImmutableList<Media.Sort>,
+    selectedSort: Media.Sort,
+    onSortSelected: (Media.Sort) -> Unit,
+    isDescending: Boolean,
+    toggleOrder: () -> Unit,
+    expanded: Boolean,
+    setExpanded: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val cascadeState = rememberCascadeState()
+    val haptic = LocalHapticFeedback.current
+
+    Box(modifier) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .clip(CircleShape)
+                .clickable { setExpanded(!expanded) }
+                .padding(
+                    vertical = LocalPaddings.current.tiny,
+                    horizontal = LocalPaddings.current.small
+                )
+                .graphicsLayer {
+                    alpha = 0.5f
+                }
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(selectedSort.icon),
+                contentDescription = null,
+                modifier = Modifier.size(11.dp)
+            )
+            Text(
+                text = stringResource(selectedSort.res),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+            )
+
+            val expandToCollapse = AnimatedImageVector.animatedVectorResource(
+                R.drawable.order
+            )
+            Icon(
+                painter = rememberAnimatedVectorPainter(
+                    animatedImageVector = expandToCollapse,
+                    atEnd = isDescending,
+                ),
+                contentDescription = null,
+                modifier = Modifier.size(11.dp)
+            )
+        }
+
+        val screenWidthDp = with(LocalDensity.current) {
+            LocalWindowInfo.current.containerSize.width.toDp()
+        }
+        val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
+        CascadeDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { setExpanded(false) },
+            state = cascadeState,
+            offset = DpOffset(x = (screenWidthDp - 196.dp) / 2, y = LocalPaddings.current.tiny),
+            shape = RoundedCornerShape(cornerRadius),
+        ) {
+            Text(
+                text = stringResource(R.string.sort),
+                fontSize = 10.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.tertiary,
+                modifier = Modifier
+                    .padding(top = LocalPaddings.current.small)
+                    .align(Alignment.CenterHorizontally)
+            )
+            sorts.fastForEach { sort ->
+                val isSortSelected = sort == selectedSort
+                val backgroundColor by animateColorAsState(
+                    targetValue = if (isSortSelected)
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+                    else Color.Transparent
+                )
+                val textColor by animateColorAsState(
+                    targetValue = if (isSortSelected)
+                        MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onBackground
+                )
+                val iconSize by animateDpAsState(
+                    targetValue = if (isSortSelected)
+                        LocalPaddings.current.medium
+                    else 0.dp
+                )
+
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(sort.icon),
+                                    contentDescription = stringResource(sort.res),
+                                    modifier = Modifier.size(iconSize)
+                                )
+                                Text(stringResource(sort.res))
+                            }
+                            if (isSortSelected) {
+                                val expandToCollapse = AnimatedImageVector.animatedVectorResource(
+                                    R.drawable.order
+                                )
+                                Icon(
+                                    painter = rememberAnimatedVectorPainter(
+                                        animatedImageVector = expandToCollapse,
+                                        atEnd = isDescending,
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(iconSize)
+                                )
+                            }
+                        }
+                    },
+                    leadingIcon = null,
+                    colors = MenuDefaults.itemColors(
+                        textColor = textColor,
+                        leadingIconColor = MaterialTheme.colorScheme.primary
+                    ),
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        if (isSortSelected) {
+                            toggleOrder()
+                        } else {
+                            onSortSelected(sort)
+                        }
+                    },
+                    contentPadding = PaddingValues(
+                        vertical = LocalPaddings.current.small,
+                        horizontal = LocalPaddings.current.medium
+                    ),
+                    modifier = Modifier
+                        .padding(LocalPaddings.current.tiny)
+                        .clip(RoundedCornerShape(LocalPaddings.current.large))
+                        .background(color = backgroundColor)
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
