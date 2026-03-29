@@ -5,6 +5,9 @@
     <string name="genres">Genres</string>
     <string name="year">Year</string>
 
+    <string name="increase_year">Increase year</string>
+    <string name="decrease_year">Decrease year</string>
+
     <string name="tune">Tune</string>
     <string name="search">Search</string>
 

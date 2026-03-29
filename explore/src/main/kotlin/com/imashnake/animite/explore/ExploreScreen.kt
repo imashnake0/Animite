@@ -2,6 +2,7 @@ package com.imashnake.animite.explore
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -10,6 +11,7 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,10 +34,14 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -45,6 +51,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -57,6 +64,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -64,6 +73,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -150,6 +160,8 @@ fun ExploreScreen(
     var isSortDropdownExpanded by remember { mutableStateOf(false) }
     val selectedSort by viewModel.selectedSort.collectAsState()
     val isDescending by viewModel.isDescending.collectAsState()
+
+    val year by viewModel.selectedYear.collectAsState()
 
     val allGenres by viewModel.allGenres.collectAsState()
     val includedGenres by viewModel.includedGenres.collectAsState()
@@ -289,6 +301,9 @@ fun ExploreScreen(
                         includeGenre = viewModel::includeMediaGenre,
                         excludeGenre = viewModel::excludeMediaGenre,
                         clearGenre = viewModel::clearMediaGenre,
+                        year = year,
+                        onYearChange = viewModel::setMediaYear,
+                        yearRange = viewModel.yearRange
                     )
                 }
             }
@@ -530,7 +545,7 @@ private fun Sort(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun FilterBottomSheet(
     sheetState: SheetState,
@@ -542,8 +557,12 @@ private fun FilterBottomSheet(
     includeGenre: (String) -> Unit,
     excludeGenre: (String) -> Unit,
     clearGenre: (String) -> Unit,
+    year: Int?,
+    yearRange: ImmutableList<Int>,
+    onYearChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val haptic = LocalHapticFeedback.current
     BottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismissRequest,
@@ -592,6 +611,127 @@ private fun FilterBottomSheet(
                     title = stringResource(R.string.all_genres),
                     onGenreClick = includeGenre,
                 )
+            }
+
+            Text(
+                text = stringResource(R.string.year),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+            )
+
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                val yearItemSize = 56.dp
+                AnimatedVisibility(year != null) {
+                    if (year != null) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Button(
+                                enabled = year > yearRange.last(),
+                                onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                                    onYearChange(year - 1)
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.step_year_left),
+                                    contentDescription = stringResource(R.string.increase_year),
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.padding(8.dp).size(24.dp)
+                                )
+                            }
+                            Box(contentAlignment = Alignment.Center) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(
+                                            width = yearItemSize,
+                                            height = yearItemSize / 1.5f
+                                        )
+                                        .border(
+                                            width = 2.dp,
+                                            shape = CircleShape,
+                                            color = MaterialTheme.colorScheme.tertiary
+                                        )
+                                )
+
+                                val listState = rememberLazyListState()
+                                LaunchedEffect(year) {
+                                    listState.animateScrollToItem(year - yearRange.last())
+                                }
+                                LazyRow(
+                                    state = listState,
+                                    contentPadding = PaddingValues(horizontal = yearItemSize * 1.5f),
+                                    userScrollEnabled = false,
+                                    modifier = Modifier.requiredWidth(yearItemSize * 4),
+                                ) {
+                                    items(yearRange.size) {
+                                        val textAlpha by animateFloatAsState(
+                                            if (yearRange.last() + it == year) 1f else 0.5f
+                                        )
+                                        Box(Modifier.requiredSize(yearItemSize)) {
+                                            Text(
+                                                text = "${yearRange.last() + it}",
+                                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = textAlpha),
+                                                modifier = Modifier.align(Alignment.Center)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            Button(
+                                enabled = year < yearRange.first(),
+                                onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                                    onYearChange(year + 1)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.step_year_right),
+                                    contentDescription = stringResource(R.string.decrease_year),
+                                    modifier = Modifier.padding(8.dp).size(24.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = yearRange.last().toString(),
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                    Slider(
+                        value = year?.toFloat() ?: 0f,
+                        onValueChange = {
+                            haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                            onYearChange(it.toInt())
+                        },
+                        colors = SliderDefaults.colors(
+                            activeTrackColor = SliderDefaults.colors().inactiveTrackColor,
+                            inactiveTickColor = Color.Transparent,
+                            activeTickColor = Color.Transparent
+                        ),
+                        steps = yearRange.toList().size,
+                        valueRange = yearRange.last().toFloat()..yearRange.first().toFloat(),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = yearRange.first().toString(),
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
             }
         }
     }
