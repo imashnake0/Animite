@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.RoundedCorner
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -71,6 +72,8 @@ import com.imashnake.animite.social.SocialScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+private const val TAG = "MainActivity"
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
@@ -85,7 +88,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val fontFamilyResolver = LocalFontFamilyResolver.current
             LaunchedEffect(Unit) {
-                fontFamilyResolver.preload(manropeFontFamily)
+                try {
+                    fontFamilyResolver.preload(manropeFontFamily)
+                } catch (e: Exception) {
+                    Log.d(TAG, "onCreate: Failed to load font: ${e.cause}: ${e.message}")
+                }
                 showSplashScreen = false
             }
 
