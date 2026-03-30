@@ -642,7 +642,7 @@ private fun FilterBottomSheet(
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.step_year_left),
                                     contentDescription = stringResource(R.string.increase_year),
-                                    modifier = Modifier.padding(8.dp).size(24.dp)
+                                    modifier = Modifier.requiredSize(24.dp)
                                 )
                             }
                             Box(contentAlignment = Alignment.Center) {
@@ -697,7 +697,7 @@ private fun FilterBottomSheet(
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.step_year_right),
                                     contentDescription = stringResource(R.string.decrease_year),
-                                    modifier = Modifier.padding(8.dp).size(24.dp)
+                                    modifier = Modifier.requiredSize(24.dp)
                                 )
                             }
                         }
