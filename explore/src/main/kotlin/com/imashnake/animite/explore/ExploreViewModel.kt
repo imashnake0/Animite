@@ -28,7 +28,7 @@ import kotlin.time.Clock
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExploreViewModel @Inject constructor(
-    mediaListRepository: AnilistMediaRepository,
+    private val mediaListRepository: AnilistMediaRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     init {
@@ -40,6 +40,7 @@ class ExploreViewModel @Inject constructor(
     val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, Media.Sort.POPULARITY)
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, true)
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
+    private val _allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_GENRES, null)
     val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_GENRES, null)
     val includedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_GENRES, emptySet())
     val excludedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_GENRES, emptySet())
@@ -85,6 +86,7 @@ class ExploreViewModel @Inject constructor(
     }
 
     fun setAllGenres(allGenres: Set<String>?) {
+        savedStateHandle[Constants._ALL_GENRES] = allGenres
         savedStateHandle[Constants.ALL_GENRES] = allGenres
     }
 
@@ -110,8 +112,9 @@ class ExploreViewModel @Inject constructor(
     fun reset() {
         savedStateHandle[Constants.SORT] = Media.Sort.POPULARITY
         savedStateHandle[Constants.ORDER] = true
-        savedStateHandle[Constants.INCLUDED_GENRES] = null
-        savedStateHandle[Constants.EXCLUDED_GENRES] = null
+        savedStateHandle[Constants.ALL_GENRES] = _allGenres.value
+        savedStateHandle[Constants.INCLUDED_GENRES] = emptySet<String>()
+        savedStateHandle[Constants.EXCLUDED_GENRES] = emptySet<String>()
         savedStateHandle[Constants.YEAR] = null
         savedStateHandle[SEARCH_QUERY] = null
     }

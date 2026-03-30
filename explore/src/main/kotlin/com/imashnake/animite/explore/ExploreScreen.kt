@@ -303,7 +303,8 @@ fun ExploreScreen(
                         clearGenre = viewModel::clearMediaGenre,
                         year = year,
                         onYearChange = viewModel::setMediaYear,
-                        yearRange = viewModel.yearRange
+                        yearRange = viewModel.yearRange,
+                        reset = viewModel::reset
                     )
                 }
             }
@@ -560,6 +561,7 @@ private fun FilterBottomSheet(
     year: Int?,
     yearRange: ImmutableList<Int>,
     onYearChange: (Int) -> Unit,
+    reset: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val haptic = LocalHapticFeedback.current
@@ -621,7 +623,6 @@ private fun FilterBottomSheet(
 
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -629,13 +630,13 @@ private fun FilterBottomSheet(
             ) {
                 val yearItemSize = 56.dp
                 AnimatedVisibility(year != null) {
-                    if (year != null) {
+                    Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Button(
-                                enabled = year > yearRange.last(),
+                                enabled = (year ?: 0) > yearRange.last(),
                                 onClick = {
                                     haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
-                                    onYearChange(year - 1)
+                                    onYearChange((year ?: 0) - 1)
                                 },
                             ) {
                                 Icon(
@@ -660,7 +661,9 @@ private fun FilterBottomSheet(
 
                                 val listState = rememberLazyListState()
                                 LaunchedEffect(year) {
-                                    listState.animateScrollToItem(year - yearRange.last())
+                                    year?.let {
+                                        listState.animateScrollToItem(year - yearRange.last())
+                                    }
                                 }
                                 LazyRow(
                                     state = listState,
@@ -675,7 +678,9 @@ private fun FilterBottomSheet(
                                         Box(Modifier.requiredSize(yearItemSize)) {
                                             Text(
                                                 text = "${yearRange.last() + it}",
-                                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = textAlpha),
+                                                color = MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = textAlpha
+                                                ),
                                                 modifier = Modifier.align(Alignment.Center)
                                             )
                                         }
@@ -683,10 +688,10 @@ private fun FilterBottomSheet(
                                 }
                             }
                             Button(
-                                enabled = year < yearRange.first(),
+                                enabled = (year ?: 0) < yearRange.first(),
                                 onClick = {
                                     haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
-                                    onYearChange(year + 1)
+                                    onYearChange((year ?: 0) + 1)
                                 }
                             ) {
                                 Icon(
@@ -696,6 +701,7 @@ private fun FilterBottomSheet(
                                 )
                             }
                         }
+                        Spacer(Modifier.size(LocalPaddings.current.small))
                     }
                 }
 
@@ -730,6 +736,23 @@ private fun FilterBottomSheet(
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
                     )
+                }
+            }
+
+            Button(
+                onClick = reset,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.reset),
+                        contentDescription = stringResource(R.string.reset),
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(stringResource(R.string.reset))
                 }
             }
         }
