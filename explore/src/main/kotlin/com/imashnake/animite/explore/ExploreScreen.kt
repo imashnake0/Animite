@@ -641,7 +641,6 @@ private fun FilterBottomSheet(
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.step_year_left),
                                     contentDescription = stringResource(R.string.increase_year),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier.padding(8.dp).size(24.dp)
                                 )
                             }
