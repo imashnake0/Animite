@@ -23,7 +23,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 @Composable
 fun Chip(
     color: Color,
-    icon: ImageVector,
+    icon: ImageVector?,
     text: String?,
     modifier: Modifier = Modifier,
     iconPadding: PaddingValues = PaddingValues(),
@@ -36,14 +36,16 @@ fun Chip(
             .background(color.copy(alpha = 0.2f))
             .padding(horizontal = LocalPaddings.current.small)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = color,
-            modifier = Modifier
-                .padding(iconPadding)
-                .size(15.dp)
-        )
+        icon?.let {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier
+                    .padding(iconPadding)
+                    .size(15.dp)
+            )
+        }
         text?.let {
             Text(
                 text = text,

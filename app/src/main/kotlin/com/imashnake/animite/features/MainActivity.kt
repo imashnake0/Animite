@@ -214,6 +214,7 @@ fun MainScreen(
                     composable<ExploreRoute> {
                         ExploreScreen(
                             listState = exploreScrollState,
+                            deviceScreenCornerRadius = deviceScreenCornerRadius,
                             onItemClick = { id, mediaType, title ->
                                 navController.navigate(
                                     MediaPage(

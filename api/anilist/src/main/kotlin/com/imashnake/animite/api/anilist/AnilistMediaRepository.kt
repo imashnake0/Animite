@@ -12,6 +12,7 @@ import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlin.collections.filterNotNull
@@ -78,6 +79,8 @@ class AnilistMediaRepository(
         page: Int = 0,
         perPage: Int = 10,
         genre: String? = null,
+        includedGenres: List<String>? = null,
+        excludedGenres: List<String>? = null,
         year: Int? = null,
         search: String? = null,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
@@ -89,6 +92,8 @@ class AnilistMediaRepository(
                     perPage = Optional.presentIfNotNull(perPage),
                     sort = Optional.presentIfNotNull(sort),
                     genre = Optional.presentIfNotNull(genre),
+                    genreIn = Optional.presentIfNotNull(includedGenres),
+                    genreNotIn = Optional.presentIfNotNull(excludedGenres),
                     search = Optional.presentIfNotNull(search),
                     // Start FuzzyDateInt has to be YYYYMMDD -> YYYY0101
                     startDate = Optional.presentIfNotNull(year?.times(10000)?.plus(101)),
@@ -125,16 +130,13 @@ class AnilistMediaRepository(
             .asResult { Media(it.media!!) }
     }
 
-    fun fetchMediaGenres() = apolloClient
+    suspend fun fetchMediaGenres() = apolloClient
         .query(GenresQuery())
         .fetchPolicy(FetchPolicy.CacheFirst)
-        .toFlow()
-        .filter { it.exception == null }
-        .asResult {
-            it.GenreCollection
-                .orEmpty()
-                .filterNotNull()
-                .filterNot { genre -> genre == HENTAI }
-                .toImmutableList()
-        }
+        .execute()
+        .data
+        ?.GenreCollection
+        ?.filterNotNull()
+        ?.filterNot { genre -> genre == HENTAI }
+        .orEmpty()
 }
