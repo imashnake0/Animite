@@ -671,12 +671,18 @@ private fun FilterBottomSheet(
                     val yearItemSize = if (screenDpSize.width > (56 * 5).dp) {
                         56.dp
                     } else screenDpSize.width / 5
+
+                    val firstYear = yearRange.first()
+                    val lastYear = yearRange.last()
+                    val yearCount = yearRange.size
+
                     AnimatedVisibility(year != null) {
                         Column {
                             Box(contentAlignment = Alignment.Center) {
                                 Box(
                                     contentAlignment = Alignment.Center,
                                 ) {
+                                    var shortenYear by remember { mutableStateOf(false) }
                                     Box(
                                         modifier = Modifier.border(
                                             width = 2.dp,
@@ -686,8 +692,9 @@ private fun FilterBottomSheet(
                                     ) {
                                         // Fake year field
                                         Text(
-                                            text = "0000",
+                                            text = if (shortenYear) "000" else "0000",
                                             color = Color.Transparent,
+                                            maxLines = 1,
                                             modifier = Modifier
                                                 .align(Alignment.Center)
                                                 .padding(LocalPaddings.current.small)
@@ -697,7 +704,7 @@ private fun FilterBottomSheet(
                                     val listState = rememberLazyListState()
                                     LaunchedEffect(year) {
                                         year?.let {
-                                            listState.animateScrollToItem(year - yearRange.last())
+                                            listState.animateScrollToItem(year - firstYear)
                                         }
                                     }
                                     LazyRow(
@@ -706,16 +713,24 @@ private fun FilterBottomSheet(
                                         userScrollEnabled = false,
                                         modifier = Modifier.requiredWidth(yearItemSize * 5),
                                     ) {
-                                        items(yearRange.size) {
+                                        items(yearCount) {
+                                            val currentYear = firstYear + it
                                             val textAlpha by animateFloatAsState(
-                                                if (yearRange.last() + it == year) 1f else 0.5f
+                                                if (currentYear == year) 1f else 0.5f
                                             )
                                             Box(Modifier.requiredSize(yearItemSize)) {
+                                                val text = if (shortenYear) {
+                                                    "'${currentYear.toString().takeLast(2)}"
+                                                } else "$currentYear"
                                                 Text(
-                                                    text = "${yearRange.last() + it}",
+                                                    text = text,
+                                                    maxLines = 1,
                                                     color = MaterialTheme.colorScheme.onBackground.copy(
                                                         alpha = textAlpha
                                                     ),
+                                                    onTextLayout = { result ->
+                                                        if (result.hasVisualOverflow) shortenYear = true
+                                                    },
                                                     modifier = Modifier.align(Alignment.Center)
                                                 )
                                             }
@@ -723,7 +738,7 @@ private fun FilterBottomSheet(
                                     }
                                 }
                                 Button(
-                                    enabled = (year ?: 0) > yearRange.last(),
+                                    enabled = (year ?: 0) > firstYear,
                                     onClick = {
                                         haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                         onYearChange((year ?: 0) - 1)
@@ -738,7 +753,7 @@ private fun FilterBottomSheet(
                                     )
                                 }
                                 Button(
-                                    enabled = (year ?: 0) < yearRange.first(),
+                                    enabled = (year ?: 0) < lastYear,
                                     onClick = {
                                         haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                         onYearChange((year ?: 0) + 1)
@@ -762,7 +777,7 @@ private fun FilterBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = yearRange.last().toString(),
+                            text = firstYear.toString(),
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
@@ -778,12 +793,12 @@ private fun FilterBottomSheet(
                                 inactiveTickColor = Color.Transparent,
                                 activeTickColor = Color.Transparent
                             ),
-                            steps = yearRange.toList().size,
-                            valueRange = yearRange.last().toFloat()..yearRange.first().toFloat(),
+                            steps = yearCount,
+                            valueRange = firstYear.toFloat()..lastYear.toFloat(),
                             modifier = Modifier.weight(1f)
                         )
                         Text(
-                            text = yearRange.first().toString(),
+                            text = lastYear.toString(),
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,

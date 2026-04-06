@@ -143,7 +143,7 @@ class ExploreViewModel @Inject constructor(
         val now = Clock.System.now()
         val timeZone = TimeZone.currentSystemDefault()
         val currentYear = now.toLocalDateTime(timeZone).year
-        return (currentYear + 1 downTo EARLIEST_YEAR).toImmutableList()
+        return (EARLIEST_YEAR..currentYear + 1).toImmutableList()
     }
 
     companion object {
