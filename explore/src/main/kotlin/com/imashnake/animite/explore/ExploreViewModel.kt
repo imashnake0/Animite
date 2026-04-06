@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
@@ -14,8 +15,10 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -50,6 +53,7 @@ class ExploreViewModel @Inject constructor(
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
 
+    @OptIn(FlowPreview::class)
     val exploreList = combine(
         flow = mediaSort,
         flow2 = searchQuery,
@@ -57,7 +61,15 @@ class ExploreViewModel @Inject constructor(
         flow4 = excludedGenres,
         flow5 = selectedYear,
         transform = ::Pentuple,
-    ).flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, year) ->
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, year) ->
+        if (
+            sort == MediaSort.POPULARITY_DESC &&
+            searchQuery == null &&
+            includedGenres == emptySet<String>() &&
+            excludedGenres == emptySet<String>() &&
+            year == null
+        ) 0L else 500L
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, year) ->
         mediaListRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
             sort = listOf(sort),
@@ -109,12 +121,18 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.YEAR] = year
     }
 
-    fun reset() {
-        savedStateHandle[Constants.SORT] = Media.Sort.POPULARITY
-        savedStateHandle[Constants.ORDER] = true
+    fun resetGenres() {
         savedStateHandle[Constants.ALL_GENRES] = _allGenres.value
         savedStateHandle[Constants.INCLUDED_GENRES] = emptySet<String>()
         savedStateHandle[Constants.EXCLUDED_GENRES] = emptySet<String>()
+    }
+
+    fun reset() {
+        savedStateHandle[Constants.SORT] = Media.Sort.POPULARITY
+        savedStateHandle[Constants.ORDER] = true
+
+        resetGenres()
+
         savedStateHandle[Constants.YEAR] = null
         savedStateHandle[SEARCH_QUERY] = null
     }

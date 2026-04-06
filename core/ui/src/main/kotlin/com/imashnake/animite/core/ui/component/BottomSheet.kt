@@ -39,6 +39,7 @@ fun BottomSheet(
     deviceScreenCornerRadiusDp: Dp,
     modifier: Modifier = Modifier,
     dragHandleBackgroundColor: Color? = null,
+    contentPadding: PaddingValues = PaddingValues(horizontal = LocalPaddings.current.large),
     content: @Composable (contentPadding: PaddingValues, modifier: Modifier) -> Unit,
 ) {
     ModalBottomSheet(
@@ -74,7 +75,7 @@ fun BottomSheet(
         )
     ) {
         content(
-            PaddingValues(horizontal = LocalPaddings.current.large),
+            contentPadding,
             Modifier
                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 .fillMaxSize()

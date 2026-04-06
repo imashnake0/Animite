@@ -15,5 +15,5 @@
     <string name="exclude_genre">Excluded</string>
     <string name="all_genres">All</string>
 
-    <string name="reset">Reset</string>
+    <string name="reset_all">Reset all</string>
 </resources>
