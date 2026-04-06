@@ -24,14 +24,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.requiredSize
@@ -94,6 +94,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
@@ -243,6 +244,7 @@ fun ExploreScreen(
                                 )
                                 isSortDropdownExpanded = it
                             },
+                            insetAndNavigationPaddingValues = insetAndNavigationPaddingValues,
                             modifier = Modifier.fillMaxWidth()
                         )
 
@@ -401,60 +403,70 @@ private fun Sort(
     toggleOrder: () -> Unit,
     expanded: Boolean,
     setExpanded: (Boolean) -> Unit,
+    insetAndNavigationPaddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     val cascadeState = rememberCascadeState()
     val haptic = LocalHapticFeedback.current
 
     Box(modifier) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .clip(CircleShape)
-                .clickable { setExpanded(!expanded) }
-                .padding(
-                    vertical = LocalPaddings.current.tiny,
-                    horizontal = LocalPaddings.current.small
-                )
-                .graphicsLayer {
-                    alpha = 0.5f
-                }
+        AnimatedContent(
+            targetState = selectedSort,
+            modifier = Modifier.align(Alignment.Center)
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(selectedSort.icon),
-                contentDescription = null,
-                modifier = Modifier.size(11.dp)
-            )
-            Text(
-                text = stringResource(selectedSort.res),
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Medium,
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { setExpanded(!expanded) }
+                    .padding(
+                        vertical = LocalPaddings.current.tiny,
+                        horizontal = LocalPaddings.current.small
+                    )
+                    .graphicsLayer {
+                        alpha = 0.5f
+                    }
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(it.icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(11.dp)
+                )
+                Text(
+                    text = stringResource(it.res),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                )
 
-            val expandToCollapse = AnimatedImageVector.animatedVectorResource(
-                R.drawable.order
-            )
-            Icon(
-                painter = rememberAnimatedVectorPainter(
-                    animatedImageVector = expandToCollapse,
-                    atEnd = isDescending,
-                ),
-                contentDescription = null,
-                modifier = Modifier.size(11.dp)
-            )
+                val expandToCollapse = AnimatedImageVector.animatedVectorResource(
+                    R.drawable.order
+                )
+                Icon(
+                    painter = rememberAnimatedVectorPainter(
+                        animatedImageVector = expandToCollapse,
+                        atEnd = isDescending,
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.size(11.dp)
+                )
+            }
         }
 
-        val screenWidthDp = with(LocalDensity.current) {
-            LocalWindowInfo.current.containerSize.width.toDp()
-        }
+        val screenDpSize = LocalWindowInfo.current.containerDpSize
+        val layoutDirection = LocalLayoutDirection.current
+        val offsetX = (
+                screenDpSize.width
+                        - insetAndNavigationPaddingValues.calculateStartPadding(layoutDirection)
+                        - insetAndNavigationPaddingValues.calculateEndPadding(layoutDirection)
+                        - 196.dp
+        ) / 2
         val cornerRadius = LocalPaddings.current.large + LocalPaddings.current.tiny / 2
         CascadeDropdownMenu(
             expanded = expanded,
             onDismissRequest = { setExpanded(false) },
             state = cascadeState,
-            offset = DpOffset(x = (screenWidthDp - 196.dp) / 2, y = LocalPaddings.current.tiny),
+            offset = DpOffset(x = offsetX, y = LocalPaddings.current.tiny),
             shape = RoundedCornerShape(cornerRadius),
         ) {
             Text(
