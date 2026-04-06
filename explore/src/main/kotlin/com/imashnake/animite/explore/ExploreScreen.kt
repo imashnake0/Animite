@@ -148,7 +148,7 @@ fun ExploreScreen(
 
     val exploreList by viewModel.exploreList.collectAsState()
 
-    var showFilterBottomSheet by remember { mutableStateOf(false) }
+    var showFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
     val filterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
@@ -157,7 +157,7 @@ fun ExploreScreen(
 
     val haptic = LocalHapticFeedback.current
 
-    var isSortDropdownExpanded by remember { mutableStateOf(false) }
+    var isSortDropdownExpanded by rememberSaveable { mutableStateOf(false) }
     val selectedSort by viewModel.selectedSort.collectAsState()
     val isDescending by viewModel.isDescending.collectAsState()
 
@@ -628,36 +628,32 @@ private fun FilterBottomSheet(
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)
             ) {
-                val yearItemSize = 56.dp
+                val screenDpSize = LocalWindowInfo.current.containerDpSize
+                val yearItemSize = if (screenDpSize.width > (56 * 5).dp) {
+                    56.dp
+                } else screenDpSize.width / 5
                 AnimatedVisibility(year != null) {
                     Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Button(
-                                enabled = (year ?: 0) > yearRange.last(),
-                                onClick = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
-                                    onYearChange((year ?: 0) - 1)
-                                },
+                        Box(contentAlignment = Alignment.Center) {
+                            Box(
+                                contentAlignment = Alignment.Center,
                             ) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.step_year_left),
-                                    contentDescription = stringResource(R.string.increase_year),
-                                    modifier = Modifier.requiredSize(24.dp)
-                                )
-                            }
-                            Box(contentAlignment = Alignment.Center) {
                                 Box(
-                                    modifier = Modifier
-                                        .size(
-                                            width = yearItemSize,
-                                            height = yearItemSize / 1.5f
-                                        )
-                                        .border(
-                                            width = 2.dp,
-                                            shape = CircleShape,
-                                            color = MaterialTheme.colorScheme.tertiary
-                                        )
-                                )
+                                    modifier = Modifier.border(
+                                        width = 2.dp,
+                                        shape = CircleShape,
+                                        color = MaterialTheme.colorScheme.tertiary
+                                    )
+                                ) {
+                                    // Fake year field
+                                    Text(
+                                        text = "0000",
+                                        color = Color.Transparent,
+                                        modifier = Modifier
+                                            .align(Alignment.Center)
+                                            .padding(LocalPaddings.current.small)
+                                    )
+                                }
 
                                 val listState = rememberLazyListState()
                                 LaunchedEffect(year) {
@@ -667,9 +663,9 @@ private fun FilterBottomSheet(
                                 }
                                 LazyRow(
                                     state = listState,
-                                    contentPadding = PaddingValues(horizontal = yearItemSize * 1.5f),
+                                    contentPadding = PaddingValues(horizontal = yearItemSize * 2f),
                                     userScrollEnabled = false,
-                                    modifier = Modifier.requiredWidth(yearItemSize * 4),
+                                    modifier = Modifier.requiredWidth(yearItemSize * 5),
                                 ) {
                                     items(yearRange.size) {
                                         val textAlpha by animateFloatAsState(
@@ -688,11 +684,28 @@ private fun FilterBottomSheet(
                                 }
                             }
                             Button(
+                                enabled = (year ?: 0) > yearRange.last(),
+                                onClick = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                                    onYearChange((year ?: 0) - 1)
+                                },
+                                contentPadding = PaddingValues(),
+                                modifier = Modifier.align(Alignment.CenterStart)
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.step_year_left),
+                                    contentDescription = stringResource(R.string.increase_year),
+                                    modifier = Modifier.requiredSize(24.dp)
+                                )
+                            }
+                            Button(
                                 enabled = (year ?: 0) < yearRange.first(),
                                 onClick = {
                                     haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                                     onYearChange((year ?: 0) + 1)
-                                }
+                                },
+                                contentPadding = PaddingValues(),
+                                modifier = Modifier.align(Alignment.CenterEnd)
                             ) {
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.step_year_right),
