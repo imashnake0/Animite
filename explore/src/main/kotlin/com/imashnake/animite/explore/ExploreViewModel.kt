@@ -139,11 +139,11 @@ class ExploreViewModel @Inject constructor(
 
     val yearRange = getYears()
 
-    private fun getYears(): ImmutableList<Int> {
+    private fun getYears(): IntRange {
         val now = Clock.System.now()
         val timeZone = TimeZone.currentSystemDefault()
         val currentYear = now.toLocalDateTime(timeZone).year
-        return (EARLIEST_YEAR..currentYear + 1).toImmutableList()
+        return EARLIEST_YEAR..currentYear + 1
     }
 
     companion object {

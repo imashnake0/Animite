@@ -572,7 +572,7 @@ private fun FilterBottomSheet(
     excludeGenre: (String) -> Unit,
     clearGenre: (String) -> Unit,
     year: Int?,
-    yearRange: ImmutableList<Int>,
+    yearRange: IntRange,
     onYearChange: (Int?) -> Unit,
     resetGenres: () -> Unit,
     reset: () -> Unit,
@@ -597,237 +597,99 @@ private fun FilterBottomSheet(
                 )
                 .padding(paddingValues)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            GenresFilter(
+                includedGenres = includedGenres,
+                excludedGenres = excludedGenres,
+                allGenres = allGenres,
+                onIncludedGenreClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                    excludeGenre(it)
+                },
+                onExcludedGenreClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                    clearGenre(it)
+                },
+                onAllGenreClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                    includeGenre(it)
+                },
                 modifier = Modifier
                     .clip(RoundedCornerShape(LocalPaddings.current.small))
                     .combinedClickable(onClick = {}, onLongClick = resetGenres)
                     .padding(LocalPaddings.current.small)
-            ) {
-                Text(
-                    text = stringResource(R.string.genres),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-                )
+            )
 
-                Column {
-                    FlowGenres(
-                        genres = includedGenres,
-                        onGenreClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                            excludeGenre(it)
-                        },
-                        icon = ImageVector.vectorResource(R.drawable.include_genre),
-                        title = stringResource(R.string.include_genre),
-                        chipColor = Color(0xFF80DF87),
-                        modifier = Modifier.padding(bottom = LocalPaddings.current.small)
-                    )
-
-                    FlowGenres(
-                        genres = excludedGenres,
-                        onGenreClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                            clearGenre(it)
-                        },
-                        icon = ImageVector.vectorResource(R.drawable.exclude_genre),
-                        title = stringResource(R.string.exclude_genre),
-                        chipColor = Color(0xFFFF9999),
-                        modifier = Modifier.padding(bottom = LocalPaddings.current.small)
-                    )
-
-                    FlowGenres(
-                        genres = allGenres,
-                        onGenreClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            includeGenre(it)
-                        },
-                        icon = ImageVector.vectorResource(R.drawable.all_genres),
-                        title = stringResource(R.string.all_genres),
-                    )
-                }
-            }
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            YearFilter(
+                year = year,
+                yearRange = yearRange,
+                onYearChange = {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    onYearChange(it)
+                },
                 modifier = Modifier
                     .clip(RoundedCornerShape(LocalPaddings.current.small))
                     .combinedClickable(onClick = {}, onLongClick = { onYearChange(null) })
                     .padding(LocalPaddings.current.small)
-            ) {
-                Text(
-                    text = stringResource(R.string.year),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-                )
-
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    val screenDpSize = LocalWindowInfo.current.containerDpSize
-                    val yearItemSize = if (screenDpSize.width > (56 * 5).dp) {
-                        56.dp
-                    } else screenDpSize.width / 5
-
-                    val firstYear = yearRange.first()
-                    val lastYear = yearRange.last()
-                    val yearCount = yearRange.size
-
-                    AnimatedVisibility(year != null) {
-                        Column {
-                            Box(contentAlignment = Alignment.Center) {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    var shortenYear by remember { mutableStateOf(false) }
-                                    Box(
-                                        modifier = Modifier.border(
-                                            width = 2.dp,
-                                            shape = CircleShape,
-                                            color = MaterialTheme.colorScheme.tertiary
-                                        )
-                                    ) {
-                                        // Fake year field
-                                        Text(
-                                            text = if (shortenYear) "000" else "0000",
-                                            color = Color.Transparent,
-                                            maxLines = 1,
-                                            modifier = Modifier
-                                                .align(Alignment.Center)
-                                                .padding(LocalPaddings.current.small)
-                                        )
-                                    }
-
-                                    val listState = rememberLazyListState()
-                                    LaunchedEffect(year) {
-                                        year?.let {
-                                            listState.animateScrollToItem(year - firstYear)
-                                        }
-                                    }
-                                    LazyRow(
-                                        state = listState,
-                                        contentPadding = PaddingValues(horizontal = yearItemSize * 2f),
-                                        userScrollEnabled = false,
-                                        modifier = Modifier.requiredWidth(yearItemSize * 5),
-                                    ) {
-                                        items(yearCount) {
-                                            val currentYear = firstYear + it
-                                            val textAlpha by animateFloatAsState(
-                                                if (currentYear == year) 1f else 0.5f
-                                            )
-                                            Box(Modifier.requiredSize(yearItemSize)) {
-                                                val text = if (shortenYear) {
-                                                    "'${currentYear.toString().takeLast(2)}"
-                                                } else "$currentYear"
-                                                Text(
-                                                    text = text,
-                                                    maxLines = 1,
-                                                    color = MaterialTheme.colorScheme.onBackground.copy(
-                                                        alpha = textAlpha
-                                                    ),
-                                                    onTextLayout = { result ->
-                                                        if (result.hasVisualOverflow) shortenYear = true
-                                                    },
-                                                    modifier = Modifier.align(Alignment.Center)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                                Button(
-                                    enabled = (year ?: 0) > firstYear,
-                                    onClick = {
-                                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                                        onYearChange((year ?: 0) - 1)
-                                    },
-                                    contentPadding = PaddingValues(),
-                                    modifier = Modifier.align(Alignment.CenterStart)
-                                ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.step_year_left),
-                                        contentDescription = stringResource(R.string.increase_year),
-                                        modifier = Modifier.requiredSize(24.dp)
-                                    )
-                                }
-                                Button(
-                                    enabled = (year ?: 0) < lastYear,
-                                    onClick = {
-                                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                                        onYearChange((year ?: 0) + 1)
-                                    },
-                                    contentPadding = PaddingValues(),
-                                    modifier = Modifier.align(Alignment.CenterEnd)
-                                ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.step_year_right),
-                                        contentDescription = stringResource(R.string.decrease_year),
-                                        modifier = Modifier.requiredSize(24.dp)
-                                    )
-                                }
-                            }
-                            Spacer(Modifier.size(LocalPaddings.current.small))
-                        }
-                    }
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = firstYear.toString(),
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-                        Slider(
-                            value = year?.toFloat() ?: 0f,
-                            onValueChange = {
-                                haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                                onYearChange(it.toInt())
-                            },
-                            colors = SliderDefaults.colors(
-                                activeTrackColor = SliderDefaults.colors().inactiveTrackColor,
-                                inactiveTickColor = Color.Transparent,
-                                activeTickColor = Color.Transparent
-                            ),
-                            steps = yearCount,
-                            valueRange = firstYear.toFloat()..lastYear.toFloat(),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = lastYear.toString(),
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
-                }
-            }
+            )
 
             Spacer(modifier = Modifier.size(LocalPaddings.current.small))
 
-            Button(
+            ResetAllButton(
                 onClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.Reject)
                     reset()
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.reset),
-                        contentDescription = stringResource(R.string.reset_all),
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(stringResource(R.string.reset_all))
-                }
-            }
+            )
+        }
+    }
+}
+
+@Composable
+private fun GenresFilter(
+    includedGenres: ImmutableList<String>,
+    excludedGenres: ImmutableList<String>,
+    allGenres: ImmutableList<String>,
+    onIncludedGenreClick: (String) -> Unit,
+    onExcludedGenreClick: (String) -> Unit,
+    onAllGenreClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+        modifier = modifier,
+    ) {
+        Text(
+            text = stringResource(R.string.genres),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+        )
+
+        Column {
+            FlowGenres(
+                genres = includedGenres,
+                onGenreClick = onIncludedGenreClick,
+                icon = ImageVector.vectorResource(R.drawable.include_genre),
+                title = stringResource(R.string.include_genre),
+                chipColor = Color(0xFF80DF87),
+                modifier = Modifier.padding(bottom = LocalPaddings.current.small)
+            )
+
+            FlowGenres(
+                genres = excludedGenres,
+                onGenreClick = onExcludedGenreClick,
+                icon = ImageVector.vectorResource(R.drawable.exclude_genre),
+                title = stringResource(R.string.exclude_genre),
+                chipColor = Color(0xFFFF9999),
+                modifier = Modifier.padding(bottom = LocalPaddings.current.small)
+            )
+
+            FlowGenres(
+                genres = allGenres,
+                onGenreClick = onAllGenreClick,
+                icon = ImageVector.vectorResource(R.drawable.all_genres),
+                title = stringResource(R.string.all_genres),
+            )
         }
     }
 }
@@ -881,6 +743,184 @@ private fun FlowGenres(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun YearFilter(
+    year: Int?,
+    yearRange: IntRange,
+    onYearChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+        modifier = modifier,
+    ) {
+        Text(
+            text = stringResource(R.string.year),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+        )
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
+        ) {
+            val screenDpSize = LocalWindowInfo.current.containerDpSize
+            val yearItemSize = if (screenDpSize.width > (56 * 5).dp) {
+                56.dp
+            } else screenDpSize.width / 5
+
+            val firstYear = yearRange.first()
+            val lastYear = yearRange.last()
+            val yearCount = yearRange.count()
+
+            AnimatedVisibility(year != null) {
+                Column {
+                    Box(contentAlignment = Alignment.Center) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            var shortenYear by remember { mutableStateOf(false) }
+                            Box(
+                                modifier = Modifier.border(
+                                    width = 2.dp,
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.tertiary
+                                )
+                            ) {
+                                // Fake year field
+                                Text(
+                                    text = if (shortenYear) "000" else "0000",
+                                    color = Color.Transparent,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .padding(LocalPaddings.current.small)
+                                )
+                            }
+
+                            val listState = rememberLazyListState()
+                            LaunchedEffect(year) {
+                                year?.let {
+                                    listState.animateScrollToItem(year - firstYear)
+                                }
+                            }
+                            LazyRow(
+                                state = listState,
+                                contentPadding = PaddingValues(horizontal = yearItemSize * 2f),
+                                userScrollEnabled = false,
+                                modifier = Modifier.requiredWidth(yearItemSize * 5),
+                            ) {
+                                items(yearCount) {
+                                    val currentYear = firstYear + it
+                                    val textAlpha by animateFloatAsState(
+                                        if (currentYear == year) 1f else 0.5f
+                                    )
+                                    Box(Modifier.requiredSize(yearItemSize)) {
+                                        val text = if (shortenYear) {
+                                            "'${currentYear.toString().takeLast(2)}"
+                                        } else "$currentYear"
+                                        Text(
+                                            text = text,
+                                            maxLines = 1,
+                                            color = MaterialTheme.colorScheme.onBackground.copy(
+                                                alpha = textAlpha
+                                            ),
+                                            onTextLayout = { result ->
+                                                if (result.hasVisualOverflow) shortenYear = true
+                                            },
+                                            modifier = Modifier.align(Alignment.Center)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        Button(
+                            enabled = (year ?: 0) > firstYear,
+                            onClick = { onYearChange((year ?: 0) - 1) },
+                            contentPadding = PaddingValues(),
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.step_year_left),
+                                contentDescription = stringResource(R.string.increase_year),
+                                modifier = Modifier.requiredSize(24.dp)
+                            )
+                        }
+                        Button(
+                            enabled = (year ?: 0) < lastYear,
+                            onClick = { onYearChange((year ?: 0) + 1) },
+                            contentPadding = PaddingValues(),
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.step_year_right),
+                                contentDescription = stringResource(R.string.decrease_year),
+                                modifier = Modifier.requiredSize(24.dp)
+                            )
+                        }
+                    }
+                    Spacer(Modifier.size(LocalPaddings.current.small))
+                }
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = firstYear.toString(),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+                Slider(
+                    value = year?.toFloat() ?: 0f,
+                    onValueChange = { onYearChange(it.toInt()) },
+                    colors = SliderDefaults.colors(
+                        activeTrackColor = SliderDefaults.colors().inactiveTrackColor,
+                        inactiveTickColor = Color.Transparent,
+                        activeTickColor = Color.Transparent
+                    ),
+                    steps = yearCount,
+                    valueRange = firstYear.toFloat()..lastYear.toFloat(),
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = lastYear.toString(),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ResetAllButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.reset),
+                contentDescription = stringResource(R.string.reset_all),
+                modifier = Modifier.size(24.dp)
+            )
+            Text(stringResource(R.string.reset_all))
         }
     }
 }
