@@ -306,7 +306,8 @@ fun ExploreScreen(
                         onYearChange = viewModel::setMediaYear,
                         yearRange = viewModel.yearRange,
                         resetGenres = viewModel::resetGenres,
-                        reset = viewModel::reset
+                        reset = viewModel::reset,
+                        modifier = Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)
                     )
                 }
             }
