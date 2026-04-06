@@ -782,27 +782,9 @@ private fun YearFilter(
             AnimatedVisibility(year != null) {
                 Column {
                     Box(contentAlignment = Alignment.Center) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                        ) {
+                        Box(contentAlignment = Alignment.Center) {
                             var shortenYear by remember { mutableStateOf(false) }
-                            Box(
-                                modifier = Modifier.border(
-                                    width = 2.dp,
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.tertiary
-                                )
-                            ) {
-                                // Fake year field
-                                Text(
-                                    text = if (shortenYear) "000" else "0000",
-                                    color = Color.Transparent,
-                                    maxLines = 1,
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .padding(LocalPaddings.current.small)
-                                )
-                            }
+                            YearOutline(shortenYear)
 
                             val listState = rememberLazyListState()
                             LaunchedEffect(year) {
@@ -899,6 +881,30 @@ private fun YearFilter(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun YearOutline(
+    shortenYear: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.border(
+            width = 2.dp,
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.tertiary
+        )
+    ) {
+        // Fake year field
+        Text(
+            text = if (shortenYear) "000" else "0000",
+            color = Color.Transparent,
+            maxLines = 1,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(LocalPaddings.current.small)
+        )
     }
 }
 
