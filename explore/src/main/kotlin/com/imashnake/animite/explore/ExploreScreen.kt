@@ -116,6 +116,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.Chip
 import com.imashnake.animite.core.ui.ext.copy
+import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
@@ -135,9 +136,7 @@ fun ExploreScreen(
     listState: LazyListState,
     deviceScreenCornerRadius: Int,
     modifier: Modifier = Modifier,
-    contentWindowInsets: WindowInsets = WindowInsets.systemBars
-        .exclude(WindowInsets.navigationBars)
-        .union(WindowInsets.displayCutout),
+    contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val navigationComponentPaddingValues = when(LocalConfiguration.current.orientation) {
@@ -183,14 +182,14 @@ fun ExploreScreen(
                     animationSpec = tween(500)
                 )
 
-                Box(modifier = Modifier.padding(insetAndNavigationPaddingValues.copy(top = 0.dp))) {
+                Box {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(
                             LocalPaddings.current.small + LocalPaddings.current.tiny
                         ),
                         modifier = Modifier
                             .background(barBackgroundColor)
-                            .padding(top = insetAndNavigationPaddingValues.calculateTopPadding())
+                            .padding(insetAndNavigationPaddingValues.copy(bottom = 0.dp))
                             .fillMaxWidth()
                             .padding(vertical = LocalPaddings.current.small)
                             .zIndex(Float.MAX_VALUE)
@@ -250,7 +249,7 @@ fun ExploreScreen(
                         // TODO: Add filter chips here.
                     }
 
-                    Column {
+                    Column(Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)) {
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
                             verticalAlignment = Alignment.CenterVertically,
@@ -280,11 +279,10 @@ fun ExploreScreen(
                                 start = LocalPaddings.current.large,
                                 end = LocalPaddings.current.large,
                             ) + PaddingValues(
-                                bottom = LocalPaddings.current.large
-                            ) + PaddingValues(
                                 top = insetAndNavigationPaddingValues.calculateTopPadding()
                                         + TextFieldDefaults.MinHeight
-                                        + 2 * LocalPaddings.current.small
+                                        + 2 * LocalPaddings.current.small,
+                                bottom =  insetAndNavigationPaddingValues.calculateBottomPadding()
                             )
                         )
                     }
