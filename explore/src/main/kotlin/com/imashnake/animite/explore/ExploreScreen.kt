@@ -84,6 +84,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -129,6 +130,7 @@ import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
 import com.imashnake.animite.navigation.R as navigationR
@@ -698,13 +700,25 @@ private fun FilterBottomSheet(
 
             Spacer(modifier = Modifier.size(LocalPaddings.current.small))
 
-            ResetAllButton(
-                onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.Reject)
-                    reset()
-                },
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+            ) {
+                val scope = rememberCoroutineScope()
+                ResetAllButton(
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.Reject)
+                        reset()
+                    }
+                )
+
+                DoneButton(
+                    onClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                        scope.launch { sheetState.hide() }
+                    }
+                )
+            }
         }
     }
 }
@@ -1077,6 +1091,29 @@ private fun FlowFilter(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DoneButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.done),
+                contentDescription = stringResource(R.string.done),
+                modifier = Modifier.size(24.dp)
+            )
+            Text(stringResource(R.string.done))
         }
     }
 }
