@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -92,7 +93,9 @@ class ExploreViewModel @Inject constructor(
             includedGenres = includedGenres.toList().ifEmpty { null },
             excludedGenres = excludedGenres.toList().ifEmpty { null },
             season = seasonYear.first?.let { MediaSeason.safeValueOf(it) },
-            year = seasonYear.second
+            year = seasonYear.second,
+            includedFormats = includedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
+            excludedFormats = excludedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
         ).asResource()
     }
     .stateIn(

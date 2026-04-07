@@ -9,6 +9,8 @@ query MediaMediumListQuery(
     $season: MediaSeason,
     $startDate: FuzzyDateInt,
     $endDate: FuzzyDateInt,
+    $formatIn: [MediaFormat],
+    $formatNotIn: [MediaFormat],
     $search: String,
 ) {
     page: Page (
@@ -24,6 +26,8 @@ query MediaMediumListQuery(
             season: $season,
             startDate_greater: $startDate,
             startDate_lesser: $endDate,
+            format_in: $formatIn,
+            format_not_in: $formatNotIn
             search: $search,
             isAdult: false
         ) {

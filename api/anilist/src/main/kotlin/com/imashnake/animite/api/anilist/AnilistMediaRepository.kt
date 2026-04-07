@@ -7,6 +7,7 @@ import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -80,6 +81,8 @@ class AnilistMediaRepository(
         excludedGenres: List<String>? = null,
         season: MediaSeason? = null,
         year: Int? = null,
+        includedFormats: List<MediaFormat>? = null,
+        excludedFormats: List<MediaFormat>? = null,
         search: String? = null,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
         return apolloClient
@@ -97,7 +100,9 @@ class AnilistMediaRepository(
                     // Start FuzzyDateInt has to be YYYYMMDD -> YYYY0101
                     startDate = Optional.presentIfNotNull(year?.times(10000)?.plus(101)),
                     // End FuzzyDateInt has to be YYYYMMDD -> YYYY1231
-                    endDate = Optional.presentIfNotNull(year?.times(10000)?.plus(1231))
+                    endDate = Optional.presentIfNotNull(year?.times(10000)?.plus(1231)),
+                    formatIn = Optional.presentIfNotNull(includedFormats),
+                    formatNotIn = Optional.presentIfNotNull(excludedFormats),
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
