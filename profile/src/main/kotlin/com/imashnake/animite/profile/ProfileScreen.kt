@@ -73,23 +73,24 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.banner.BannerLayout
-import com.imashnake.animite.profile.ext.animiteBlockQuoteStyle
-import com.imashnake.animite.profile.ext.animiteCodeBlockStyle
-import com.imashnake.animite.core.ui.ext.copy
-import com.imashnake.animite.core.ui.ext.horizontalOnly
-import com.imashnake.animite.core.ui.ext.maxHeight
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.core.ui.component.ProgressIndicatorScreen
+import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.crossfadeModel
+import com.imashnake.animite.core.ui.ext.horizontalOnly
+import com.imashnake.animite.core.ui.ext.maxHeight
+import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.profile.ext.animiteBlockQuoteStyle
+import com.imashnake.animite.profile.ext.animiteCodeBlockStyle
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
@@ -446,7 +447,7 @@ private fun UserTabs(
                 divider = {},
                 modifier = Modifier.padding(horizontalContentPadding)
             ) {
-                titles.forEachIndexed { index, tab ->
+                titles.fastForEachIndexed { index, tab ->
                     Tab(
                         selected = pagerState.currentPage == index,
                         onClick = {
@@ -485,7 +486,7 @@ private fun UserTabs(
                 divider = {},
                 modifier = Modifier.padding(horizontalContentPadding)
             ) {
-                titles.forEachIndexed { index, tab ->
+                titles.fastForEachIndexed { index, tab ->
                     Tab(
                         selected = pagerState.currentPage == index,
                         onClick = {

@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
@@ -67,7 +68,7 @@ fun NavigationRail(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            NavigationBarPaths.entries.forEach { destination ->
+            NavigationBarPaths.entries.fastForEach { destination ->
                 val selected = remember(destination, currentBackStackEntry) {
                     currentBackStackEntry?.let { destination.matchesDestination(it) } == true
                 }

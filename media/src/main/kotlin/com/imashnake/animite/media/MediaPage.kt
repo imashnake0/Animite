@@ -1016,7 +1016,7 @@ private fun MediaRankings(
                 ButtonGroupDefaults.ConnectedSpaceBetween
             )
         ) {
-            Media.Ranking.TimeSpan.entries.forEach { timeSpan ->
+            Media.Ranking.TimeSpan.entries.fastForEach { timeSpan ->
                 ToggleButton(
                     checked = selectedTimeSpanIndex == timeSpan.index,
                     onCheckedChange = { onCheckedChange(timeSpan.index) },

@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
@@ -54,7 +55,7 @@ fun NavigationBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            NavigationBarPaths.entries.forEach { destination ->
+            NavigationBarPaths.entries.fastForEach { destination ->
                 val selected = remember(destination, currentBackStackEntry) {
                     currentBackStackEntry?.let { destination.matchesDestination(it) } == true
                 }

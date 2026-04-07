@@ -242,6 +242,8 @@ data class Media(
         ONE_SHOT;
 
         companion object {
+            fun animeFormats() = Format.entries.dropLast(3)
+
             fun safeValueOf(rawValue: String): Format? = try {
                 valueOf(rawValue)
             } catch (e: IllegalArgumentException) {

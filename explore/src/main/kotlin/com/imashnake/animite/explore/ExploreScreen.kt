@@ -53,7 +53,6 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -174,6 +173,10 @@ fun ExploreScreen(
     val allGenres by viewModel.allGenres.collectAsState()
     val includedGenres by viewModel.includedGenres.collectAsState()
     val excludedGenres by viewModel.excludedGenres.collectAsState()
+
+    val allFormats by viewModel.allFormats.collectAsState()
+    val includedFormats by viewModel.includedFormats.collectAsState()
+    val excludedFormats by viewModel.excludedFormats.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
@@ -309,12 +312,19 @@ fun ExploreScreen(
                         includeGenre = viewModel::includeMediaGenre,
                         excludeGenre = viewModel::excludeMediaGenre,
                         clearGenre = viewModel::clearMediaGenre,
+                        resetGenres = viewModel::resetGenres,
                         season = season,
                         selectSeason = viewModel::setMediaSeason,
                         year = year,
                         onYearChange = viewModel::setMediaYear,
                         yearRange = viewModel.yearRange,
-                        resetGenres = viewModel::resetGenres,
+                        allFormats = allFormats.orEmpty().sorted().toImmutableList(),
+                        includedFormats = includedFormats.sorted().toImmutableList(),
+                        excludedFormats = excludedFormats.sorted().toImmutableList(),
+                        includeFormat = viewModel::includeMediaFormat,
+                        excludeFormat = viewModel::excludeMediaFormat,
+                        clearFormat = viewModel::clearMediaFormat,
+                        resetFormats = viewModel::resetFormats,
                         reset = viewModel::reset,
                         modifier = Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)
                     )
@@ -580,12 +590,19 @@ private fun FilterBottomSheet(
     includeGenre: (String) -> Unit,
     excludeGenre: (String) -> Unit,
     clearGenre: (String) -> Unit,
+    resetGenres: () -> Unit,
     season: String?,
     selectSeason: (String?) -> Unit,
     year: Int?,
     yearRange: IntRange,
     onYearChange: (Int?) -> Unit,
-    resetGenres: () -> Unit,
+    allFormats: ImmutableList<String>,
+    includedFormats: ImmutableList<String>,
+    excludedFormats: ImmutableList<String>,
+    includeFormat: (String) -> Unit,
+    excludeFormat: (String) -> Unit,
+    clearFormat: (String) -> Unit,
+    resetFormats: () -> Unit,
     reset: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -655,6 +672,28 @@ private fun FilterBottomSheet(
                     .padding(LocalPaddings.current.small)
             )
 
+            FormatFilter(
+                includedFormats = includedFormats,
+                excludedFormats = excludedFormats,
+                allFormats = allFormats,
+                onIncludedFormatClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                    excludeFormat(it)
+                },
+                onExcludedFormatClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                    clearFormat(it)
+                },
+                onAllFormatClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                    includeFormat(it)
+                },
+                modifier = Modifier
+                    .clip(RoundedCornerShape(LocalPaddings.current.small))
+                    .combinedClickable(onClick = {}, onLongClick = resetFormats)
+                    .padding(LocalPaddings.current.small)
+            )
+
             Spacer(modifier = Modifier.size(LocalPaddings.current.small))
 
             ResetAllButton(
@@ -689,83 +728,30 @@ private fun GenresFilter(
         )
 
         Column {
-            FlowGenres(
-                genres = includedGenres,
-                onGenreClick = onIncludedGenreClick,
+            FlowFilter(
+                filters = includedGenres,
+                onFilterClick = onIncludedGenreClick,
                 icon = ImageVector.vectorResource(R.drawable.include_genre),
                 title = stringResource(R.string.include_genre),
                 chipColor = Color(0xFF80DF87),
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
 
-            FlowGenres(
-                genres = excludedGenres,
-                onGenreClick = onExcludedGenreClick,
+            FlowFilter(
+                filters = excludedGenres,
+                onFilterClick = onExcludedGenreClick,
                 icon = ImageVector.vectorResource(R.drawable.exclude_genre),
                 title = stringResource(R.string.exclude_genre),
                 chipColor = Color(0xFFFF9999),
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
 
-            FlowGenres(
-                genres = allGenres,
-                onGenreClick = onAllGenreClick,
+            FlowFilter(
+                filters = allGenres,
+                onFilterClick = onAllGenreClick,
                 icon = ImageVector.vectorResource(R.drawable.all_genres),
                 title = stringResource(R.string.all_genres),
             )
-        }
-    }
-}
-
-@Composable
-private fun FlowGenres(
-    genres: ImmutableList<String>,
-    onGenreClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
-    title: String? = null,
-    chipColor: Color= MaterialTheme.colorScheme.tertiary,
-) {
-    AnimatedContent(genres) {
-        if (it.isNotEmpty()) {
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                    modifier = Modifier.padding(bottom = LocalPaddings.current.tiny)
-                ) {
-                    icon?.let {
-                        Icon(
-                            imageVector = icon,
-                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            contentDescription = null,
-                            modifier = Modifier.size(11.dp)
-                        )
-                    }
-                    title?.let {
-                        Text(
-                            text = title,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
-                }
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    modifier = modifier.fillMaxWidth()
-                ) {
-                    it.fastForEach { genre ->
-                        Chip(
-                            color = chipColor,
-                            icon = null,
-                            text = genre,
-                            modifier = Modifier.clickable { onGenreClick(genre) }
-                        )
-                    }
-                }
-            }
         }
     }
 }
@@ -790,7 +776,7 @@ private fun SeasonFilter(
         Row(
             horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
         ) {
-            Media.Season.entries.forEach { season ->
+            Media.Season.entries.fastForEach { season ->
                 ToggleButton(
                     checked = selectedSeason?.let { Media.Season.safeValueOf(it) } == season,
                     onCheckedChange = { onSeasonSelected(season.name) },
@@ -980,6 +966,112 @@ private fun YearOutline(
                 .align(Alignment.Center)
                 .padding(LocalPaddings.current.small)
         )
+    }
+}
+
+@Composable
+private fun FormatFilter(
+    includedFormats: ImmutableList<String>,
+    excludedFormats: ImmutableList<String>,
+    allFormats: ImmutableList<String>,
+    onIncludedFormatClick: (String) -> Unit,
+    onExcludedFormatClick: (String) -> Unit,
+    onAllFormatClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+        modifier = modifier,
+    ) {
+        Text(
+            text = stringResource(R.string.format),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+        )
+
+        Column {
+            FlowFilter(
+                filters = includedFormats,
+                onFilterClick = onIncludedFormatClick,
+                icon = ImageVector.vectorResource(R.drawable.include_genre),
+                title = stringResource(R.string.include_genre),
+                chipColor = Color(0xFF80DF87),
+                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
+                modifier = Modifier.padding(bottom = LocalPaddings.current.small)
+            )
+
+            FlowFilter(
+                filters = excludedFormats,
+                onFilterClick = onExcludedFormatClick,
+                icon = ImageVector.vectorResource(R.drawable.exclude_genre),
+                title = stringResource(R.string.exclude_genre),
+                chipColor = Color(0xFFFF9999),
+                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
+                modifier = Modifier.padding(bottom = LocalPaddings.current.small)
+            )
+
+            FlowFilter(
+                filters = allFormats,
+                onFilterClick = onAllFormatClick,
+                icon = ImageVector.vectorResource(R.drawable.all_genres),
+                title = stringResource(R.string.all_genres),
+                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FlowFilter(
+    filters: ImmutableList<String>,
+    onFilterClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    transformFilterText: @Composable ((String) -> String)? = null,
+    icon: ImageVector? = null,
+    title: String? = null,
+    chipColor: Color= MaterialTheme.colorScheme.tertiary,
+) {
+    AnimatedContent(filters) {
+        if (it.isNotEmpty()) {
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                    modifier = Modifier.padding(bottom = LocalPaddings.current.tiny)
+                ) {
+                    icon?.let {
+                        Icon(
+                            imageVector = icon,
+                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            contentDescription = null,
+                            modifier = Modifier.size(11.dp)
+                        )
+                    }
+                    title?.let {
+                        Text(
+                            text = title,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
+                }
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    modifier = modifier.fillMaxWidth()
+                ) {
+                    it.fastForEach { filter ->
+                        Chip(
+                            color = chipColor,
+                            icon = null,
+                            text = transformFilterText?.invoke(filter) ?: filter,
+                            modifier = Modifier.clickable { onFilterClick(filter) }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
