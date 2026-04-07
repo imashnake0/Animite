@@ -166,6 +166,8 @@ fun ExploreScreen(
 
     val haptic = LocalHapticFeedback.current
 
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
     var isSortDropdownExpanded by rememberSaveable { mutableStateOf(false) }
     val selectedSort by viewModel.selectedSort.collectAsState()
     val isDescending by viewModel.isDescending.collectAsState()
@@ -218,6 +220,7 @@ fun ExploreScreen(
                                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
                         ) {
                             SearchBar(
+                                searchQuery = searchQuery,
                                 onSearch = { viewModel.setSearchQuery(it) },
                                 modifier = Modifier
                                     .clip(CircleShape)
@@ -349,20 +352,19 @@ fun ExploreScreen(
 )
 @Composable
 private fun SearchBar(
+    searchQuery: String?,
     onSearch: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
-    var text by rememberSaveable { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val closeIconSize by animateFloatAsState(
-        targetValue = if (text.isNotEmpty()) 1f else 0f
+        targetValue = if (!searchQuery.isNullOrEmpty()) 1f else 0f
     )
 
     TextField(
-        value = text,
+        value = searchQuery.orEmpty(),
         onValueChange = {
-            text = it
             onSearch(it.ifEmpty { null })
         },
         modifier = modifier.focusRequester(focusRequester),
@@ -385,37 +387,31 @@ private fun SearchBar(
             )
         },
         trailingIcon = {
-            Row {
-                CompositionLocalProvider(
-                    LocalRippleConfiguration provides RippleConfiguration(
-                        rippleAlpha = RippleAlpha(
-                            draggedAlpha = 0f,
-                            focusedAlpha = 0f,
-                            hoveredAlpha = 0f,
-                            pressedAlpha = 0f
-                        )
+            CompositionLocalProvider(
+                LocalRippleConfiguration provides RippleConfiguration(
+                    rippleAlpha = RippleAlpha(
+                        draggedAlpha = 0f,
+                        focusedAlpha = 0f,
+                        hoveredAlpha = 0f,
+                        pressedAlpha = 0f
                     )
+                )
+            ) {
+                IconButton(
+                    onClick = { onSearch(null) },
+                    colors = IconButtonDefaults.iconButtonColors(),
+                    modifier = Modifier
+                        .size(40.dp)
+                        .graphicsLayer {
+                            scaleX = closeIconSize
+                            scaleY = closeIconSize
+                        }
                 ) {
-                    IconButton(
-                        onClick = {
-                            text = ""
-                            onSearch(null)
-                        },
-                        colors = IconButtonDefaults.iconButtonColors(),
-                        enabled = text.isNotEmpty(),
-                        modifier = Modifier
-                            .size(40.dp)
-                            .graphicsLayer {
-                                scaleX = closeIconSize
-                                scaleY = closeIconSize
-                            }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }
