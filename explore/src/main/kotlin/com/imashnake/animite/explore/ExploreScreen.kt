@@ -53,6 +53,9 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -71,6 +74,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -130,7 +135,8 @@ import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(
     ExperimentalLayoutApi::class,
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
 fun ExploreScreen(
@@ -162,6 +168,7 @@ fun ExploreScreen(
     val selectedSort by viewModel.selectedSort.collectAsState()
     val isDescending by viewModel.isDescending.collectAsState()
 
+    val season by viewModel.selectedSeason.collectAsState()
     val year by viewModel.selectedYear.collectAsState()
 
     val allGenres by viewModel.allGenres.collectAsState()
@@ -302,6 +309,8 @@ fun ExploreScreen(
                         includeGenre = viewModel::includeMediaGenre,
                         excludeGenre = viewModel::excludeMediaGenre,
                         clearGenre = viewModel::clearMediaGenre,
+                        season = season,
+                        selectSeason = viewModel::setMediaSeason,
                         year = year,
                         onYearChange = viewModel::setMediaYear,
                         yearRange = viewModel.yearRange,
@@ -571,6 +580,8 @@ private fun FilterBottomSheet(
     includeGenre: (String) -> Unit,
     excludeGenre: (String) -> Unit,
     clearGenre: (String) -> Unit,
+    season: String?,
+    selectSeason: (String?) -> Unit,
     year: Int?,
     yearRange: IntRange,
     onYearChange: (Int?) -> Unit,
@@ -616,6 +627,18 @@ private fun FilterBottomSheet(
                 modifier = Modifier
                     .clip(RoundedCornerShape(LocalPaddings.current.small))
                     .combinedClickable(onClick = {}, onLongClick = resetGenres)
+                    .padding(LocalPaddings.current.small)
+            )
+
+            SeasonFilter(
+                selectedSeason = season,
+                onSeasonSelected = {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    selectSeason(it)
+                },
+                modifier = Modifier
+                    .clip(RoundedCornerShape(LocalPaddings.current.small))
+                    .combinedClickable(onClick = {}, onLongClick = { selectSeason(null) })
                     .padding(LocalPaddings.current.small)
             )
 
@@ -740,6 +763,58 @@ private fun FlowGenres(
                             text = genre,
                             modifier = Modifier.clickable { onGenreClick(genre) }
                         )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun SeasonFilter(
+    selectedSeason: String?,
+    onSeasonSelected: (String?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+        modifier = modifier,
+    ) {
+        Text(
+            text = stringResource(R.string.season),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+        ) {
+            Media.Season.entries.forEach { season ->
+                ToggleButton(
+                    checked = selectedSeason?.let { Media.Season.safeValueOf(it) } == season,
+                    onCheckedChange = { onSeasonSelected(season.name) },
+                    shapes = when (season) {
+                        Media.Season.WINTER -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        Media.Season.FALL -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                    },
+                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(season.icon),
+                            contentDescription = stringResource(season.res),
+                            modifier = Modifier
+                                .graphicsLayer { alpha = 0.5f }
+                                .height(14.dp)
+                                .align(Alignment.CenterVertically)
+                        )
+                        Text(stringResource(season.res))
                     }
                 }
             }
@@ -915,6 +990,10 @@ private fun ResetAllButton(
 ) {
     Button(
         onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        ),
         modifier = modifier,
     ) {
         Row(

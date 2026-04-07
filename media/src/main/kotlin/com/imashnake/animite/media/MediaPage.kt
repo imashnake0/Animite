@@ -1029,7 +1029,8 @@ private fun MediaRankings(
                 ) {
                     Row(
                         verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
+                    ) {
                         Text(text = stringResource(timeSpan.res), Modifier.alignByBaseline())
                         when (timeSpan.index) {
                             1 -> year?.let {

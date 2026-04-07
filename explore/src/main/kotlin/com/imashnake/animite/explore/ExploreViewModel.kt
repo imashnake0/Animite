@@ -1,5 +1,6 @@
 package com.imashnake.animite.explore
 
+import androidx.compose.ui.graphics.Path.Companion.combine
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -47,6 +48,7 @@ class ExploreViewModel @Inject constructor(
     val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_GENRES, null)
     val includedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_GENRES, emptySet())
     val excludedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_GENRES, emptySet())
+    val selectedSeason = savedStateHandle.getStateFlow<String?>(Constants.SEASON, null)
     val selectedYear = savedStateHandle.getStateFlow<Int?>(Constants.YEAR, null)
 
     val mediaSort = selectedSort
@@ -59,24 +61,25 @@ class ExploreViewModel @Inject constructor(
         flow2 = searchQuery,
         flow3 = includedGenres,
         flow4 = excludedGenres,
-        flow5 = selectedYear,
+        flow5 = selectedSeason.combine(selectedYear, ::Pair),
         transform = ::Pentuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, year) ->
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear) ->
         if (
             sort == MediaSort.POPULARITY_DESC &&
             searchQuery == null &&
             includedGenres == emptySet<String>() &&
             excludedGenres == emptySet<String>() &&
-            year == null
+            seasonYear.first == null &&
+            seasonYear.second == null
         ) 0L else 500L
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, year) ->
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear) ->
         mediaListRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
             sort = listOf(sort),
             search = searchQuery,
             includedGenres = includedGenres.toList().ifEmpty { null },
             excludedGenres = excludedGenres.toList().ifEmpty { null },
-            year = year
+            year = seasonYear.second
         ).asResource()
     }
     .stateIn(
@@ -117,6 +120,10 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.EXCLUDED_GENRES] = excludedGenres.value.minus(genre)
     }
 
+    fun setMediaSeason(season: String?) {
+        savedStateHandle[Constants.SEASON] = season
+    }
+
     fun setMediaYear(year: Int?) {
         savedStateHandle[Constants.YEAR] = year
     }
@@ -133,6 +140,7 @@ class ExploreViewModel @Inject constructor(
 
         resetGenres()
 
+        savedStateHandle[Constants.SEASON] = null
         savedStateHandle[Constants.YEAR] = null
         savedStateHandle[SEARCH_QUERY] = null
     }

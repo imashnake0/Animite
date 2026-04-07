@@ -2,6 +2,7 @@
 <resources>
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
+    <string name="season">Season</string>
     <string name="genres">Genres</string>
     <string name="year">Year</string>
 

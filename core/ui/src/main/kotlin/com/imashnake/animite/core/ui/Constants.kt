@@ -9,5 +9,6 @@ object Constants {
     const val ALL_GENRES = "allGenres"
     const val INCLUDED_GENRES = "includedGenres"
     const val EXCLUDED_GENRES = "excludedGenres"
+    const val SEASON = "season"
     const val YEAR = "year"
 }
