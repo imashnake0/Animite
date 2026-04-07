@@ -18,8 +18,10 @@ data object SocialRoute
 
 @Serializable
 data class ExploreRoute(
+    val sortName: String? = null,
+    val isDescending: Boolean? = null,
     val season: String? = null,
-    val year: Int? = null
+    val year: Int? = null,
 )
 
 @Serializable

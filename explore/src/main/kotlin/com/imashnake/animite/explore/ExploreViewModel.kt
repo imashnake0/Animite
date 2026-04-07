@@ -46,8 +46,8 @@ class ExploreViewModel @Inject constructor(
         }
     }
 
-    val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, Media.Sort.POPULARITY)
-    val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, true)
+    val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, navArgs.sortName?.let { Media.Sort.valueOf(it) } ?: Media.Sort.POPULARITY)
+    val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, navArgs.isDescending ?: true)
 
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
 
