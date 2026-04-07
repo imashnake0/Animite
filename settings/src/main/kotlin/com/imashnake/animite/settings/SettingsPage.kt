@@ -77,6 +77,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.banner.BannerLayout
@@ -179,7 +180,7 @@ fun SettingsPage(
                                         ButtonGroupDefaults.ConnectedSpaceBetween
                                     )
                                 ) {
-                                    Theme.entries.forEach { theme ->
+                                    Theme.entries.fastForEach { theme ->
                                         ToggleButton(
                                             checked = selectedTheme == theme.name,
                                             onCheckedChange = {
@@ -297,7 +298,7 @@ fun SettingsPage(
                                     }
                                     1 -> {
                                         Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
-                                            DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART).forEach {
+                                            DayPart.entries.map { it.name }.plus(SYSTEM_DAY_PART).fastForEach {
                                                 Row(
                                                     horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                                                     verticalAlignment = Alignment.CenterVertically,
@@ -365,7 +366,7 @@ private fun Items(
             verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
             modifier = modifier
         ) {
-            items.forEachIndexed { index, item ->
+            items.fastForEachIndexed { index, item ->
                 val top = when (index) {
                     0 -> LocalPaddings.current.large
                     else -> LocalPaddings.current.tiny

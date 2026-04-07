@@ -12,11 +12,8 @@ import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
-import kotlin.collections.filterNotNull
-import kotlin.collections.orEmpty
 
 // TODO: Add preference for adult content.
 private const val HENTAI = "Hentai"
