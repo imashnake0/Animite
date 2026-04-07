@@ -5,14 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -47,6 +46,7 @@ class ExploreViewModel @Inject constructor(
     val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_GENRES, null)
     val includedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_GENRES, emptySet())
     val excludedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_GENRES, emptySet())
+    val selectedSeason = savedStateHandle.getStateFlow<String?>(Constants.SEASON, null)
     val selectedYear = savedStateHandle.getStateFlow<Int?>(Constants.YEAR, null)
 
     val mediaSort = selectedSort
@@ -59,24 +59,26 @@ class ExploreViewModel @Inject constructor(
         flow2 = searchQuery,
         flow3 = includedGenres,
         flow4 = excludedGenres,
-        flow5 = selectedYear,
+        flow5 = selectedSeason.combine(selectedYear, ::Pair),
         transform = ::Pentuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, year) ->
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear) ->
         if (
             sort == MediaSort.POPULARITY_DESC &&
             searchQuery == null &&
             includedGenres == emptySet<String>() &&
             excludedGenres == emptySet<String>() &&
-            year == null
+            seasonYear.first == null &&
+            seasonYear.second == null
         ) 0L else 500L
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, year) ->
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear) ->
         mediaListRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
             sort = listOf(sort),
             search = searchQuery,
             includedGenres = includedGenres.toList().ifEmpty { null },
             excludedGenres = excludedGenres.toList().ifEmpty { null },
-            year = year
+            season = seasonYear.first?.let { MediaSeason.safeValueOf(it) },
+            year = seasonYear.second
         ).asResource()
     }
     .stateIn(
@@ -117,6 +119,10 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.EXCLUDED_GENRES] = excludedGenres.value.minus(genre)
     }
 
+    fun setMediaSeason(season: String?) {
+        savedStateHandle[Constants.SEASON] = season
+    }
+
     fun setMediaYear(year: Int?) {
         savedStateHandle[Constants.YEAR] = year
     }
@@ -133,17 +139,18 @@ class ExploreViewModel @Inject constructor(
 
         resetGenres()
 
+        savedStateHandle[Constants.SEASON] = null
         savedStateHandle[Constants.YEAR] = null
         savedStateHandle[SEARCH_QUERY] = null
     }
 
     val yearRange = getYears()
 
-    private fun getYears(): ImmutableList<Int> {
+    private fun getYears(): IntRange {
         val now = Clock.System.now()
         val timeZone = TimeZone.currentSystemDefault()
         val currentYear = now.toLocalDateTime(timeZone).year
-        return (EARLIEST_YEAR..currentYear + 1).toImmutableList()
+        return EARLIEST_YEAR..currentYear + 1
     }
 
     companion object {

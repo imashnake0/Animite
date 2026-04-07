@@ -76,6 +76,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.banner.BannerLayout
@@ -748,7 +749,7 @@ private fun PreviewItems() {
                 0 -> Row(
                     horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
                 ) {
-                    Theme.entries.forEach { theme ->
+                    Theme.entries.fastForEach { theme ->
                         ToggleButton(
                             checked = selectedTheme == theme,
                             onCheckedChange = { selectedTheme = theme },
