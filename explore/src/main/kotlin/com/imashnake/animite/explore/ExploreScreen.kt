@@ -715,7 +715,10 @@ private fun FilterBottomSheet(
                 DoneButton(
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-                        scope.launch { sheetState.hide() }
+                        scope.launch {
+                            sheetState.hide()
+                            onDismissRequest()
+                        }
                     }
                 )
             }
