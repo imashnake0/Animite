@@ -101,7 +101,7 @@ fun <T> MediaSmallRow(
                         color = MaterialTheme.colorScheme.primary,
                         icon = ImageVector.vectorResource(icon),
                         text = label,
-                        modifier = Modifier.clickable { onLabelClick?.invoke() }
+                        onClick = { onLabelClick?.invoke() },
                     )
                 }
 
@@ -110,9 +110,8 @@ fun <T> MediaSmallRow(
                         color = MaterialTheme.colorScheme.primary,
                         icon = ImageVector.vectorResource(R.drawable.right_arrow),
                         text = null,
-                        modifier = Modifier
-                            .clickable { onLabelClick.invoke() }
-                            .fillMaxHeight()
+                        onClick = onLabelClick,
+                        modifier = Modifier.fillMaxHeight()
                     )
                 }
             }
