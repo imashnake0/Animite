@@ -113,7 +113,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
@@ -992,34 +991,31 @@ private fun FormatFilter(
 
         Column {
             FlowFilter(
-                filters = includedFormats
-                    .fastMap { stringResource(Media.Format.valueOf(it).res) }
-                    .toImmutableList(),
+                filters = includedFormats,
                 onFilterClick = onIncludedFormatClick,
                 icon = ImageVector.vectorResource(R.drawable.include_genre),
                 title = stringResource(R.string.include_genre),
                 chipColor = Color(0xFF80DF87),
+                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
 
             FlowFilter(
-                filters = excludedFormats
-                    .fastMap { stringResource(Media.Format.valueOf(it).res) }
-                    .toImmutableList(),
+                filters = excludedFormats,
                 onFilterClick = onExcludedFormatClick,
                 icon = ImageVector.vectorResource(R.drawable.exclude_genre),
                 title = stringResource(R.string.exclude_genre),
                 chipColor = Color(0xFFFF9999),
+                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
 
             FlowFilter(
-                filters = allFormats
-                    .fastMap { stringResource(Media.Format.valueOf(it).res) }
-                    .toImmutableList(),
+                filters = allFormats,
                 onFilterClick = onAllFormatClick,
                 icon = ImageVector.vectorResource(R.drawable.all_genres),
                 title = stringResource(R.string.all_genres),
+                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
             )
         }
     }
@@ -1030,6 +1026,7 @@ private fun FlowFilter(
     filters: ImmutableList<String>,
     onFilterClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    transformFilterText: @Composable ((String) -> String)? = null,
     icon: ImageVector? = null,
     title: String? = null,
     chipColor: Color= MaterialTheme.colorScheme.tertiary,
@@ -1068,7 +1065,7 @@ private fun FlowFilter(
                         Chip(
                             color = chipColor,
                             icon = null,
-                            text = filter,
+                            text = transformFilterText?.invoke(filter) ?: filter,
                             modifier = Modifier.clickable { onFilterClick(filter) }
                         )
                     }
