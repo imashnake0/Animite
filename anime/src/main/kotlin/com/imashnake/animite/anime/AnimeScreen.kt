@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -30,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -182,7 +185,38 @@ private fun AnimeRow(
     MediaSmallRow(
         title = mediaList.type.title,
         mediaList = mediaList.list,
-        modifier = modifier,
+        modifier = modifier
+            .clip(RoundedCornerShape(LocalPaddings.current.large))
+            .clickable {
+                when(mediaList.type) {
+                    MediaList.Type.TRENDING_NOW -> {
+                        onNavigateToExplore(
+                            ExploreRoute(
+                                sortName = Media.Sort.TRENDING.name,
+                                isDescending = true
+                            )
+                        )
+                    }
+                    MediaList.Type.ALL_TIME_POPULAR -> {
+                        onNavigateToExplore(
+                            ExploreRoute(
+                                sortName = Media.Sort.POPULARITY.name,
+                                isDescending = true
+                            )
+                        )
+                    }
+                    MediaList.Type.POPULAR_THIS_SEASON,
+                    MediaList.Type.UPCOMING_NEXT_SEASON -> {
+                        onNavigateToExplore(
+                            ExploreRoute(
+                                season = mediaList.season?.name,
+                                year = mediaList.year,
+                            )
+                        )
+                    }
+                    else -> {}
+                }
+            },
         icon = mediaList.season?.icon,
         label = "${mediaList.season?.let { stringResource(it.res) }.orEmpty()} " +
                 mediaList.year?.toString().orEmpty(),
