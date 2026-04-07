@@ -792,15 +792,24 @@ private fun SeasonFilter(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
                     ) {
+                        var showLabel by remember { mutableStateOf(false) }
                         Icon(
                             imageVector = ImageVector.vectorResource(season.icon),
                             contentDescription = stringResource(season.res),
                             modifier = Modifier
-                                .graphicsLayer { alpha = 0.5f }
+                                .graphicsLayer { alpha = if (showLabel) 0.5f else 1f }
                                 .height(14.dp)
                                 .align(Alignment.CenterVertically)
                         )
-                        Text(stringResource(season.res))
+
+                        if (showLabel) {
+                            Text(
+                                text = stringResource(season.res),
+                                onTextLayout = {
+                                    if (it.hasVisualOverflow) showLabel = false
+                                }
+                            )
+                        }
                     }
                 }
             }
