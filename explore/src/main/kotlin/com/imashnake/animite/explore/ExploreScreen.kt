@@ -236,7 +236,10 @@ fun ExploreScreen(
                                     contentDescription = stringResource(R.string.tune),
                                     tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier
-                                        .clickable { showFilterBottomSheet = true }
+                                        .clickable {
+                                            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                                            showFilterBottomSheet = true
+                                        }
                                         .padding(8.dp)
                                         .size(24.dp)
                                 )
