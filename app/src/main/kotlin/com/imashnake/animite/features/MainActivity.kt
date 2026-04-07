@@ -174,6 +174,7 @@ fun MainScreen(
                     composable<AnimeRoute> {
                         AnimeScreen(
                             onNavigateToMediaItem = navController::navigate,
+                            onNavigateToExplore = navController::navigate,
                             scrollState = animeScrollState,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,

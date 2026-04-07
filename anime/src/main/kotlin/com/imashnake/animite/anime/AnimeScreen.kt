@@ -51,6 +51,7 @@ import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
+import com.imashnake.animite.navigation.ExploreRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -62,6 +63,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @Suppress("LongMethod")
 fun AnimeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToExplore: (ExploreRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     scrollState: ScrollState = rememberScrollState(),
@@ -134,6 +136,7 @@ fun AnimeScreen(
                                                     )
                                                 )
                                             },
+                                            onNavigateToExplore = onNavigateToExplore,
                                             sharedTransitionScope = sharedTransitionScope,
                                             animatedVisibilityScope = animatedVisibilityScope,
                                             contentPadding = PaddingValues(
@@ -170,6 +173,7 @@ fun AnimeScreen(
 private fun AnimeRow(
     mediaList: MediaList,
     onItemClicked: (Media.Small) -> Unit,
+    onNavigateToExplore: (ExploreRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -182,6 +186,14 @@ private fun AnimeRow(
         icon = mediaList.season?.icon,
         label = "${mediaList.season?.let { stringResource(it.res) }.orEmpty()} " +
                 mediaList.year?.toString().orEmpty(),
+        onLabelClick = {
+            onNavigateToExplore(
+                ExploreRoute(
+                    season = mediaList.season?.name,
+                    year = mediaList.year,
+                )
+            )
+        },
         contentPadding = contentPadding,
     ) { _, media ->
         with(sharedTransitionScope) {

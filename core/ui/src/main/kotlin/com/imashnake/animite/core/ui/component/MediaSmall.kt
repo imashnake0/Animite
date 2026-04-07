@@ -2,6 +2,7 @@ package com.imashnake.animite.core.ui.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,6 +60,7 @@ fun <T> MediaSmallRow(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
     label: String? = null,
+    onLabelClick: (() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable LazyItemScope.(Int, T) -> Unit
 ) {
@@ -92,6 +94,7 @@ fun <T> MediaSmallRow(
                     color = MaterialTheme.colorScheme.primary,
                     icon = ImageVector.vectorResource(icon),
                     text = label,
+                    modifier = Modifier.clickable { onLabelClick?.invoke() }
                 )
             }
         }

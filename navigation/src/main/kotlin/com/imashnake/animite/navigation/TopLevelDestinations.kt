@@ -17,7 +17,10 @@ data class ProfileRoute(
 data object SocialRoute
 
 @Serializable
-data object ExploreRoute
+data class ExploreRoute(
+    val season: String? = null,
+    val year: Int? = null
+)
 
 @Serializable
 data object AnimeRoute
