@@ -1092,7 +1092,7 @@ private fun FlowFilter(
                             color = chipColor,
                             icon = null,
                             text = transformFilterText?.invoke(filter) ?: filter,
-                            modifier = Modifier.clickable { onFilterClick(filter) }
+                            onClick = { onFilterClick(filter) },
                         )
                     }
                 }
