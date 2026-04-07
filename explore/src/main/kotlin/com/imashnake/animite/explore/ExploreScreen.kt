@@ -107,6 +107,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -789,28 +790,23 @@ private fun SeasonFilter(
                     colors = ToggleButtonDefaults.tonalToggleButtonColors(),
                     modifier = Modifier.weight(1f)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
                     ) {
-                        var showLabel by remember { mutableStateOf(false) }
                         Icon(
                             imageVector = ImageVector.vectorResource(season.icon),
                             contentDescription = stringResource(season.res),
                             modifier = Modifier
-                                .graphicsLayer { alpha = if (showLabel) 0.5f else 1f }
+                                .graphicsLayer { alpha = 0.5f }
                                 .height(14.dp)
-                                .align(Alignment.CenterVertically)
                         )
 
-                        if (showLabel) {
-                            Text(
-                                text = stringResource(season.res),
-                                onTextLayout = {
-                                    if (it.hasVisualOverflow) showLabel = false
-                                }
-                            )
-                        }
+                        Text(
+                            text = stringResource(season.res),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
             }
