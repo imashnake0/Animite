@@ -6,10 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -80,6 +82,7 @@ fun <T> MediaSmallRow(
             modifier = Modifier
                 .padding(start = startPadding, end = endPadding)
                 .fillMaxWidth()
+                .height(IntrinsicSize.Max)
         ) {
             if (title != null) {
                 Text(
@@ -89,13 +92,29 @@ fun <T> MediaSmallRow(
                 )
             }
 
-            if (icon != null && label != null) {
-                Chip(
-                    color = MaterialTheme.colorScheme.primary,
-                    icon = ImageVector.vectorResource(icon),
-                    text = label,
-                    modifier = Modifier.clickable { onLabelClick?.invoke() }
-                )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                if (icon != null && label != null) {
+                    Chip(
+                        color = MaterialTheme.colorScheme.primary,
+                        icon = ImageVector.vectorResource(icon),
+                        text = label,
+                        modifier = Modifier.clickable { onLabelClick?.invoke() }
+                    )
+                }
+
+                if (onLabelClick != null) {
+                    Chip(
+                        color = MaterialTheme.colorScheme.primary,
+                        icon = ImageVector.vectorResource(R.drawable.right_arrow),
+                        text = null,
+                        modifier = Modifier
+                            .clickable { onLabelClick.invoke() }
+                            .fillMaxHeight()
+                    )
+                }
             }
         }
         LazyRow(

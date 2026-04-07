@@ -186,13 +186,19 @@ private fun AnimeRow(
         icon = mediaList.season?.icon,
         label = "${mediaList.season?.let { stringResource(it.res) }.orEmpty()} " +
                 mediaList.year?.toString().orEmpty(),
-        onLabelClick = {
-            onNavigateToExplore(
-                ExploreRoute(
-                    season = mediaList.season?.name,
-                    year = mediaList.year,
-                )
-            )
+        onLabelClick = when(mediaList.type) {
+            MediaList.Type.POPULAR_THIS_SEASON,
+            MediaList.Type.UPCOMING_NEXT_SEASON -> {
+                {
+                    onNavigateToExplore(
+                        ExploreRoute(
+                            season = mediaList.season?.name,
+                            year = mediaList.year,
+                        )
+                    )
+                }
+            }
+            else -> null
         },
         contentPadding = contentPadding,
     ) { _, media ->
