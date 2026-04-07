@@ -976,7 +976,7 @@ private fun YearOutline(
         modifier = modifier.border(
             width = 2.dp,
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.outlineVariant
         )
     ) {
         // Fake year field
