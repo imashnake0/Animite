@@ -1018,6 +1018,9 @@ private fun FormatFilter(
                 icon = ImageVector.vectorResource(R.drawable.include_genre),
                 title = stringResource(R.string.include_genre),
                 chipColor = Color(0xFF80DF87),
+                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
@@ -1028,6 +1031,9 @@ private fun FormatFilter(
                 icon = ImageVector.vectorResource(R.drawable.exclude_genre),
                 title = stringResource(R.string.exclude_genre),
                 chipColor = Color(0xFFFF9999),
+                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
@@ -1037,6 +1043,9 @@ private fun FormatFilter(
                 onFilterClick = onAllFormatClick,
                 icon = ImageVector.vectorResource(R.drawable.all_genres),
                 title = stringResource(R.string.all_genres),
+                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
             )
         }
@@ -1048,6 +1057,7 @@ private fun FlowFilter(
     filters: ImmutableList<String>,
     onFilterClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    transformFilterIcon: @Composable ((String) -> ImageVector?)? = null,
     transformFilterText: @Composable ((String) -> String)? = null,
     icon: ImageVector? = null,
     title: String? = null,
@@ -1086,7 +1096,7 @@ private fun FlowFilter(
                     it.fastForEach { filter ->
                         Chip(
                             color = chipColor,
-                            icon = null,
+                            icon = transformFilterIcon?.invoke(filter),
                             text = transformFilterText?.invoke(filter) ?: filter,
                             onClick = { onFilterClick(filter) },
                         )

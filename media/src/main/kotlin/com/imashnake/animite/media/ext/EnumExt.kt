@@ -29,6 +29,20 @@ val Media.Format.res get() = when(this) {
     Media.Format.ONE_SHOT -> R.string.one_shot
 }
 
+val Media.Format.icon get() = when(this) {
+    Media.Format.TV -> R.drawable.tv
+    Media.Format.TV_SHORT -> R.drawable.tv_short
+    Media.Format.MOVIE -> R.drawable.movie
+    Media.Format.SPECIAL -> R.drawable.special
+    Media.Format.OVA -> R.drawable.ova
+    Media.Format.ONA -> R.drawable.ona
+    Media.Format.MUSIC -> R.drawable.music
+//    Media.Format.MANGA -> R.drawable.manga
+//    Media.Format.NOVEL -> R.drawable.novel
+//    Media.Format.ONE_SHOT -> R.drawable.one_shot
+    else -> null
+}
+
 val Media.Status.res get() = when(this) {
     Media.Status.FINISHED -> R.string.finished
     Media.Status.RELEASING -> R.string.releasing
