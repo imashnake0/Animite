@@ -31,6 +31,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -82,7 +83,6 @@ fun <T> MediaSmallRow(
             modifier = Modifier
                 .padding(start = startPadding, end = endPadding)
                 .fillMaxWidth()
-                .height(IntrinsicSize.Max)
         ) {
             if (title != null) {
                 Text(
@@ -94,7 +94,7 @@ fun <T> MediaSmallRow(
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier.height(IntrinsicSize.Max)
             ) {
                 if (icon != null && label != null) {
                     Chip(
@@ -102,6 +102,15 @@ fun <T> MediaSmallRow(
                         icon = ImageVector.vectorResource(icon),
                         text = label,
                         onClick = { onLabelClick?.invoke() },
+                    )
+                } else {
+                    // Dummy chip to make the one below the same height
+                    Chip(
+                        color = Color.Transparent,
+                        icon = null,
+                        text = "",
+                        onClick = null,
+                        modifier = Modifier.graphicsLayer { scaleX = 0f }
                     )
                 }
 
