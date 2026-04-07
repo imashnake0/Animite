@@ -611,7 +611,8 @@ private fun FilterBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismissRequest,
         deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
-        contentPadding = PaddingValues(horizontal = LocalPaddings.current.medium),
+        contentPadding = PaddingValues(horizontal = LocalPaddings.current.medium) +
+                PaddingValues(bottom = LocalPaddings.current.large),
         modifier = modifier,
     ) { paddingValues, modifier ->
         Column(
