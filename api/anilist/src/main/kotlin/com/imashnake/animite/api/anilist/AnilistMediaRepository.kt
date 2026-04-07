@@ -81,6 +81,7 @@ class AnilistMediaRepository(
         genre: String? = null,
         includedGenres: List<String>? = null,
         excludedGenres: List<String>? = null,
+        season: MediaSeason? = null,
         year: Int? = null,
         search: String? = null,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
@@ -95,6 +96,7 @@ class AnilistMediaRepository(
                     genreIn = Optional.presentIfNotNull(includedGenres),
                     genreNotIn = Optional.presentIfNotNull(excludedGenres),
                     search = Optional.presentIfNotNull(search),
+                    season = Optional.presentIfNotNull(season),
                     // Start FuzzyDateInt has to be YYYYMMDD -> YYYY0101
                     startDate = Optional.presentIfNotNull(year?.times(10000)?.plus(101)),
                     // End FuzzyDateInt has to be YYYYMMDD -> YYYY1231

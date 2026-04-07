@@ -1,19 +1,17 @@
 package com.imashnake.animite.explore
 
-import androidx.compose.ui.graphics.Path.Companion.combine
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -79,6 +77,7 @@ class ExploreViewModel @Inject constructor(
             search = searchQuery,
             includedGenres = includedGenres.toList().ifEmpty { null },
             excludedGenres = excludedGenres.toList().ifEmpty { null },
+            season = seasonYear.first?.let { MediaSeason.safeValueOf(it) },
             year = seasonYear.second
         ).asResource()
     }
