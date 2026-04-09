@@ -70,7 +70,7 @@ kotlin = "2.3.20"
 kotlinxTime = "0.7.1"
 kotlinxCollectionsImmutable = "0.4.0"
 coroutines = "1.10.2"
-serialization = "1.10.0"
+serialization = "1.11.0"
 
 # Compose Multiplatform
 # https://github.com/JetBrains/compose-multiplatform
