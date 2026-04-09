@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -86,7 +88,12 @@ fun <T> MediaSmallRow(
                 .padding(start = startPadding, end = endPadding)
                 .fillMaxWidth()
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+            FlowRow(
+                itemVerticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                modifier = Modifier.padding(end = dimensionResource(R.dimen.icon_size))
+            ) {
                 if (title != null) {
                     Text(
                         text = title,
@@ -102,6 +109,7 @@ fun <T> MediaSmallRow(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                     contentDescription = null,
                     modifier = Modifier
+                        .requiredSize(dimensionResource(R.dimen.icon_size))
                         .clip(CircleShape)
                         .clickable { onListClick() }
                 )
