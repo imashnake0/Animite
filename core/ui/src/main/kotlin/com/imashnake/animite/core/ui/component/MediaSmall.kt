@@ -1,12 +1,13 @@
 package com.imashnake.animite.core.ui.component
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,11 +34,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,46 +55,55 @@ import kotlinx.collections.immutable.ImmutableList
  *
  * @param mediaList A list of [T]s.
  */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T> MediaSmallRow(
     title: String?,
     mediaList: ImmutableList<T>,
     modifier: Modifier = Modifier,
-    @DrawableRes icon: Int? = null,
-    label: String? = null,
+    contextChip: @Composable (RowScope.((() -> Unit)?) -> Unit)? = null,
+    onListClick: (() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable LazyItemScope.(Int, T) -> Unit
 ) {
     Column(
-        modifier = modifier.padding(
-            top = contentPadding.calculateTopPadding(),
-            bottom = contentPadding.calculateBottomPadding()
-        ),
+        modifier = modifier
+            .clickable(enabled = onListClick != null) { onListClick?.invoke() }
+            .padding(
+                top = contentPadding.calculateTopPadding(),
+                bottom = contentPadding.calculateBottomPadding()
+            ),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
         val layoutDirection = LocalLayoutDirection.current
         val startPadding = contentPadding.calculateStartPadding(layoutDirection)
         val endPadding = contentPadding.calculateEndPadding(layoutDirection)
+
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .padding(start = startPadding, end = endPadding)
                 .fillMaxWidth()
         ) {
-            if (title != null) {
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-                )
+            Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+                if (title != null) {
+                    Text(
+                        text = title,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+                    )
+                }
+                if (contextChip != null) contextChip(onListClick)
             }
 
-            if (icon != null && label != null) {
-                Chip(
-                    color = MaterialTheme.colorScheme.primary,
-                    icon = ImageVector.vectorResource(icon),
-                    text = label,
+            if (onListClick != null) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { onListClick() }
                 )
             }
         }

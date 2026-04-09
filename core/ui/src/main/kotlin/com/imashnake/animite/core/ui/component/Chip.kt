@@ -1,6 +1,7 @@
 package com.imashnake.animite.core.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ fun Chip(
     icon: ImageVector?,
     text: String?,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     iconPadding: PaddingValues = PaddingValues(),
 ) {
     Row(
@@ -33,6 +35,7 @@ fun Chip(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(CircleShape)
+            .clickable { onClick?.invoke() }
             .background(color.copy(alpha = 0.2f))
             .padding(horizontal = LocalPaddings.current.small)
     ) {

@@ -55,7 +55,7 @@ enum class NavigationBarPaths(
     ),
     Explore(
         navigateTo = {
-            it.navigate(ExploreRoute) {
+            it.navigate(ExploreRoute()) {
                 popUpTo(id = it.graph.findStartDestination().id) {
                     saveState = true
                 }

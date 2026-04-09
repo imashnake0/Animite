@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -30,9 +32,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -41,16 +46,18 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
-import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.resource.Resource
-import com.imashnake.animite.core.ui.component.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.Chip
+import com.imashnake.animite.core.ui.component.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
+import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
+import com.imashnake.animite.navigation.ExploreRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -62,6 +69,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @Suppress("LongMethod")
 fun AnimeScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToExplore: (ExploreRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     scrollState: ScrollState = rememberScrollState(),
@@ -134,6 +142,7 @@ fun AnimeScreen(
                                                     )
                                                 )
                                             },
+                                            onNavigateToExplore = onNavigateToExplore,
                                             sharedTransitionScope = sharedTransitionScope,
                                             animatedVisibilityScope = animatedVisibilityScope,
                                             contentPadding = PaddingValues(
@@ -170,6 +179,7 @@ fun AnimeScreen(
 private fun AnimeRow(
     mediaList: MediaList,
     onItemClicked: (Media.Small) -> Unit,
+    onNavigateToExplore: (ExploreRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -178,11 +188,51 @@ private fun AnimeRow(
     MediaSmallRow(
         title = mediaList.type.title,
         mediaList = mediaList.list,
-        modifier = modifier,
-        icon = mediaList.season?.icon,
-        label = "${mediaList.season?.let { stringResource(it.res) }.orEmpty()} " +
-                mediaList.year?.toString().orEmpty(),
+        contextChip = when (mediaList.type) {
+            MediaList.Type.POPULAR_THIS_SEASON,
+            MediaList.Type.UPCOMING_NEXT_SEASON -> { { onListClick ->
+                Chip(
+                    color = MaterialTheme.colorScheme.primary,
+                    icon = mediaList.season?.icon?.let {
+                        ImageVector.vectorResource(it)
+                    },
+                    text = "${mediaList.season?.let { stringResource(it.res) }.orEmpty()} "
+                            + mediaList.year?.toString().orEmpty(),
+                    onClick = onListClick
+                )
+            } }
+            else -> null
+        },
+        onListClick = when (mediaList.type) {
+            MediaList.Type.TRENDING_NOW -> { {
+                onNavigateToExplore(
+                    ExploreRoute(
+                        sortName = Media.Sort.TRENDING.name,
+                        isDescending = true
+                    )
+                )
+            } }
+            MediaList.Type.ALL_TIME_POPULAR -> { {
+                onNavigateToExplore(
+                    ExploreRoute(
+                        sortName = Media.Sort.POPULARITY.name,
+                        isDescending = true
+                    )
+                )
+            } }
+            MediaList.Type.POPULAR_THIS_SEASON,
+            MediaList.Type.UPCOMING_NEXT_SEASON -> { {
+                onNavigateToExplore(
+                    ExploreRoute(
+                        season = mediaList.season?.name,
+                        year = mediaList.year,
+                    )
+                )
+            } }
+            else -> null
+        },
         contentPadding = contentPadding,
+        modifier = modifier.clip(RoundedCornerShape(LocalPaddings.current.large))
     ) { _, media ->
         with(sharedTransitionScope) {
             MediaCard(

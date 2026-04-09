@@ -166,6 +166,8 @@ fun ExploreScreen(
 
     val haptic = LocalHapticFeedback.current
 
+    val searchQuery by viewModel.searchQuery.collectAsState()
+
     var isSortDropdownExpanded by rememberSaveable { mutableStateOf(false) }
     val selectedSort by viewModel.selectedSort.collectAsState()
     val isDescending by viewModel.isDescending.collectAsState()
@@ -218,6 +220,7 @@ fun ExploreScreen(
                                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
                         ) {
                             SearchBar(
+                                searchQuery = searchQuery,
                                 onSearch = { viewModel.setSearchQuery(it) },
                                 modifier = Modifier
                                     .clip(CircleShape)
@@ -349,20 +352,19 @@ fun ExploreScreen(
 )
 @Composable
 private fun SearchBar(
+    searchQuery: String?,
     onSearch: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
-    var text by rememberSaveable { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val closeIconSize by animateFloatAsState(
-        targetValue = if (text.isNotEmpty()) 1f else 0f
+        targetValue = if (!searchQuery.isNullOrEmpty()) 1f else 0f
     )
 
     TextField(
-        value = text,
+        value = searchQuery.orEmpty(),
         onValueChange = {
-            text = it
             onSearch(it.ifEmpty { null })
         },
         modifier = modifier.focusRequester(focusRequester),
@@ -385,37 +387,31 @@ private fun SearchBar(
             )
         },
         trailingIcon = {
-            Row {
-                CompositionLocalProvider(
-                    LocalRippleConfiguration provides RippleConfiguration(
-                        rippleAlpha = RippleAlpha(
-                            draggedAlpha = 0f,
-                            focusedAlpha = 0f,
-                            hoveredAlpha = 0f,
-                            pressedAlpha = 0f
-                        )
+            CompositionLocalProvider(
+                LocalRippleConfiguration provides RippleConfiguration(
+                    rippleAlpha = RippleAlpha(
+                        draggedAlpha = 0f,
+                        focusedAlpha = 0f,
+                        hoveredAlpha = 0f,
+                        pressedAlpha = 0f
                     )
+                )
+            ) {
+                IconButton(
+                    onClick = { onSearch(null) },
+                    colors = IconButtonDefaults.iconButtonColors(),
+                    modifier = Modifier
+                        .size(40.dp)
+                        .graphicsLayer {
+                            scaleX = closeIconSize
+                            scaleY = closeIconSize
+                        }
                 ) {
-                    IconButton(
-                        onClick = {
-                            text = ""
-                            onSearch(null)
-                        },
-                        colors = IconButtonDefaults.iconButtonColors(),
-                        enabled = text.isNotEmpty(),
-                        modifier = Modifier
-                            .size(40.dp)
-                            .graphicsLayer {
-                                scaleX = closeIconSize
-                                scaleY = closeIconSize
-                            }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }
@@ -980,7 +976,7 @@ private fun YearOutline(
         modifier = modifier.border(
             width = 2.dp,
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.outlineVariant
         )
     ) {
         // Fake year field
@@ -1022,6 +1018,9 @@ private fun FormatFilter(
                 icon = ImageVector.vectorResource(R.drawable.include_genre),
                 title = stringResource(R.string.include_genre),
                 chipColor = Color(0xFF80DF87),
+                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
@@ -1032,6 +1031,9 @@ private fun FormatFilter(
                 icon = ImageVector.vectorResource(R.drawable.exclude_genre),
                 title = stringResource(R.string.exclude_genre),
                 chipColor = Color(0xFFFF9999),
+                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
@@ -1041,6 +1043,9 @@ private fun FormatFilter(
                 onFilterClick = onAllFormatClick,
                 icon = ImageVector.vectorResource(R.drawable.all_genres),
                 title = stringResource(R.string.all_genres),
+                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
             )
         }
@@ -1052,6 +1057,7 @@ private fun FlowFilter(
     filters: ImmutableList<String>,
     onFilterClick: (String) -> Unit,
     modifier: Modifier = Modifier,
+    transformFilterIcon: @Composable ((String) -> ImageVector?)? = null,
     transformFilterText: @Composable ((String) -> String)? = null,
     icon: ImageVector? = null,
     title: String? = null,
@@ -1090,9 +1096,9 @@ private fun FlowFilter(
                     it.fastForEach { filter ->
                         Chip(
                             color = chipColor,
-                            icon = null,
+                            icon = transformFilterIcon?.invoke(filter),
                             text = transformFilterText?.invoke(filter) ?: filter,
-                            modifier = Modifier.clickable { onFilterClick(filter) }
+                            onClick = { onFilterClick(filter) },
                         )
                     }
                 }

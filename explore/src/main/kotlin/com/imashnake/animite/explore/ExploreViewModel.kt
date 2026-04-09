@@ -3,6 +3,7 @@ package com.imashnake.animite.explore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaFormat
@@ -12,6 +13,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
+import com.imashnake.animite.navigation.ExploreRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,6 +37,8 @@ class ExploreViewModel @Inject constructor(
     private val mediaListRepository: AnilistMediaRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    private val navArgs = savedStateHandle.toRoute<ExploreRoute>()
+
     init {
         setAllFormats(Media.Format.animeFormats().map { it.name }.toSet())
         viewModelScope.launch(Dispatchers.IO) {
@@ -42,8 +46,8 @@ class ExploreViewModel @Inject constructor(
         }
     }
 
-    val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, Media.Sort.POPULARITY)
-    val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, true)
+    val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, navArgs.sortName?.let { Media.Sort.valueOf(it) } ?: Media.Sort.POPULARITY)
+    val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, navArgs.isDescending ?: true)
 
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
 
@@ -52,8 +56,8 @@ class ExploreViewModel @Inject constructor(
     val includedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_GENRES, emptySet())
     val excludedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_GENRES, emptySet())
 
-    val selectedSeason = savedStateHandle.getStateFlow<String?>(Constants.SEASON, null)
-    val selectedYear = savedStateHandle.getStateFlow<Int?>(Constants.YEAR, null)
+    val selectedSeason = savedStateHandle.getStateFlow(Constants.SEASON, navArgs.season)
+    val selectedYear = savedStateHandle.getStateFlow(Constants.YEAR, navArgs.year)
 
     private val _allFormats = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FORMATS, null)
     val allFormats = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FORMATS, null)
