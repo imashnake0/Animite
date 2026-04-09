@@ -25,8 +25,9 @@ dependencies {
     // Compose
     implementation(libs.bundles.compose)
     implementation(libs.compose.animation.graphics)
-    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.material.icons.core)
     implementation(libs.compose.ui.toolingPreview)
+    debugImplementation(libs.compose.ui.tooling)
 
     // Compose Markdown
     implementation(libs.boswelja.composeMarkdown.material3)
