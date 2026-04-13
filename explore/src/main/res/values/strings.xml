@@ -5,6 +5,7 @@
     <string name="season">Season</string>
     <string name="genres">Genres</string>
     <string name="format">Format</string>
+    <string name="status">Status</string>
     <string name="year">Year</string>
 
     <string name="increase_year">Increase year</string>

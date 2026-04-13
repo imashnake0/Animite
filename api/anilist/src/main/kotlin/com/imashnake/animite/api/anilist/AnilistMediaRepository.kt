@@ -10,6 +10,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
+import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -83,6 +84,8 @@ class AnilistMediaRepository(
         year: Int? = null,
         includedFormats: List<MediaFormat>? = null,
         excludedFormats: List<MediaFormat>? = null,
+        includedStatuses: List<MediaStatus>? = null,
+        excludedStatuses: List<MediaStatus>? = null,
         search: String? = null,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
         return apolloClient
@@ -103,6 +106,8 @@ class AnilistMediaRepository(
                     endDate = Optional.presentIfNotNull(year?.times(10000)?.plus(1231)),
                     formatIn = Optional.presentIfNotNull(includedFormats),
                     formatNotIn = Optional.presentIfNotNull(excludedFormats),
+                    statusIn = Optional.presentIfNotNull(includedStatuses),
+                    statusNotIn = Optional.presentIfNotNull(excludedStatuses),
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)

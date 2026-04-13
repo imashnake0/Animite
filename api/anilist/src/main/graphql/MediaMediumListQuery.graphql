@@ -11,6 +11,8 @@ query MediaMediumListQuery(
     $endDate: FuzzyDateInt,
     $formatIn: [MediaFormat],
     $formatNotIn: [MediaFormat],
+    $statusIn: [MediaStatus],
+    $statusNotIn: [MediaStatus],
     $search: String,
 ) {
     page: Page (
@@ -27,9 +29,11 @@ query MediaMediumListQuery(
             startDate_greater: $startDate,
             startDate_lesser: $endDate,
             format_in: $formatIn,
-            format_not_in: $formatNotIn
+            format_not_in: $formatNotIn,
+            status_in: $statusIn,
+            status_not_in: $statusNotIn,
             search: $search,
-            isAdult: false
+            isAdult: false,
         ) {
             ...MediaMedium
         }
