@@ -9,6 +9,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
+import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
@@ -41,6 +42,7 @@ class ExploreViewModel @Inject constructor(
 
     init {
         setAllFormats(Media.Format.animeFormats().map { it.name }.toSet())
+        setAllStatuses(Media.Status.entries.map { it.name }.toSet())
         viewModelScope.launch(Dispatchers.IO) {
             setAllGenres(mediaListRepository.fetchMediaGenres().toSet())
         }
@@ -64,6 +66,12 @@ class ExploreViewModel @Inject constructor(
     val includedFormats = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FORMATS, emptySet())
     val excludedFormats = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FORMATS, emptySet())
 
+    private val _allStatuses = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_STATUSES, null)
+    val allStatuses = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_STATUSES, null)
+    val includedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_STATUSES, emptySet())
+    val excludedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_STATUSES, emptySet())
+
+
     val mediaSort = selectedSort
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
@@ -77,7 +85,9 @@ class ExploreViewModel @Inject constructor(
         flow5 = selectedSeason.combine(selectedYear, ::Pair),
         flow6 = includedFormats,
         flow7 = excludedFormats,
-        transform = ::Septuple,
+        flow8 = includedStatuses,
+        flow9 = excludedStatuses,
+        transform = ::Nonuple,
     ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats) ->
         if (
             sort == MediaSort.POPULARITY_DESC &&
@@ -89,7 +99,7 @@ class ExploreViewModel @Inject constructor(
             includedFormats == emptySet<String>() &&
             excludedFormats == emptySet<String>()
         ) 0L else 500L
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats) ->
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses) ->
         mediaListRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
             sort = listOf(sort),
@@ -100,6 +110,8 @@ class ExploreViewModel @Inject constructor(
             year = seasonYear.second,
             includedFormats = includedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
             excludedFormats = excludedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
+            includedStatuses = includedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
+            excludedStatuses = excludedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
         ).asResource()
     }
     .stateIn(
@@ -160,6 +172,26 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.EXCLUDED_FORMATS] = excludedFormats.value.minus(format)
     }
 
+    fun setAllStatuses(allStatuses: Set<String>?) {
+        savedStateHandle[Constants._ALL_STATUSES] = allStatuses
+        savedStateHandle[Constants.ALL_STATUSES] = allStatuses
+    }
+
+    fun includeMediaStatuses(status: String?) {
+        savedStateHandle[Constants.INCLUDED_STATUSES] = includedStatuses.value.plus(status)
+        savedStateHandle[Constants.ALL_STATUSES] = allStatuses.value?.minus(status)
+    }
+
+    fun excludeMediaStatuses(status: String?) {
+        savedStateHandle[Constants.EXCLUDED_STATUSES] = excludedStatuses.value.plus(status)
+        savedStateHandle[Constants.INCLUDED_STATUSES] = includedStatuses.value.minus(status)
+    }
+
+    fun clearMediaStatuses(status: String?) {
+        savedStateHandle[Constants.ALL_STATUSES] = allStatuses.value?.plus(status)
+        savedStateHandle[Constants.EXCLUDED_STATUSES] = excludedStatuses.value.minus(status)
+    }
+
     fun setMediaSeason(season: String?) {
         savedStateHandle[Constants.SEASON] = season
     }
@@ -180,6 +212,12 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.EXCLUDED_FORMATS] = emptySet<String>()
     }
 
+    fun resetStatuses() {
+        savedStateHandle[Constants.ALL_STATUSES] = _allStatuses.value
+        savedStateHandle[Constants.INCLUDED_STATUSES] = emptySet<String>()
+        savedStateHandle[Constants.EXCLUDED_STATUSES] = emptySet<String>()
+    }
+
     fun reset() {
         savedStateHandle[SEARCH_QUERY] = null
 
@@ -192,6 +230,8 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.YEAR] = null
 
         resetFormats()
+
+        resetStatuses()
     }
 
     val yearRange = getYears()
@@ -210,7 +250,7 @@ class ExploreViewModel @Inject constructor(
 }
 
 // TODO: Move this to core?
-data class Septuple<out A, out B, out C, out D, out E, out F, out G>(
+data class Nonuple<out A, out B, out C, out D, out E, out F, out G, out H, out I>(
     val first: A,
     val second: B,
     val third: C,
@@ -218,12 +258,15 @@ data class Septuple<out A, out B, out C, out D, out E, out F, out G>(
     val fifth: E,
     val sixth: F,
     val seventh: G,
+    val eighth: H,
+    val ninth: I,
 ) {
     /**
-     * Returns string representation of the [Septuple] including its
-     * [first], [second], [third], [fourth], [fifth], [sixth], and [seventh] values.
+     * Returns string representation of the [Nonuple] including its
+     * [first], [second], [third], [fourth], [fifth], [sixth], [seventh], [eighth], and [ninth] values.
      */
-    override fun toString(): String = "($first, $second, $third, $fourth, $fifth, $sixth, $seventh)"
+    override fun toString(): String =
+        "($first, $second, $third, $fourth, $fifth, $sixth, $seventh, $eighth, $ninth)"
 }
 
 inline fun <
@@ -234,8 +277,8 @@ inline fun <
         T5,
         T6,
         T7,
-//        T8,
-//        T9,
+        T8,
+        T9,
 //        T10,
         R
 > combine(
@@ -246,8 +289,8 @@ inline fun <
     flow5: Flow<T5>,
     flow6: Flow<T6>,
     flow7: Flow<T7>,
-//    flow8: Flow<T8>,
-//    flow9: Flow<T9>,
+    flow8: Flow<T8>,
+    flow9: Flow<T9>,
 //    flow10: Flow<T10>,
     crossinline transform: suspend (
         T1,
@@ -257,8 +300,8 @@ inline fun <
         T5,
         T6,
         T7,
-//        T8,
-//        T9,
+        T8,
+        T9,
 //        T10
     ) -> R,
 ): Flow<R> = combine(
@@ -269,8 +312,8 @@ inline fun <
     flow5,
     flow6,
     flow7,
-//    flow8,
-//    flow9,
+    flow8,
+    flow9,
 //    flow10
 ) { args: Array<*> ->
     @Suppress("UNCHECKED_CAST")
@@ -282,8 +325,8 @@ inline fun <
         args[4] as T5,
         args[5] as T6,
         args[6] as T7,
-//        args[7] as T8,
-//        args[8] as T9,
+        args[7] as T8,
+        args[8] as T9,
 //        args[9] as T10,
     )
 }

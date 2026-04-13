@@ -19,4 +19,9 @@ object Constants {
     const val ALL_FORMATS = "allFormats"
     const val INCLUDED_FORMATS = "includedFormats"
     const val EXCLUDED_FORMATS = "excludedFormats"
+
+    const val _ALL_STATUSES = "_allStatuses"
+    const val ALL_STATUSES = "allStatuses"
+    const val INCLUDED_STATUSES = "includedStatuses"
+    const val EXCLUDED_STATUSES = "excludedStatuses"
 }

@@ -51,6 +51,14 @@ val Media.Status.res get() = when(this) {
     Media.Status.HIATUS -> R.string.hiatus
 }
 
+//val Media.Status.icon get() = when(this) {
+//    Media.Status.FINISHED -> R.drawable.
+//    Media.Status.RELEASING -> R.drawable.
+//    Media.Status.NOT_YET_RELEASED -> R.drawable.
+//    Media.Status.CANCELLED -> R.drawable.
+//    Media.Status.HIATUS -> R.drawable.
+//}
+
 val Media.Season.res get() = when(this) {
     Media.Season.WINTER -> R.string.winter
     Media.Season.SPRING -> R.string.spring
