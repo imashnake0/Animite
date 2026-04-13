@@ -1119,9 +1119,9 @@ private fun StatusFilter(
                 icon = ImageVector.vectorResource(R.drawable.include),
                 title = stringResource(R.string.include_genre),
                 chipColor = Color(0xFF80DF87),
-//                transformFilterIcon = { Media.Status.valueOf(it).icon?.let { icon ->
-//                    ImageVector.vectorResource(icon) }
-//                },
+                transformFilterIcon = { Media.Status.valueOf(it).icon.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Status.valueOf(it).res) },
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
@@ -1132,9 +1132,9 @@ private fun StatusFilter(
                 icon = ImageVector.vectorResource(R.drawable.exclude),
                 title = stringResource(R.string.exclude_genre),
                 chipColor = Color(0xFFFF9999),
-//                transformFilterIcon = { Media.Status.valueOf(it).icon?.let { icon ->
-//                    ImageVector.vectorResource(icon) }
-//                },
+                transformFilterIcon = { Media.Status.valueOf(it).icon.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Status.valueOf(it).res) },
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
@@ -1144,9 +1144,9 @@ private fun StatusFilter(
                 onFilterClick = onAllStatusClick,
                 icon = ImageVector.vectorResource(R.drawable.all),
                 title = stringResource(R.string.all_genres),
-//                transformFilterIcon = { Media.Status.valueOf(it).icon?.let { icon ->
-//                    ImageVector.vectorResource(icon) }
-//                },
+                transformFilterIcon = { Media.Status.valueOf(it).icon.let { icon ->
+                    ImageVector.vectorResource(icon) }
+                },
                 transformFilterText = { stringResource(Media.Status.valueOf(it).res) },
             )
         }
