@@ -34,7 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -185,6 +187,7 @@ private fun AnimeRow(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
+    val haptic = LocalHapticFeedback.current
     MediaSmallRow(
         title = mediaList.type.title,
         mediaList = mediaList.list,
@@ -203,33 +206,36 @@ private fun AnimeRow(
             } }
             else -> null
         },
-        onListClick = when (mediaList.type) {
-            MediaList.Type.TRENDING_NOW -> { {
-                onNavigateToExplore(
-                    ExploreRoute(
-                        sortName = Media.Sort.TRENDING.name,
-                        isDescending = true
+        onListClick = {
+            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+            when (mediaList.type) {
+                MediaList.Type.TRENDING_NOW -> {
+                    onNavigateToExplore(
+                        ExploreRoute(
+                            sortName = Media.Sort.TRENDING.name,
+                            isDescending = true
+                        )
                     )
-                )
-            } }
-            MediaList.Type.ALL_TIME_POPULAR -> { {
-                onNavigateToExplore(
-                    ExploreRoute(
-                        sortName = Media.Sort.POPULARITY.name,
-                        isDescending = true
+                }
+                MediaList.Type.ALL_TIME_POPULAR -> {
+                    onNavigateToExplore(
+                        ExploreRoute(
+                            sortName = Media.Sort.POPULARITY.name,
+                            isDescending = true
+                        )
                     )
-                )
-            } }
-            MediaList.Type.POPULAR_THIS_SEASON,
-            MediaList.Type.UPCOMING_NEXT_SEASON -> { {
-                onNavigateToExplore(
-                    ExploreRoute(
-                        season = mediaList.season?.name,
-                        year = mediaList.year,
+                }
+                MediaList.Type.POPULAR_THIS_SEASON,
+                MediaList.Type.UPCOMING_NEXT_SEASON -> {
+                    onNavigateToExplore(
+                        ExploreRoute(
+                            season = mediaList.season?.name,
+                            year = mediaList.year,
+                        )
                     )
-                )
-            } }
-            else -> null
+                }
+                else -> {}
+            }
         },
         contentPadding = contentPadding,
         modifier = modifier.clip(RoundedCornerShape(LocalPaddings.current.large))
