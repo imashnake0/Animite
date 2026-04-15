@@ -646,26 +646,15 @@ private fun FilterBottomSheet(
                 )
                 .padding(paddingValues)
         ) {
-            GenresFilter(
-                includedGenres = includedGenres,
-                excludedGenres = excludedGenres,
-                allGenres = allGenres,
-                onIncludedGenreClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    excludeGenre(it)
-                },
-                onExcludedGenreClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    clearGenre(it)
-                },
-                onAllGenreClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                    includeGenre(it)
-                },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(LocalPaddings.current.small))
-                    .combinedClickable(onClick = {}, onLongClick = resetGenres)
-                    .padding(LocalPaddings.current.small)
+            ChipFilter(
+                title = stringResource(R.string.genres),
+                includedFilters = includedGenres,
+                excludedFilters = excludedGenres,
+                allFilters = allGenres,
+                onIncludedFilterClick = excludeGenre,
+                onExcludedFilterClick = clearGenre,
+                onAllFilterClick = includeGenre,
+                resetFilters = resetGenres
             )
 
             SeasonFilter(
@@ -693,48 +682,38 @@ private fun FilterBottomSheet(
                     .padding(LocalPaddings.current.small)
             )
 
-            FormatFilter(
-                includedFormats = includedFormats,
-                excludedFormats = excludedFormats,
-                allFormats = allFormats,
-                onIncludedFormatClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    excludeFormat(it)
-                },
-                onExcludedFormatClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    clearFormat(it)
-                },
-                onAllFormatClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                    includeFormat(it)
-                },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(LocalPaddings.current.small))
-                    .combinedClickable(onClick = {}, onLongClick = resetFormats)
-                    .padding(LocalPaddings.current.small)
+            ChipFilter(
+                title = stringResource(R.string.format),
+                filterIcon = { Media.Format.safeValueOf(it)?.icon?.let { icon ->
+                    ImageVector.vectorResource(icon)
+                } },
+                filterText = { Media.Format.safeValueOf(it)?.res?.let { text ->
+                    stringResource(text)
+                } },
+                includedFilters = includedFormats,
+                excludedFilters = excludedFormats,
+                allFilters = allFormats,
+                onIncludedFilterClick = excludeFormat,
+                onExcludedFilterClick = clearFormat,
+                onAllFilterClick = includeFormat,
+                resetFilters = resetFormats
             )
 
-            StatusFilter(
-                includedStatuses = includedStatuses,
-                excludedStatuses = excludedStatuses,
-                allStatuses = allStatuses,
-                onIncludedStatusClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    excludeStatus(it)
-                },
-                onExcludedStatusClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    clearStatus(it)
-                },
-                onAllStatusClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                    includeStatus(it)
-                },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(LocalPaddings.current.small))
-                    .combinedClickable(onClick = {}, onLongClick = resetStatuses)
-                    .padding(LocalPaddings.current.small)
+            ChipFilter(
+                title = stringResource(R.string.status),
+                filterIcon = { Media.Status.safeValueOf(it)?.icon?.let { icon ->
+                    ImageVector.vectorResource(icon)
+                } },
+                filterText = { Media.Status.safeValueOf(it)?.res?.let { text ->
+                    stringResource(text)
+                } },
+                includedFilters = includedStatuses,
+                excludedFilters = excludedStatuses,
+                allFilters = allStatuses,
+                onIncludedFilterClick = excludeStatus,
+                onExcludedFilterClick = clearStatus,
+                onAllFilterClick = includeStatus,
+                resetFilters = resetStatuses
             )
 
             Spacer(modifier = Modifier.size(LocalPaddings.current.small))
@@ -761,55 +740,6 @@ private fun FilterBottomSheet(
                     }
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun GenresFilter(
-    includedGenres: ImmutableList<String>,
-    excludedGenres: ImmutableList<String>,
-    allGenres: ImmutableList<String>,
-    onIncludedGenreClick: (String) -> Unit,
-    onExcludedGenreClick: (String) -> Unit,
-    onAllGenreClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-        modifier = modifier,
-    ) {
-        Text(
-            text = stringResource(R.string.genres),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-        )
-
-        Column {
-            FlowFilter(
-                filters = includedGenres,
-                onFilterClick = onIncludedGenreClick,
-                icon = ImageVector.vectorResource(R.drawable.include),
-                title = stringResource(R.string.include_genre),
-                chipColor = Color(0xFF80DF87),
-                modifier = Modifier.padding(bottom = LocalPaddings.current.small)
-            )
-
-            FlowFilter(
-                filters = excludedGenres,
-                onFilterClick = onExcludedGenreClick,
-                icon = ImageVector.vectorResource(R.drawable.exclude),
-                title = stringResource(R.string.exclude_genre),
-                chipColor = Color(0xFFFF9999),
-                modifier = Modifier.padding(bottom = LocalPaddings.current.small)
-            )
-
-            FlowFilter(
-                filters = allGenres,
-                onFilterClick = onAllGenreClick,
-                icon = ImageVector.vectorResource(R.drawable.all),
-                title = stringResource(R.string.all_genres),
-            )
         }
     }
 }
@@ -1032,134 +962,86 @@ private fun YearOutline(
 }
 
 @Composable
-private fun FormatFilter(
-    includedFormats: ImmutableList<String>,
-    excludedFormats: ImmutableList<String>,
-    allFormats: ImmutableList<String>,
-    onIncludedFormatClick: (String) -> Unit,
-    onExcludedFormatClick: (String) -> Unit,
-    onAllFormatClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+private fun ChipFilter(
+    title: String?,
+    includedFilters: ImmutableList<String>,
+    excludedFilters: ImmutableList<String>,
+    allFilters: ImmutableList<String>,
+    onIncludedFilterClick: (String) -> Unit,
+    onExcludedFilterClick: (String) -> Unit,
+    onAllFilterClick: (String) -> Unit,
+    resetFilters: () -> Unit,
+    modifier: Modifier = Modifier,
+    filterIcon: @Composable ((String) -> ImageVector?)? = null,
+    filterText: @Composable ((String) -> String?)? = null,
 ) {
+    val haptic = LocalHapticFeedback.current
     Column(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-        modifier = modifier,
+        modifier = modifier
+            .clip(RoundedCornerShape(LocalPaddings.current.small))
+            .combinedClickable(onClick = {}, onLongClick = resetFilters)
+            .padding(LocalPaddings.current.small),
     ) {
-        Text(
-            text = stringResource(R.string.format),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-        )
+        title?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+            )
+        }
 
         Column {
-            FlowFilter(
-                filters = includedFormats,
-                onFilterClick = onIncludedFormatClick,
+            ChipFilterFlowRow(
+                filters = includedFilters,
+                onFilterClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                    onIncludedFilterClick(it)
+                },
                 icon = ImageVector.vectorResource(R.drawable.include),
                 title = stringResource(R.string.include_genre),
                 chipColor = Color(0xFF80DF87),
-                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
-                    ImageVector.vectorResource(icon) }
-                },
-                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
+                transformFilterIcon = filterIcon,
+                transformFilterText = filterText,
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
 
-            FlowFilter(
-                filters = excludedFormats,
-                onFilterClick = onExcludedFormatClick,
+            ChipFilterFlowRow(
+                filters = excludedFilters,
+                onFilterClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                    onExcludedFilterClick(it)
+                },
                 icon = ImageVector.vectorResource(R.drawable.exclude),
                 title = stringResource(R.string.exclude_genre),
                 chipColor = Color(0xFFFF9999),
-                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
-                    ImageVector.vectorResource(icon) }
-                },
-                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
+                transformFilterIcon = filterIcon,
+                transformFilterText = filterText,
                 modifier = Modifier.padding(bottom = LocalPaddings.current.small)
             )
 
-            FlowFilter(
-                filters = allFormats,
-                onFilterClick = onAllFormatClick,
+            ChipFilterFlowRow(
+                filters = allFilters,
+                onFilterClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                    onAllFilterClick(it)
+                },
                 icon = ImageVector.vectorResource(R.drawable.all),
                 title = stringResource(R.string.all_genres),
-                transformFilterIcon = { Media.Format.valueOf(it).icon?.let { icon ->
-                    ImageVector.vectorResource(icon) }
-                },
-                transformFilterText = { stringResource(Media.Format.valueOf(it).res) },
+                transformFilterIcon = filterIcon,
+                transformFilterText = filterText,
             )
         }
     }
 }
 
 @Composable
-private fun StatusFilter(
-    includedStatuses: ImmutableList<String>,
-    excludedStatuses: ImmutableList<String>,
-    allStatuses: ImmutableList<String>,
-    onIncludedStatusClick: (String) -> Unit,
-    onExcludedStatusClick: (String) -> Unit,
-    onAllStatusClick: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-        modifier = modifier,
-    ) {
-        Text(
-            text = stringResource(R.string.status),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-        )
-
-        Column {
-            FlowFilter(
-                filters = includedStatuses,
-                onFilterClick = onIncludedStatusClick,
-                icon = ImageVector.vectorResource(R.drawable.include),
-                title = stringResource(R.string.include_genre),
-                chipColor = Color(0xFF80DF87),
-                transformFilterIcon = { Media.Status.valueOf(it).icon.let { icon ->
-                    ImageVector.vectorResource(icon) }
-                },
-                transformFilterText = { stringResource(Media.Status.valueOf(it).res) },
-                modifier = Modifier.padding(bottom = LocalPaddings.current.small)
-            )
-
-            FlowFilter(
-                filters = excludedStatuses,
-                onFilterClick = onExcludedStatusClick,
-                icon = ImageVector.vectorResource(R.drawable.exclude),
-                title = stringResource(R.string.exclude_genre),
-                chipColor = Color(0xFFFF9999),
-                transformFilterIcon = { Media.Status.valueOf(it).icon.let { icon ->
-                    ImageVector.vectorResource(icon) }
-                },
-                transformFilterText = { stringResource(Media.Status.valueOf(it).res) },
-                modifier = Modifier.padding(bottom = LocalPaddings.current.small)
-            )
-
-            FlowFilter(
-                filters = allStatuses,
-                onFilterClick = onAllStatusClick,
-                icon = ImageVector.vectorResource(R.drawable.all),
-                title = stringResource(R.string.all_genres),
-                transformFilterIcon = { Media.Status.valueOf(it).icon.let { icon ->
-                    ImageVector.vectorResource(icon) }
-                },
-                transformFilterText = { stringResource(Media.Status.valueOf(it).res) },
-            )
-        }
-    }
-}
-
-@Composable
-private fun FlowFilter(
+private fun ChipFilterFlowRow(
     filters: ImmutableList<String>,
     onFilterClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     transformFilterIcon: @Composable ((String) -> ImageVector?)? = null,
-    transformFilterText: @Composable ((String) -> String)? = null,
+    transformFilterText: @Composable ((String) -> String?)? = null,
     icon: ImageVector? = null,
     title: String? = null,
     chipColor: Color= MaterialTheme.colorScheme.tertiary,
@@ -1167,28 +1049,8 @@ private fun FlowFilter(
     AnimatedContent(filters) {
         if (it.isNotEmpty()) {
             Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                    modifier = Modifier.padding(bottom = LocalPaddings.current.tiny)
-                ) {
-                    icon?.let {
-                        Icon(
-                            imageVector = icon,
-                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            contentDescription = null,
-                            modifier = Modifier.size(11.dp)
-                        )
-                    }
-                    title?.let {
-                        Text(
-                            text = title,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
-                }
+                FlowFilterGroupHeaders(icon = icon, title = title)
+
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                     verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
@@ -1204,6 +1066,36 @@ private fun FlowFilter(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun FlowFilterGroupHeaders(
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null,
+    title: String? = null,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+        modifier = modifier.padding(bottom = LocalPaddings.current.tiny)
+    ) {
+        icon?.let {
+            Icon(
+                imageVector = icon,
+                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                contentDescription = null,
+                modifier = Modifier.size(11.dp)
+            )
+        }
+        title?.let {
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+            )
         }
     }
 }
