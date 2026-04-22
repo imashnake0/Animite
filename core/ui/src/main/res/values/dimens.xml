@@ -10,5 +10,5 @@
     <dimen name="progress_indicator_width">100dp</dimen>
     <dimen name="progress_indicator_height">3dp</dimen>
 
-    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size">16dp</dimen>
 </resources>

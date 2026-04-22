@@ -16,6 +16,9 @@ import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
 import com.imashnake.animite.navigation.ExploreRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -41,10 +44,17 @@ class ExploreViewModel @Inject constructor(
     private val navArgs = savedStateHandle.toRoute<ExploreRoute>()
 
     init {
-        setAllFormats(Media.Format.animeFormats().map { it.name }.toSet())
-        setAllStatuses(Media.Status.entries.map { it.name }.toSet())
-        viewModelScope.launch(Dispatchers.IO) {
-            setAllGenres(mediaListRepository.fetchMediaGenres().toSet())
+        ChipFilterType.entries.forEach { filterType ->
+            viewModelScope.launch(Dispatchers.IO) {
+                setAllFilters(
+                    filterType = filterType,
+                    allFilters = when (filterType) {
+                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres().toSet()
+                        ChipFilterType.FORMAT -> Media.Format.animeFormats().map { it.name }.toSet()
+                        ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
+                    }
+                )
+            }
         }
     }
 
@@ -53,24 +63,62 @@ class ExploreViewModel @Inject constructor(
 
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
 
-    private val _allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_GENRES, null)
-    val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_GENRES, null)
-    val includedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_GENRES, emptySet())
-    val excludedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_GENRES, emptySet())
+    private val _allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FILTERS + Constants.GENRES, null)
+    private val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.GENRES, null)
+    private val includedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FILTERS + Constants.GENRES, emptySet())
+    private val excludedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FILTERS + Constants.GENRES, emptySet())
+
+    val chipGenreGroup = combine(allGenres, includedGenres, excludedGenres) { (all, included, excluded) ->
+        ChipFilterGroup(
+            type = ChipFilterType.GENRE,
+            allFilters = all.orEmpty().sorted().toImmutableList(),
+            includedFilters = included.orEmpty().sorted().toImmutableList(),
+            excludedFilters = excluded.orEmpty().sorted().toImmutableList()
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = ChipFilterGroup(type = ChipFilterType.GENRE, persistentListOf(), persistentListOf(), persistentListOf())
+    )
 
     val selectedSeason = savedStateHandle.getStateFlow(Constants.SEASON, navArgs.season)
     val selectedYear = savedStateHandle.getStateFlow(Constants.YEAR, navArgs.year)
 
-    private val _allFormats = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FORMATS, null)
-    val allFormats = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FORMATS, null)
-    val includedFormats = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FORMATS, emptySet())
-    val excludedFormats = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FORMATS, emptySet())
+    private val _allFormats = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FILTERS + Constants.FORMATS, null)
+    private val allFormats = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.FORMATS, null)
+    private val includedFormats = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FILTERS + Constants.FORMATS, emptySet())
+    private val excludedFormats = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FILTERS + Constants.FORMATS, emptySet())
 
-    private val _allStatuses = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_STATUSES, null)
-    val allStatuses = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_STATUSES, null)
-    val includedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_STATUSES, emptySet())
-    val excludedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_STATUSES, emptySet())
+    val chipFormatGroup = combine(allFormats, includedFormats, excludedFormats) { (all, included, excluded) ->
+        ChipFilterGroup(
+            type = ChipFilterType.FORMAT,
+            allFilters = all.orEmpty().sorted().toImmutableList(),
+            includedFilters = included.orEmpty().sorted().toImmutableList(),
+            excludedFilters = excluded.orEmpty().sorted().toImmutableList()
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = ChipFilterGroup(type = ChipFilterType.GENRE, persistentListOf(), persistentListOf(), persistentListOf())
+    )
 
+    private val _allStatuses = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FILTERS + Constants.STATUSES, null)
+    private val allStatuses = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.STATUSES, null)
+    private val includedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FILTERS + Constants.STATUSES, emptySet())
+    private val excludedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FILTERS + Constants.STATUSES, emptySet())
+
+    val chipStatusGroup = combine(allStatuses, includedStatuses, excludedStatuses) { (all, included, excluded) ->
+        ChipFilterGroup(
+            type = ChipFilterType.STATUS,
+            allFilters = all.orEmpty().sorted().toImmutableList(),
+            includedFilters = included.orEmpty().sorted().toImmutableList(),
+            excludedFilters = excluded.orEmpty().sorted().toImmutableList()
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = ChipFilterGroup(type = ChipFilterType.GENRE, persistentListOf(), persistentListOf(), persistentListOf())
+    )
 
     val mediaSort = selectedSort
         .combine(isDescending, ::Pair)
@@ -132,64 +180,48 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[SEARCH_QUERY] = searchQuery
     }
 
-    fun setAllGenres(allGenres: Set<String>?) {
-        savedStateHandle[Constants._ALL_GENRES] = allGenres
-        savedStateHandle[Constants.ALL_GENRES] = allGenres
+    private fun setAllFilters(filterType: ChipFilterType, allFilters: Set<String>?) {
+        savedStateHandle[Constants._ALL_FILTERS + filterType.tag] = allFilters
+        savedStateHandle[Constants.ALL_FILTERS + filterType.tag] = allFilters
     }
 
-    fun includeMediaGenre(genre: String?) {
-        savedStateHandle[Constants.INCLUDED_GENRES] = includedGenres.value.plus(genre)
-        savedStateHandle[Constants.ALL_GENRES] = allGenres.value?.minus(genre)
+    fun includeFilter(filterType: ChipFilterType, filter: String?) {
+        savedStateHandle[Constants.INCLUDED_FILTERS + filterType.tag] = when(filterType) {
+            ChipFilterType.GENRE -> includedGenres
+            ChipFilterType.FORMAT -> includedFormats
+            ChipFilterType.STATUS -> includedStatuses
+        }.value.plus(filter)
+        savedStateHandle[Constants.ALL_FILTERS + filterType.tag] = when(filterType) {
+            ChipFilterType.GENRE -> allGenres
+            ChipFilterType.FORMAT -> allFormats
+            ChipFilterType.STATUS -> allStatuses
+        }.value?.minus(filter)
     }
 
-    fun excludeMediaGenre(genre: String?) {
-        savedStateHandle[Constants.EXCLUDED_GENRES] = excludedGenres.value.plus(genre)
-        savedStateHandle[Constants.INCLUDED_GENRES] = includedGenres.value.minus(genre)
+    fun excludeFilter(filterType: ChipFilterType, filter: String?) {
+        savedStateHandle[Constants.EXCLUDED_FILTERS + filterType.tag] = when(filterType) {
+            ChipFilterType.GENRE -> excludedGenres
+            ChipFilterType.FORMAT -> excludedFormats
+            ChipFilterType.STATUS -> excludedStatuses
+        }.value.plus(filter)
+        savedStateHandle[Constants.INCLUDED_FILTERS + filterType.tag] = when(filterType) {
+            ChipFilterType.GENRE -> includedGenres
+            ChipFilterType.FORMAT -> includedFormats
+            ChipFilterType.STATUS -> includedStatuses
+        }.value.minus(filter)
     }
 
-    fun clearMediaGenre(genre: String?) {
-        savedStateHandle[Constants.ALL_GENRES] = allGenres.value?.plus(genre)
-        savedStateHandle[Constants.EXCLUDED_GENRES] = excludedGenres.value.minus(genre)
-    }
-
-    fun setAllFormats(allFormats: Set<String>?) {
-        savedStateHandle[Constants._ALL_FORMATS] = allFormats
-        savedStateHandle[Constants.ALL_FORMATS] = allFormats
-    }
-
-    fun includeMediaFormat(format: String?) {
-        savedStateHandle[Constants.INCLUDED_FORMATS] = includedFormats.value.plus(format)
-        savedStateHandle[Constants.ALL_FORMATS] = allFormats.value?.minus(format)
-    }
-
-    fun excludeMediaFormat(format: String?) {
-        savedStateHandle[Constants.EXCLUDED_FORMATS] = excludedFormats.value.plus(format)
-        savedStateHandle[Constants.INCLUDED_FORMATS] = includedFormats.value.minus(format)
-    }
-
-    fun clearMediaFormat(format: String?) {
-        savedStateHandle[Constants.ALL_FORMATS] = allFormats.value?.plus(format)
-        savedStateHandle[Constants.EXCLUDED_FORMATS] = excludedFormats.value.minus(format)
-    }
-
-    fun setAllStatuses(allStatuses: Set<String>?) {
-        savedStateHandle[Constants._ALL_STATUSES] = allStatuses
-        savedStateHandle[Constants.ALL_STATUSES] = allStatuses
-    }
-
-    fun includeMediaStatuses(status: String?) {
-        savedStateHandle[Constants.INCLUDED_STATUSES] = includedStatuses.value.plus(status)
-        savedStateHandle[Constants.ALL_STATUSES] = allStatuses.value?.minus(status)
-    }
-
-    fun excludeMediaStatuses(status: String?) {
-        savedStateHandle[Constants.EXCLUDED_STATUSES] = excludedStatuses.value.plus(status)
-        savedStateHandle[Constants.INCLUDED_STATUSES] = includedStatuses.value.minus(status)
-    }
-
-    fun clearMediaStatuses(status: String?) {
-        savedStateHandle[Constants.ALL_STATUSES] = allStatuses.value?.plus(status)
-        savedStateHandle[Constants.EXCLUDED_STATUSES] = excludedStatuses.value.minus(status)
+    fun clearFilter(filterType: ChipFilterType, filter: String?) {
+        savedStateHandle[Constants.ALL_FILTERS + filterType.tag] = when(filterType) {
+            ChipFilterType.GENRE -> allGenres
+            ChipFilterType.FORMAT -> allFormats
+            ChipFilterType.STATUS -> allStatuses
+        }.value?.plus(filter)
+        savedStateHandle[Constants.EXCLUDED_FILTERS + filterType.tag] = when(filterType) {
+            ChipFilterType.GENRE -> excludedGenres
+            ChipFilterType.FORMAT -> excludedFormats
+            ChipFilterType.STATUS -> excludedStatuses
+        }.value.minus(filter)
     }
 
     fun setMediaSeason(season: String?) {
@@ -200,22 +232,14 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.YEAR] = year
     }
 
-    fun resetGenres() {
-        savedStateHandle[Constants.ALL_GENRES] = _allGenres.value
-        savedStateHandle[Constants.INCLUDED_GENRES] = emptySet<String>()
-        savedStateHandle[Constants.EXCLUDED_GENRES] = emptySet<String>()
-    }
-
-    fun resetFormats() {
-        savedStateHandle[Constants.ALL_FORMATS] = _allFormats.value
-        savedStateHandle[Constants.INCLUDED_FORMATS] = emptySet<String>()
-        savedStateHandle[Constants.EXCLUDED_FORMATS] = emptySet<String>()
-    }
-
-    fun resetStatuses() {
-        savedStateHandle[Constants.ALL_STATUSES] = _allStatuses.value
-        savedStateHandle[Constants.INCLUDED_STATUSES] = emptySet<String>()
-        savedStateHandle[Constants.EXCLUDED_STATUSES] = emptySet<String>()
+    fun resetFilter(filterType: ChipFilterType) {
+        savedStateHandle[Constants.ALL_FILTERS + filterType.tag] = when(filterType) {
+            ChipFilterType.GENRE -> _allGenres
+            ChipFilterType.FORMAT -> _allFormats
+            ChipFilterType.STATUS -> _allStatuses
+        }.value
+        savedStateHandle[Constants.INCLUDED_FILTERS + filterType.tag] = emptySet<String>()
+        savedStateHandle[Constants.EXCLUDED_FILTERS + filterType.tag] = emptySet<String>()
     }
 
     fun reset() {
@@ -224,14 +248,12 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.SORT] = Media.Sort.POPULARITY
         savedStateHandle[Constants.ORDER] = true
 
-        resetGenres()
-
         savedStateHandle[Constants.SEASON] = null
         savedStateHandle[Constants.YEAR] = null
 
-        resetFormats()
-
-        resetStatuses()
+        ChipFilterType.entries.forEach {
+            resetFilter(it)
+        }
     }
 
     val yearRange = getYears()
@@ -247,6 +269,19 @@ class ExploreViewModel @Inject constructor(
         private const val SEARCH_QUERY = "searchQuery"
         private const val EARLIEST_YEAR = 1940
     }
+
+    enum class ChipFilterType(val tag: String) {
+        GENRE(Constants.GENRES),
+        FORMAT(Constants.FORMATS),
+        STATUS(Constants.STATUSES)
+    }
+
+    data class ChipFilterGroup(
+        val type: ChipFilterType,
+        val allFilters: ImmutableList<String>,
+        val includedFilters: ImmutableList<String>,
+        val excludedFilters: ImmutableList<String>,
+    )
 }
 
 // TODO: Move this to core?

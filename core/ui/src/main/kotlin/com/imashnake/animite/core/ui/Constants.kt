@@ -7,21 +7,15 @@ object Constants {
     const val SORT = "sort"
     const val ORDER = "order"
 
-    const val _ALL_GENRES = "_allGenres"
-    const val ALL_GENRES = "allGenres"
-    const val INCLUDED_GENRES = "includedGenres"
-    const val EXCLUDED_GENRES = "excludedGenres"
+    const val _ALL_FILTERS = "_all"
+    const val ALL_FILTERS = "all"
+    const val INCLUDED_FILTERS = "included"
+    const val EXCLUDED_FILTERS = "excluded"
+
+    const val GENRES = "Genres"
+    const val FORMATS = "Formats"
+    const val STATUSES = "Statuses"
 
     const val SEASON = "season"
     const val YEAR = "year"
-
-    const val _ALL_FORMATS = "_allFormats"
-    const val ALL_FORMATS = "allFormats"
-    const val INCLUDED_FORMATS = "includedFormats"
-    const val EXCLUDED_FORMATS = "excludedFormats"
-
-    const val _ALL_STATUSES = "_allStatuses"
-    const val ALL_STATUSES = "allStatuses"
-    const val INCLUDED_STATUSES = "includedStatuses"
-    const val EXCLUDED_STATUSES = "excludedStatuses"
 }
