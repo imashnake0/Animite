@@ -31,7 +31,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-    id("com.android.settings") version "9.0.1"
+    id("com.android.settings") version "9.2.0"
 }
 
 rootProject.name = "Animite"
