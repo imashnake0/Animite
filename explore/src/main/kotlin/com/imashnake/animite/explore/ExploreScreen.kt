@@ -17,6 +17,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -104,6 +105,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -133,6 +135,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
+import com.imashnake.animite.core.ui.R as coreUiR
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(
@@ -263,8 +266,6 @@ fun ExploreScreen(
                             insetAndNavigationPaddingValues = insetAndNavigationPaddingValues,
                             modifier = Modifier.fillMaxWidth()
                         )
-
-                        // TODO: Add filter chips here.
                     }
 
                     Column(Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)) {
@@ -628,10 +629,6 @@ private fun FilterBottomSheet(
                     haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     selectSeason(it)
                 },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(LocalPaddings.current.small))
-                    .combinedClickable(onClick = {}, onLongClick = { selectSeason(null) })
-                    .padding(LocalPaddings.current.small)
             )
 
             YearFilter(
@@ -641,10 +638,6 @@ private fun FilterBottomSheet(
                     haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     onYearChange(it)
                 },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(LocalPaddings.current.small))
-                    .combinedClickable(onClick = {}, onLongClick = { onYearChange(null) })
-                    .padding(LocalPaddings.current.small)
             )
 
             ChipFilter(
@@ -685,8 +678,10 @@ private fun FilterBottomSheet(
 
             Spacer(modifier = Modifier.size(LocalPaddings.current.small))
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            // TODO: Not properly horizontally aligned when flowed.
+            FlowRow(
+                horizontalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 val scope = rememberCoroutineScope()
@@ -694,9 +689,9 @@ private fun FilterBottomSheet(
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Reject)
                         reset()
-                    }
+                    },
                 )
-
+                Spacer(Modifier.size(LocalPaddings.current.medium))
                 DoneButton(
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
@@ -704,7 +699,7 @@ private fun FilterBottomSheet(
                             sheetState.hide()
                             onDismissRequest()
                         }
-                    }
+                    },
                 )
             }
         }
@@ -718,18 +713,14 @@ private fun SeasonFilter(
     onSeasonSelected: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+    CollapsibleRow(
+        title = stringResource(R.string.season),
+        onLongClick = { onSeasonSelected(null) },
         modifier = modifier,
     ) {
-        Text(
-            text = stringResource(R.string.season),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-        )
-
         Row(
             horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            modifier = Modifier.padding(top = LocalPaddings.current.medium)
         ) {
             Media.Season.entries.fastForEach { season ->
                 ToggleButton(
@@ -771,22 +762,18 @@ private fun SeasonFilter(
 private fun YearFilter(
     year: Int?,
     yearRange: IntRange,
-    onYearChange: (Int) -> Unit,
+    onYearChange: (Int?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+    CollapsibleRow(
+        title = stringResource(R.string.year),
+        onLongClick = { onYearChange(null) },
         modifier = modifier,
     ) {
-        Text(
-            text = stringResource(R.string.year),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-        )
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(top = LocalPaddings.current.medium)
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
@@ -944,22 +931,12 @@ private fun ChipFilter(
     filterText: @Composable ((String) -> String?)? = null,
 ) {
     val haptic = LocalHapticFeedback.current
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-        modifier = modifier
-            .clip(RoundedCornerShape(LocalPaddings.current.small))
-            .combinedClickable(onClick = {}, onLongClick = { resetFilters(type) })
-            .padding(LocalPaddings.current.small),
+    CollapsibleRow(
+        title = title,
+        onLongClick = { resetFilters(type) },
+        modifier = modifier,
     ) {
-        title?.let {
-            Text(
-                text = it,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-            )
-        }
-
-        Column {
+        Column(Modifier.padding(top = LocalPaddings.current.medium)) {
             ChipFilterFlowRow(
                 filters = includedFilters,
                 onFilterClick = {
@@ -1068,6 +1045,7 @@ fun FlowFilterGroupHeaders(
     }
 }
 
+// TODO: Maybe move this to core:ui.
 @Composable
 private fun DoneButton(
     onClick: () -> Unit,
@@ -1091,6 +1069,7 @@ private fun DoneButton(
     }
 }
 
+// TODO: Maybe move this to core:ui.
 @Composable
 private fun ResetAllButton(
     onClick: () -> Unit,
@@ -1114,6 +1093,53 @@ private fun ResetAllButton(
                 modifier = Modifier.size(24.dp)
             )
             Text(stringResource(R.string.reset_all))
+        }
+    }
+}
+
+// TODO: Maybe move this to core:ui.
+@Composable
+private fun CollapsibleRow(
+    title: String?,
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (ColumnScope.() -> Unit),
+) {
+    var isVisible by rememberSaveable { mutableStateOf(true) }
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(LocalPaddings.current.small))
+            .combinedClickable(
+                onClick = { isVisible = !isVisible },
+                onLongClick = onLongClick
+            )
+            .padding(LocalPaddings.current.small)
+    ) {
+        title?.let {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+                )
+                val iconRotation by animateFloatAsState(if (isVisible) 0f else -90f)
+                Icon(
+                    painter = painterResource(R.drawable.drop_down),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .requiredSize(dimensionResource(coreUiR.dimen.icon_size))
+                        .graphicsLayer { rotationZ = iconRotation }
+                )
+            }
+        }
+
+        AnimatedVisibility(visible = isVisible) {
+            content()
         }
     }
 }
