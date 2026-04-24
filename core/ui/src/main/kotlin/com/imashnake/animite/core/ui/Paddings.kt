@@ -76,7 +76,7 @@ fun rememberDefaultPaddings(density: Density = Density.COMFY): Paddings {
                 )
             }
         ),
-        animationSpec = tween(1000)
+        animationSpec = tween(750)
     )
     return Paddings(
         ultraTiny = 1.dp,
