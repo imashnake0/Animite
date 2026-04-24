@@ -17,6 +17,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -104,6 +105,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -133,6 +135,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
+import com.imashnake.animite.core.ui.R as coreUiR
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(
@@ -175,17 +178,9 @@ fun ExploreScreen(
     val season by viewModel.selectedSeason.collectAsState()
     val year by viewModel.selectedYear.collectAsState()
 
-    val allGenres by viewModel.allGenres.collectAsState()
-    val includedGenres by viewModel.includedGenres.collectAsState()
-    val excludedGenres by viewModel.excludedGenres.collectAsState()
-
-    val allFormats by viewModel.allFormats.collectAsState()
-    val includedFormats by viewModel.includedFormats.collectAsState()
-    val excludedFormats by viewModel.excludedFormats.collectAsState()
-
-    val allStatuses by viewModel.allStatuses.collectAsState()
-    val includedStatuses by viewModel.includedStatuses.collectAsState()
-    val excludedStatuses by viewModel.excludedStatuses.collectAsState()
+    val chipGenreGroup by viewModel.chipGenreGroup.collectAsState()
+    val chipFormatGroup by viewModel.chipFormatGroup.collectAsState()
+    val chipStatusGroup by viewModel.chipStatusGroup.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         when (exploreList) {
@@ -271,8 +266,6 @@ fun ExploreScreen(
                             insetAndNavigationPaddingValues = insetAndNavigationPaddingValues,
                             modifier = Modifier.fillMaxWidth()
                         )
-
-                        // TODO: Add filter chips here.
                     }
 
                     Column(Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)) {
@@ -319,32 +312,18 @@ fun ExploreScreen(
                         sheetState = filterSheetState,
                         onDismissRequest = { showFilterBottomSheet = false },
                         deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
-                        allGenres = allGenres.orEmpty().sorted().toImmutableList(),
-                        includedGenres = includedGenres.sorted().toImmutableList(),
-                        excludedGenres = excludedGenres.sorted().toImmutableList(),
-                        includeGenre = viewModel::includeMediaGenre,
-                        excludeGenre = viewModel::excludeMediaGenre,
-                        clearGenre = viewModel::clearMediaGenre,
-                        resetGenres = viewModel::resetGenres,
+                        chipGenreGroup = chipGenreGroup,
                         season = season,
                         selectSeason = viewModel::setMediaSeason,
                         year = year,
                         onYearChange = viewModel::setMediaYear,
                         yearRange = viewModel.yearRange,
-                        allFormats = allFormats.orEmpty().sorted().toImmutableList(),
-                        includedFormats = includedFormats.sorted().toImmutableList(),
-                        excludedFormats = excludedFormats.sorted().toImmutableList(),
-                        includeFormat = viewModel::includeMediaFormat,
-                        excludeFormat = viewModel::excludeMediaFormat,
-                        clearFormat = viewModel::clearMediaFormat,
-                        resetFormats = viewModel::resetFormats,
-                        allStatuses = allStatuses.orEmpty().sorted().toImmutableList(),
-                        includedStatuses = includedStatuses.sorted().toImmutableList(),
-                        excludedStatuses = excludedStatuses.sorted().toImmutableList(),
-                        includeStatus = viewModel::includeMediaStatuses,
-                        excludeStatus = viewModel::excludeMediaStatuses,
-                        clearStatus = viewModel::clearMediaStatuses,
-                        resetStatuses = viewModel::resetStatuses,
+                        chipFormatGroup = chipFormatGroup,
+                        chipStatusGroup = chipStatusGroup,
+                        includeChipFilter = viewModel::includeFilter,
+                        excludeChipFilter = viewModel::excludeFilter,
+                        clearChipFilter = viewModel::clearFilter,
+                        resetChipFilters = viewModel::resetFilter,
                         reset = viewModel::reset,
                         modifier = Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)
                     )
@@ -597,32 +576,18 @@ private fun FilterBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     deviceScreenCornerRadiusDp: Dp,
-    allGenres: ImmutableList<String>,
-    includedGenres: ImmutableList<String>,
-    excludedGenres: ImmutableList<String>,
-    includeGenre: (String) -> Unit,
-    excludeGenre: (String) -> Unit,
-    clearGenre: (String) -> Unit,
-    resetGenres: () -> Unit,
+    chipGenreGroup: ExploreViewModel.ChipFilterGroup,
     season: String?,
     selectSeason: (String?) -> Unit,
     year: Int?,
     yearRange: IntRange,
     onYearChange: (Int?) -> Unit,
-    allFormats: ImmutableList<String>,
-    includedFormats: ImmutableList<String>,
-    excludedFormats: ImmutableList<String>,
-    includeFormat: (String) -> Unit,
-    excludeFormat: (String) -> Unit,
-    clearFormat: (String) -> Unit,
-    resetFormats: () -> Unit,
-    allStatuses: ImmutableList<String>,
-    includedStatuses: ImmutableList<String>,
-    excludedStatuses: ImmutableList<String>,
-    includeStatus: (String) -> Unit,
-    excludeStatus: (String) -> Unit,
-    clearStatus: (String) -> Unit,
-    resetStatuses: () -> Unit,
+    chipFormatGroup: ExploreViewModel.ChipFilterGroup,
+    chipStatusGroup: ExploreViewModel.ChipFilterGroup,
+    includeChipFilter: (ExploreViewModel.ChipFilterType, String) -> Unit,
+    excludeChipFilter: (ExploreViewModel.ChipFilterType, String) -> Unit,
+    clearChipFilter: (ExploreViewModel.ChipFilterType, String) -> Unit,
+    resetChipFilters: (ExploreViewModel.ChipFilterType) -> Unit,
     reset: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -647,14 +612,15 @@ private fun FilterBottomSheet(
                 .padding(paddingValues)
         ) {
             ChipFilter(
+                type = ExploreViewModel.ChipFilterType.GENRE,
                 title = stringResource(R.string.genres),
-                includedFilters = includedGenres,
-                excludedFilters = excludedGenres,
-                allFilters = allGenres,
-                onIncludedFilterClick = excludeGenre,
-                onExcludedFilterClick = clearGenre,
-                onAllFilterClick = includeGenre,
-                resetFilters = resetGenres
+                includedFilters = chipGenreGroup.includedFilters,
+                excludedFilters = chipGenreGroup.excludedFilters,
+                allFilters = chipGenreGroup.allFilters,
+                onIncludedFilterClick = excludeChipFilter,
+                onExcludedFilterClick = clearChipFilter,
+                onAllFilterClick = includeChipFilter,
+                resetFilters = resetChipFilters
             )
 
             SeasonFilter(
@@ -663,10 +629,6 @@ private fun FilterBottomSheet(
                     haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     selectSeason(it)
                 },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(LocalPaddings.current.small))
-                    .combinedClickable(onClick = {}, onLongClick = { selectSeason(null) })
-                    .padding(LocalPaddings.current.small)
             )
 
             YearFilter(
@@ -676,13 +638,10 @@ private fun FilterBottomSheet(
                     haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     onYearChange(it)
                 },
-                modifier = Modifier
-                    .clip(RoundedCornerShape(LocalPaddings.current.small))
-                    .combinedClickable(onClick = {}, onLongClick = { onYearChange(null) })
-                    .padding(LocalPaddings.current.small)
             )
 
             ChipFilter(
+                type = ExploreViewModel.ChipFilterType.FORMAT,
                 title = stringResource(R.string.format),
                 filterIcon = { Media.Format.safeValueOf(it)?.icon?.let { icon ->
                     ImageVector.vectorResource(icon)
@@ -690,16 +649,17 @@ private fun FilterBottomSheet(
                 filterText = { Media.Format.safeValueOf(it)?.res?.let { text ->
                     stringResource(text)
                 } },
-                includedFilters = includedFormats,
-                excludedFilters = excludedFormats,
-                allFilters = allFormats,
-                onIncludedFilterClick = excludeFormat,
-                onExcludedFilterClick = clearFormat,
-                onAllFilterClick = includeFormat,
-                resetFilters = resetFormats
+                includedFilters = chipFormatGroup.includedFilters,
+                excludedFilters = chipFormatGroup.excludedFilters,
+                allFilters = chipFormatGroup.allFilters,
+                onIncludedFilterClick = excludeChipFilter,
+                onExcludedFilterClick = clearChipFilter,
+                onAllFilterClick = includeChipFilter,
+                resetFilters = resetChipFilters
             )
 
             ChipFilter(
+                type = ExploreViewModel.ChipFilterType.STATUS,
                 title = stringResource(R.string.status),
                 filterIcon = { Media.Status.safeValueOf(it)?.icon?.let { icon ->
                     ImageVector.vectorResource(icon)
@@ -707,19 +667,21 @@ private fun FilterBottomSheet(
                 filterText = { Media.Status.safeValueOf(it)?.res?.let { text ->
                     stringResource(text)
                 } },
-                includedFilters = includedStatuses,
-                excludedFilters = excludedStatuses,
-                allFilters = allStatuses,
-                onIncludedFilterClick = excludeStatus,
-                onExcludedFilterClick = clearStatus,
-                onAllFilterClick = includeStatus,
-                resetFilters = resetStatuses
+                includedFilters = chipStatusGroup.includedFilters,
+                excludedFilters = chipStatusGroup.excludedFilters,
+                allFilters = chipStatusGroup.allFilters,
+                onIncludedFilterClick = excludeChipFilter,
+                onExcludedFilterClick = clearChipFilter,
+                onAllFilterClick = includeChipFilter,
+                resetFilters = resetChipFilters
             )
 
             Spacer(modifier = Modifier.size(LocalPaddings.current.small))
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            // TODO: Not properly horizontally aligned when flowed.
+            FlowRow(
+                horizontalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 val scope = rememberCoroutineScope()
@@ -727,9 +689,9 @@ private fun FilterBottomSheet(
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Reject)
                         reset()
-                    }
+                    },
                 )
-
+                Spacer(Modifier.size(LocalPaddings.current.medium))
                 DoneButton(
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
@@ -737,7 +699,7 @@ private fun FilterBottomSheet(
                             sheetState.hide()
                             onDismissRequest()
                         }
-                    }
+                    },
                 )
             }
         }
@@ -751,18 +713,14 @@ private fun SeasonFilter(
     onSeasonSelected: (String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+    CollapsibleRow(
+        title = stringResource(R.string.season),
+        onLongClick = { onSeasonSelected(null) },
         modifier = modifier,
     ) {
-        Text(
-            text = stringResource(R.string.season),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-        )
-
         Row(
             horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            modifier = Modifier.padding(top = LocalPaddings.current.medium)
         ) {
             Media.Season.entries.fastForEach { season ->
                 ToggleButton(
@@ -804,22 +762,18 @@ private fun SeasonFilter(
 private fun YearFilter(
     year: Int?,
     yearRange: IntRange,
-    onYearChange: (Int) -> Unit,
+    onYearChange: (Int?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+    CollapsibleRow(
+        title = stringResource(R.string.year),
+        onLongClick = { onYearChange(null) },
         modifier = modifier,
     ) {
-        Text(
-            text = stringResource(R.string.year),
-            color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-        )
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(top = LocalPaddings.current.medium)
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
@@ -963,40 +917,31 @@ private fun YearOutline(
 
 @Composable
 private fun ChipFilter(
+    type: ExploreViewModel.ChipFilterType,
     title: String?,
     includedFilters: ImmutableList<String>,
     excludedFilters: ImmutableList<String>,
     allFilters: ImmutableList<String>,
-    onIncludedFilterClick: (String) -> Unit,
-    onExcludedFilterClick: (String) -> Unit,
-    onAllFilterClick: (String) -> Unit,
-    resetFilters: () -> Unit,
+    onIncludedFilterClick: (ExploreViewModel.ChipFilterType, String) -> Unit,
+    onExcludedFilterClick: (ExploreViewModel.ChipFilterType, String) -> Unit,
+    onAllFilterClick: (ExploreViewModel.ChipFilterType, String) -> Unit,
+    resetFilters: (ExploreViewModel.ChipFilterType) -> Unit,
     modifier: Modifier = Modifier,
     filterIcon: @Composable ((String) -> ImageVector?)? = null,
     filterText: @Composable ((String) -> String?)? = null,
 ) {
     val haptic = LocalHapticFeedback.current
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-        modifier = modifier
-            .clip(RoundedCornerShape(LocalPaddings.current.small))
-            .combinedClickable(onClick = {}, onLongClick = resetFilters)
-            .padding(LocalPaddings.current.small),
+    CollapsibleRow(
+        title = title,
+        onLongClick = { resetFilters(type) },
+        modifier = modifier,
     ) {
-        title?.let {
-            Text(
-                text = it,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-            )
-        }
-
-        Column {
+        Column(Modifier.padding(top = LocalPaddings.current.medium)) {
             ChipFilterFlowRow(
                 filters = includedFilters,
                 onFilterClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    onIncludedFilterClick(it)
+                    onIncludedFilterClick(type, it)
                 },
                 icon = ImageVector.vectorResource(R.drawable.include),
                 title = stringResource(R.string.include_genre),
@@ -1010,7 +955,7 @@ private fun ChipFilter(
                 filters = excludedFilters,
                 onFilterClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                    onExcludedFilterClick(it)
+                    onExcludedFilterClick(type, it)
                 },
                 icon = ImageVector.vectorResource(R.drawable.exclude),
                 title = stringResource(R.string.exclude_genre),
@@ -1024,7 +969,7 @@ private fun ChipFilter(
                 filters = allFilters,
                 onFilterClick = {
                     haptic.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                    onAllFilterClick(it)
+                    onAllFilterClick(type, it)
                 },
                 icon = ImageVector.vectorResource(R.drawable.all),
                 title = stringResource(R.string.all_genres),
@@ -1100,6 +1045,7 @@ fun FlowFilterGroupHeaders(
     }
 }
 
+// TODO: Maybe move this to core:ui.
 @Composable
 private fun DoneButton(
     onClick: () -> Unit,
@@ -1123,6 +1069,7 @@ private fun DoneButton(
     }
 }
 
+// TODO: Maybe move this to core:ui.
 @Composable
 private fun ResetAllButton(
     onClick: () -> Unit,
@@ -1146,6 +1093,53 @@ private fun ResetAllButton(
                 modifier = Modifier.size(24.dp)
             )
             Text(stringResource(R.string.reset_all))
+        }
+    }
+}
+
+// TODO: Maybe move this to core:ui.
+@Composable
+private fun CollapsibleRow(
+    title: String?,
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (ColumnScope.() -> Unit),
+) {
+    var isVisible by rememberSaveable { mutableStateOf(true) }
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(LocalPaddings.current.small))
+            .combinedClickable(
+                onClick = { isVisible = !isVisible },
+                onLongClick = onLongClick
+            )
+            .padding(LocalPaddings.current.small)
+    ) {
+        title?.let {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+                )
+                val iconRotation by animateFloatAsState(if (isVisible) 0f else -90f)
+                Icon(
+                    painter = painterResource(R.drawable.drop_down),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .requiredSize(dimensionResource(coreUiR.dimen.icon_size))
+                        .graphicsLayer { rotationZ = iconRotation }
+                )
+            }
+        }
+
+        AnimatedVisibility(visible = isVisible) {
+            content()
         }
     }
 }

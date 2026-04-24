@@ -849,7 +849,7 @@ private fun MediaDetails(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(top = LocalPaddings.current.small)
-                .requiredSize(LocalPaddings.current.medium)
+                .requiredSize(dimensionResource(coreUiR.dimen.icon_size))
         )
     }
 }
