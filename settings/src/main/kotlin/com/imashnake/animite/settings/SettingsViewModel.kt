@@ -15,6 +15,7 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
     val theme = preferencesRepository.theme.filterNotNull()
     val useSystemColorScheme = preferencesRepository.useSystemColorScheme.filterNotNull()
+    val isAmoled = preferencesRepository.isAmoled.filterNotNull()
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
 
@@ -23,6 +24,10 @@ class SettingsViewModel @Inject constructor(
     }
     fun setUseSystemColorScheme(useSystemColorScheme: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setUseSystemColorScheme(useSystemColorScheme)
+    }
+
+    fun setIsAmoled(isAmoled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setIsAmoled(isAmoled)
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {

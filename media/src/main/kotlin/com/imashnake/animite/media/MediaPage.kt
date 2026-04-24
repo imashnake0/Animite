@@ -176,6 +176,7 @@ fun MediaPage(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
+    isAmoled: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -208,7 +209,13 @@ fun MediaPage(
 
     var isList by remember { mutableStateOf(true) }
 
-    MaterialTheme(colorScheme = rememberColorSchemeFor(media.color, useDarkTheme = useDarkTheme)) {
+    MaterialTheme(
+        colorScheme = rememberColorSchemeFor(
+            color = media.color,
+            useDarkTheme = useDarkTheme,
+            isAmoled = isAmoled
+        )
+    ) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)

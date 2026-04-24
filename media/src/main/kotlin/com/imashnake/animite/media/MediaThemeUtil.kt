@@ -20,13 +20,14 @@ import com.materialkolor.rememberDynamicColorScheme
 @Composable
 fun rememberColorSchemeFor(
     color: Int?,
+    isAmoled: Boolean,
     fallbackColorScheme: ColorScheme = MaterialTheme.colorScheme,
     useDarkTheme: Boolean = isSystemInDarkTheme()
 ) = color?.let {
     rememberDynamicColorScheme(
         seedColor = Color(it),
         isDark = useDarkTheme,
-        isAmoled = false,
+        isAmoled = isAmoled,
         style = PaletteStyle.Vibrant,
-    ).modify(useDarkTheme)
+    ).modify(useDarkTheme, isAmoled)
 } ?: fallbackColorScheme

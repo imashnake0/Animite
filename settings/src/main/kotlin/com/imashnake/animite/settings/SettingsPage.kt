@@ -91,7 +91,6 @@ import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
 private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
@@ -116,6 +115,7 @@ fun SettingsPage(
 
     val selectedTheme by viewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
     val useSystemColorScheme by viewModel.useSystemColorScheme.collectAsState(initial = true)
+    val isAmoled by viewModel.isAmoled.collectAsState(initial = false)
     val haptic = LocalHapticFeedback.current
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
@@ -155,6 +155,11 @@ fun SettingsPage(
                                     icon = R.drawable.palette,
                                     label = R.string.palette,
                                     orientation = Item.Orientation.HORIZONTAL
+                                ),
+                                Item(
+                                    icon = R.drawable.amoled,
+                                    label = R.string.amoled,
+                                    orientation = Item.Orientation.HORIZONTAL
                                 )
                             ),
                             onItemClick = { index ->
@@ -163,6 +168,15 @@ fun SettingsPage(
                                         viewModel.setUseSystemColorScheme(!useSystemColorScheme)
                                         haptic.performHapticFeedback(
                                             hapticFeedbackType = if (useSystemColorScheme) {
+                                                HapticFeedbackType.ToggleOff
+                                            } else HapticFeedbackType.ToggleOn
+                                        )
+                                    }
+
+                                    2 -> {
+                                        viewModel.setIsAmoled(!isAmoled)
+                                        haptic.performHapticFeedback(
+                                            hapticFeedbackType = if (isAmoled) {
                                                 HapticFeedbackType.ToggleOff
                                             } else HapticFeedbackType.ToggleOn
                                         )
@@ -215,6 +229,30 @@ fun SettingsPage(
                                         },
                                         thumbContent = {
                                             if (useSystemColorScheme) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Check,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        },
+                                    )
+                                }
+
+                                2 -> {
+                                    Switch(
+                                        checked = isAmoled,
+                                        onCheckedChange = {
+                                            viewModel.setIsAmoled(it)
+                                            haptic.performHapticFeedback(
+                                                hapticFeedbackType = if (!it) {
+                                                    HapticFeedbackType.ToggleOff
+                                                } else HapticFeedbackType.ToggleOn
+                                            )
+                                        },
+                                        thumbContent = {
+                                            if (isAmoled) {
                                                 Icon(
                                                     imageVector = Icons.Filled.Check,
                                                     contentDescription = null,

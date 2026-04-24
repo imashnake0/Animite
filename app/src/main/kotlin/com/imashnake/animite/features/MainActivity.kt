@@ -99,6 +99,7 @@ class MainActivity : ComponentActivity() {
             val theme by settingsViewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
 
             val useSystemColorScheme by settingsViewModel.useSystemColorScheme.collectAsState(initial = false)
+            val isAmoled by settingsViewModel.isAmoled.collectAsState(initial = false)
 
             val useDarkTheme = when(Theme.valueOf(theme)) {
                 Theme.DARK -> true
@@ -112,12 +113,14 @@ class MainActivity : ComponentActivity() {
 
             AnimiteTheme(
                 useDarkTheme = useDarkTheme,
+                isAmoled = isAmoled,
                 useSystemColorScheme = useSystemColorScheme,
                 dayHour = dayHour
             ) {
                 MainScreen(
                     deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
                     useDarkTheme = useDarkTheme,
+                    isAmoled = isAmoled,
                     avatar = avatar,
                     modifier = Modifier
                         .fillMaxSize()
@@ -145,6 +148,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
+    isAmoled: Boolean,
     avatar: String?,
     modifier: Modifier = Modifier,
 ) {
@@ -193,6 +197,7 @@ fun MainScreen(
                             onBack = navController::navigateUp,
                             onNavigateToMediaItem = navController::navigate,
                             useDarkTheme = useDarkTheme,
+                            isAmoled = isAmoled,
                             deviceScreenCornerRadius = deviceScreenCornerRadius,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,

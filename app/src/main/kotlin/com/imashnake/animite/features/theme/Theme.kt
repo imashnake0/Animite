@@ -42,6 +42,7 @@ import kotlin.time.ExperimentalTime
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
     useDarkTheme: Boolean,
+    isAmoled: Boolean,
     useSystemColorScheme: Boolean,
     dayHour: Float?,
     content: @Composable () -> Unit,
@@ -75,15 +76,20 @@ fun AnimiteTheme(
         primary = Color(stops.second),
         secondary = Color(stops.third),
         isDark = useDarkTheme,
-        isAmoled = false,
+        isAmoled = isAmoled,
         style = PaletteStyle.Vibrant,
     )
-    val animiteColorScheme = remember(useDarkTheme, dynamicColor, stops) {
+    val animiteColorScheme = remember(
+        useDarkTheme,
+        isAmoled,
+        dynamicColor,
+        stops,
+    ) {
         when {
             dynamicColor && useDarkTheme -> dynamicDarkColorScheme(context)
             dynamicColor && !useDarkTheme -> dynamicLightColorScheme(context)
             else -> staticColorScheme
-        }.modify(useDarkTheme)
+        }.modify(useDarkTheme, isAmoled)
     }
 
     val animiteRippleTheme = RippleConfiguration(
