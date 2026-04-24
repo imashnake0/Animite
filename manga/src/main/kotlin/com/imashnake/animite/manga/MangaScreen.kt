@@ -40,12 +40,13 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
-import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.resource.Resource
-import com.imashnake.animite.core.ui.component.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.EmptyChip
+import com.imashnake.animite.core.ui.component.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
+import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.SharedContentKey
@@ -174,6 +175,7 @@ private fun MangaRow(
     MediaSmallRow(
         title = type.title,
         mediaList = items,
+        contextChip = { EmptyChip() },
         modifier = modifier,
         contentPadding = contentPadding,
     ) { _, media ->
