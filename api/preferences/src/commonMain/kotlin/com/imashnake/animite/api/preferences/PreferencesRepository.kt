@@ -9,6 +9,7 @@ import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
+private const val DEFAULT_DENSITY_KEY = "COMFY"
 private const val USE_SYSTEM_COLOR_SCHEME = true
 private const val IS_AMOLED = false
 private const val IS_DEV_OPTIONS_ENABLED = false
@@ -42,7 +43,7 @@ class PreferencesRepository internal constructor(
     // region settings
     private val themeKey = stringPreferencesKey("theme")
     val theme = dataStore.getValue(themeKey, DEFAULT_THEME_KEY)
-    suspend fun setThemeToken(theme: String) {
+    suspend fun setTheme(theme: String) {
         dataStore.setValue(themeKey, theme)
     }
 
@@ -56,6 +57,12 @@ class PreferencesRepository internal constructor(
     val isAmoled = dataStore.getValue(isAmoledKey, IS_AMOLED)
     suspend fun setIsAmoled(isAmoled: Boolean) {
         dataStore.setValue(isAmoledKey, isAmoled)
+    }
+
+    private val densityKey = stringPreferencesKey("density")
+    val density = dataStore.getValue(densityKey, DEFAULT_DENSITY_KEY)
+    suspend fun setDensity(density: String) {
+        dataStore.setValue(densityKey, density)
     }
 
     private val isDevOptionsEnabledKey = booleanPreferencesKey("dev_options_enabled")

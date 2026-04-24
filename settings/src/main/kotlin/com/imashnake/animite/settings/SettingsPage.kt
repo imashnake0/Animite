@@ -13,6 +13,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,6 +46,7 @@ import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -76,13 +78,16 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.util.fastRoundToInt
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.DayPart
+import com.imashnake.animite.core.ui.Density
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.LocalTimeContext
 import com.imashnake.animite.core.ui.TimeContext
@@ -116,6 +121,7 @@ fun SettingsPage(
     val selectedTheme by viewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
     val useSystemColorScheme by viewModel.useSystemColorScheme.collectAsState(initial = true)
     val isAmoled by viewModel.isAmoled.collectAsState(initial = false)
+    val selectedDensity by viewModel.density.collectAsState(initial = Density.COMFY.name)
     val haptic = LocalHapticFeedback.current
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
@@ -160,6 +166,11 @@ fun SettingsPage(
                                     icon = R.drawable.amoled,
                                     label = R.string.amoled,
                                     orientation = Item.Orientation.HORIZONTAL
+                                ),
+                                Item(
+                                    icon = R.drawable.density,
+                                    label = R.string.density,
+                                    orientation = Item.Orientation.VERTICAL
                                 )
                             ),
                             onItemClick = { index ->
@@ -262,6 +273,56 @@ fun SettingsPage(
                                             }
                                         },
                                     )
+                                }
+
+                                3 -> {
+                                    Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                        Box(modifier = Modifier.fillMaxWidth()) {
+                                            Density.entries.fastForEach {
+                                                Text(
+                                                    text = stringResource(it.res),
+                                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                                                    fontSize = 10.sp,
+                                                    modifier = Modifier.align(
+                                                        when (it) {
+                                                            Density.COMFY -> Alignment.CenterStart
+                                                            Density.COZY -> Alignment.Center
+                                                            Density.COMPACT -> Alignment.CenterEnd
+                                                        }
+                                                    )
+                                                )
+                                            }
+                                        }
+
+                                        val interactionSource = remember {
+                                            MutableInteractionSource()
+                                        }
+                                        val colors = SliderDefaults.colors(
+                                            activeTrackColor = SliderDefaults.colors().inactiveTrackColor,
+                                            activeTickColor = SliderDefaults.colors().inactiveTickColor,
+                                        )
+                                        Slider(
+                                            value = when (Density.valueOf(selectedDensity)) {
+                                                Density.COMFY -> 0f
+                                                Density.COZY -> 1f
+                                                Density.COMPACT -> 2f
+                                            },
+                                            onValueChange = {
+                                                viewModel.setDensity(Density.entries[it.fastRoundToInt()])
+                                            },
+                                            colors = colors,
+                                            steps = 1,
+                                            valueRange = 0f..2f,
+                                            thumb = {
+                                                SliderDefaults.Thumb(
+                                                    interactionSource = interactionSource,
+                                                    colors = colors,
+                                                    enabled = true,
+                                                    modifier = Modifier.height(20.dp)
+                                                )
+                                            }
+                                        )
+                                    }
                                 }
 
                                 else -> {}
@@ -397,6 +458,7 @@ private fun Items(
     isDarkMode: Boolean,
     modifier: Modifier = Modifier,
     onItemClick: (Int) -> Unit,
+    itemCustomIcon: @Composable (() -> Unit)? = null,
     itemContent: @Composable (Int) -> Unit,
 ) {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
@@ -417,6 +479,7 @@ private fun Items(
                 when (item.orientation) {
                     Item.Orientation.HORIZONTAL -> HorizontalItem(
                         item = index to item,
+                        customIcon = itemCustomIcon,
                         shape = RoundedCornerShape(
                             topStart = top,
                             topEnd = top,
@@ -432,6 +495,7 @@ private fun Items(
                     }
                     Item.Orientation.VERTICAL -> VerticalItem(
                         item = index to item,
+                        customIcon = itemCustomIcon,
                         shape = RoundedCornerShape(
                             topStart = top,
                             topEnd = top,
@@ -462,6 +526,7 @@ private fun HorizontalItem(
     background: Color,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
+    customIcon: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
@@ -479,10 +544,14 @@ private fun HorizontalItem(
                 .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(item.second.icon),
-                contentDescription = null,
-            )
+            if (customIcon != null) {
+                customIcon()
+            } else {
+                Icon(
+                    imageVector = ImageVector.vectorResource(item.second.icon),
+                    contentDescription = null,
+                )
+            }
             Text(
                 text = stringResource(item.second.label),
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
@@ -502,6 +571,7 @@ private fun VerticalItem(
     background: Color,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
+    customIcon: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
@@ -522,10 +592,14 @@ private fun VerticalItem(
                 horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(item.second.icon),
-                    contentDescription = null,
-                )
+                if (customIcon != null) {
+                    customIcon()
+                } else {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(item.second.icon),
+                        contentDescription = null,
+                    )
+                }
                 Text(
                     text = stringResource(item.second.label),
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),

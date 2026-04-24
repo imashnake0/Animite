@@ -3,6 +3,7 @@ package com.imashnake.animite.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.preferences.PreferencesRepository
+import com.imashnake.animite.core.ui.Density
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterNotNull
@@ -16,11 +17,12 @@ class SettingsViewModel @Inject constructor(
     val theme = preferencesRepository.theme.filterNotNull()
     val useSystemColorScheme = preferencesRepository.useSystemColorScheme.filterNotNull()
     val isAmoled = preferencesRepository.isAmoled.filterNotNull()
+    val density = preferencesRepository.density.filterNotNull()
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
 
     fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {
-        preferencesRepository.setThemeToken(theme.name)
+        preferencesRepository.setTheme(theme.name)
     }
     fun setUseSystemColorScheme(useSystemColorScheme: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setUseSystemColorScheme(useSystemColorScheme)
@@ -28,6 +30,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setIsAmoled(isAmoled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setIsAmoled(isAmoled)
+    }
+
+    fun setDensity(density: Density) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setDensity(density.name)
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {

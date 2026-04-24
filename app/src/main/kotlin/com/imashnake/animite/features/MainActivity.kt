@@ -47,7 +47,9 @@ import androidx.navigation.navDeepLink
 import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.anime.AnimeScreen
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.core.ui.Density
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.explore.ExploreScreen
 import com.imashnake.animite.features.searchbar.SearchFrontDrop
 import com.imashnake.animite.features.theme.AnimiteTheme
@@ -97,9 +99,9 @@ class MainActivity : ComponentActivity() {
             }
 
             val theme by settingsViewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
-
             val useSystemColorScheme by settingsViewModel.useSystemColorScheme.collectAsState(initial = false)
             val isAmoled by settingsViewModel.isAmoled.collectAsState(initial = false)
+            val density by settingsViewModel.density.collectAsState(initial = Density.COMFY.name)
 
             val useDarkTheme = when(Theme.valueOf(theme)) {
                 Theme.DARK -> true
@@ -112,6 +114,7 @@ class MainActivity : ComponentActivity() {
             val avatar by profileViewModel.viewerAvatar.collectAsState(initial = null)
 
             AnimiteTheme(
+                paddings = rememberDefaultPaddings(Density.valueOf(density)),
                 useDarkTheme = useDarkTheme,
                 isAmoled = isAmoled,
                 useSystemColorScheme = useSystemColorScheme,
