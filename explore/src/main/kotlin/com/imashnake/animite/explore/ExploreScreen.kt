@@ -506,7 +506,7 @@ private fun Sort(
                 )
                 val iconSize by animateDpAsState(
                     targetValue = if (isSortSelected)
-                        LocalPaddings.current.medium
+                        dimensionResource(coreUiR.dimen.icon_size)
                     else 0.dp
                 )
 
@@ -529,12 +529,12 @@ private fun Sort(
                                 Text(stringResource(sort.res))
                             }
                             if (isSortSelected) {
-                                val expandToCollapse = AnimatedImageVector.animatedVectorResource(
+                                val order = AnimatedImageVector.animatedVectorResource(
                                     R.drawable.order
                                 )
                                 Icon(
                                     painter = rememberAnimatedVectorPainter(
-                                        animatedImageVector = expandToCollapse,
+                                        animatedImageVector = order,
                                         atEnd = isDescending,
                                     ),
                                     contentDescription = null,

@@ -9,7 +9,8 @@
     <string name="light">Light</string>
     <string name="system">Device</string>
     <string name="palette">Use system color scheme</string>
-    <string name="amoled">Amoled</string>
+    <string name="amoled">AMOLED</string>
+    <string name="density">Density</string>
 
     <string name="about">About</string>
     <string name="app_icon">App Icon</string>

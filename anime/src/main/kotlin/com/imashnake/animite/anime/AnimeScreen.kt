@@ -51,6 +51,7 @@ import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Chip
+import com.imashnake.animite.core.ui.component.EmptyChip
 import com.imashnake.animite.core.ui.component.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
@@ -204,7 +205,7 @@ private fun AnimeRow(
                     onClick = onListClick
                 )
             } }
-            else -> null
+            else -> { { EmptyChip() } }
         },
         onListClick = {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
