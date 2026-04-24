@@ -99,6 +99,7 @@ import com.imashnake.animite.settings.SettingsPage
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
+import com.imashnake.animite.core.ui.R as coreUiR
 import com.imashnake.animite.navigation.R as navigationR
 
 private const val DROP_DOWN_ITEMS_COUNT = 2
@@ -384,7 +385,7 @@ fun SettingsIcon(
             modifier = Modifier
                 .clickable { onNavigateToSettings(SettingsPage) }
                 .padding(LocalPaddings.current.small)
-                .size(LocalPaddings.current.medium)
+                .size(dimensionResource(coreUiR.dimen.icon_size))
                 .graphicsLayer { rotationZ = angle }
         )
     }
