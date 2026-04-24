@@ -10,6 +10,7 @@ import com.imashnake.animite.api.preferences.ext.setValue
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
 private const val USE_SYSTEM_COLOR_SCHEME = true
+private const val IS_AMOLED = false
 private const val IS_DEV_OPTIONS_ENABLED = false
 
 /**
@@ -49,6 +50,12 @@ class PreferencesRepository internal constructor(
     val useSystemColorScheme = dataStore.getValue(useSystemColorSchemeKey, USE_SYSTEM_COLOR_SCHEME)
     suspend fun setUseSystemColorScheme(useSystemColorScheme: Boolean) {
         dataStore.setValue(useSystemColorSchemeKey, useSystemColorScheme)
+    }
+
+    private val isAmoledKey = booleanPreferencesKey("is_amoled")
+    val isAmoled = dataStore.getValue(isAmoledKey, IS_AMOLED)
+    suspend fun setIsAmoled(isAmoled: Boolean) {
+        dataStore.setValue(isAmoledKey, isAmoled)
     }
 
     private val isDevOptionsEnabledKey = booleanPreferencesKey("dev_options_enabled")
