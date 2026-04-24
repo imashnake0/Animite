@@ -308,6 +308,7 @@ fun SettingsPage(
                                                 Density.COMPACT -> 2f
                                             },
                                             onValueChange = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                                 viewModel.setDensity(Density.entries[it.fastRoundToInt()])
                                             },
                                             colors = colors,
