@@ -143,7 +143,7 @@ fun ProfileScreen(
             .background(MaterialTheme.colorScheme.background)
     ) {
         when {
-            false -> when {
+            isLoggedIn -> when {
                 data.all { it is Resource.Success } -> viewer.data?.run {
                     LaunchedEffect(avatar) {
                         if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
