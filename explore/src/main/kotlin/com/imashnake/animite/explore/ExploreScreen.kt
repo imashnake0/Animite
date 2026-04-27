@@ -280,6 +280,10 @@ fun ExploreScreen(
                         MediaMediumList(
                             mediaMediumList = explorePage.data?.list.orEmpty().toImmutableList(),
                             onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
+                            pageInfo = explorePage.data?.info,
+                            onPageChanged = {
+                                TODO()
+                            },
                             shouldShowRank = true,
                             modifier = Modifier
                                 .consumeWindowInsets(

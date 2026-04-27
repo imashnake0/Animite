@@ -43,9 +43,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.imashnake.animite.api.anilist.sanitize.media.Info
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.CharacterCard
+import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.core.ui.R as coreUiR
@@ -56,6 +58,8 @@ fun MediaMediumList(
     onItemClick: (Int, String?) -> Unit,
     shouldShowRank: Boolean,
     modifier: Modifier = Modifier,
+    pageInfo: Info? = null,
+    onPageChanged: (Int) -> Unit = {},
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -90,6 +94,16 @@ fun MediaMediumList(
                     )
                     .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
             )
+        }
+        if (pageInfo?.hasNextPage == true && pageInfo.currentPage != null && pageInfo.lastPage != null) {
+            item {
+                Paginator(
+                    page = pageInfo.currentPage,
+                    pageRange = 1..pageInfo.lastPage!!,
+                    onPageChanged = onPageChanged,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
