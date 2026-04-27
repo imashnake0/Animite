@@ -39,7 +39,7 @@ fun Paginator(
     page: Int?,
     pageRange: IntRange,
     onPageChanged: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -54,14 +54,14 @@ fun Paginator(
             var shortenYear by remember { mutableStateOf(false) }
             PageOutline(shortenYear)
 
-            val listState = rememberLazyListState()
+            val paginatorState = rememberLazyListState()
             LaunchedEffect(page) {
                 page?.let {
-                    listState.animateScrollToItem(page - pageRange.first())
+                    paginatorState.animateScrollToItem(page - pageRange.first())
                 }
             }
             LazyRow(
-                state = listState,
+                state = paginatorState,
                 contentPadding = PaddingValues(horizontal = yearItemSize * 2f),
                 userScrollEnabled = false,
                 modifier = Modifier.requiredWidth(yearItemSize * 5),

@@ -140,7 +140,7 @@ private fun MediaMediumItem(
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier
                         .padding(horizontal = LocalPaddings.current.tiny)
-                        .requiredWidth(LocalPaddings.current.large)
+                        .requiredWidth(30.dp)
                         .align(Alignment.CenterVertically)
                 )
             }
