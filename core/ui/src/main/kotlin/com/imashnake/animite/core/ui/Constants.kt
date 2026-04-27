@@ -18,4 +18,5 @@ object Constants {
 
     const val SEASON = "season"
     const val YEAR = "year"
+    const val PAGE = "page"
 }

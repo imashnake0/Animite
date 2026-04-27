@@ -43,9 +43,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.imashnake.animite.api.anilist.sanitize.media.Info
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.CharacterCard
+import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.core.ui.R as coreUiR
@@ -56,6 +58,8 @@ fun MediaMediumList(
     onItemClick: (Int, String?) -> Unit,
     shouldShowRank: Boolean,
     modifier: Modifier = Modifier,
+    pageInfo: Info? = null,
+    onPageChanged: (Int) -> Unit = {},
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -68,10 +72,15 @@ fun MediaMediumList(
         // Needed to prevent scrolling after item animations
         item(key = 0) {}
         items(mediaMediumList.size, key = { mediaMediumList[it].id }) { index ->
+            val rank = if (!shouldShowRank) {
+                null
+            } else {
+                (index + 1) + (pageInfo?.currentPage?.minus(1)?.times(10) ?: 1)
+            }
             MediaMediumItem(
                 item = mediaMediumList[index],
                 onClick = onItemClick,
-                rank = (index + 1).takeIf { shouldShowRank },
+                rank = rank,
                 modifier = Modifier
                     .animateItem()
                     .height(137.dp)
@@ -90,6 +99,17 @@ fun MediaMediumList(
                     )
                     .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
             )
+        }
+        if (pageInfo?.currentPage != null && pageInfo.lastPage != null) {
+            item {
+                Paginator(
+                    page = pageInfo.currentPage,
+                    hasNextPage = pageInfo.hasNextPage,
+                    pageRange = 1..pageInfo.lastPage!!,
+                    onPageChanged = onPageChanged,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -121,7 +141,7 @@ private fun MediaMediumItem(
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier
                         .padding(horizontal = LocalPaddings.current.tiny)
-                        .requiredWidth(LocalPaddings.current.large)
+                        .requiredWidth(30.dp)
                         .align(Alignment.CenterVertically)
                 )
             }

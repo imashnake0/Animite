@@ -71,7 +71,7 @@ class MediaPageViewModel @Inject constructor(
             uiState = uiState.copy(genreTitleList = uiState.genreTitleList?.first.orEmpty() to persistentListOf())
             return@launch
         }
-        val list = mediaRepository.fetchMediaMediumList(
+        val page = mediaRepository.fetchMediaMediumList(
             mediaType = uiState.type?.let {
                 MediaType.safeValueOf(it)
             } ?: MediaType.UNKNOWN__,
@@ -79,6 +79,6 @@ class MediaPageViewModel @Inject constructor(
             genre = genre,
         ).firstOrNull()?.getOrNull()
 
-        uiState = uiState.copy(genreTitleList = list?.let { genre to it })
+        uiState = uiState.copy(genreTitleList = page?.list?.let { genre to it })
     }
 }

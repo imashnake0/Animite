@@ -19,6 +19,11 @@ query MediaMediumListQuery(
         page: $page,
         perPage: $perPage
     ) {
+        pageInfo {
+            currentPage
+            lastPage
+            hasNextPage
+        }
         media(
             type: $type,
             sort: $sort,
