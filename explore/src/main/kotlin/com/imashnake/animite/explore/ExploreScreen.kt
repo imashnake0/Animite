@@ -281,9 +281,7 @@ fun ExploreScreen(
                             mediaMediumList = explorePage.data?.list.orEmpty().toImmutableList(),
                             onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
                             pageInfo = explorePage.data?.info,
-                            onPageChanged = {
-                                TODO()
-                            },
+                            onPageChanged = viewModel::setPage,
                             shouldShowRank = true,
                             modifier = Modifier
                                 .consumeWindowInsets(

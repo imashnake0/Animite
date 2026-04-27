@@ -72,10 +72,15 @@ fun MediaMediumList(
         // Needed to prevent scrolling after item animations
         item(key = 0) {}
         items(mediaMediumList.size, key = { mediaMediumList[it].id }) { index ->
+            val rank = if (!shouldShowRank) {
+                null
+            } else {
+                (index + 1) + (pageInfo?.currentPage?.minus(1)?.times(10) ?: 1)
+            }
             MediaMediumItem(
                 item = mediaMediumList[index],
                 onClick = onItemClick,
-                rank = (index + 1).takeIf { shouldShowRank },
+                rank = rank,
                 modifier = Modifier
                     .animateItem()
                     .height(137.dp)

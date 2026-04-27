@@ -106,6 +106,7 @@ class ExploreViewModel @Inject constructor(
     private val allStatuses = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.STATUSES, null)
     private val includedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FILTERS + Constants.STATUSES, emptySet())
     private val excludedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FILTERS + Constants.STATUSES, emptySet())
+    private val page = savedStateHandle.getMutableStateFlow(Constants.PAGE, 1)
 
     val chipStatusGroup = combine(allStatuses, includedStatuses, excludedStatuses) { (all, included, excluded) ->
         ChipFilterGroup(
@@ -135,8 +136,9 @@ class ExploreViewModel @Inject constructor(
         flow7 = excludedFormats,
         flow8 = includedStatuses,
         flow9 = excludedStatuses,
-        transform = ::Nonuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats) ->
+        flow10 = page,
+        transform = ::Decuple,
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, page) ->
         if (
             sort == MediaSort.POPULARITY_DESC &&
             searchQuery == null &&
@@ -147,10 +149,11 @@ class ExploreViewModel @Inject constructor(
             includedFormats == emptySet<String>() &&
             excludedFormats == emptySet<String>()
         ) 0L else 500L
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses) ->
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page) ->
         mediaListRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
             sort = listOf(sort),
+            page = page,
             search = searchQuery,
             includedGenres = includedGenres.toList().ifEmpty { null },
             excludedGenres = excludedGenres.toList().ifEmpty { null },
@@ -232,6 +235,10 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.YEAR] = year
     }
 
+    fun setPage(page: Int) {
+        savedStateHandle[Constants.PAGE] = page
+    }
+
     fun resetFilter(filterType: ChipFilterType) {
         savedStateHandle[Constants.ALL_FILTERS + filterType.tag] = when(filterType) {
             ChipFilterType.GENRE -> _allGenres
@@ -254,6 +261,8 @@ class ExploreViewModel @Inject constructor(
         ChipFilterType.entries.forEach {
             resetFilter(it)
         }
+
+        savedStateHandle[Constants.PAGE] = 1
     }
 
     val yearRange = getYears()
@@ -285,7 +294,7 @@ class ExploreViewModel @Inject constructor(
 }
 
 // TODO: Move this to core?
-data class Nonuple<out A, out B, out C, out D, out E, out F, out G, out H, out I>(
+data class Decuple<out A, out B, out C, out D, out E, out F, out G, out H, out I, out J>(
     val first: A,
     val second: B,
     val third: C,
@@ -295,13 +304,15 @@ data class Nonuple<out A, out B, out C, out D, out E, out F, out G, out H, out I
     val seventh: G,
     val eighth: H,
     val ninth: I,
+    val tenth: J,
 ) {
     /**
-     * Returns string representation of the [Nonuple] including its
-     * [first], [second], [third], [fourth], [fifth], [sixth], [seventh], [eighth], and [ninth] values.
+     * Returns string representation of the [Decuple] including its
+     * [first], [second], [third], [fourth], [fifth], [sixth], [seventh], [eighth], [ninth], and
+     * [tenth] values.
      */
     override fun toString(): String =
-        "($first, $second, $third, $fourth, $fifth, $sixth, $seventh, $eighth, $ninth)"
+        "($first, $second, $third, $fourth, $fifth, $sixth, $seventh, $eighth, $ninth, $tenth)"
 }
 
 inline fun <
@@ -314,7 +325,7 @@ inline fun <
         T7,
         T8,
         T9,
-//        T10,
+        T10,
         R
 > combine(
     flow: Flow<T1>,
@@ -326,7 +337,7 @@ inline fun <
     flow7: Flow<T7>,
     flow8: Flow<T8>,
     flow9: Flow<T9>,
-//    flow10: Flow<T10>,
+    flow10: Flow<T10>,
     crossinline transform: suspend (
         T1,
         T2,
@@ -337,7 +348,7 @@ inline fun <
         T7,
         T8,
         T9,
-//        T10
+        T10
     ) -> R,
 ): Flow<R> = combine(
     flow,
@@ -349,7 +360,7 @@ inline fun <
     flow7,
     flow8,
     flow9,
-//    flow10
+    flow10
 ) { args: Array<*> ->
     @Suppress("UNCHECKED_CAST")
     transform(
@@ -362,6 +373,6 @@ inline fun <
         args[6] as T7,
         args[7] as T8,
         args[8] as T9,
-//        args[9] as T10,
+        args[9] as T10,
     )
 }
