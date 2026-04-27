@@ -4,15 +4,16 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
+import com.imashnake.animite.api.anilist.sanitize.media.Info
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
+import com.imashnake.animite.api.anilist.sanitize.media.Page
 import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.api.anilist.type.MediaType
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
@@ -87,7 +88,7 @@ class AnilistMediaRepository(
         includedStatuses: List<MediaStatus>? = null,
         excludedStatuses: List<MediaStatus>? = null,
         search: String? = null,
-    ): Flow<Result<ImmutableList<Media.Medium>>> {
+    ): Flow<Result<Page<Media.Medium>>> {
         return apolloClient
             .query(
                 MediaMediumListQuery(
@@ -113,10 +114,13 @@ class AnilistMediaRepository(
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
             .filter { it.exception == null }
-            .asResult {
-                it.page!!.media.orEmpty().filterNotNull().map { query ->
-                    Media.Medium(query.mediaMedium)
-                }.toImmutableList()
+            .asResult { data ->
+                Page(
+                    list = data.page!!.media.orEmpty().filterNotNull().map { query ->
+                        Media.Medium(query.mediaMedium)
+                    }.toImmutableList(),
+                    info = data.page.pageInfo?.let { Info(it) }
+                )
             }
     }
 

@@ -11,7 +11,6 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,13 +36,10 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -79,7 +75,6 @@ import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -125,6 +120,7 @@ import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.Chip
+import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.media.MediaMediumList
@@ -158,7 +154,7 @@ fun ExploreScreen(
     }
     val insetAndNavigationPaddingValues = contentWindowInsets.asPaddingValues() + navigationComponentPaddingValues
 
-    val exploreList by viewModel.exploreList.collectAsState()
+    val explorePage by viewModel.explorePage.collectAsState()
 
     var showFilterBottomSheet by rememberSaveable { mutableStateOf(false) }
     val filterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
@@ -183,7 +179,7 @@ fun ExploreScreen(
     val chipStatusGroup by viewModel.chipStatusGroup.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
-        when (exploreList) {
+        when (explorePage) {
             is Resource.Success -> {
                 val isNotAtTop by remember {
                     derivedStateOf {
@@ -282,7 +278,7 @@ fun ExploreScreen(
                         }
 
                         MediaMediumList(
-                            mediaMediumList = exploreList.data.orEmpty().toImmutableList(),
+                            mediaMediumList = explorePage.data?.list.orEmpty().toImmutableList(),
                             onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
                             shouldShowRank = true,
                             modifier = Modifier
@@ -301,7 +297,7 @@ fun ExploreScreen(
                                 top = insetAndNavigationPaddingValues.calculateTopPadding()
                                         + TextFieldDefaults.MinHeight
                                         + 2 * LocalPaddings.current.small,
-                                bottom =  insetAndNavigationPaddingValues.calculateBottomPadding()
+                                bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
                             )
                         )
                     }
@@ -778,7 +774,7 @@ private fun YearFilter(
                 .align(Alignment.CenterHorizontally)
         ) {
             val screenDpSize = LocalWindowInfo.current.containerDpSize
-            val yearItemSize = if (screenDpSize.width > (56 * 5).dp) {
+            if (screenDpSize.width > (56 * 5).dp) {
                 56.dp
             } else screenDpSize.width / 5
 
@@ -788,72 +784,11 @@ private fun YearFilter(
 
             AnimatedVisibility(year != null) {
                 Column {
-                    Box(contentAlignment = Alignment.Center) {
-                        Box(contentAlignment = Alignment.Center) {
-                            var shortenYear by remember { mutableStateOf(false) }
-                            YearOutline(shortenYear)
-
-                            val listState = rememberLazyListState()
-                            LaunchedEffect(year) {
-                                year?.let {
-                                    listState.animateScrollToItem(year - firstYear)
-                                }
-                            }
-                            LazyRow(
-                                state = listState,
-                                contentPadding = PaddingValues(horizontal = yearItemSize * 2f),
-                                userScrollEnabled = false,
-                                modifier = Modifier.requiredWidth(yearItemSize * 5),
-                            ) {
-                                items(yearCount) {
-                                    val currentYear = firstYear + it
-                                    val textAlpha by animateFloatAsState(
-                                        if (currentYear == year) 1f else 0.5f
-                                    )
-                                    Box(Modifier.requiredSize(yearItemSize)) {
-                                        val text = if (shortenYear) {
-                                            "'${currentYear.toString().takeLast(2)}"
-                                        } else "$currentYear"
-                                        Text(
-                                            text = text,
-                                            maxLines = 1,
-                                            color = MaterialTheme.colorScheme.onBackground.copy(
-                                                alpha = textAlpha
-                                            ),
-                                            onTextLayout = { result ->
-                                                if (result.hasVisualOverflow) shortenYear = true
-                                            },
-                                            modifier = Modifier.align(Alignment.Center)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        Button(
-                            enabled = (year ?: 0) > firstYear,
-                            onClick = { onYearChange((year ?: 0) - 1) },
-                            contentPadding = PaddingValues(),
-                            modifier = Modifier.align(Alignment.CenterStart)
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.step_year_left),
-                                contentDescription = stringResource(R.string.increase_year),
-                                modifier = Modifier.requiredSize(24.dp)
-                            )
-                        }
-                        Button(
-                            enabled = (year ?: 0) < lastYear,
-                            onClick = { onYearChange((year ?: 0) + 1) },
-                            contentPadding = PaddingValues(),
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.step_year_right),
-                                contentDescription = stringResource(R.string.decrease_year),
-                                modifier = Modifier.requiredSize(24.dp)
-                            )
-                        }
-                    }
+                    Paginator(
+                        page = year,
+                        pageRange = yearRange,
+                        onPageChanged = { onYearChange(it) }
+                    )
                     Spacer(Modifier.size(LocalPaddings.current.small))
                 }
             }
@@ -888,30 +823,6 @@ private fun YearFilter(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun YearOutline(
-    shortenYear: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier.border(
-            width = 2.dp,
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.outlineVariant
-        )
-    ) {
-        // Fake year field
-        Text(
-            text = if (shortenYear) "000" else "0000",
-            color = Color.Transparent,
-            maxLines = 1,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(LocalPaddings.current.small)
-        )
     }
 }
 

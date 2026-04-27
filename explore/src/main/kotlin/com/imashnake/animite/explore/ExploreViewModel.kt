@@ -125,7 +125,7 @@ class ExploreViewModel @Inject constructor(
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
 
     @OptIn(FlowPreview::class)
-    val exploreList = combine(
+    val explorePage = combine(
         flow = mediaSort,
         flow2 = searchQuery,
         flow3 = includedGenres,
