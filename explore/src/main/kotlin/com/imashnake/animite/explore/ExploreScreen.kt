@@ -772,15 +772,6 @@ private fun YearFilter(
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
-            val screenDpSize = LocalWindowInfo.current.containerDpSize
-            if (screenDpSize.width > (56 * 5).dp) {
-                56.dp
-            } else screenDpSize.width / 5
-
-            val firstYear = yearRange.first()
-            val lastYear = yearRange.last()
-            val yearCount = yearRange.count()
-
             AnimatedVisibility(year != null) {
                 Column {
                     Paginator(
@@ -796,6 +787,8 @@ private fun YearFilter(
                 horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val firstYear = yearRange.first()
+                val lastYear = yearRange.last()
                 Text(
                     text = firstYear.toString(),
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
@@ -810,7 +803,7 @@ private fun YearFilter(
                         inactiveTickColor = Color.Transparent,
                         activeTickColor = Color.Transparent
                     ),
-                    steps = yearCount,
+                    steps = yearRange.count(),
                     valueRange = firstYear.toFloat()..lastYear.toFloat(),
                     modifier = Modifier.weight(1f)
                 )
