@@ -100,10 +100,11 @@ fun MediaMediumList(
                     .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
             )
         }
-        if (pageInfo?.hasNextPage == true && pageInfo.currentPage != null && pageInfo.lastPage != null) {
+        if (pageInfo?.currentPage != null && pageInfo.lastPage != null) {
             item {
                 Paginator(
                     page = pageInfo.currentPage,
+                    hasNextPage = pageInfo.hasNextPage,
                     pageRange = 1..pageInfo.lastPage!!,
                     onPageChanged = onPageChanged,
                     modifier = Modifier.fillMaxWidth()

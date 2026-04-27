@@ -789,7 +789,7 @@ private fun YearFilter(
                     Paginator(
                         page = year,
                         pageRange = yearRange,
-                        onPageChanged = { onYearChange(it) }
+                        onPageChanged = { onYearChange(it) },
                     )
                     Spacer(Modifier.size(LocalPaddings.current.small))
                 }

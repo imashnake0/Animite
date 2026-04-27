@@ -40,6 +40,7 @@ fun Paginator(
     pageRange: IntRange,
     onPageChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    hasNextPage: Boolean? = null,
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -103,7 +104,7 @@ fun Paginator(
             )
         }
         Button(
-            enabled = (page ?: 0) < pageRange.last,
+            enabled = (page ?: 0) < pageRange.last && hasNextPage ?: true,
             onClick = { onPageChanged((page ?: 0) + 1) },
             contentPadding = PaddingValues(),
             modifier = Modifier.align(Alignment.CenterEnd)

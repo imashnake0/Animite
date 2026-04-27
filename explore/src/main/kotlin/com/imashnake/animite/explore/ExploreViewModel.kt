@@ -138,7 +138,7 @@ class ExploreViewModel @Inject constructor(
         flow9 = excludedStatuses,
         flow10 = page,
         transform = ::Decuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, page) ->
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page) ->
         if (
             sort == MediaSort.POPULARITY_DESC &&
             searchQuery == null &&
@@ -147,7 +147,8 @@ class ExploreViewModel @Inject constructor(
             seasonYear.first == null &&
             seasonYear.second == null &&
             includedFormats == emptySet<String>() &&
-            excludedFormats == emptySet<String>()
+            excludedFormats == emptySet<String>() ||
+            page != 0
         ) 0L else 500L
     }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page) ->
         mediaListRepository.fetchMediaMediumList(
