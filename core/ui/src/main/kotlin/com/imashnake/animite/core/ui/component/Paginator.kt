@@ -50,12 +50,12 @@ fun Paginator(
     ) {
         Box(contentAlignment = Alignment.Center) {
             val screenDpSize = LocalWindowInfo.current.containerDpSize
-            val yearItemSize = if (screenDpSize.width > (56 * 5).dp) {
+            val pageItemSize = if (screenDpSize.width > (56 * 5).dp) {
                 56.dp
             } else screenDpSize.width / 5
 
-            var shortenYear by remember { mutableStateOf(false) }
-            PageOutline(shortenYear)
+            var shortenPage by remember { mutableStateOf(false) }
+            PageOutline(shortenPage)
 
             val paginatorState = rememberLazyListState()
             LaunchedEffect(page) {
@@ -65,17 +65,17 @@ fun Paginator(
             }
             LazyRow(
                 state = paginatorState,
-                contentPadding = PaddingValues(horizontal = yearItemSize * 2f),
+                contentPadding = PaddingValues(horizontal = pageItemSize * 2f),
                 userScrollEnabled = false,
-                modifier = Modifier.requiredWidth(yearItemSize * 5),
+                modifier = Modifier.requiredWidth(pageItemSize * 5),
             ) {
                 items(pageRange.count()) {
                     val currentPage = pageRange.first + it
                     val textAlpha by animateFloatAsState(
                         if (currentPage == page) 1f else 0.5f
                     )
-                    Box(Modifier.requiredSize(yearItemSize)) {
-                        val text = if (shortenYear) {
+                    Box(Modifier.requiredSize(pageItemSize)) {
+                        val text = if (shortenPage) {
                             "'${currentPage.toString().takeLast(2)}"
                         } else "$currentPage"
                         Text(
@@ -85,7 +85,7 @@ fun Paginator(
                                 alpha = textAlpha
                             ),
                             onTextLayout = { result ->
-                                if (result.hasVisualOverflow) shortenYear = true
+                                if (result.hasVisualOverflow) shortenPage = true
                             },
                             modifier = Modifier.align(Alignment.Center)
                         )
@@ -140,7 +140,7 @@ private fun PageOutline(
             color = MaterialTheme.colorScheme.outlineVariant
         )
     ) {
-        // Fake year field
+        // Fake page field
         Text(
             text = if (shortenPage) "000" else "0000",
             color = Color.Transparent,
