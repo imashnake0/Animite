@@ -632,10 +632,7 @@ private fun FilterBottomSheet(
             YearFilter(
                 year = year,
                 yearRange = yearRange,
-                onYearChange = {
-                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                    onYearChange(it)
-                },
+                onYearChange = onYearChange,
             )
 
             ChipFilter(

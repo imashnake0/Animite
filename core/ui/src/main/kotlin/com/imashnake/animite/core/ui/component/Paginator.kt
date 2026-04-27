@@ -28,6 +28,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -91,9 +93,14 @@ fun Paginator(
                 }
             }
         }
+
+        val haptic = LocalHapticFeedback.current
         Button(
             enabled = (page ?: 0) > pageRange.first,
-            onClick = { onPageChanged((page ?: 0) - 1) },
+            onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                onPageChanged((page ?: 0) - 1)
+            },
             contentPadding = PaddingValues(),
             modifier = Modifier.align(Alignment.CenterStart)
         ) {
@@ -105,7 +112,10 @@ fun Paginator(
         }
         Button(
             enabled = (page ?: 0) < pageRange.last && hasNextPage ?: true,
-            onClick = { onPageChanged((page ?: 0) + 1) },
+            onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                onPageChanged((page ?: 0) + 1)
+            },
             contentPadding = PaddingValues(),
             modifier = Modifier.align(Alignment.CenterEnd)
         ) {
