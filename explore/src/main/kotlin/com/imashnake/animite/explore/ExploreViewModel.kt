@@ -49,7 +49,7 @@ class ExploreViewModel @Inject constructor(
                 setAllFilters(
                     filterType = filterType,
                     allFilters = when (filterType) {
-                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres().toSet()
+                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres().toSet() - setOfNotNull(navArgs.genre)
                         ChipFilterType.FORMAT -> Media.Format.animeFormats().map { it.name }.toSet()
                         ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
                     }
@@ -65,8 +65,8 @@ class ExploreViewModel @Inject constructor(
 
     private val _allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FILTERS + Constants.GENRES, null)
     private val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.GENRES, null)
-    private val includedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FILTERS + Constants.GENRES, emptySet())
-    private val excludedGenres = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FILTERS + Constants.GENRES, emptySet())
+    private val includedGenres = savedStateHandle.getMutableStateFlow(Constants.INCLUDED_FILTERS + Constants.GENRES, setOfNotNull(navArgs.genre))
+    private val excludedGenres = savedStateHandle.getMutableStateFlow(Constants.EXCLUDED_FILTERS + Constants.GENRES, emptySet<String>())
 
     val chipGenreGroup = combine(allGenres, includedGenres, excludedGenres) { (all, included, excluded) ->
         ChipFilterGroup(
