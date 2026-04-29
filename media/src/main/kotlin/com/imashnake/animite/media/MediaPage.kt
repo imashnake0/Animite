@@ -24,7 +24,6 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,8 +51,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -68,11 +65,8 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SuggestionChip
-import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
@@ -80,7 +74,6 @@ import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -130,19 +123,20 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
-import com.imashnake.animite.core.ui.ext.bannerParallax
-import com.imashnake.animite.core.ui.ext.copy
-import com.imashnake.animite.core.ui.ext.horizontalOnly
-import com.imashnake.animite.core.ui.component.BottomSheet
-import com.imashnake.animite.core.ui.component.CharacterCard
 import com.imashnake.animite.core.ui.Constants
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.BottomSheet
+import com.imashnake.animite.core.ui.component.CharacterCard
 import com.imashnake.animite.core.ui.component.Chip
+import com.imashnake.animite.core.ui.component.ChipFlowRow
 import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
-import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.core.ui.component.StatsRow
+import com.imashnake.animite.core.ui.ext.bannerParallax
+import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.crossfadeModel
+import com.imashnake.animite.core.ui.ext.horizontalOnly
+import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
@@ -301,6 +295,7 @@ fun MediaPage(
                                 MediaGenres(
                                     genres = media.genres,
                                     onGenreClick = {
+                                        // TODO: Navigate to explore screen with proper arguments.
                                         isExpanded = true
                                         viewModel.getGenreMediaMediums(it)
                                     },
@@ -1148,37 +1143,12 @@ private fun MediaGenres(
     contentPadding: PaddingValues,
     color: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-        contentPadding = contentPadding,
-        modifier = modifier
-    ) {
-        items(genres) { genre ->
-            CompositionLocalProvider(
-                // Remove default M3 padding
-                LocalMinimumInteractiveComponentSize provides 0.dp,
-            ) {
-                SuggestionChip(
-                    label = {
-                        Text(
-                            text = genre.lowercase(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.padding(
-                                vertical = LocalPaddings.current.small
-                            )
-                        )
-                    },
-                    onClick = { onGenreClick(genre) },
-                    shape = CircleShape,
-                    colors = SuggestionChipDefaults.suggestionChipColors(
-                        containerColor = color.copy(alpha = 0.25f)
-                    ),
-                    border = BorderStroke(width = 0.dp, color = Color.Transparent)
-                )
-            }
-        }
-    }
+    ChipFlowRow(
+        chips = genres,
+        onChipClick = onGenreClick,
+        modifier = modifier.padding(contentPadding),
+        chipColor = color,
+    )
 }
 
 /**

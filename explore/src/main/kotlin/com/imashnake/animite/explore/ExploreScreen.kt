@@ -119,7 +119,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.BottomSheet
-import com.imashnake.animite.core.ui.component.Chip
+import com.imashnake.animite.core.ui.component.ChipFlowRow
 import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
@@ -899,20 +899,14 @@ private fun ChipFilterFlowRow(
             Column {
                 FlowFilterGroupHeaders(icon = icon, title = title)
 
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    modifier = modifier.fillMaxWidth()
-                ) {
-                    it.fastForEach { filter ->
-                        Chip(
-                            color = chipColor,
-                            icon = transformFilterIcon?.invoke(filter),
-                            text = transformFilterText?.invoke(filter) ?: filter,
-                            onClick = { onFilterClick(filter) },
-                        )
-                    }
-                }
+                ChipFlowRow(
+                    chips = it,
+                    onChipClick = onFilterClick,
+                    modifier = modifier,
+                    chipColor = chipColor,
+                    transformFilterIcon = transformFilterIcon,
+                    transformFilterText = transformFilterText,
+                )
             }
         }
     }

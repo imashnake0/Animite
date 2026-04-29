@@ -22,6 +22,7 @@ data class ExploreRoute(
     val isDescending: Boolean? = null,
     val season: String? = null,
     val year: Int? = null,
+    val genre: String? = null,
 )
 
 @Serializable
