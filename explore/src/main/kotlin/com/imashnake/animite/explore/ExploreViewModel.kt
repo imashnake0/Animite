@@ -49,11 +49,17 @@ class ExploreViewModel @Inject constructor(
                 setAllFilters(
                     filterType = filterType,
                     allFilters = when (filterType) {
-                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres().toSet() - setOfNotNull(navArgs.genre)
+                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres().toSet()
                         ChipFilterType.FORMAT -> Media.Format.animeFormats().map { it.name }.toSet()
                         ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
                     }
                 )
+                navArgs.genre?.let {
+                    includeFilter(
+                        filterType = ChipFilterType.GENRE,
+                        filter = it
+                    )
+                }
             }
         }
     }
