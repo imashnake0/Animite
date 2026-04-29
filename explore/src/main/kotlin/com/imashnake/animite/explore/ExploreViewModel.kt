@@ -8,7 +8,6 @@ import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaSeason
-import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.resource.Resource
@@ -131,6 +130,8 @@ class ExploreViewModel @Inject constructor(
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
 
+    var shouldDebounce = false
+
     @OptIn(FlowPreview::class)
     val explorePage = combine(
         flow = mediaSort,
@@ -145,17 +146,12 @@ class ExploreViewModel @Inject constructor(
         flow10 = page,
         transform = ::Decuple,
     ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page) ->
-        if (
-            sort == MediaSort.POPULARITY_DESC &&
-            searchQuery == null &&
-            includedGenres == emptySet<String>() &&
-            excludedGenres == emptySet<String>() &&
-            seasonYear.first == null &&
-            seasonYear.second == null &&
-            includedFormats == emptySet<String>() &&
-            excludedFormats == emptySet<String>() ||
-            page != 0
-        ) 0L else 500L
+        if (shouldDebounce) {
+            500L
+        } else {
+            shouldDebounce = true
+            0L
+        }
     }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page) ->
         mediaListRepository.fetchMediaMediumList(
             mediaType = MediaType.ANIME,
