@@ -141,6 +141,7 @@ import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.media.ext.title
+import com.imashnake.animite.navigation.ExploreRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
@@ -168,6 +169,7 @@ private const val RELATIONS = "Relations"
 fun MediaPage(
     onBack: () -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToExplore: (ExploreRoute) -> Unit,
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
     isAmoled: Boolean,
@@ -295,9 +297,7 @@ fun MediaPage(
                                 MediaGenres(
                                     genres = media.genres,
                                     onGenreClick = {
-                                        // TODO: Navigate to explore screen with proper arguments.
-                                        isExpanded = true
-                                        viewModel.getGenreMediaMediums(it)
+                                        onNavigateToExplore(ExploreRoute(genre = it))
                                     },
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
