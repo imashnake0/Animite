@@ -199,6 +199,7 @@ fun MainScreen(
                         MediaPage(
                             onBack = navController::navigateUp,
                             onNavigateToMediaItem = navController::navigate,
+                            onNavigateToExplore = navController::navigate,
                             useDarkTheme = useDarkTheme,
                             isAmoled = isAmoled,
                             deviceScreenCornerRadius = deviceScreenCornerRadius,

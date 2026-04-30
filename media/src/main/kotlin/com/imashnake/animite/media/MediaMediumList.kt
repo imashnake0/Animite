@@ -32,6 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,6 +66,7 @@ fun MediaMediumList(
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
+    var page by remember { mutableIntStateOf(pageInfo?.currentPage ?: -1) }
     LazyColumn(
         state = state,
         modifier = modifier,
@@ -103,10 +107,13 @@ fun MediaMediumList(
         if (pageInfo?.currentPage != null && pageInfo.lastPage != null) {
             item {
                 Paginator(
-                    page = pageInfo.currentPage,
+                    page = page,
                     hasNextPage = pageInfo.hasNextPage,
                     pageRange = 1..pageInfo.lastPage!!,
-                    onPageChanged = onPageChanged,
+                    onPageChanged = {
+                        page = it
+                        onPageChanged(it)
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
