@@ -14,10 +14,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -39,18 +43,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Info
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.CharacterCard
+import com.imashnake.animite.core.ui.component.LoadingMediaSmall
 import com.imashnake.animite.core.ui.component.Paginator
+import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.core.ui.R as coreUiR
@@ -244,5 +252,108 @@ private fun MediaMediumItem(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LoadingMediaMediumItem(
+    shouldShowRank: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier) {
+        if (shouldShowRank) {
+            Box(
+                Modifier
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                    .requiredHeight(137.dp)
+                    .width(LocalPaddings.current.large * 3)
+            )
+        }
+
+        Row {
+             if (shouldShowRank)
+                Text(
+                    text = " ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier
+                        .padding(horizontal = LocalPaddings.current.tiny)
+                        .requiredWidth(30.dp)
+                        .align(Alignment.CenterVertically)
+                )
+
+            LoadingMediaSmall(
+                imageHeight = 137.dp,
+                cardWidth = 96.dp,
+                shouldShowLabel = false
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingMediaMediumList(
+    count: Int,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
+) {
+    val layoutDirection = LocalLayoutDirection.current
+    val startPadding = contentPadding.calculateStartPadding(layoutDirection)
+    val endPadding = contentPadding.calculateEndPadding(layoutDirection)
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        contentPadding = PaddingValues(
+            start = startPadding,
+            end = endPadding,
+        ),
+        userScrollEnabled = false,
+        modifier = modifier
+    ) {
+        item(key = 0) {}
+        items(count) { index ->
+            LoadingMediaMediumItem(
+                shouldShowRank = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            // TODO: Why is index 1 here instead of 0???
+                            topEnd = if (index == 1) {
+                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                            } else LocalPaddings.current.small,
+                            bottomEnd = if (index == count) {
+                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                            } else LocalPaddings.current.small,
+                        )
+                    )
+                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewLoadingMediaMediumList() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        LoadingMediaMediumList(count = 10)
+    }
+}
+
+@Preview
+@Composable
+fun PreviewLoadingMediaMediumItem() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        LoadingMediaMediumItem(
+            shouldShowRank = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(LocalPaddings.current.small))
+                .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
+        )
     }
 }
