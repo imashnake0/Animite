@@ -7,9 +7,12 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -123,6 +126,7 @@ import com.imashnake.animite.core.ui.component.ChipFlowRow
 import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
+import com.imashnake.animite.media.LoadingMediaMediumList
 import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
@@ -179,107 +183,121 @@ fun ExploreScreen(
     val chipStatusGroup by viewModel.chipStatusGroup.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
-        when (explorePage) {
-            is Resource.Success -> {
-                val isNotAtTop by remember {
-                    derivedStateOf {
-                        listState.firstVisibleItemScrollOffset != 0
-                                || listState.firstVisibleItemIndex != 0
-                    }
-                }
-                val barBackgroundColor by animateColorAsState(
-                    targetValue = if (!isNotAtTop) {
-                        MaterialTheme.colorScheme.background
-                    } else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.9f),
-                    animationSpec = tween(500)
-                )
+        val isNotAtTop by remember {
+            derivedStateOf {
+                listState.firstVisibleItemScrollOffset != 0
+                        || listState.firstVisibleItemIndex != 0
+            }
+        }
+        val barBackgroundColor by animateColorAsState(
+            targetValue = if (!isNotAtTop) {
+                MaterialTheme.colorScheme.background
+            } else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.9f),
+            animationSpec = tween(500)
+        )
 
-                Box {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(
-                            LocalPaddings.current.small + LocalPaddings.current.tiny
-                        ),
+        Box {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(
+                    LocalPaddings.current.small + LocalPaddings.current.tiny
+                ),
+                modifier = Modifier
+                    .background(barBackgroundColor)
+                    .padding(insetAndNavigationPaddingValues.copy(bottom = 0.dp))
+                    .fillMaxWidth()
+                    .padding(vertical = LocalPaddings.current.small)
+                    .zIndex(Float.MAX_VALUE)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(horizontal = LocalPaddings.current.large)
+                        .height(IntrinsicSize.Max)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                ) {
+                    SearchBar(
+                        searchQuery = searchQuery,
+                        onSearch = { viewModel.setSearchQuery(it) },
                         modifier = Modifier
-                            .background(barBackgroundColor)
-                            .padding(insetAndNavigationPaddingValues.copy(bottom = 0.dp))
-                            .fillMaxWidth()
-                            .padding(vertical = LocalPaddings.current.small)
-                            .zIndex(Float.MAX_VALUE)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                            .padding(horizontal = LocalPaddings.current.small)
+                            .weight(1f)
+                    )
+
+                    Surface(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = CircleShape,
+                        modifier = Modifier.padding(end = 8.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.tune),
+                            contentDescription = stringResource(R.string.tune),
+                            tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier
-                                .padding(horizontal = LocalPaddings.current.large)
-                                .height(IntrinsicSize.Max)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                        ) {
-                            SearchBar(
-                                searchQuery = searchQuery,
-                                onSearch = { viewModel.setSearchQuery(it) },
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                    .padding(horizontal = LocalPaddings.current.small)
-                                    .weight(1f)
-                            )
-
-                            Surface(
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = CircleShape,
-                                modifier = Modifier.padding(end = 8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.tune),
-                                    contentDescription = stringResource(R.string.tune),
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier
-                                        .clickable {
-                                            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-                                            showFilterBottomSheet = true
-                                        }
-                                        .padding(8.dp)
-                                        .size(24.dp)
-                                )
-                            }
-                        }
-
-                        Sort(
-                            sorts = Media.Sort.entries.toImmutableList(),
-                            selectedSort = selectedSort,
-                            onSortSelected = { viewModel.setMediaSort(it) },
-                            isDescending = isDescending,
-                            toggleOrder = { viewModel.setIsDescending(!isDescending) },
-                            expanded = isSortDropdownExpanded,
-                            setExpanded = {
-                                haptic.performHapticFeedback(
-                                    if (it) {
-                                        HapticFeedbackType.ToggleOn
-                                    } else HapticFeedbackType.ToggleOff
-                                )
-                                isSortDropdownExpanded = it
-                            },
-                            insetAndNavigationPaddingValues = insetAndNavigationPaddingValues,
-                            modifier = Modifier.fillMaxWidth()
+                                .clickable {
+                                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                                    showFilterBottomSheet = true
+                                }
+                                .padding(8.dp)
+                                .size(24.dp)
                         )
                     }
+                }
 
-                    Column(Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Spacer(modifier = Modifier.size(11.dp))
-                            Text(
-                                text = "",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
+                Sort(
+                    sorts = Media.Sort.entries.toImmutableList(),
+                    selectedSort = selectedSort,
+                    onSortSelected = { viewModel.setMediaSort(it) },
+                    isDescending = isDescending,
+                    toggleOrder = { viewModel.setIsDescending(!isDescending) },
+                    expanded = isSortDropdownExpanded,
+                    setExpanded = {
+                        haptic.performHapticFeedback(
+                            if (it) {
+                                HapticFeedbackType.ToggleOn
+                            } else HapticFeedbackType.ToggleOff
+                        )
+                        isSortDropdownExpanded = it
+                    },
+                    insetAndNavigationPaddingValues = insetAndNavigationPaddingValues,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
+            Column(Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Spacer(modifier = Modifier.size(11.dp))
+                    Text(
+                        text = "",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
+                AnimatedContent(
+                    targetState = explorePage is Resource.Success,
+                    transitionSpec = {
+                        fadeIn(tween(1000))
+                            .togetherWith(fadeOut(tween(1000)))
+                    },
+                ) {
+                    if (it) {
                         MediaMediumList(
-                            mediaMediumList = explorePage.data?.list.orEmpty().toImmutableList(),
-                            onItemClick = { id, title -> onItemClick(id, MediaType.ANIME, title) },
+                            mediaMediumList = explorePage.data?.list
+                                .orEmpty()
+                                .toImmutableList(),
+                            onItemClick = { id, title ->
+                                onItemClick(
+                                    id,
+                                    MediaType.ANIME,
+                                    title
+                                )
+                            },
                             pageInfo = explorePage.data?.info,
                             onPageChanged = viewModel::setPage,
                             shouldShowRank = true,
@@ -301,6 +319,27 @@ fun ExploreScreen(
                                         + 2 * LocalPaddings.current.small,
                                 bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
                             )
+                        )
+                    } else {
+                        LoadingMediaMediumList(
+                            count = 10,
+                            contentPadding = PaddingValues(
+                                top = LocalPaddings.current.medium,
+                                bottom = LocalPaddings.current.large,
+                                start = LocalPaddings.current.large,
+                                end = LocalPaddings.current.large,
+                            ) + PaddingValues(
+                                top = insetAndNavigationPaddingValues.calculateTopPadding()
+                                        + TextFieldDefaults.MinHeight
+                                        + 2 * LocalPaddings.current.small,
+                                bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
+                            ),
+                            modifier = Modifier
+                                .consumeWindowInsets(
+                                    insetAndNavigationPaddingValues
+                                            + PaddingValues(bottom = LocalPaddings.current.large)
+                                )
+                                .imePadding(),
                         )
                     }
                 }
@@ -327,9 +366,6 @@ fun ExploreScreen(
                     )
                 }
             }
-            // TODO: Add loading and error states.
-            is Resource.Loading -> {}
-            is Resource.Error -> {}
         }
     }
 }
