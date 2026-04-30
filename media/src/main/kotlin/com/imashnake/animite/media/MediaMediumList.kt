@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -298,16 +295,9 @@ fun LoadingMediaMediumList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
-    val layoutDirection = LocalLayoutDirection.current
-    val startPadding = contentPadding.calculateStartPadding(layoutDirection)
-    val endPadding = contentPadding.calculateEndPadding(layoutDirection)
-
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-        contentPadding = PaddingValues(
-            start = startPadding,
-            end = endPadding,
-        ),
+        contentPadding = contentPadding,
         userScrollEnabled = false,
         modifier = modifier
     ) {
@@ -321,11 +311,10 @@ fun LoadingMediaMediumList(
                         RoundedCornerShape(
                             topStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
                             bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
-                            // TODO: Why is index 1 here instead of 0???
-                            topEnd = if (index == 1) {
+                            topEnd = if (index == 0) {
                                 dimensionResource(coreUiR.dimen.media_card_corner_radius)
                             } else LocalPaddings.current.small,
-                            bottomEnd = if (index == count) {
+                            bottomEnd = if (index == count - 1) {
                                 dimensionResource(coreUiR.dimen.media_card_corner_radius)
                             } else LocalPaddings.current.small,
                         )

@@ -282,8 +282,8 @@ fun ExploreScreen(
                 AnimatedContent(
                     targetState = explorePage is Resource.Success,
                     transitionSpec = {
-                        fadeIn(tween(500))
-                            .togetherWith(fadeOut(tween(500)))
+                        fadeIn(tween(500), initialAlpha = 1f)
+                            .togetherWith(fadeOut(tween(500), targetAlpha = 1f))
                     },
                 ) {
                     if (it) {
