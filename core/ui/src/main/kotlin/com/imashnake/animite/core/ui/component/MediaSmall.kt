@@ -352,10 +352,11 @@ internal fun MediaSmall(
 }
 
 @Composable
-internal fun LoadingMediaSmall(
+fun LoadingMediaSmall(
     imageHeight: Dp,
     cardWidth: Dp,
     modifier: Modifier = Modifier,
+    shouldShowLabel: Boolean = true,
 ) {
     Card(
         shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)),
@@ -368,13 +369,14 @@ internal fun LoadingMediaSmall(
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
         )
 
-        Text(
-            text = " \n ",
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(
-                vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
+        if (shouldShowLabel)
+            Text(
+                text = " \n ",
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(
+                    vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
+                )
             )
-        )
     }
 }
 
@@ -430,6 +432,15 @@ private fun PreviewLoadingMediaSmall() {
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewLoadingMediaSmallRow() {
+    CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
+        LoadingMediaSmallRow(count = 10)
+    }
+}
+
 
 @Preview
 @Composable
