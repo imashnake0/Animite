@@ -146,6 +146,7 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import com.materialkolor.ktx.blend
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
@@ -302,7 +303,6 @@ fun MediaPage(
                                     contentPadding = PaddingValues(
                                         horizontal = LocalPaddings.current.large
                                     ) + horizontalInsets,
-                                    color = Color(media.color ?: 0xFF152232.toInt()),
                                 )
                             }
 
@@ -1141,13 +1141,14 @@ private fun MediaGenres(
     onGenreClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
-    color: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
     ChipFlowRow(
         chips = genres,
         onChipClick = onGenreClick,
+        chipColor = MaterialTheme.colorScheme.primaryContainer.blend(
+            MaterialTheme.colorScheme.onBackground, amount = 0.65f
+        ),
         modifier = modifier.padding(contentPadding),
-        chipColor = color,
     )
 }
 
