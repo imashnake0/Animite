@@ -5,24 +5,24 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapLatest
 
-sealed class Resource<T> private constructor(
-    open val data: T?,
-    open val message: String? = null
+public sealed class Resource<T> private constructor(
+    public open val data: T?,
+    public open val message: String? = null
 ) {
 
-    data class Success<T>(override val data: T) : Resource<T>(data)
-    data class Error<T>(override val message: String?, override val data: T? = null) : Resource<T>(data, message)
-    class Loading<T> : Resource<T>(null)
+    public data class Success<T>(override val data: T) : Resource<T>(data)
+    public data class Error<T>(override val message: String?, override val data: T? = null) : Resource<T>(data, message)
+    public class Loading<T> : Resource<T>(null)
 
-    companion object {
-        fun <T> success(data: T): Resource<T> = Success(data)
+    public companion object {
+        public fun <T> success(data: T): Resource<T> = Success(data)
 
-        fun <T> error(msg: String, data: T? = null): Resource<T> = Error(msg, data)
+        public fun <T> error(msg: String, data: T? = null): Resource<T> = Error(msg, data)
 
-        fun <T> loading(): Resource<T> = Loading()
+        public fun <T> loading(): Resource<T> = Loading()
 
         @OptIn(ExperimentalCoroutinesApi::class)
-        fun <T, R> Flow<Result<T>>.asResource(transform: (T) -> R): Flow<Resource<R>> = this
+        public fun <T, R> Flow<Result<T>>.asResource(transform: (T) -> R): Flow<Resource<R>> = this
             .mapLatest {
                 success(transform(it.getOrThrow()))
             }
@@ -30,6 +30,6 @@ sealed class Resource<T> private constructor(
                 emit(error(it.message.orEmpty()))
             }
 
-        fun <T> Flow<Result<T>>.asResource(): Flow<Resource<T>> = this.asResource { it }
+        public fun <T> Flow<Result<T>>.asResource(): Flow<Resource<T>> = this.asResource { it }
     }
 }
