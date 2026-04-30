@@ -42,7 +42,11 @@ class SearchViewModel @Inject constructor(
                 ).asResource()
             }
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(1000), Resource.loading())
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = Resource.loading()
+        )
 
     fun setMediaType(mediaType: MediaType) {
         savedStateHandle[Constants.MEDIA_TYPE] = mediaType
