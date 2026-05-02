@@ -58,7 +58,6 @@ import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
-import com.imashnake.animite.core.ui.R as coreUiR
 
 @Composable
 fun MediaMediumList(
@@ -96,13 +95,13 @@ fun MediaMediumList(
                     .fillMaxWidth()
                     .clip(
                         RoundedCornerShape(
-                            topStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
-                            bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            topStart = 18.dp,
+                            bottomStart = 18.dp,
                             topEnd = if (index == 0) {
-                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                                18.dp
                             } else LocalPaddings.current.small,
                             bottomEnd = if (index == mediaMediumList.lastIndex) {
-                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                                18.dp
                             } else LocalPaddings.current.small,
                         )
                     )
@@ -309,13 +308,13 @@ fun LoadingMediaMediumList(
                     .fillMaxWidth()
                     .clip(
                         RoundedCornerShape(
-                            topStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
-                            bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            topStart = 18.dp,
+                            bottomStart = 18.dp,
                             topEnd = if (index == 0) {
-                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                                18.dp
                             } else LocalPaddings.current.small,
                             bottomEnd = if (index == count - 1) {
-                                dimensionResource(coreUiR.dimen.media_card_corner_radius)
+                                18.dp
                             } else LocalPaddings.current.small,
                         )
                     )

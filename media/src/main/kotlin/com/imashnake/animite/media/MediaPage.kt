@@ -412,7 +412,7 @@ fun MediaPage(
                             .padding(
                                 top = dimensionResource(R.dimen.media_details_height)
                                         + LocalPaddings.current.medium
-                                        + dimensionResource(coreUiR.dimen.banner_height)
+                                        + 168.dp
                                         - dimensionResource(R.dimen.media_image_height)
                                         - insetPaddingValues.calculateTopPadding()
                                         + offset,
@@ -851,7 +851,7 @@ private fun MediaDetails(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(top = LocalPaddings.current.small)
-                .requiredSize(dimensionResource(coreUiR.dimen.icon_size))
+                .requiredSize(16.dp)
         )
     }
 }
@@ -1290,7 +1290,7 @@ private fun MediaStreamingEpisode(
         val topCornerRadius = if (isTrailerPresent) {
             LocalPaddings.current.small
         } else {
-            dimensionResource(coreUiR.dimen.media_card_corner_radius)
+            18.dp
         }
         with(streamingEpisodes[index]) {
             Box(
@@ -1301,8 +1301,8 @@ private fun MediaStreamingEpisode(
                         RoundedCornerShape(
                             topStart = topCornerRadius,
                             topEnd = topCornerRadius,
-                            bottomStart = dimensionResource(coreUiR.dimen.media_card_corner_radius),
-                            bottomEnd = dimensionResource(coreUiR.dimen.media_card_corner_radius),
+                            bottomStart = 18.dp,
+                            bottomEnd = 18.dp,
                         )
                     )
                     .clickable {
@@ -1325,7 +1325,7 @@ private fun MediaStreamingEpisode(
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         modifier = Modifier
-                            .padding(dimensionResource(coreUiR.dimen.media_card_corner_radius) / 2)
+                            .padding(9.dp)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
                             .padding(horizontal = LocalPaddings.current.small)
@@ -1339,7 +1339,7 @@ private fun MediaStreamingEpisode(
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f))
-                            .padding(horizontal = dimensionResource(coreUiR.dimen.media_card_corner_radius) / 2)
+                            .padding(horizontal = 9.dp)
                             .padding(vertical = LocalPaddings.current.ultraTiny)
                     ) {
                         Text(

@@ -135,7 +135,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
-import com.imashnake.animite.core.ui.R as coreUiR
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(
@@ -540,7 +539,7 @@ private fun Sort(
                 )
                 val iconSize by animateDpAsState(
                     targetValue = if (isSortSelected)
-                        dimensionResource(coreUiR.dimen.icon_size)
+                        16.dp
                     else 0.dp
                 )
 
@@ -1065,7 +1064,7 @@ private fun CollapsibleRow(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(top = 2.dp)
-                        .requiredSize(dimensionResource(coreUiR.dimen.icon_size))
+                        .requiredSize(16.dp)
                         .graphicsLayer { rotationZ = iconRotation }
                 )
             }

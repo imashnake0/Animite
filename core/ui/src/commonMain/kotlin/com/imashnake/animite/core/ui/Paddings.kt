@@ -1,6 +1,5 @@
 package com.imashnake.animite.core.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.core.AnimationVector4D
 import androidx.compose.animation.core.TwoWayConverter
 import androidx.compose.animation.core.animateValueAsState
@@ -11,6 +10,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import animite.core.ui.generated.resources.Res
+import animite.core.ui.generated.resources.comfy
+import animite.core.ui.generated.resources.compact
+import animite.core.ui.generated.resources.cozy
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Immutable
 data class Paddings(
@@ -87,8 +92,13 @@ fun rememberDefaultPaddings(density: Density = Density.COMFY): Paddings {
     )
 }
 
-enum class Density(@param:StringRes val res: Int) {
-    COMFY(R.string.comfy),
-    COZY(R.string.cozy),
-    COMPACT(R.string.compact),
+enum class Density(private val res: StringResource) {
+    COMFY(Res.string.comfy),
+    COZY(Res.string.cozy),
+    COMPACT(Res.string.compact);
+
+    @Composable
+    fun label(): String {
+        return stringResource(res)
+    }
 }
