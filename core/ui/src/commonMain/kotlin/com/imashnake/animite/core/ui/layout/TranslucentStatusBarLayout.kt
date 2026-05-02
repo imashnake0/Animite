@@ -11,16 +11,15 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
-import com.imashnake.animite.core.ui.R
+import androidx.compose.ui.unit.dp
 
 @Composable
 @Suppress("LongParameterList")
 fun TranslucentStatusBarLayout(
     scrollState: ScrollState,
     modifier: Modifier = Modifier,
-    distanceUntilAnimated: Dp = dimensionResource(R.dimen.banner_height),
+    distanceUntilAnimated: Dp = 168.dp,
     targetAlpha: Float = 0.74f,
     targetColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit

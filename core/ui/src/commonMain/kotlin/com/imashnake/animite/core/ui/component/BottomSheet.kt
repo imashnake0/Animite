@@ -1,5 +1,6 @@
 package com.imashnake.animite.core.ui.component
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
@@ -16,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -24,12 +26,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import animite.core.ui.generated.resources.Res
+import animite.core.ui.generated.resources.arrow_up
+import animite.core.ui.generated.resources.close
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.R
 import com.imashnake.animite.core.ui.ext.thenIf
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,17 +58,20 @@ fun BottomSheet(
                         background(dragHandleBackgroundColor!!)
                     }
             ) {
-                Image(
-                    painter = rememberAnimatedVectorPainter(
-                        AnimatedImageVector.animatedVectorResource(R.drawable.chevron_to_cross_anim),
-                        atEnd = sheetState.targetValue == SheetValue.Expanded
-                    ),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onBackground),
-                    modifier = Modifier
-                        .padding(LocalPaddings.current.small)
-                        .size(20.dp)
-                )
+                AnimatedContent(sheetState.targetValue) {
+                    val drawable = if (it == SheetValue.Expanded) {
+                        Res.drawable.close
+                    } else {
+                        Res.drawable.arrow_up
+                    }
+                    Icon(
+                        painter = painterResource(drawable),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(LocalPaddings.current.small)
+                            .size(20.dp)
+                    )
+                }
             }
         },
         onDismissRequest = onDismissRequest,
