@@ -280,7 +280,7 @@ fun SettingsPage(
                                         Box(modifier = Modifier.fillMaxWidth()) {
                                             Density.entries.fastForEach {
                                                 Text(
-                                                    text = stringResource(it.res),
+                                                    text = it.label(),
                                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                                                     fontSize = 10.sp,
                                                     modifier = Modifier.align(

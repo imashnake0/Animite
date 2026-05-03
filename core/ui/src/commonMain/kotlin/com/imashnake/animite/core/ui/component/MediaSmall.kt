@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.R
 import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import kotlinx.collections.immutable.ImmutableList
@@ -92,7 +91,7 @@ fun <T> MediaSmallRow(
                 itemVerticalAlignment = Alignment.CenterVertically,
                 verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
                 horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                modifier = Modifier.padding(end = dimensionResource(R.dimen.icon_size))
+                modifier = Modifier.padding(end = 16.dp)
             ) {
                 if (title != null) {
                     Text(
@@ -109,7 +108,7 @@ fun <T> MediaSmallRow(
                     imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                     contentDescription = null,
                     modifier = Modifier
-                        .requiredSize(dimensionResource(R.dimen.icon_size))
+                        .requiredSize(16.dp)
                         .clip(CircleShape)
                         .clickable { onListClick() }
                 )
@@ -263,14 +262,14 @@ internal fun MediaSmall(
 ) {
     Card(
         onClick = onClick,
-        shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)),
+        shape = RoundedCornerShape(18.dp),
         modifier = modifier.width(cardWidth),
     ) {
         Box(
             modifier = imageModifier
                 .height(imageHeight)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
+                .clip(RoundedCornerShape(18.dp))
         ) {
             AsyncImage(
                 model = crossfadeModel(image),
@@ -321,19 +320,14 @@ internal fun MediaSmall(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge,
                     maxLines = 2,
-                    modifier = Modifier.padding(
-                        vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
-                    )
+                    modifier = Modifier.padding(vertical = 10.dp)
                 )
 
                 Box(
                     Modifier
                         .align(Alignment.Center)
                         .fillMaxWidth()
-                        .padding(
-                            horizontal = dimensionResource(R.dimen.media_card_text_padding_horizontal),
-                            vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
-                        )
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
                 ) {
                     Text(
                         text = label,
@@ -359,23 +353,21 @@ fun LoadingMediaSmall(
     shouldShowLabel: Boolean = true,
 ) {
     Card(
-        shape = RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)),
+        shape = RoundedCornerShape(18.dp),
         modifier = modifier.width(cardWidth),
     ) {
         Box(
             modifier = Modifier
                 .height(imageHeight)
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(dimensionResource(R.dimen.media_card_corner_radius)))
+                .clip(RoundedCornerShape(18.dp))
         )
 
         if (shouldShowLabel)
             Text(
                 text = " \n ",
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.padding(
-                    vertical = dimensionResource(R.dimen.media_card_text_padding_vertical)
-                )
+                modifier = Modifier.padding(vertical = 10.dp)
             )
     }
 }
