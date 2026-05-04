@@ -5,6 +5,7 @@ import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -23,14 +24,17 @@ class AnilistSearchRepository(
     fun fetchSearch(
         type: MediaType,
         perPage: Int,
-        search: String
+        search: String,
+        isAdult: Boolean,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
         return apolloClient
             .query(
-                SearchQuery(
+                MediaMediumListQuery(
                     type = Optional.presentIfNotNull(type),
                     perPage = Optional.presentIfNotNull(perPage),
-                    search = Optional.presentIfNotNull(search)
+                    search = Optional.presentIfNotNull(search),
+                    sort = Optional.present(listOf(MediaSort.POPULARITY_DESC)),
+                    isAdult = Optional.presentIfNotNull(if (isAdult) null else false)
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)

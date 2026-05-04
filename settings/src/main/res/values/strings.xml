@@ -12,7 +12,12 @@
     <string name="amoled">AMOLED</string>
     <string name="density">Density</string>
 
+    <string name="preferences">Preferences</string>
+
+    <string name="nsfw">NSFW</string>
+
     <string name="about">About</string>
+
     <string name="app_icon">App Icon</string>
     <string name="discord">Discord</string>
     <string name="github">GitHub</string>

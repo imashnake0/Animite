@@ -14,6 +14,7 @@ query MediaMediumListQuery(
     $statusIn: [MediaStatus],
     $statusNotIn: [MediaStatus],
     $search: String,
+    $isAdult: Boolean,
 ) {
     page: Page (
         page: $page,
@@ -38,7 +39,7 @@ query MediaMediumListQuery(
             status_in: $statusIn,
             status_not_in: $statusNotIn,
             search: $search,
-            isAdult: false,
+            isAdult: $isAdult,
         ) {
             ...MediaMedium
         }

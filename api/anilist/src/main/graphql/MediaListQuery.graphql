@@ -7,6 +7,7 @@ query MediaListQuery(
     $season: MediaSeason,
     $seasonYear: Int,
     # endregion
+    $isAdult: Boolean,
 ) {
     page: Page (
         page: $page,
@@ -19,7 +20,7 @@ query MediaListQuery(
             season: $season,
             seasonYear: $seasonYear
             # endregion
-            isAdult: false
+            isAdult: $isAdult
         ) {
             ...MediaSmall
         }

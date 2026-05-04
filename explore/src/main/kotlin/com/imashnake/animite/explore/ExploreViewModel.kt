@@ -10,6 +10,7 @@ import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -40,7 +42,8 @@ import kotlin.time.Clock
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExploreViewModel @Inject constructor(
     private val mediaListRepository: AnilistMediaRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
     private val navArgs = savedStateHandle.toRoute<ExploreRoute>()
 
@@ -146,15 +149,16 @@ class ExploreViewModel @Inject constructor(
         flow8 = includedStatuses,
         flow9 = excludedStatuses,
         flow10 = page,
-        transform = ::Decuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page) ->
+        flow11 = preferencesRepository.isAdult.filterNotNull(),
+        transform = ::Hendecuple,
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page, isAdult) ->
         if (shouldDebounce) {
             500L
         } else {
             shouldDebounce = true
             0L
         }
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page) ->
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page, isAdult) ->
         flow {
             emit(Resource.loading())
             emit(
@@ -171,6 +175,7 @@ class ExploreViewModel @Inject constructor(
                     excludedFormats = excludedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
                     includedStatuses = includedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
                     excludedStatuses = excludedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
+                    isAdult = isAdult
                 ).asResource().first()
             )
         }
@@ -304,7 +309,7 @@ class ExploreViewModel @Inject constructor(
 }
 
 // TODO: Move this to core?
-data class Decuple<out A, out B, out C, out D, out E, out F, out G, out H, out I, out J>(
+data class Hendecuple<out A, out B, out C, out D, out E, out F, out G, out H, out I, out J, out K>(
     val first: A,
     val second: B,
     val third: C,
@@ -315,14 +320,15 @@ data class Decuple<out A, out B, out C, out D, out E, out F, out G, out H, out I
     val eighth: H,
     val ninth: I,
     val tenth: J,
+    val eleventh: K,
 ) {
     /**
-     * Returns string representation of the [Decuple] including its
-     * [first], [second], [third], [fourth], [fifth], [sixth], [seventh], [eighth], [ninth], and
-     * [tenth] values.
+     * Returns string representation of the [Hendecuple] including its
+     * [first], [second], [third], [fourth], [fifth], [sixth], [seventh], [eighth], [ninth], [tenth]
+     * and [eleventh] values.
      */
     override fun toString(): String =
-        "($first, $second, $third, $fourth, $fifth, $sixth, $seventh, $eighth, $ninth, $tenth)"
+        "($first, $second, $third, $fourth, $fifth, $sixth, $seventh, $eighth, $ninth, $tenth, $eleventh)"
 }
 
 inline fun <
@@ -336,6 +342,7 @@ inline fun <
         T8,
         T9,
         T10,
+        T11,
         R
 > combine(
     flow: Flow<T1>,
@@ -348,6 +355,7 @@ inline fun <
     flow8: Flow<T8>,
     flow9: Flow<T9>,
     flow10: Flow<T10>,
+    flow11: Flow<T11>,
     crossinline transform: suspend (
         T1,
         T2,
@@ -358,7 +366,8 @@ inline fun <
         T7,
         T8,
         T9,
-        T10
+        T10,
+        T11,
     ) -> R,
 ): Flow<R> = combine(
     flow,
@@ -370,7 +379,8 @@ inline fun <
     flow7,
     flow8,
     flow9,
-    flow10
+    flow10,
+    flow11,
 ) { args: Array<*> ->
     @Suppress("UNCHECKED_CAST")
     transform(
@@ -384,5 +394,6 @@ inline fun <
         args[7] as T8,
         args[8] as T9,
         args[9] as T10,
+        args[10] as T11,
     )
 }
