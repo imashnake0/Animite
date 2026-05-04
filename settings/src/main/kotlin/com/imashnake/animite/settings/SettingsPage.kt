@@ -379,7 +379,7 @@ fun SettingsPage(
                                         thumbContent = {
                                             if (isAdult) {
                                                 Icon(
-                                                    imageVector = Icons.Filled.Check,
+                                                    imageVector = ImageVector.vectorResource(R.drawable.eye),
                                                     contentDescription = null,
                                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                                     tint = MaterialTheme.colorScheme.primary
