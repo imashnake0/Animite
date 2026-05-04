@@ -41,7 +41,8 @@ class AnilistMediaRepository(
         page: Int = 0,
         perPage: Int = 10,
         season: MediaSeason? = null,
-        seasonYear: Int? = null
+        seasonYear: Int? = null,
+        isAdult: Boolean = false
     ): Flow<Result<MediaList>> {
         return apolloClient
             .query(
@@ -51,7 +52,8 @@ class AnilistMediaRepository(
                     perPage = Optional.presentIfNotNull(perPage),
                     sort = Optional.presentIfNotNull(sort),
                     season = Optional.presentIfNotNull(season),
-                    seasonYear = Optional.presentIfNotNull(seasonYear)
+                    seasonYear = Optional.presentIfNotNull(seasonYear),
+                    isAdult = Optional.presentIfNotNull(if (isAdult) null else false)
                 )
             )
             .fetchPolicy(
