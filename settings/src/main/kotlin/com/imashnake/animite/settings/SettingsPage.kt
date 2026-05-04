@@ -117,12 +117,14 @@ fun SettingsPage(
     val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val scrollState = rememberScrollState()
+    val haptic = LocalHapticFeedback.current
 
     val selectedTheme by viewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
     val useSystemColorScheme by viewModel.useSystemColorScheme.collectAsState(initial = true)
     val isAmoled by viewModel.isAmoled.collectAsState(initial = false)
     val selectedDensity by viewModel.density.collectAsState(initial = Density.COMFY.name)
-    val haptic = LocalHapticFeedback.current
+
+    val isAdult by viewModel.isAdult.collectAsState(initial = false)
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -333,6 +335,65 @@ fun SettingsPage(
 
                     Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
                         Text(
+                            text = stringResource(R.string.preferences),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                        Items(
+                            items = persistentListOf(
+                                Item(
+                                    icon = R.drawable.nsfw,
+                                    label = R.string.nsfw,
+                                    orientation = Item.Orientation.HORIZONTAL
+                                )
+                            ),
+                            onItemClick = { index ->
+                                when (index) {
+                                    0 -> {
+                                        viewModel.setIsAdult(!isAdult)
+                                        haptic.performHapticFeedback(
+                                            hapticFeedbackType = if (isAdult) {
+                                                HapticFeedbackType.ToggleOff
+                                            } else HapticFeedbackType.ToggleOn
+                                        )
+                                    }
+                                }
+                            },
+                            isDarkMode = isDarkMode,
+                            modifier = Modifier.fillMaxWidth()
+                        ) { index ->
+                            when (index) {
+                                0 -> {
+                                    Switch(
+                                        checked = isAdult,
+                                        onCheckedChange = {
+                                            viewModel.setIsAdult(it)
+                                            haptic.performHapticFeedback(
+                                                hapticFeedbackType = if (!it) {
+                                                    HapticFeedbackType.ToggleOff
+                                                } else HapticFeedbackType.ToggleOn
+                                            )
+                                        },
+                                        thumbContent = {
+                                            if (isAdult) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Check,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        },
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                        Text(
                             text = stringResource(R.string.about),
                             color = MaterialTheme.colorScheme.onBackground,
                             style = MaterialTheme.typography.titleLarge,
@@ -481,12 +542,16 @@ private fun Items(
                     Item.Orientation.HORIZONTAL -> HorizontalItem(
                         item = index to item,
                         customIcon = itemCustomIcon,
-                        shape = RoundedCornerShape(
-                            topStart = top,
-                            topEnd = top,
-                            bottomEnd = bottom,
-                            bottomStart = bottom,
-                        ),
+                        shape = if (items.size == 1) {
+                            CircleShape
+                        } else {
+                            RoundedCornerShape(
+                                topStart = top,
+                                topEnd = top,
+                                bottomEnd = bottom,
+                                bottomStart = bottom,
+                            )
+                        },
                         onItemClick = { onItemClick(index) },
                         background = if (isDarkMode) {
                             MaterialTheme.colorScheme.surfaceContainer

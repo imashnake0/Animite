@@ -18,6 +18,7 @@ class SettingsViewModel @Inject constructor(
     val useSystemColorScheme = preferencesRepository.useSystemColorScheme.filterNotNull()
     val isAmoled = preferencesRepository.isAmoled.filterNotNull()
     val density = preferencesRepository.density.filterNotNull()
+    val isAdult = preferencesRepository.isAdult.filterNotNull()
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
 
@@ -34,6 +35,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setDensity(density: Density) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setDensity(density.name)
+    }
+
+    fun setIsAdult(isAdult: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setIsAdult(isAdult)
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
