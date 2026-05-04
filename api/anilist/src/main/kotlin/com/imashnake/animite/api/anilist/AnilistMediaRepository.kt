@@ -88,6 +88,7 @@ class AnilistMediaRepository(
         includedStatuses: List<MediaStatus>? = null,
         excludedStatuses: List<MediaStatus>? = null,
         search: String? = null,
+        isAdult: Boolean = false,
     ): Flow<Result<Page<Media.Medium>>> {
         return apolloClient
             .query(
@@ -109,6 +110,7 @@ class AnilistMediaRepository(
                     formatNotIn = Optional.presentIfNotNull(excludedFormats),
                     statusIn = Optional.presentIfNotNull(includedStatuses),
                     statusNotIn = Optional.presentIfNotNull(excludedStatuses),
+                    isAdult = Optional.presentIfNotNull(if (isAdult) null else false)
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
