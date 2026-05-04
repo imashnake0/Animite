@@ -5,14 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistSearchRepository
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -23,30 +26,35 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchRepository: AnilistSearchRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    preferencesRepository: PreferencesRepository
 ): ViewModel() {
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val query = savedStateHandle.getStateFlow<String?>(QUERY, null)
 
-    val searchList = mediaType
-        .filterNotNull()
-        .combine(query, ::Pair)
-        .flatMapLatest { (mediaType, query) ->
-            if (query.isNullOrEmpty()) {
-                flowOf(Resource.success(persistentListOf()))
-            } else {
-                searchRepository.fetchSearch(
-                    type = mediaType,
-                    perPage = 10,
-                    search = query
-                ).asResource()
-            }
+    @OptIn(FlowPreview::class)
+    val searchList = combine(
+        flow = mediaType.filterNotNull(),
+        flow2 = query,
+        flow3 = preferencesRepository.isAdult.filterNotNull(),
+        transform = ::Triple
+    ).debounce(300L).flatMapLatest { (mediaType, query, isAdult) ->
+        if (query.isNullOrEmpty()) {
+            flowOf(Resource.success(persistentListOf()))
+        } else {
+            searchRepository.fetchSearch(
+                type = mediaType,
+                perPage = 20,
+                search = query,
+                isAdult = isAdult,
+            ).asResource()
         }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(1000),
-            initialValue = Resource.loading()
-        )
+    }
+    .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading()
+    )
 
     fun setMediaType(mediaType: MediaType) {
         savedStateHandle[Constants.MEDIA_TYPE] = mediaType
