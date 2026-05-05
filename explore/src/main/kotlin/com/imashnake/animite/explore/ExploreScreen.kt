@@ -55,6 +55,7 @@ import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -176,6 +177,7 @@ fun ExploreScreen(
 
     val season by viewModel.selectedSeason.collectAsState()
     val year by viewModel.selectedYear.collectAsState()
+    val isAdult by viewModel.isAdult.collectAsState()
 
     val chipGenreGroup by viewModel.chipGenreGroup.collectAsState()
     val chipFormatGroup by viewModel.chipFormatGroup.collectAsState()
@@ -354,6 +356,8 @@ fun ExploreScreen(
                         year = year,
                         onYearChange = viewModel::setMediaYear,
                         yearRange = viewModel.yearRange,
+                        isAdult = isAdult == true,
+                        setIsAdult = viewModel::setIsAdult,
                         chipFormatGroup = chipFormatGroup,
                         chipStatusGroup = chipStatusGroup,
                         includeChipFilter = viewModel::includeFilter,
@@ -615,6 +619,8 @@ private fun FilterBottomSheet(
     year: Int?,
     yearRange: IntRange,
     onYearChange: (Int?) -> Unit,
+    isAdult: Boolean,
+    setIsAdult: (Boolean) -> Unit,
     chipFormatGroup: ExploreViewModel.ChipFilterGroup,
     chipStatusGroup: ExploreViewModel.ChipFilterGroup,
     includeChipFilter: (ExploreViewModel.ChipFilterType, String) -> Unit,
@@ -704,6 +710,11 @@ private fun FilterBottomSheet(
                 onExcludedFilterClick = clearChipFilter,
                 onAllFilterClick = includeChipFilter,
                 resetFilters = resetChipFilters
+            )
+
+            OtherFilters(
+                isAdult = isAdult,
+                onCheckedChange = setIsAdult,
             )
 
             Spacer(modifier = Modifier.size(LocalPaddings.current.small))
@@ -849,6 +860,39 @@ private fun YearFilter(
                     fontWeight = FontWeight.Medium,
                 )
             }
+        }
+    }
+}
+
+// TODO: This filter should make adult absolutely true.
+@Composable
+private fun OtherFilters(
+    isAdult: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CollapsibleRow(
+        title = stringResource(R.string.others),
+        onLongClick = {},
+        modifier = modifier,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(top = LocalPaddings.current.small)
+                .clip(CircleShape)
+                .clickable { onCheckedChange(!isAdult) }
+                .padding(end = LocalPaddings.current.medium)
+        ) {
+            Checkbox(
+                checked = isAdult,
+                onCheckedChange = onCheckedChange
+            )
+            Text(
+                text = stringResource(R.string.adult),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

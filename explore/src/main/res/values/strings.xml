@@ -7,6 +7,9 @@
     <string name="format">Format</string>
     <string name="status">Status</string>
     <string name="year">Year</string>
+    <string name="others">Others</string>
+
+    <string name="adult">Adult</string>
 
     <string name="increase_year">Increase year</string>
     <string name="decrease_year">Decrease year</string>
