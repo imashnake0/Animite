@@ -48,12 +48,14 @@ class ExploreViewModel @Inject constructor(
     private val navArgs = savedStateHandle.toRoute<ExploreRoute>()
 
     init {
-        ChipFilterType.entries.forEach { filterType ->
-            viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
+            ChipFilterType.entries.forEach { filterType ->
                 setAllFilters(
                     filterType = filterType,
                     allFilters = when (filterType) {
-                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres().toSet()
+                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres(
+                            preferencesRepository.isAdult.filterNotNull().first()
+                        ).toSet()
                         ChipFilterType.FORMAT -> Media.Format.animeFormats().map { it.name }.toSet()
                         ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
                     }
@@ -64,6 +66,9 @@ class ExploreViewModel @Inject constructor(
                         filter = it
                     )
                 }
+            }
+            preferencesRepository.isAdult.first()?.let {
+                setIsAdult(it)
             }
         }
     }
@@ -135,6 +140,8 @@ class ExploreViewModel @Inject constructor(
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
 
+    val isAdult = savedStateHandle.getMutableStateFlow<Boolean?>(Constants.IS_ADULT, null)
+
     var shouldDebounce = false
 
     @OptIn(FlowPreview::class)
@@ -149,16 +156,16 @@ class ExploreViewModel @Inject constructor(
         flow8 = includedStatuses,
         flow9 = excludedStatuses,
         flow10 = page,
-        flow11 = preferencesRepository.isAdult.filterNotNull(),
+        flow11 = preferencesRepository.isAdult.filterNotNull().combine(isAdult.filterNotNull(), ::Pair),
         transform = ::Hendecuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page, isAdult) ->
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page, areAdult) ->
         if (shouldDebounce) {
             500L
         } else {
             shouldDebounce = true
             0L
         }
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page, isAdult) ->
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page, areAdult) ->
         flow {
             emit(Resource.loading())
             emit(
@@ -175,7 +182,7 @@ class ExploreViewModel @Inject constructor(
                     excludedFormats = excludedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
                     includedStatuses = includedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
                     excludedStatuses = excludedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    isAdult = isAdult
+                    isAdult = areAdult.first || areAdult.second
                 ).asResource().first()
             )
         }
@@ -252,6 +259,10 @@ class ExploreViewModel @Inject constructor(
 
     fun setPage(page: Int) {
         savedStateHandle[Constants.PAGE] = page
+    }
+
+    fun setIsAdult(isAdult: Boolean) {
+        savedStateHandle[Constants.IS_ADULT] = isAdult
     }
 
     fun resetFilter(filterType: ChipFilterType) {

@@ -18,7 +18,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 
-// TODO: Add preference for adult content.
 private const val HENTAI = "Hentai"
 
 /**
@@ -147,13 +146,13 @@ class AnilistMediaRepository(
             .asResult { Media(it.media!!) }
     }
 
-    suspend fun fetchMediaGenres() = apolloClient
+    suspend fun fetchMediaGenres(isAdult: Boolean) = apolloClient
         .query(GenresQuery())
         .fetchPolicy(FetchPolicy.CacheFirst)
         .execute()
         .data
         ?.GenreCollection
         ?.filterNotNull()
-        ?.filterNot { genre -> genre == HENTAI }
+        ?.filter { genre -> if (!isAdult) genre != HENTAI else true }
         .orEmpty()
 }
