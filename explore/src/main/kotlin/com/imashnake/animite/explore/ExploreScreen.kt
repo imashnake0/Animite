@@ -177,7 +177,8 @@ fun ExploreScreen(
 
     val season by viewModel.selectedSeason.collectAsState()
     val year by viewModel.selectedYear.collectAsState()
-    val isAdult by viewModel.isAdult.collectAsState()
+    val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
+    val isAdult by viewModel.isAdult.collectAsState(initial = false)
 
     val chipGenreGroup by viewModel.chipGenreGroup.collectAsState()
     val chipFormatGroup by viewModel.chipFormatGroup.collectAsState()
@@ -356,6 +357,7 @@ fun ExploreScreen(
                         year = year,
                         onYearChange = viewModel::setMediaYear,
                         yearRange = viewModel.yearRange,
+                        isNsfwEnabled = isNsfwEnabled,
                         isAdult = isAdult == true,
                         setIsAdult = viewModel::setIsAdult,
                         chipFormatGroup = chipFormatGroup,
@@ -619,6 +621,7 @@ private fun FilterBottomSheet(
     year: Int?,
     yearRange: IntRange,
     onYearChange: (Int?) -> Unit,
+    isNsfwEnabled: Boolean,
     isAdult: Boolean,
     setIsAdult: (Boolean) -> Unit,
     chipFormatGroup: ExploreViewModel.ChipFilterGroup,
@@ -712,10 +715,12 @@ private fun FilterBottomSheet(
                 resetFilters = resetChipFilters
             )
 
-            OtherFilters(
-                isAdult = isAdult,
-                onCheckedChange = setIsAdult,
-            )
+            if (isNsfwEnabled) {
+                OtherFilters(
+                    isAdult = isAdult,
+                    onCheckedChange = setIsAdult,
+                )
+            }
 
             Spacer(modifier = Modifier.size(LocalPaddings.current.small))
 

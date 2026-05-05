@@ -36,9 +36,9 @@ class SearchViewModel @Inject constructor(
     val searchList = combine(
         flow = mediaType.filterNotNull(),
         flow2 = query,
-        flow3 = preferencesRepository.isAdult.filterNotNull(),
+        flow3 = preferencesRepository.isNsfwEnabled.filterNotNull(),
         transform = ::Triple
-    ).debounce(300L).flatMapLatest { (mediaType, query, isAdult) ->
+    ).debounce(300L).flatMapLatest { (mediaType, query, isNsfwEnabled) ->
         if (query.isNullOrEmpty()) {
             flowOf(Resource.success(persistentListOf()))
         } else {
@@ -46,7 +46,7 @@ class SearchViewModel @Inject constructor(
                 type = mediaType,
                 perPage = 20,
                 search = query,
-                isAdult = isAdult,
+                isNsfwEnabled = isNsfwEnabled,
             ).asResource()
         }
     }

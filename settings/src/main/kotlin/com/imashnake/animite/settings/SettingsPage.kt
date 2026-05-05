@@ -124,7 +124,7 @@ fun SettingsPage(
     val isAmoled by viewModel.isAmoled.collectAsState(initial = false)
     val selectedDensity by viewModel.density.collectAsState(initial = Density.COMFY.name)
 
-    val isAdult by viewModel.isAdult.collectAsState(initial = false)
+    val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -352,9 +352,9 @@ fun SettingsPage(
                             onItemClick = { index ->
                                 when (index) {
                                     0 -> {
-                                        viewModel.setIsAdult(!isAdult)
+                                        viewModel.setIsAdult(!isNsfwEnabled)
                                         haptic.performHapticFeedback(
-                                            hapticFeedbackType = if (isAdult) {
+                                            hapticFeedbackType = if (isNsfwEnabled) {
                                                 HapticFeedbackType.ToggleOff
                                             } else HapticFeedbackType.ToggleOn
                                         )
@@ -367,7 +367,7 @@ fun SettingsPage(
                             when (index) {
                                 0 -> {
                                     Switch(
-                                        checked = isAdult,
+                                        checked = isNsfwEnabled,
                                         onCheckedChange = {
                                             viewModel.setIsAdult(it)
                                             haptic.performHapticFeedback(
@@ -377,7 +377,7 @@ fun SettingsPage(
                                             )
                                         },
                                         thumbContent = {
-                                            if (isAdult) {
+                                            if (isNsfwEnabled) {
                                                 Icon(
                                                     imageVector = ImageVector.vectorResource(R.drawable.eye),
                                                     contentDescription = null,

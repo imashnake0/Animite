@@ -48,15 +48,15 @@ class AnimeViewModel @Inject constructor(
 
     val trendingMedia = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
-        flow2 = preferencesRepository.isAdult.filterNotNull(),
+        flow2 = preferencesRepository.isNsfwEnabled.filterNotNull(),
         transform = ::Pair
-    ).flatMapLatest { (_, isAdult) ->
+    ).flatMapLatest { (_, isNsfwEnabled) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.TRENDING_NOW,
             mediaType = MediaType.ANIME,
             sort = listOf(MediaSort.TRENDING_DESC),
             useNetwork = useNetwork,
-            isAdult = isAdult
+            isNsfwEnabled = isNsfwEnabled
         )
     }
     .asResource()
@@ -69,9 +69,9 @@ class AnimeViewModel @Inject constructor(
     val popularMediaThisSeason = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
         flow2 = now,
-        flow3 = preferencesRepository.isAdult.filterNotNull(),
+        flow3 = preferencesRepository.isNsfwEnabled.filterNotNull(),
         transform = ::Triple,
-    ).flatMapLatest { (_, now, isAdult) ->
+    ).flatMapLatest { (_, now, isNsfwEnabled) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.POPULAR_THIS_SEASON,
             mediaType = MediaType.ANIME,
@@ -79,7 +79,7 @@ class AnimeViewModel @Inject constructor(
             season = now.month.season,
             seasonYear = now.year,
             useNetwork = useNetwork,
-            isAdult = isAdult
+            isNsfwEnabled = isNsfwEnabled
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -90,9 +90,9 @@ class AnimeViewModel @Inject constructor(
     val upcomingMediaNextSeason = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
         flow2 = now,
-        flow3 = preferencesRepository.isAdult.filterNotNull(),
+        flow3 = preferencesRepository.isNsfwEnabled.filterNotNull(),
         transform = ::Triple,
-    ).flatMapLatest { (_, now, isAdult) ->
+    ).flatMapLatest { (_, now, isNsfwEnabled) ->
         val season = now.month.season
         mediaListRepository.fetchMediaList(
             mediaListType = Type.UPCOMING_NEXT_SEASON,
@@ -101,7 +101,7 @@ class AnimeViewModel @Inject constructor(
             season = season.nextSeason,
             seasonYear = season.nextSeasonYear(now),
             useNetwork = useNetwork,
-            isAdult = isAdult
+            isNsfwEnabled = isNsfwEnabled
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -111,15 +111,15 @@ class AnimeViewModel @Inject constructor(
 
     val allTimePopular = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
-        flow2 = preferencesRepository.isAdult.filterNotNull(),
+        flow2 = preferencesRepository.isNsfwEnabled.filterNotNull(),
         transform = ::Pair
-    ).flatMapLatest { (_, isAdult) ->
+    ).flatMapLatest { (_, isNsfwEnabled) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.ALL_TIME_POPULAR,
             mediaType = MediaType.ANIME,
             sort = listOf(MediaSort.POPULARITY_DESC),
             useNetwork = useNetwork,
-            isAdult = isAdult
+            isNsfwEnabled = isNsfwEnabled
         )
     }
     .asResource()

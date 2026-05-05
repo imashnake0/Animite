@@ -12,7 +12,7 @@ private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
 private const val DEFAULT_DENSITY_KEY = "COMFY"
 private const val USE_SYSTEM_COLOR_SCHEME = true
 private const val IS_AMOLED = false
-private const val IS_ADULT = false
+private const val IS_NSFW_ENABLED = false
 private const val IS_DEV_OPTIONS_ENABLED = false
 
 /**
@@ -66,10 +66,10 @@ class PreferencesRepository internal constructor(
         dataStore.setValue(densityKey, density)
     }
 
-    private val isAdultKey = booleanPreferencesKey("is_adult")
-    val isAdult = dataStore.getValue(isAdultKey, IS_ADULT)
-    suspend fun setIsAdult(isAdult: Boolean) {
-        dataStore.setValue(isAdultKey, isAdult)
+    private val isNsfwEnabledKey = booleanPreferencesKey("is_nsfw_enabled")
+    val isNsfwEnabled = dataStore.getValue(isNsfwEnabledKey, IS_NSFW_ENABLED)
+    suspend fun setIsNsfwEnabled(isNsfwEnabled: Boolean) {
+        dataStore.setValue(isNsfwEnabledKey, isNsfwEnabled)
     }
 
     private val isDevOptionsEnabledKey = booleanPreferencesKey("dev_options_enabled")

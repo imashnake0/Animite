@@ -41,7 +41,7 @@ class AnilistMediaRepository(
         perPage: Int = 10,
         season: MediaSeason? = null,
         seasonYear: Int? = null,
-        isAdult: Boolean = false
+        isNsfwEnabled: Boolean = false,
     ): Flow<Result<MediaList>> {
         return apolloClient
             .query(
@@ -52,7 +52,7 @@ class AnilistMediaRepository(
                     sort = Optional.presentIfNotNull(sort),
                     season = Optional.presentIfNotNull(season),
                     seasonYear = Optional.presentIfNotNull(seasonYear),
-                    isAdult = Optional.presentIfNotNull(if (isAdult) null else false)
+                    isAdult = Optional.presentIfNotNull(if (isNsfwEnabled) null else false)
                 )
             )
             .fetchPolicy(
@@ -89,6 +89,7 @@ class AnilistMediaRepository(
         includedStatuses: List<MediaStatus>? = null,
         excludedStatuses: List<MediaStatus>? = null,
         search: String? = null,
+        isNsfwEnabled: Boolean = false,
         isAdult: Boolean = false,
     ): Flow<Result<Page<Media.Medium>>> {
         return apolloClient
@@ -111,7 +112,11 @@ class AnilistMediaRepository(
                     formatNotIn = Optional.presentIfNotNull(excludedFormats),
                     statusIn = Optional.presentIfNotNull(includedStatuses),
                     statusNotIn = Optional.presentIfNotNull(excludedStatuses),
-                    isAdult = Optional.presentIfNotNull(if (isAdult) null else false)
+                    isAdult = Optional.presentIfNotNull(
+                        if (isNsfwEnabled) {
+                            if (isAdult) true else null
+                        } else false
+                    )
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)

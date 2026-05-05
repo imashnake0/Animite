@@ -25,7 +25,7 @@ class AnilistSearchRepository(
         type: MediaType,
         perPage: Int,
         search: String,
-        isAdult: Boolean,
+        isNsfwEnabled: Boolean,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
         return apolloClient
             .query(
@@ -34,7 +34,7 @@ class AnilistSearchRepository(
                     perPage = Optional.presentIfNotNull(perPage),
                     search = Optional.presentIfNotNull(search),
                     sort = Optional.present(listOf(MediaSort.POPULARITY_DESC)),
-                    isAdult = Optional.presentIfNotNull(if (isAdult) null else false)
+                    isAdult = Optional.presentIfNotNull(if (isNsfwEnabled) null else false)
                 )
             )
             .fetchPolicy(FetchPolicy.CacheAndNetwork)

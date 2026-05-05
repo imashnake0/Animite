@@ -54,7 +54,7 @@ class ExploreViewModel @Inject constructor(
                     filterType = filterType,
                     allFilters = when (filterType) {
                         ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres(
-                            preferencesRepository.isAdult.filterNotNull().first()
+                            preferencesRepository.isNsfwEnabled.filterNotNull().first()
                         ).toSet()
                         ChipFilterType.FORMAT -> Media.Format.animeFormats().map { it.name }.toSet()
                         ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
@@ -66,9 +66,6 @@ class ExploreViewModel @Inject constructor(
                         filter = it
                     )
                 }
-            }
-            preferencesRepository.isAdult.first()?.let {
-                setIsAdult(it)
             }
         }
     }
@@ -140,7 +137,8 @@ class ExploreViewModel @Inject constructor(
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
 
-    val isAdult = savedStateHandle.getMutableStateFlow<Boolean?>(Constants.IS_ADULT, null)
+    val isAdult = savedStateHandle.getMutableStateFlow<Boolean?>(Constants.IS_ADULT, false)
+    val isNsfwEnabled = preferencesRepository.isNsfwEnabled.filterNotNull()
 
     var shouldDebounce = false
 
@@ -156,16 +154,16 @@ class ExploreViewModel @Inject constructor(
         flow8 = includedStatuses,
         flow9 = excludedStatuses,
         flow10 = page,
-        flow11 = preferencesRepository.isAdult.filterNotNull().combine(isAdult.filterNotNull(), ::Pair),
+        flow11 = preferencesRepository.isNsfwEnabled.filterNotNull().combine(isAdult.filterNotNull(), ::Pair),
         transform = ::Hendecuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page, areAdult) ->
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page, isNsfwToAdult) ->
         if (shouldDebounce) {
             500L
         } else {
             shouldDebounce = true
             0L
         }
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page, areAdult) ->
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page, isNsfwToAdult) ->
         flow {
             emit(Resource.loading())
             emit(
@@ -182,7 +180,8 @@ class ExploreViewModel @Inject constructor(
                     excludedFormats = excludedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
                     includedStatuses = includedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
                     excludedStatuses = excludedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    isAdult = areAdult.first || areAdult.second
+                    isNsfwEnabled = isNsfwToAdult.first,
+                    isAdult = isNsfwToAdult.second,
                 ).asResource().first()
             )
         }
@@ -283,6 +282,8 @@ class ExploreViewModel @Inject constructor(
 
         savedStateHandle[Constants.SEASON] = null
         savedStateHandle[Constants.YEAR] = null
+
+        savedStateHandle[Constants.IS_ADULT] = false
 
         ChipFilterType.entries.forEach {
             resetFilter(it)
