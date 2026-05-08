@@ -79,7 +79,7 @@ data class Media(
     val recommendations: ImmutableList<Small>,
 ) {
     companion object {
-        fun getFormattedDate(
+        private fun getFormattedDate(
             year: Int?,
             month: Int?,
             day: Int?,
@@ -92,7 +92,7 @@ data class Media(
             return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
         }
 
-        fun getNextAiring(nextAiringEpisode: AnimeInfo.NextAiringEpisode?): NextAiring? {
+        private fun getNextAiring(nextAiringEpisode: AnimeInfo.NextAiringEpisode?): NextAiring? {
             return nextAiringEpisode?.let { nextEp ->
                 val airingAt = Instant.fromEpochSeconds(nextEp.airingAt.toLong())
                 if (airingAt <= Clock.System.now()) return null
@@ -103,7 +103,7 @@ data class Media(
             }
         }
 
-        fun getAnimeInfo(animeInfo: AnimeInfo?) = buildList {
+        private fun getAnimeInfo(animeInfo: AnimeInfo?) = buildList {
             if (
                 addAll(
                     listOfNotNull(
@@ -141,7 +141,7 @@ data class Media(
             }
         }.toImmutableList()
 
-        fun getRankings(
+        private fun getRankings(
             rankings: List<MediaQuery.Ranking?>?,
             averageScore: Int?
         ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
@@ -153,7 +153,7 @@ data class Media(
             )
         }
 
-        fun getAllTimeRankings(
+        private fun getAllTimeRankings(
             rankings: List<MediaQuery.Ranking>,
             averageScore: Int?
         ): Pair<Ranking.TimeSpan, ImmutableList<Ranking>> {
@@ -175,7 +175,7 @@ data class Media(
             return Ranking.TimeSpan.ALL_TIME to rankings.toImmutableList()
         }
 
-        fun getYearSeasonRankings(
+        private fun getYearSeasonRankings(
             rankings: List<MediaQuery.Ranking>,
         ): ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>> {
             val rankings = rankings.filter { it.type != MediaRankType.UNKNOWN__ }
@@ -210,7 +210,7 @@ data class Media(
             ).toImmutableList()
         }
 
-        fun getStreamingEpisodes(streamingEpisodes: List<MediaQuery.StreamingEpisode?>?): ImmutableList<Episode> {
+        private fun getStreamingEpisodes(streamingEpisodes: List<MediaQuery.StreamingEpisode?>?): ImmutableList<Episode> {
             if (streamingEpisodes.isNullOrEmpty()) return persistentListOf()
 
             val regex = Regex("""Episode\s+(\d+(?:\.\d+)?)(?:\s*-\s*(.+))?""")
@@ -369,6 +369,13 @@ data class Media(
         }
     }
 
+    enum class Language {
+        DEFAULT,
+        ROMAJI,
+        ENGLISH,
+        NATIVE,
+    }
+
     @Immutable
     sealed class Info(open val item: InfoItem) {
         data class Format(
@@ -491,7 +498,7 @@ data class Media(
         internal constructor(query: CharacterSmall, role: String? = null) : this(
             id = query.id,
             image = query.image?.large,
-            name = query.name?.full,
+            name = query.name?.userPreferred ?: query.name?.full,
             role = role,
             dob = getFormattedDate(
                 year = query.dateOfBirth?.year,
@@ -510,7 +517,7 @@ data class Media(
         internal constructor(query: StaffSmall, role: String? = null) : this(
             id = query.id,
             image = query.image?.large,
-            name = query.name?.full,
+            name = query.name?.userPreferred ?: query.name?.full,
             role = role,
             dob = getFormattedDate(
                 year = query.dateOfBirth?.year,
@@ -558,12 +565,20 @@ data class Media(
         val site: String?,
     )
 
-    internal constructor(query: MediaQuery.Media) : this(
+    internal constructor(
+        query: MediaQuery.Media,
+        language: Language
+    ) : this(
         id = query.id,
         bannerImage = query.bannerImage,
         coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
         color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
-        title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
+        title = when (language) {
+            Language.DEFAULT -> query.title?.userPreferred
+            Language.ROMAJI -> query.title?.romaji
+            Language.ENGLISH -> query.title?.english
+            Language.NATIVE -> query.title?.native
+        },
         description = query.description.orEmpty(),
         nextAiring = getNextAiring(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
@@ -587,7 +602,7 @@ data class Media(
                 role = it.role?.lowercase()
             )
         }.toImmutableList(),
-        trailer = if(query.trailer?.site == null || query.trailer.id == null) {
+        trailer = if (query.trailer?.site == null || query.trailer.id == null) {
             null
         } else {
             Trailer(
@@ -607,10 +622,10 @@ data class Media(
         },
         streamingEpisodes = getStreamingEpisodes(query.streamingEpisodes),
         relations = query.relations?.edges.orEmpty().mapNotNull { edge ->
-            edge?.node?.mediaSmall?.let { edge.relationType?.sanitize() to Small(it) }
+            edge?.node?.mediaSmall?.let { edge.relationType?.sanitize() to Small(it, language) }
         }.toImmutableList(),
         recommendations = query.recommendations?.nodes.orEmpty().mapNotNull { node ->
-            node?.mediaRecommendation?.mediaSmall?.let { Small(it) }
+            node?.mediaRecommendation?.mediaSmall?.let { Small(it, language) }
         }.toImmutableList()
     )
 
@@ -632,11 +647,19 @@ data class Media(
             UNKNOWN("Unknown"),
         }
 
-        internal constructor(query: MediaSmall) : this(
+        internal constructor(
+            query: MediaSmall,
+            language: Language
+        ) : this(
             id = query.id,
             type = query.type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large,
-            title = query.title?.romaji ?: query.title?.english ?: query.title?.native
+            title = when (language) {
+                Language.DEFAULT -> query.title?.userPreferred
+                Language.ROMAJI -> query.title?.romaji
+                Language.ENGLISH -> query.title?.english
+                Language.NATIVE -> query.title?.native
+            }
         )
     }
 
@@ -659,10 +682,18 @@ data class Media(
         /** @see episodes */
         val episodes: Int?,
     ) {
-        internal constructor(query: MediaMedium) : this(
+        internal constructor(
+            query: MediaMedium,
+            language: Language
+        ) : this(
             id = query.id,
             coverImage = query.coverImage?.extraLarge,
-            title = query.title?.romaji ?: query.title?.english ?: query.title?.native,
+            title = when (language) {
+                Language.DEFAULT -> query.title?.userPreferred
+                Language.ROMAJI -> query.title?.romaji
+                Language.ENGLISH -> query.title?.english
+                Language.NATIVE -> query.title?.native
+            },
             season = query.season?.sanitize(),
             seasonYear = query.seasonYear,
             studios = query.studios?.nodes

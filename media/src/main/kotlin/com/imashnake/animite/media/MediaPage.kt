@@ -156,7 +156,6 @@ import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import com.imashnake.animite.core.ui.R as coreUiR
 
 private const val RECOMMENDATIONS = "Recommendations"
 private const val RELATIONS = "Relations"
@@ -707,50 +706,24 @@ fun MediaPage(
                         }
                     }
 
-                    // TODO: This list <-> grid pattern can probably be added to all the other
-                    //  instances of media lists in a better way.
-                    AnimatedContent(
-                        targetState = isList,
-                        transitionSpec = {
-                            fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
+                    MediaMediumList(
+                        mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
+                        shouldShowRank = false,
+                        onItemClick = { id, title ->
+                            onNavigateToMediaItem(
+                                MediaPage(
+                                    id = id,
+                                    source = MediaList.Type.GENRE_LIST.name,
+                                    mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
+                                    title = title
+                                )
+                            )
                         },
-                        modifier = Modifier.padding(horizontalInsets)
-                    ) {
-                        if (it) {
-                            MediaMediumGrid(
-                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
-                                onItemClick = { id, title ->
-                                    onNavigateToMediaItem(
-                                        MediaPage(
-                                            id = id,
-                                            source = MediaList.Type.GENRE_LIST.name,
-                                            mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
-                                            title = title
-                                        )
-                                    )
-                                }
-                            )
-                        } else {
-                            MediaMediumList(
-                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
-                                shouldShowRank = false,
-                                onItemClick = { id, title ->
-                                    onNavigateToMediaItem(
-                                        MediaPage(
-                                            id = id,
-                                            source = MediaList.Type.GENRE_LIST.name,
-                                            mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
-                                            title = title
-                                        )
-                                    )
-                                },
-                                modifier = Modifier.imePadding(),
-                                contentPadding = PaddingValues(
-                                    LocalPaddings.current.large
-                                ) + PaddingValues(bottom = LocalPaddings.current.large)
-                            )
-                        }
-                    }
+                        modifier = Modifier.imePadding(),
+                        contentPadding = PaddingValues(
+                            LocalPaddings.current.large
+                        ) + PaddingValues(bottom = LocalPaddings.current.large)
+                    )
                 }
             }
         }

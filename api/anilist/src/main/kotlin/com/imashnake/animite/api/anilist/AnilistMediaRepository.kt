@@ -29,7 +29,7 @@ private const val HENTAI = "Hentai"
  */
 @Suppress("LongParameterList")
 class AnilistMediaRepository(
-    private val apolloClient: ApolloClient
+    private val apolloClient: ApolloClient,
 ) {
 
     fun fetchMediaList(
@@ -42,6 +42,7 @@ class AnilistMediaRepository(
         season: MediaSeason? = null,
         seasonYear: Int? = null,
         isNsfwEnabled: Boolean = false,
+        language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<MediaList>> {
         return apolloClient
             .query(
@@ -66,7 +67,7 @@ class AnilistMediaRepository(
                 MediaList(
                     type = mediaListType,
                     list = it.page!!.media.orEmpty().filterNotNull().map { query ->
-                        Media.Small(query.mediaSmall)
+                        Media.Small(query.mediaSmall, language)
                     }.toImmutableList(),
                     season = season?.sanitize(),
                     year = seasonYear,
@@ -91,6 +92,7 @@ class AnilistMediaRepository(
         search: String? = null,
         isNsfwEnabled: Boolean = false,
         isAdult: Boolean = false,
+        language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<Page<Media.Medium>>> {
         return apolloClient
             .query(
@@ -125,7 +127,7 @@ class AnilistMediaRepository(
             .asResult { data ->
                 Page(
                     list = data.page!!.media.orEmpty().filterNotNull().map { query ->
-                        Media.Medium(query.mediaMedium)
+                        Media.Medium(query.mediaMedium, language)
                     }.toImmutableList(),
                     info = data.page.pageInfo?.let { Info(it) }
                 )
@@ -135,7 +137,8 @@ class AnilistMediaRepository(
     fun fetchMedia(
         id: Int?,
         mediaType: MediaType,
-        recommendationCount: Int = 10
+        recommendationCount: Int = 10,
+        language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<Media>> {
         return apolloClient
             .query(
@@ -148,7 +151,7 @@ class AnilistMediaRepository(
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .toFlow()
             .filter { it.exception == null }
-            .asResult { Media(it.media!!) }
+            .asResult { Media(it.media!!, language) }
     }
 
     suspend fun fetchMediaGenres(isAdult: Boolean) = apolloClient

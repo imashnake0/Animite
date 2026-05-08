@@ -4,6 +4,7 @@ fragment MediaMedium on Media {
         extraLarge
     }
     title {
+        userPreferred
         romaji
         english
         native

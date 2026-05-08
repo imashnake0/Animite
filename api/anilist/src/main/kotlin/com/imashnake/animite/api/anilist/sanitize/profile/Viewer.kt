@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.imashnake.animite.api.anilist.UserMediaListQuery
 import com.imashnake.animite.api.anilist.fragment.User
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Language
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
@@ -77,24 +78,33 @@ data class User(
             val name: String?,
             val list: ImmutableList<Any>,
         ) {
-            internal constructor(query: UserMediaListQuery.List) : this(
+            internal constructor(
+                query: UserMediaListQuery.List,
+                language: Language
+            ) : this(
                 name = query.name,
                 list = query.entries.orEmpty().mapNotNull {
-                    Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null)
+                    Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null, language)
                 }.toImmutableList()
             )
 
-            internal constructor(query: User.Anime1) : this(
+            internal constructor(
+                query: User.Anime1,
+                language: Language
+            ) : this(
                 name = Favouritables.Anime.name,
                 list = query.nodes.orEmpty().mapNotNull {
-                    Media.Small(it?.mediaSmall ?: return@mapNotNull null)
+                    Media.Small(it?.mediaSmall ?: return@mapNotNull null, language)
                 }.toImmutableList()
             )
 
-            internal constructor(query: User.Manga) : this(
+            internal constructor(
+                query: User.Manga,
+                language: Language
+            ) : this(
                 name = Favouritables.Manga.name,
                 list = query.nodes.orEmpty().mapNotNull {
-                    Media.Small(it?.mediaSmall ?: return@mapNotNull null)
+                    Media.Small(it?.mediaSmall ?: return@mapNotNull null, language)
                 }.toImmutableList()
             )
 
@@ -106,15 +116,22 @@ data class User(
             )
         }
 
-        internal constructor(query: UserMediaListQuery.Data, type: MediaType?) : this(
+        internal constructor(
+            query: UserMediaListQuery.Data,
+            type: MediaType?,
+            language: Language
+        ) : this(
             type = type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             namedLists = query.mediaListCollection?.lists.orEmpty().mapNotNull {
-                NamedList(it ?: return@mapNotNull null)
+                NamedList(it ?: return@mapNotNull null, language)
             }.toImmutableList()
         )
     }
 
-    internal constructor(query: User) : this(
+    internal constructor(
+        query: User,
+        language: Language
+    ) : this(
         id = query.id,
         name = query.name,
         description = query.about,
@@ -144,8 +161,8 @@ data class User(
             }.sortedByDescending { it.mediaCount }
         }.toImmutableList(),
         favourites = listOfNotNull(
-            query.favourites?.anime?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
-            query.favourites?.manga?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.anime?.let { MediaCollection.NamedList(it, language) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.manga?.let { MediaCollection.NamedList(it, language) }.takeIf { it?.list?.isNotEmpty() == true },
             query.favourites?.characters?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
         ).toImmutableList()
     )

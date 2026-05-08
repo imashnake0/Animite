@@ -26,6 +26,7 @@ class AnilistSearchRepository(
         perPage: Int,
         search: String,
         isNsfwEnabled: Boolean,
+        language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<ImmutableList<Media.Medium>>> {
         return apolloClient
             .query(
@@ -42,7 +43,7 @@ class AnilistSearchRepository(
             .filter { it.exception == null }
             .asResult {
                 it.page!!.media.orEmpty().filterNotNull().map { query ->
-                    Media.Medium(query.mediaMedium)
+                    Media.Medium(query.mediaMedium, language)
                 }.toImmutableList()
             }
     }

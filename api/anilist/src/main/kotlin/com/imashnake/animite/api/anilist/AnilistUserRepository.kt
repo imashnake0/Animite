@@ -4,6 +4,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,10 @@ import kotlinx.coroutines.flow.filter
 class AnilistUserRepository(
     private val apolloClient: ApolloClient
 ) {
-    fun fetchViewer(useNetwork: Boolean): Flow<Result<User>> {
+    fun fetchViewer(
+        useNetwork: Boolean,
+        language: Media.Language = Media.Language.DEFAULT,
+    ): Flow<Result<User>> {
         return apolloClient
             .query(ViewerQuery())
             .fetchPolicy(
@@ -29,14 +33,15 @@ class AnilistUserRepository(
             )
             .toFlow()
             .filter { it.exception == null }
-            .asResult { User(it.viewer?.user!!) }
+            .asResult { User(it.viewer?.user!!, language) }
     }
 
     /** @param id The id of the user. */
     fun fetchUserMediaList(
         id: Int?,
         type: MediaType?,
-        useNetwork: Boolean
+        useNetwork: Boolean,
+        language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<User.MediaCollection>> =
         apolloClient
             .query(
@@ -52,5 +57,5 @@ class AnilistUserRepository(
             )
             .toFlow()
             .filter { it.exception == null }
-            .asResult { User.MediaCollection(it, type) }
+            .asResult { User.MediaCollection(it, type, language) }
 }
