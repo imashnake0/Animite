@@ -4,7 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
+import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
@@ -46,17 +48,26 @@ class AnimeViewModel @Inject constructor(
 
     var useNetwork = false
 
+    val prefs = combine(
+        flow = preferencesRepository.isNsfwEnabled.filterNotNull(),
+        flow2 = preferencesRepository.language.filterNotNull(),
+        transform = { isNsfwEnabled, language ->
+            Prefs(isNsfwEnabled, Media.Language.valueOf(language))
+        }
+    )
+
     val trendingMedia = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
-        flow2 = preferencesRepository.isNsfwEnabled.filterNotNull(),
+        flow2 = prefs,
         transform = ::Pair
-    ).flatMapLatest { (_, isNsfwEnabled) ->
+    ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.TRENDING_NOW,
             mediaType = MediaType.ANIME,
             sort = listOf(MediaSort.TRENDING_DESC),
             useNetwork = useNetwork,
-            isNsfwEnabled = isNsfwEnabled
+            isNsfwEnabled = prefs.isNsfwEnabled,
+            language = prefs.language
         )
     }
     .asResource()
@@ -69,9 +80,9 @@ class AnimeViewModel @Inject constructor(
     val popularMediaThisSeason = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
         flow2 = now,
-        flow3 = preferencesRepository.isNsfwEnabled.filterNotNull(),
+        flow3 = prefs,
         transform = ::Triple,
-    ).flatMapLatest { (_, now, isNsfwEnabled) ->
+    ).flatMapLatest { (_, now, prefs) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.POPULAR_THIS_SEASON,
             mediaType = MediaType.ANIME,
@@ -79,7 +90,8 @@ class AnimeViewModel @Inject constructor(
             season = now.month.season,
             seasonYear = now.year,
             useNetwork = useNetwork,
-            isNsfwEnabled = isNsfwEnabled
+            isNsfwEnabled = prefs.isNsfwEnabled,
+            language = prefs.language
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -90,9 +102,9 @@ class AnimeViewModel @Inject constructor(
     val upcomingMediaNextSeason = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
         flow2 = now,
-        flow3 = preferencesRepository.isNsfwEnabled.filterNotNull(),
+        flow3 = prefs,
         transform = ::Triple,
-    ).flatMapLatest { (_, now, isNsfwEnabled) ->
+    ).flatMapLatest { (_, now, prefs) ->
         val season = now.month.season
         mediaListRepository.fetchMediaList(
             mediaListType = Type.UPCOMING_NEXT_SEASON,
@@ -101,7 +113,8 @@ class AnimeViewModel @Inject constructor(
             season = season.nextSeason,
             seasonYear = season.nextSeasonYear(now),
             useNetwork = useNetwork,
-            isNsfwEnabled = isNsfwEnabled
+            isNsfwEnabled = prefs.isNsfwEnabled,
+            language = prefs.language
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -111,15 +124,16 @@ class AnimeViewModel @Inject constructor(
 
     val allTimePopular = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
-        flow2 = preferencesRepository.isNsfwEnabled.filterNotNull(),
+        flow2 = prefs,
         transform = ::Pair
-    ).flatMapLatest { (_, isNsfwEnabled) ->
+    ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.ALL_TIME_POPULAR,
             mediaType = MediaType.ANIME,
             sort = listOf(MediaSort.POPULARITY_DESC),
             useNetwork = useNetwork,
-            isNsfwEnabled = isNsfwEnabled
+            isNsfwEnabled = prefs.isNsfwEnabled,
+            language = prefs.language
         )
     }
     .asResource()

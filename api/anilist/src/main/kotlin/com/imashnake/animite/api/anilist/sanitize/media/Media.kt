@@ -578,7 +578,7 @@ data class Media(
             Language.ROMAJI -> query.title?.romaji
             Language.ENGLISH -> query.title?.english
             Language.NATIVE -> query.title?.native
-        },
+        } ?: query.title?.userPreferred,
         description = query.description.orEmpty(),
         nextAiring = getNextAiring(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),
@@ -659,7 +659,7 @@ data class Media(
                 Language.ROMAJI -> query.title?.romaji
                 Language.ENGLISH -> query.title?.english
                 Language.NATIVE -> query.title?.native
-            }
+            } ?: query.title?.userPreferred
         )
     }
 
@@ -693,7 +693,7 @@ data class Media(
                 Language.ROMAJI -> query.title?.romaji
                 Language.ENGLISH -> query.title?.english
                 Language.NATIVE -> query.title?.native
-            },
+            } ?: query.title?.userPreferred,
             season = query.season?.sanitize(),
             seasonYear = query.seasonYear,
             studios = query.studios?.nodes
