@@ -65,20 +65,4 @@ class MediaPageViewModel @Inject constructor(
             }
         }
     }
-
-    fun getGenreMediaMediums(genre: String?) = viewModelScope.launch {
-        if (genre == null) {
-            uiState = uiState.copy(genreTitleList = uiState.genreTitleList?.first.orEmpty() to persistentListOf())
-            return@launch
-        }
-        val page = mediaRepository.fetchMediaMediumList(
-            mediaType = uiState.type?.let {
-                MediaType.safeValueOf(it)
-            } ?: MediaType.UNKNOWN__,
-            sort = listOf(MediaSort.SCORE_DESC),
-            genre = genre,
-        ).firstOrNull()?.getOrNull()
-
-        uiState = uiState.copy(genreTitleList = page?.list?.let { genre to it })
-    }
 }
