@@ -2,6 +2,7 @@ fragment MediaSmall on Media {
     id
     type
     title {
+        userPreferred
         romaji
         english
         native

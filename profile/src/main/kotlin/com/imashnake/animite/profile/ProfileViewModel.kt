@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistUserRepository
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.resource.Resource
@@ -42,27 +43,31 @@ class ProfileViewModel @Inject constructor(
         .accessToken
         .map { !it.isNullOrEmpty() }
 
-    val viewer = refreshTrigger
-        .onStart { emit(Unit) }
-        .flatMapLatest {
-            userRepository.fetchViewer(useNetwork)
-        }.asResource().onEach {
-            it.data?.let { user -> preferencesRepository.setViewerId(user.id) }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(1000),
-            initialValue = Resource.loading(),
-        )
+    val viewer = combine(
+        flow = refreshTrigger.onStart { emit(Unit) },
+        flow2 = preferencesRepository.language.filterNotNull(),
+        transform = ::Pair
+    ).flatMapLatest {
+        userRepository.fetchViewer(useNetwork, Media.Language.valueOf(it.second))
+    }.asResource().onEach {
+        it.data?.let { user -> preferencesRepository.setViewerId(user.id) }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading(),
+    )
 
     val viewerAnimeLists = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
         flow2 = preferencesRepository.viewerId.filterNotNull(),
-        transform = ::Pair,
+        flow3 = preferencesRepository.language.filterNotNull(),
+        transform = ::Triple,
     ).flatMapLatest {
         userRepository.fetchUserMediaList(
             id = it.second.toIntOrNull(),
             type = MediaType.ANIME,
             useNetwork = useNetwork,
+            language = Media.Language.valueOf(it.third)
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -73,12 +78,14 @@ class ProfileViewModel @Inject constructor(
     val viewerMangaLists = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
         flow2 = preferencesRepository.viewerId.filterNotNull(),
-        transform = ::Pair,
+        flow3 = preferencesRepository.language.filterNotNull(),
+        transform = ::Triple,
     ).flatMapLatest {
         userRepository.fetchUserMediaList(
             id = it.second.toIntOrNull(),
             type = MediaType.MANGA,
             useNetwork = useNetwork,
+            language = Media.Language.valueOf(it.third)
         )
     }.asResource().stateIn(
         scope = viewModelScope,

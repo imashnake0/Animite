@@ -3,14 +3,12 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -41,7 +39,6 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.requiredSize
@@ -59,7 +56,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -86,7 +82,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -113,15 +108,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
-import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.MediaList
-import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.core.ui.Constants
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -133,7 +125,6 @@ import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.core.ui.component.StatsRow
 import com.imashnake.animite.core.ui.ext.bannerParallax
-import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.NestedScrollableContent
@@ -148,7 +139,6 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.materialkolor.ktx.blend
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -156,7 +146,6 @@ import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import com.imashnake.animite.core.ui.R as coreUiR
 
 private const val RECOMMENDATIONS = "Recommendations"
 private const val RELATIONS = "Relations"
@@ -203,8 +192,6 @@ fun MediaPage(
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
         deviceScreenCornerRadius.toDp()
     }
-
-    var isList by remember { mutableStateOf(true) }
 
     MaterialTheme(
         colorScheme = rememberColorSchemeFor(
@@ -633,132 +620,7 @@ fun MediaPage(
                     }
                 }
             }
-
-            val frontDropColor by animateColorAsState(
-                targetValue = MaterialTheme.colorScheme.background.copy(
-                    alpha = if (isExpanded) 0.95f else 0f
-                ),
-                animationSpec = tween(Constants.CROSSFADE_DURATION),
-                label = "show_front_drop"
-            )
-
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .drawBehind { drawRect(frontDropColor) }
-            )
-
-            // TODO: Add progress indicator.
-            AnimatedVisibility(
-                visible = media.genreTitleList?.second?.isNotEmpty() ?: false,
-                enter = fadeIn(tween(750)),
-                exit = fadeOut(tween(750)),
-            ) {
-                Column {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .padding(insetPaddingValues.copy(bottom = 0.dp))
-                            .padding(horizontal = LocalPaddings.current.large)
-                            .padding(vertical = LocalPaddings.current.medium)
-                    ) {
-                        Text(
-                            text = media.genreTitleList?.first.orEmpty(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleLarge,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        ) {
-                            val listToGrid = AnimatedImageVector.animatedVectorResource(
-                                R.drawable.grid_list_anim
-                            )
-                            Icon(
-                                painter = rememberAnimatedVectorPainter(listToGrid, isList),
-                                contentDescription = stringResource(R.string.list_to_grid),
-                                modifier = Modifier
-                                    .padding(end = LocalPaddings.current.small)
-                                    .clip(CircleShape)
-                                    .clickable { isList = !isList }
-                                    .size(40.dp)
-                                    .padding(LocalPaddings.current.small)
-                                    .zIndex(2f)
-                            )
-
-                            Icon(
-                                imageVector = Icons.Rounded.Close,
-                                contentDescription = stringResource(R.string.back),
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .clickable {
-                                        viewModel.getGenreMediaMediums(null)
-                                        isExpanded = false
-                                    }
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .padding(LocalPaddings.current.small)
-                                    .zIndex(2f)
-                            )
-                        }
-                    }
-
-                    // TODO: This list <-> grid pattern can probably be added to all the other
-                    //  instances of media lists in a better way.
-                    AnimatedContent(
-                        targetState = isList,
-                        transitionSpec = {
-                            fadeIn(tween(750)).togetherWith(fadeOut(tween(750)))
-                        },
-                        modifier = Modifier.padding(horizontalInsets)
-                    ) {
-                        if (it) {
-                            MediaMediumGrid(
-                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
-                                onItemClick = { id, title ->
-                                    onNavigateToMediaItem(
-                                        MediaPage(
-                                            id = id,
-                                            source = MediaList.Type.GENRE_LIST.name,
-                                            mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
-                                            title = title
-                                        )
-                                    )
-                                }
-                            )
-                        } else {
-                            MediaMediumList(
-                                mediaMediumList = media.genreTitleList?.second ?: persistentListOf(),
-                                shouldShowRank = false,
-                                onItemClick = { id, title ->
-                                    onNavigateToMediaItem(
-                                        MediaPage(
-                                            id = id,
-                                            source = MediaList.Type.GENRE_LIST.name,
-                                            mediaType = media.type ?: MediaType.UNKNOWN__.rawValue,
-                                            title = title
-                                        )
-                                    )
-                                },
-                                modifier = Modifier.imePadding(),
-                                contentPadding = PaddingValues(
-                                    LocalPaddings.current.large
-                                ) + PaddingValues(bottom = LocalPaddings.current.large)
-                            )
-                        }
-                    }
-                }
-            }
         }
-    }
-
-    BackHandler(!media.genreTitleList?.second.isNullOrEmpty()) {
-        viewModel.getGenreMediaMediums(null)
-        isExpanded = false
     }
 }
 

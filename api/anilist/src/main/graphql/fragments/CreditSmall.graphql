@@ -4,6 +4,7 @@ fragment CharacterSmall on Character {
         large
     }
     name {
+        userPreferred
         full
         alternative
     }
@@ -24,6 +25,7 @@ fragment StaffSmall on Staff {
         large
     }
     name {
+        userPreferred
         full
         alternative
     }

@@ -13,6 +13,7 @@ private const val DEFAULT_DENSITY_KEY = "COMFY"
 private const val USE_SYSTEM_COLOR_SCHEME = true
 private const val IS_AMOLED = false
 private const val IS_NSFW_ENABLED = false
+private const val DEFAULT_LANGUAGE_KEY = "DEFAULT"
 private const val IS_DEV_OPTIONS_ENABLED = false
 
 /**
@@ -72,6 +73,13 @@ class PreferencesRepository internal constructor(
         dataStore.setValue(isNsfwEnabledKey, isNsfwEnabled)
     }
 
+    private val languageKey = stringPreferencesKey("language")
+    val language = dataStore.getValue(languageKey, DEFAULT_LANGUAGE_KEY)
+    suspend fun setLanguage(language: String) {
+        dataStore.setValue(languageKey, language)
+    }
+
+    // region developer options
     private val isDevOptionsEnabledKey = booleanPreferencesKey("dev_options_enabled")
     val isDevOptionsEnabled = dataStore.getValue(isDevOptionsEnabledKey, IS_DEV_OPTIONS_ENABLED)
     suspend fun setDevOptionsEnabled(isEnabled: Boolean) {
@@ -81,7 +89,6 @@ class PreferencesRepository internal constructor(
         dataStore.setValue(isDevOptionsEnabledKey, isEnabled)
     }
 
-    // region developer options
     private val dayHourKey = floatPreferencesKey("day_hour")
     val dayHour = dataStore.getValue(dayHourKey, null)
     suspend fun setDayHour(dayHour: Float?) {

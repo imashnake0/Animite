@@ -2,6 +2,7 @@ package com.imashnake.animite.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.ui.Density
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,7 @@ class SettingsViewModel @Inject constructor(
     val isAmoled = preferencesRepository.isAmoled.filterNotNull()
     val density = preferencesRepository.density.filterNotNull()
     val isNsfwEnabled = preferencesRepository.isNsfwEnabled.filterNotNull()
+    val language = preferencesRepository.language.filterNotNull()
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
 
@@ -37,8 +39,12 @@ class SettingsViewModel @Inject constructor(
         preferencesRepository.setDensity(density.name)
     }
 
-    fun setIsAdult(isNsfwEnabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+    fun setIsNsfwEnabled(isNsfwEnabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setIsNsfwEnabled(isNsfwEnabled)
+    }
+
+    fun setLanguage(language: Media.Language) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setLanguage(language.name)
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {

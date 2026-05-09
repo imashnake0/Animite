@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistSearchRepository
+import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.resource.Resource
@@ -32,13 +34,21 @@ class SearchViewModel @Inject constructor(
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val query = savedStateHandle.getStateFlow<String?>(QUERY, null)
 
+    val prefs = combine(
+        flow = preferencesRepository.isNsfwEnabled.filterNotNull(),
+        flow2 = preferencesRepository.language.filterNotNull(),
+        transform = { isNsfwEnabled, language ->
+            Prefs(isNsfwEnabled, Media.Language.valueOf(language))
+        }
+    )
+
     @OptIn(FlowPreview::class)
     val searchList = combine(
         flow = mediaType.filterNotNull(),
         flow2 = query,
-        flow3 = preferencesRepository.isNsfwEnabled.filterNotNull(),
+        flow3 = prefs,
         transform = ::Triple
-    ).debounce(300L).flatMapLatest { (mediaType, query, isNsfwEnabled) ->
+    ).debounce(300L).flatMapLatest { (mediaType, query, prefs) ->
         if (query.isNullOrEmpty()) {
             flowOf(Resource.success(persistentListOf()))
         } else {
@@ -46,7 +56,8 @@ class SearchViewModel @Inject constructor(
                 type = mediaType,
                 perPage = 20,
                 search = query,
-                isNsfwEnabled = isNsfwEnabled,
+                isNsfwEnabled = prefs.isNsfwEnabled,
+                language = prefs.language
             ).asResource()
         }
     }

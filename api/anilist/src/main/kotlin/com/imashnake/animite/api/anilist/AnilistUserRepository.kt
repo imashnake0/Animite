@@ -4,6 +4,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
@@ -19,9 +20,11 @@ import kotlinx.coroutines.flow.filter
 class AnilistUserRepository(
     private val apolloClient: ApolloClient
 ) {
-    fun fetchViewer(useNetwork: Boolean): Flow<Result<User>> {
-        return apolloClient
-            .query(ViewerQuery())
+    fun fetchViewer(
+        useNetwork: Boolean,
+        language: Media.Language = Media.Language.DEFAULT,
+    ): Flow<Result<User>> {
+        return apolloClient.query(ViewerQuery())
             .fetchPolicy(
                 fetchPolicy = if (useNetwork) {
                     FetchPolicy.NetworkFirst
@@ -29,28 +32,29 @@ class AnilistUserRepository(
             )
             .toFlow()
             .filter { it.exception == null }
-            .asResult { User(it.viewer?.user!!) }
+            .asResult { User(it.viewer?.user!!, language) }
     }
 
     /** @param id The id of the user. */
     fun fetchUserMediaList(
         id: Int?,
         type: MediaType?,
-        useNetwork: Boolean
-    ): Flow<Result<User.MediaCollection>> =
-        apolloClient
-            .query(
-                UserMediaListQuery(
-                    userId = Optional.presentIfNotNull(id),
-                    type = Optional.presentIfNotNull(type)
-                )
+        useNetwork: Boolean,
+        language: Media.Language = Media.Language.DEFAULT,
+    ): Flow<Result<User.MediaCollection>> {
+        return apolloClient.query(
+            UserMediaListQuery(
+                userId = Optional.presentIfNotNull(id),
+                type = Optional.presentIfNotNull(type)
             )
-            .fetchPolicy(
-                fetchPolicy = if (useNetwork) {
-                    FetchPolicy.NetworkFirst
-                } else FetchPolicy.CacheFirst
-            )
-            .toFlow()
-            .filter { it.exception == null }
-            .asResult { User.MediaCollection(it, type) }
+        )
+        .fetchPolicy(
+            fetchPolicy = if (useNetwork) {
+                FetchPolicy.NetworkFirst
+            } else FetchPolicy.CacheFirst
+        )
+        .toFlow()
+        .filter { it.exception == null }
+        .asResult { User.MediaCollection(it, type, language) }
+    }
 }

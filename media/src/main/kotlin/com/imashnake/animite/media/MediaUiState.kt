@@ -19,7 +19,6 @@ data class MediaUiState(
     val season: Media.Season? = null,
     val rankings: ImmutableList<Pair<Ranking.TimeSpan, ImmutableList<Ranking>>>? = null,
     val genres: ImmutableList<String>? = null,
-    val genreTitleList: Pair<String, ImmutableList<Media.Medium>>? = null,
     val characters: ImmutableList<Media.Credit>? = null,
     val staff: ImmutableList<Media.Credit>? = null,
     val trailer: Media.Trailer? = null,
