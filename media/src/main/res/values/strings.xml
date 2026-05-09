@@ -103,7 +103,7 @@
     <string name ="sort_trending">Trending</string>
     <string name ="sort_favourites">Favourites</string>
     <string name ="sort_score">Score</string>
-    <string name ="sort_episodes">Episodes</string>
+    <string name ="sort_episodes">Episode Count</string>
 
     <string name="language_default">Default</string>
     <string name="language_romaji">Romaji</string>
