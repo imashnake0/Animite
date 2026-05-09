@@ -8,9 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.preferences.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -18,8 +24,9 @@ import javax.inject.Inject
 @HiltViewModel
 @Suppress("SwallowedException")
 class MediaPageViewModel @Inject constructor(
+    private val mediaRepository: AnilistMediaRepository,
+    preferencesRepository: PreferencesRepository,
     savedStateHandle: SavedStateHandle,
-    private val mediaRepository: AnilistMediaRepository
 ) : ViewModel() {
     private val navArgs = savedStateHandle.toRoute<MediaPage>()
     var uiState by mutableStateOf(MediaUiState(
@@ -36,7 +43,14 @@ class MediaPageViewModel @Inject constructor(
                 val mediaType = MediaType.safeValueOf(navArgs.mediaType)
                 // TODO: Switch to StateFlows.
                 val media = mediaRepository
-                    .fetchMedia(navArgs.id, mediaType)
+                    .fetchMedia(
+                        id = navArgs.id,
+                        mediaType = mediaType,
+                        language = preferencesRepository.language
+                            .filterNotNull()
+                            .mapNotNull { Media.Language.valueOf(it) }
+                            .first()
+                    )
                     .firstOrNull()
                     ?.getOrNull()
 

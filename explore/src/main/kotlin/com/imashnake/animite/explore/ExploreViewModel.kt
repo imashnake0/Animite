@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaStatus
@@ -140,6 +141,14 @@ class ExploreViewModel @Inject constructor(
     val isAdult = savedStateHandle.getMutableStateFlow<Boolean?>(Constants.IS_ADULT, false)
     val isNsfwEnabled = preferencesRepository.isNsfwEnabled.filterNotNull()
 
+    val prefs = combine(
+        flow = preferencesRepository.isNsfwEnabled.filterNotNull(),
+        flow2 = preferencesRepository.language.filterNotNull(),
+        transform = { isNsfwEnabled, language ->
+            Prefs(isNsfwEnabled, Media.Language.valueOf(language))
+        }
+    )
+
     var shouldDebounce = false
 
     @OptIn(FlowPreview::class)
@@ -154,16 +163,17 @@ class ExploreViewModel @Inject constructor(
         flow8 = includedStatuses,
         flow9 = excludedStatuses,
         flow10 = page,
-        flow11 = preferencesRepository.isNsfwEnabled.filterNotNull().combine(isAdult.filterNotNull(), ::Pair),
-        transform = ::Hendecuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page, isNsfwToAdult) ->
+        flow11 = isAdult.filterNotNull(),
+        flow12 = prefs,
+        transform = ::Dodecuple,
+    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page, isAdult, prefs) ->
         if (shouldDebounce) {
             500L
         } else {
             shouldDebounce = true
             0L
         }
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page, isNsfwToAdult) ->
+    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page, isAdult, prefs) ->
         flow {
             emit(Resource.loading())
             emit(
@@ -180,8 +190,9 @@ class ExploreViewModel @Inject constructor(
                     excludedFormats = excludedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
                     includedStatuses = includedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
                     excludedStatuses = excludedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    isNsfwEnabled = isNsfwToAdult.first,
-                    isAdult = isNsfwToAdult.second,
+                    isAdult = isAdult,
+                    isNsfwEnabled = prefs.isNsfwEnabled,
+                    language = prefs.language
                 ).asResource().first()
             )
         }
@@ -321,7 +332,7 @@ class ExploreViewModel @Inject constructor(
 }
 
 // TODO: Move this to core?
-data class Hendecuple<out A, out B, out C, out D, out E, out F, out G, out H, out I, out J, out K>(
+data class Dodecuple<out A, out B, out C, out D, out E, out F, out G, out H, out I, out J, out K, out L>(
     val first: A,
     val second: B,
     val third: C,
@@ -333,14 +344,15 @@ data class Hendecuple<out A, out B, out C, out D, out E, out F, out G, out H, ou
     val ninth: I,
     val tenth: J,
     val eleventh: K,
+    val twelfth: L
 ) {
     /**
-     * Returns string representation of the [Hendecuple] including its
-     * [first], [second], [third], [fourth], [fifth], [sixth], [seventh], [eighth], [ninth], [tenth]
-     * and [eleventh] values.
+     * Returns string representation of the [Dodecuple] including its
+     * [first], [second], [third], [fourth], [fifth], [sixth], [seventh], [eighth], [ninth],
+     * [tenth], [eleventh], and [twelfth] values.
      */
     override fun toString(): String =
-        "($first, $second, $third, $fourth, $fifth, $sixth, $seventh, $eighth, $ninth, $tenth, $eleventh)"
+        "($first, $second, $third, $fourth, $fifth, $sixth, $seventh, $eighth, $ninth, $tenth, $eleventh, $twelfth)"
 }
 
 inline fun <
@@ -355,6 +367,7 @@ inline fun <
         T9,
         T10,
         T11,
+        T12,
         R
 > combine(
     flow: Flow<T1>,
@@ -368,6 +381,7 @@ inline fun <
     flow9: Flow<T9>,
     flow10: Flow<T10>,
     flow11: Flow<T11>,
+    flow12: Flow<T12>,
     crossinline transform: suspend (
         T1,
         T2,
@@ -380,6 +394,7 @@ inline fun <
         T9,
         T10,
         T11,
+        T12,
     ) -> R,
 ): Flow<R> = combine(
     flow,
@@ -393,6 +408,7 @@ inline fun <
     flow9,
     flow10,
     flow11,
+    flow12,
 ) { args: Array<*> ->
     @Suppress("UNCHECKED_CAST")
     transform(
@@ -407,5 +423,6 @@ inline fun <
         args[8] as T9,
         args[9] as T10,
         args[10] as T11,
+        args[11] as T12,
     )
 }

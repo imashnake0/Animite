@@ -44,35 +44,34 @@ class AnilistMediaRepository(
         isNsfwEnabled: Boolean = false,
         language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<MediaList>> {
-        return apolloClient
-            .query(
-                MediaListQuery(
-                    type = Optional.presentIfNotNull(mediaType),
-                    page = Optional.presentIfNotNull(page),
-                    perPage = Optional.presentIfNotNull(perPage),
-                    sort = Optional.presentIfNotNull(sort),
-                    season = Optional.presentIfNotNull(season),
-                    seasonYear = Optional.presentIfNotNull(seasonYear),
-                    isAdult = Optional.presentIfNotNull(if (isNsfwEnabled) null else false)
-                )
+        return apolloClient.query(
+            MediaListQuery(
+                type = Optional.presentIfNotNull(mediaType),
+                page = Optional.presentIfNotNull(page),
+                perPage = Optional.presentIfNotNull(perPage),
+                sort = Optional.presentIfNotNull(sort),
+                season = Optional.presentIfNotNull(season),
+                seasonYear = Optional.presentIfNotNull(seasonYear),
+                isAdult = Optional.presentIfNotNull(if (isNsfwEnabled) null else false)
             )
-            .fetchPolicy(
-                fetchPolicy = if (useNetwork) {
-                    FetchPolicy.NetworkFirst
-                } else FetchPolicy.CacheFirst
+        )
+        .fetchPolicy(
+            fetchPolicy = if (useNetwork) {
+                FetchPolicy.NetworkFirst
+            } else FetchPolicy.CacheFirst
+        )
+        .toFlow()
+        .filter { it.exception == null }
+        .asResult {
+            MediaList(
+                type = mediaListType,
+                list = it.page!!.media.orEmpty().filterNotNull().map { query ->
+                    Media.Small(query.mediaSmall, language)
+                }.toImmutableList(),
+                season = season?.sanitize(),
+                year = seasonYear,
             )
-            .toFlow()
-            .filter { it.exception == null }
-            .asResult {
-                MediaList(
-                    type = mediaListType,
-                    list = it.page!!.media.orEmpty().filterNotNull().map { query ->
-                        Media.Small(query.mediaSmall, language)
-                    }.toImmutableList(),
-                    season = season?.sanitize(),
-                    year = seasonYear,
-                )
-            }
+        }
     }
 
     fun fetchMediaMediumList(
@@ -90,8 +89,8 @@ class AnilistMediaRepository(
         includedStatuses: List<MediaStatus>? = null,
         excludedStatuses: List<MediaStatus>? = null,
         search: String? = null,
-        isNsfwEnabled: Boolean = false,
         isAdult: Boolean = false,
+        isNsfwEnabled: Boolean = false,
         language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<Page<Media.Medium>>> {
         return apolloClient.query(

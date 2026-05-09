@@ -24,8 +24,7 @@ class AnilistUserRepository(
         useNetwork: Boolean,
         language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<User>> {
-        return apolloClient
-            .query(ViewerQuery())
+        return apolloClient.query(ViewerQuery())
             .fetchPolicy(
                 fetchPolicy = if (useNetwork) {
                     FetchPolicy.NetworkFirst
@@ -42,20 +41,20 @@ class AnilistUserRepository(
         type: MediaType?,
         useNetwork: Boolean,
         language: Media.Language = Media.Language.DEFAULT,
-    ): Flow<Result<User.MediaCollection>> =
-        apolloClient
-            .query(
-                UserMediaListQuery(
-                    userId = Optional.presentIfNotNull(id),
-                    type = Optional.presentIfNotNull(type)
-                )
+    ): Flow<Result<User.MediaCollection>> {
+        return apolloClient.query(
+            UserMediaListQuery(
+                userId = Optional.presentIfNotNull(id),
+                type = Optional.presentIfNotNull(type)
             )
-            .fetchPolicy(
-                fetchPolicy = if (useNetwork) {
-                    FetchPolicy.NetworkFirst
-                } else FetchPolicy.CacheFirst
-            )
-            .toFlow()
-            .filter { it.exception == null }
-            .asResult { User.MediaCollection(it, type, language) }
+        )
+        .fetchPolicy(
+            fetchPolicy = if (useNetwork) {
+                FetchPolicy.NetworkFirst
+            } else FetchPolicy.CacheFirst
+        )
+        .toFlow()
+        .filter { it.exception == null }
+        .asResult { User.MediaCollection(it, type, language) }
+    }
 }
