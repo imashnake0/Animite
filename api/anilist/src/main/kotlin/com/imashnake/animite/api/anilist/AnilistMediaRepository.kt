@@ -94,44 +94,43 @@ class AnilistMediaRepository(
         isAdult: Boolean = false,
         language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<Page<Media.Medium>>> {
-        return apolloClient
-            .query(
-                MediaMediumListQuery(
-                    type = Optional.presentIfNotNull(mediaType),
-                    page = Optional.presentIfNotNull(page),
-                    perPage = Optional.presentIfNotNull(perPage),
-                    sort = Optional.presentIfNotNull(sort),
-                    genre = Optional.presentIfNotNull(genre),
-                    genreIn = Optional.presentIfNotNull(includedGenres),
-                    genreNotIn = Optional.presentIfNotNull(excludedGenres),
-                    search = Optional.presentIfNotNull(search),
-                    season = Optional.presentIfNotNull(season),
-                    // Start FuzzyDateInt has to be YYYYMMDD -> YYYY0101
-                    startDate = Optional.presentIfNotNull(year?.times(10000)?.plus(101)),
-                    // End FuzzyDateInt has to be YYYYMMDD -> YYYY1231
-                    endDate = Optional.presentIfNotNull(year?.times(10000)?.plus(1231)),
-                    formatIn = Optional.presentIfNotNull(includedFormats),
-                    formatNotIn = Optional.presentIfNotNull(excludedFormats),
-                    statusIn = Optional.presentIfNotNull(includedStatuses),
-                    statusNotIn = Optional.presentIfNotNull(excludedStatuses),
-                    isAdult = Optional.presentIfNotNull(
-                        if (isNsfwEnabled) {
-                            if (isAdult) true else null
-                        } else false
-                    )
+        return apolloClient.query(
+            MediaMediumListQuery(
+                type = Optional.presentIfNotNull(mediaType),
+                page = Optional.presentIfNotNull(page),
+                perPage = Optional.presentIfNotNull(perPage),
+                sort = Optional.presentIfNotNull(sort),
+                genre = Optional.presentIfNotNull(genre),
+                genreIn = Optional.presentIfNotNull(includedGenres),
+                genreNotIn = Optional.presentIfNotNull(excludedGenres),
+                search = Optional.presentIfNotNull(search),
+                season = Optional.presentIfNotNull(season),
+                // Start FuzzyDateInt has to be YYYYMMDD -> YYYY0101
+                startDate = Optional.presentIfNotNull(year?.times(10000)?.plus(101)),
+                // End FuzzyDateInt has to be YYYYMMDD -> YYYY1231
+                endDate = Optional.presentIfNotNull(year?.times(10000)?.plus(1231)),
+                formatIn = Optional.presentIfNotNull(includedFormats),
+                formatNotIn = Optional.presentIfNotNull(excludedFormats),
+                statusIn = Optional.presentIfNotNull(includedStatuses),
+                statusNotIn = Optional.presentIfNotNull(excludedStatuses),
+                isAdult = Optional.presentIfNotNull(
+                    if (isNsfwEnabled) {
+                        if (isAdult) true else null
+                    } else false
                 )
             )
-            .fetchPolicy(FetchPolicy.CacheAndNetwork)
-            .toFlow()
-            .filter { it.exception == null }
-            .asResult { data ->
-                Page(
-                    list = data.page!!.media.orEmpty().filterNotNull().map { query ->
-                        Media.Medium(query.mediaMedium, language)
-                    }.toImmutableList(),
-                    info = data.page.pageInfo?.let { Info(it) }
-                )
-            }
+        )
+        .fetchPolicy(FetchPolicy.CacheAndNetwork)
+        .toFlow()
+        .filter { it.exception == null }
+        .asResult { data ->
+            Page(
+                list = data.page!!.media.orEmpty().filterNotNull().map { query ->
+                    Media.Medium(query.mediaMedium, language)
+                }.toImmutableList(),
+                info = data.page.pageInfo?.let { Info(it) }
+            )
+        }
     }
 
     fun fetchMedia(
@@ -140,18 +139,17 @@ class AnilistMediaRepository(
         recommendationCount: Int = 10,
         language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<Media>> {
-        return apolloClient
-            .query(
-                MediaQuery(
-                    id = Optional.presentIfNotNull(id),
-                    type = Optional.presentIfNotNull(mediaType),
-                    recommendationsPerPage = Optional.presentIfNotNull(recommendationCount)
-                )
+        return apolloClient.query(
+            MediaQuery(
+                id = Optional.presentIfNotNull(id),
+                type = Optional.presentIfNotNull(mediaType),
+                recommendationsPerPage = Optional.presentIfNotNull(recommendationCount)
             )
-            .fetchPolicy(FetchPolicy.CacheAndNetwork)
-            .toFlow()
-            .filter { it.exception == null }
-            .asResult { Media(it.media!!, language) }
+        )
+        .fetchPolicy(FetchPolicy.CacheAndNetwork)
+        .toFlow()
+        .filter { it.exception == null }
+        .asResult { Media(it.media!!, language) }
     }
 
     suspend fun fetchMediaGenres(isAdult: Boolean) = apolloClient
