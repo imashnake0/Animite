@@ -62,12 +62,12 @@ class ExploreViewModel @Inject constructor(
                         ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
                     }
                 )
-                navArgs.genre?.let {
-                    includeFilter(
-                        filterType = ChipFilterType.GENRE,
-                        filter = it
-                    )
-                }
+            }
+            navArgs.genre?.let {
+                includeFilter(
+                    filterType = ChipFilterType.GENRE,
+                    filter = it
+                )
             }
         }
     }
@@ -77,7 +77,7 @@ class ExploreViewModel @Inject constructor(
 
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
 
-    val mediaType = savedStateHandle.getStateFlow(Constants.MEDIA_TYPE_FILTER, MediaType.ANIME.name)
+    val mediaType = savedStateHandle.getStateFlow(Constants.MEDIA_TYPE_FILTER, navArgs.mediaType ?: MediaType.ANIME.name)
 
     private val _allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FILTERS + Constants.GENRES, null)
     private val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.GENRES, null)

@@ -29,7 +29,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -49,11 +51,11 @@ import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.navigation.ExploreRoute
 import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
-import kotlinx.collections.immutable.ImmutableList
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +63,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @Suppress("LongMethod")
 fun MangaScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    onNavigateToExplore: (ExploreRoute) -> Unit,
     scrollState: ScrollState,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -118,8 +121,7 @@ fun MangaScreen(
                                     val mediaList = (row as? Resource.Success)?.data
                                     if (mediaList?.list.orEmpty().isNotEmpty()) {
                                         MangaRow(
-                                            items = mediaList!!.list,
-                                            type = mediaList.type,
+                                            mediaList = mediaList!!,
                                             onItemClicked = { media ->
                                                 onNavigateToMediaItem(
                                                     MediaPage(
@@ -130,6 +132,7 @@ fun MangaScreen(
                                                     )
                                                 )
                                             },
+                                            onNavigateToExplore = onNavigateToExplore,
                                             sharedTransitionScope = sharedTransitionScope,
                                             animatedVisibilityScope = animatedVisibilityScope,
                                             contentPadding = PaddingValues(
@@ -164,18 +167,43 @@ fun MangaScreen(
 
 @Composable
 private fun MangaRow(
-    items: ImmutableList<Media.Small>,
-    type: MediaList.Type,
+    mediaList: MediaList,
     onItemClicked: (Media.Small) -> Unit,
+    onNavigateToExplore: (ExploreRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
+    val haptic = LocalHapticFeedback.current
     MediaSmallRow(
-        title = type.title,
-        mediaList = items,
+        title = mediaList.type.title,
+        mediaList = mediaList.list,
         contextChip = { EmptyChip() },
+        onListClick = {
+            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+            when (mediaList.type) {
+                MediaList.Type.TRENDING_NOW -> {
+                    onNavigateToExplore(
+                        ExploreRoute(
+                            mediaType = MediaType.MANGA.name,
+                            sortName = Media.Sort.TRENDING.name,
+                            isDescending = true
+                        )
+                    )
+                }
+                MediaList.Type.ALL_TIME_POPULAR -> {
+                    onNavigateToExplore(
+                        ExploreRoute(
+                            mediaType = MediaType.MANGA.name,
+                            sortName = Media.Sort.POPULARITY.name,
+                            isDescending = true
+                        )
+                    )
+                }
+                else -> {}
+            }
+        },
         modifier = modifier,
         contentPadding = contentPadding,
     ) { _, media ->
@@ -189,7 +217,7 @@ private fun MangaRow(
                     sharedContentState = rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = type.name,
+                            source = mediaList.type.name,
                             sharedComponents = Card to Page,
                         )
                     ),
@@ -202,7 +230,7 @@ private fun MangaRow(
                     rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = type.name,
+                            source = mediaList.type.name,
                             sharedComponents = Image to Image,
                         )
                     ),

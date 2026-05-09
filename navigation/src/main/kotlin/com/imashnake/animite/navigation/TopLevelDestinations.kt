@@ -18,6 +18,7 @@ data object SocialRoute
 
 @Serializable
 data class ExploreRoute(
+    val mediaType: String? = null,
     val sortName: String? = null,
     val isDescending: Boolean? = null,
     val season: String? = null,

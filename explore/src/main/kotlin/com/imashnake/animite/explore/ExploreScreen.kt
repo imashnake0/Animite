@@ -660,6 +660,7 @@ private fun FilterBottomSheet(
                 .padding(paddingValues)
         ) {
             ToggleFilter(
+                title = stringResource(R.string.type),
                 entries = MediaType.entries.minus(MediaType.UNKNOWN__).fastMap { it.name }.toImmutableList(),
                 selectedToggle = mediaType,
                 onToggled = {
@@ -684,6 +685,7 @@ private fun FilterBottomSheet(
 
             AnimatedVisibility(mediaType == MediaType.ANIME.name) {
                 ToggleFilter(
+                    title = stringResource(R.string.season),
                     entries = Media.Season.entries.fastMap { it.name }.toImmutableList(),
                     selectedToggle = season,
                     onToggled = {
@@ -777,6 +779,7 @@ private fun FilterBottomSheet(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ToggleFilter(
+    title: String?,
     entries: ImmutableList<String>,
     selectedToggle: String?,
     onToggled: (String?) -> Unit,
@@ -785,7 +788,7 @@ private fun ToggleFilter(
     modifier: Modifier = Modifier
 ) {
     CollapsibleRow(
-        title = stringResource(R.string.season),
+        title = title,
         onLongClick = { onToggled(null) },
         modifier = modifier,
     ) {

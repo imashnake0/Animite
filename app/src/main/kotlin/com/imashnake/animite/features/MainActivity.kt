@@ -190,6 +190,7 @@ fun MainScreen(
                     composable<MangaRoute> {
                         MangaScreen(
                             onNavigateToMediaItem = navController::navigate,
+                            onNavigateToExplore = navController::navigate,
                             scrollState = mangaScrollState,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
