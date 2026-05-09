@@ -414,8 +414,8 @@ fun SettingsPage(
                                                     haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                                 },
                                                 shapes = when (language) {
-                                                    Media.Language.DEFAULT -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                                    Media.Language.NATIVE -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                    Media.Language.ROMAJI -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                    Media.Language.DEFAULT -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                                     else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                                 },
                                                 colors = ToggleButtonDefaults.toggleButtonColors(

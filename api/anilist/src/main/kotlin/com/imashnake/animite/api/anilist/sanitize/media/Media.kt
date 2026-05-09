@@ -370,10 +370,10 @@ data class Media(
     }
 
     enum class Language {
-        DEFAULT,
         ROMAJI,
         ENGLISH,
         NATIVE,
+        DEFAULT,
     }
 
     @Immutable

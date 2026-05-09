@@ -136,8 +136,8 @@ val Media.Sort.icon get() = when (this) {
 }
 
 val Media.Language.res get() = when (this) {
-    Media.Language.DEFAULT -> R.string.language_default
     Media.Language.ROMAJI -> R.string.language_romaji
     Media.Language.ENGLISH -> R.string.language_english
     Media.Language.NATIVE -> R.string.language_native
+    Media.Language.DEFAULT -> R.string.language_default
 }
