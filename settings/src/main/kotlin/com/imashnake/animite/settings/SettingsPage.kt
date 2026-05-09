@@ -84,6 +84,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.DayPart
@@ -94,6 +95,7 @@ import com.imashnake.animite.core.ui.TimeContext
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
@@ -125,6 +127,7 @@ fun SettingsPage(
     val selectedDensity by viewModel.density.collectAsState(initial = Density.COMFY.name)
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
+    val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -347,17 +350,25 @@ fun SettingsPage(
                                     icon = R.drawable.nsfw,
                                     label = R.string.nsfw,
                                     orientation = Item.Orientation.HORIZONTAL
+                                ),
+                                Item(
+                                    icon = R.drawable.title_language,
+                                    label = R.string.title_language,
+                                    orientation = Item.Orientation.VERTICAL
                                 )
                             ),
                             onItemClick = { index ->
                                 when (index) {
                                     0 -> {
-                                        viewModel.setIsAdult(!isNsfwEnabled)
+                                        viewModel.setIsNsfwEnabled(!isNsfwEnabled)
                                         haptic.performHapticFeedback(
                                             hapticFeedbackType = if (isNsfwEnabled) {
                                                 HapticFeedbackType.ToggleOff
                                             } else HapticFeedbackType.ToggleOn
                                         )
+                                    }
+                                    1 -> {
+
                                     }
                                 }
                             },
@@ -369,7 +380,7 @@ fun SettingsPage(
                                     Switch(
                                         checked = isNsfwEnabled,
                                         onCheckedChange = {
-                                            viewModel.setIsAdult(it)
+                                            viewModel.setIsNsfwEnabled(it)
                                             haptic.performHapticFeedback(
                                                 hapticFeedbackType = if (!it) {
                                                     HapticFeedbackType.ToggleOff
@@ -387,6 +398,35 @@ fun SettingsPage(
                                             }
                                         },
                                     )
+                                }
+
+                                1 -> {
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(
+                                            ButtonGroupDefaults.ConnectedSpaceBetween
+                                        )
+                                    ) {
+                                        Media.Language.entries.fastForEach { language ->
+                                            ToggleButton(
+                                                checked = selectedLanguage == language.name,
+                                                onCheckedChange = {
+                                                    viewModel.setLanguage(language)
+                                                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                                },
+                                                shapes = when (language) {
+                                                    Media.Language.DEFAULT -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                    Media.Language.NATIVE -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                                },
+                                                colors = ToggleButtonDefaults.toggleButtonColors(
+                                                    containerColor = MaterialTheme.colorScheme.background
+                                                ),
+                                                modifier = Modifier.weight(1f)
+                                            ) {
+                                                Text(stringResource(language.res))
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
