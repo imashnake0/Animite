@@ -169,6 +169,10 @@ class ExploreViewModel @Inject constructor(
         flow4 = statusSegregation,
         flow5 = isAdult.filterNotNull(),
         flow6 = mediaType.onEach {
+            val mediaType = MediaType.valueOf(it)
+            if (mediaType == MediaType.MANGA) {
+                setMediaSeason(null)
+            }
             setAllFilters(
                 filterType = ChipFilterType.FORMAT,
                 allFilters = when (MediaType.valueOf(it)) {
@@ -176,6 +180,7 @@ class ExploreViewModel @Inject constructor(
                     else -> Media.Format.mangaFormats()
                 }.map { format -> format.name }.toSet()
             )
+            resetFilter(ChipFilterType.FORMAT)
         },
         transform = { genres, seasonYear, format, status, isAdult, type ->
             FilterSheetOptions(
