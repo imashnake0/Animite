@@ -109,4 +109,8 @@
     <string name="language_romaji">Romaji</string>
     <string name="language_english">English</string>
     <string name="language_native">日本語</string>
+
+    <string name="media_type_anime">Anime</string>
+    <string name="media_type_manga">Manga</string>
+    <string name="media_type_unknown">Unknown</string>
 </resources>

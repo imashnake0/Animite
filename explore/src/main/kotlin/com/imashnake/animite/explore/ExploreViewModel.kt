@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -75,6 +76,8 @@ class ExploreViewModel @Inject constructor(
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, navArgs.isDescending ?: true)
 
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
+
+    val mediaType = savedStateHandle.getStateFlow(Constants.MEDIA_TYPE_FILTER, MediaType.ANIME.name)
 
     private val _allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FILTERS + Constants.GENRES, null)
     private val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.GENRES, null)
@@ -157,7 +160,7 @@ class ExploreViewModel @Inject constructor(
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
 
-    val isAdult = savedStateHandle.getMutableStateFlow<Boolean?>(Constants.IS_ADULT, false)
+    val isAdult = savedStateHandle.getStateFlow<Boolean?>(Constants.IS_ADULT, false)
 
     val filterSheetOptions = combine(
         flow = genreSegregation,
@@ -165,13 +168,23 @@ class ExploreViewModel @Inject constructor(
         flow3 = formatSegregation,
         flow4 = statusSegregation,
         flow5 = isAdult.filterNotNull(),
-        transform = { genres, seasonYear, format, status, isAdult ->
+        flow6 = mediaType.onEach {
+            setAllFilters(
+                filterType = ChipFilterType.FORMAT,
+                allFilters = when (MediaType.valueOf(it)) {
+                    MediaType.ANIME -> Media.Format.animeFormats()
+                    else -> Media.Format.mangaFormats()
+                }.map { format -> format.name }.toSet()
+            )
+        },
+        transform = { genres, seasonYear, format, status, isAdult, type ->
             FilterSheetOptions(
                 genres = genres,
                 seasonYear = seasonYear,
                 format = format,
                 status = status,
-                isAdult = isAdult
+                isAdult = isAdult,
+                mediaType = type,
             )
         }
     )
@@ -208,7 +221,7 @@ class ExploreViewModel @Inject constructor(
             emit(Resource.loading())
             emit(
                 mediaListRepository.fetchMediaMediumList(
-                    mediaType = MediaType.ANIME,
+                    mediaType = MediaType.valueOf(filterSheetOptions.mediaType),
                     sort = listOf(sort),
                     page = page,
                     search = searchQuery,
@@ -243,6 +256,10 @@ class ExploreViewModel @Inject constructor(
 
     fun setSearchQuery(searchQuery: String?) {
         savedStateHandle[SEARCH_QUERY] = searchQuery
+    }
+
+    fun setMediaType(type: String) {
+        savedStateHandle[Constants.MEDIA_TYPE_FILTER] = type
     }
 
     private fun setAllFilters(filterType: ChipFilterType, allFilters: Set<String>?) {
@@ -375,7 +392,8 @@ class ExploreViewModel @Inject constructor(
         val seasonYear: SeasonYear,
         val format: ChipFilterSegregation,
         val status: ChipFilterSegregation,
-        val isAdult: Boolean
+        val isAdult: Boolean,
+        val mediaType: String,
     )
 }
 
@@ -393,4 +411,46 @@ data class Pentuple<out A, out B, out C, out D, out E>(
      */
     override fun toString(): String =
         "($first, $second, $third, $fourth, $fifth)"
+}
+
+inline fun <
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        R
+        > combine(
+    flow: Flow<T1>,
+    flow2: Flow<T2>,
+    flow3: Flow<T3>,
+    flow4: Flow<T4>,
+    flow5: Flow<T5>,
+    flow6: Flow<T6>,
+    crossinline transform: suspend (
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+    ) -> R,
+): Flow<R> = combine(
+    flow,
+    flow2,
+    flow3,
+    flow4,
+    flow5,
+    flow6,
+) { args: Array<*> ->
+    @Suppress("UNCHECKED_CAST")
+    transform(
+        args[0] as T1,
+        args[1] as T2,
+        args[2] as T3,
+        args[3] as T4,
+        args[4] as T5,
+        args[5] as T6,
+    )
 }

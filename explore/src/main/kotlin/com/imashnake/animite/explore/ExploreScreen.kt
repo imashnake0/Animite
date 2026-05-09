@@ -116,6 +116,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
@@ -175,6 +177,7 @@ fun ExploreScreen(
     val selectedSort by viewModel.selectedSort.collectAsState()
     val isDescending by viewModel.isDescending.collectAsState()
 
+    val mediaType by viewModel.mediaType.collectAsState()
     val season by viewModel.selectedSeason.collectAsState()
     val year by viewModel.selectedYear.collectAsState()
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
@@ -296,7 +299,7 @@ fun ExploreScreen(
                             onItemClick = { id, title ->
                                 onItemClick(
                                     id,
-                                    MediaType.ANIME,
+                                    MediaType.valueOf(mediaType),
                                     title
                                 )
                             },
@@ -351,6 +354,8 @@ fun ExploreScreen(
                         sheetState = filterSheetState,
                         onDismissRequest = { showFilterBottomSheet = false },
                         deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
+                        mediaType = mediaType,
+                        onMediaTypeChanged = viewModel::setMediaType,
                         chipGenreGroup = chipGenreGroup,
                         season = season,
                         selectSeason = viewModel::setMediaSeason,
@@ -615,6 +620,8 @@ private fun FilterBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     deviceScreenCornerRadiusDp: Dp,
+    mediaType: String,
+    onMediaTypeChanged: (String) -> Unit,
     chipGenreGroup: ExploreViewModel.ChipFilterGroup,
     season: String?,
     selectSeason: (String?) -> Unit,
@@ -643,7 +650,6 @@ private fun FilterBottomSheet(
         modifier = modifier,
     ) { paddingValues, modifier ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
             modifier = modifier
                 .background(
                     Brush.verticalGradient(
@@ -653,6 +659,17 @@ private fun FilterBottomSheet(
                 )
                 .padding(paddingValues)
         ) {
+            ToggleFilter(
+                entries = MediaType.entries.minus(MediaType.UNKNOWN__).fastMap { it.name }.toImmutableList(),
+                selectedToggle = mediaType,
+                onToggled = {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    it?.let { onMediaTypeChanged(it) }
+                },
+                icon = { ImageVector.vectorResource(MediaType.valueOf(it).icon) },
+                text = { stringResource(MediaType.valueOf(it).res) }
+            )
+
             ChipFilter(
                 type = ExploreViewModel.ChipFilterType.GENRE,
                 title = stringResource(R.string.genres),
@@ -665,13 +682,18 @@ private fun FilterBottomSheet(
                 resetFilters = resetChipFilters
             )
 
-            SeasonFilter(
-                selectedSeason = season,
-                onSeasonSelected = {
-                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                    selectSeason(it)
-                },
-            )
+            AnimatedVisibility(mediaType == MediaType.ANIME.name) {
+                ToggleFilter(
+                    entries = Media.Season.entries.fastMap { it.name }.toImmutableList(),
+                    selectedToggle = season,
+                    onToggled = {
+                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                        selectSeason(it)
+                    },
+                    icon = { ImageVector.vectorResource(Media.Season.valueOf(it).icon) },
+                    text = { stringResource(Media.Season.valueOf(it).res) }
+                )
+            }
 
             YearFilter(
                 year = year,
@@ -754,27 +776,30 @@ private fun FilterBottomSheet(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun SeasonFilter(
-    selectedSeason: String?,
-    onSeasonSelected: (String?) -> Unit,
+private fun ToggleFilter(
+    entries: ImmutableList<String>,
+    selectedToggle: String?,
+    onToggled: (String?) -> Unit,
+    icon: @Composable (String) -> ImageVector,
+    text: @Composable (String) -> String,
     modifier: Modifier = Modifier
 ) {
     CollapsibleRow(
         title = stringResource(R.string.season),
-        onLongClick = { onSeasonSelected(null) },
+        onLongClick = { onToggled(null) },
         modifier = modifier,
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
             modifier = Modifier.padding(top = LocalPaddings.current.medium)
         ) {
-            Media.Season.entries.fastForEach { season ->
+            entries.fastForEachIndexed { index, entry ->
                 ToggleButton(
-                    checked = selectedSeason?.let { Media.Season.safeValueOf(it) } == season,
-                    onCheckedChange = { onSeasonSelected(season.name) },
-                    shapes = when (season) {
-                        Media.Season.WINTER -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        Media.Season.FALL -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                    checked = selectedToggle == entry,
+                    onCheckedChange = { onToggled(entry) },
+                    shapes = when (index) {
+                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                         else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                     },
                     colors = ToggleButtonDefaults.tonalToggleButtonColors(),
@@ -785,15 +810,15 @@ private fun SeasonFilter(
                         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(season.icon),
-                            contentDescription = stringResource(season.res),
+                            imageVector = icon(entry),
+                            contentDescription = text(entry),
                             modifier = Modifier
                                 .graphicsLayer { alpha = 0.5f }
                                 .height(14.dp)
                         )
 
                         Text(
-                            text = stringResource(season.res),
+                            text = text(entry),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -1089,6 +1114,7 @@ private fun CollapsibleRow(
     var isVisible by rememberSaveable { mutableStateOf(true) }
     Column(
         modifier = modifier
+            .padding(vertical = LocalPaddings.current.small / 2)
             .clip(RoundedCornerShape(LocalPaddings.current.small))
             .combinedClickable(
                 onClick = { isVisible = !isVisible },
