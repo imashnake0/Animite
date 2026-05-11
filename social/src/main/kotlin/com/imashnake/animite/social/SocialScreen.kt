@@ -11,7 +11,7 @@ import com.imashnake.animite.core.ui.screen.FallbackScreen
 @Composable
 fun SocialScreen() {
     FallbackScreen(
-        message = stringResource(R.string.coming_soon),
+        message = stringResource(R.string.coming_soon_social),
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)

@@ -243,6 +243,7 @@ data class Media(
 
         companion object {
             fun animeFormats() = Format.entries.dropLast(3)
+            fun mangaFormats() = Format.entries.takeLast(3)
 
             fun safeValueOf(rawValue: String): Format? = try {
                 valueOf(rawValue)

@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -61,12 +62,12 @@ class ExploreViewModel @Inject constructor(
                         ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
                     }
                 )
-                navArgs.genre?.let {
-                    includeFilter(
-                        filterType = ChipFilterType.GENRE,
-                        filter = it
-                    )
-                }
+            }
+            navArgs.genre?.let {
+                includeFilter(
+                    filterType = ChipFilterType.GENRE,
+                    filter = it
+                )
             }
         }
     }
@@ -76,10 +77,17 @@ class ExploreViewModel @Inject constructor(
 
     val searchQuery = savedStateHandle.getStateFlow<String?>(SEARCH_QUERY, null)
 
+    val mediaType = savedStateHandle.getStateFlow(Constants.MEDIA_TYPE_FILTER, navArgs.mediaType ?: MediaType.ANIME.name)
+
     private val _allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FILTERS + Constants.GENRES, null)
     private val allGenres = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.GENRES, null)
     private val includedGenres = savedStateHandle.getMutableStateFlow(Constants.INCLUDED_FILTERS + Constants.GENRES, setOfNotNull(navArgs.genre))
     private val excludedGenres = savedStateHandle.getMutableStateFlow(Constants.EXCLUDED_FILTERS + Constants.GENRES, emptySet<String>())
+    private val genreSegregation = combine(
+        flow = includedGenres,
+        flow2 = excludedGenres,
+        transform = ::Pair
+    ).map { ChipFilterSegregation(it.first, it.second) }
 
     val chipGenreGroup = combine(allGenres, includedGenres, excludedGenres) { (all, included, excluded) ->
         ChipFilterGroup(
@@ -96,11 +104,19 @@ class ExploreViewModel @Inject constructor(
 
     val selectedSeason = savedStateHandle.getStateFlow(Constants.SEASON, navArgs.season)
     val selectedYear = savedStateHandle.getStateFlow(Constants.YEAR, navArgs.year)
+    val seasonYear = selectedSeason.combine(selectedYear) { season, year ->
+        SeasonYear(season, year)
+    }
 
     private val _allFormats = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants._ALL_FILTERS + Constants.FORMATS, null)
     private val allFormats = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.FORMATS, null)
     private val includedFormats = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FILTERS + Constants.FORMATS, emptySet())
     private val excludedFormats = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FILTERS + Constants.FORMATS, emptySet())
+    private val formatSegregation = combine(
+        flow = includedFormats,
+        flow2 = excludedFormats,
+        transform = ::Pair
+    ).map { ChipFilterSegregation(it.first, it.second) }
 
     val chipFormatGroup = combine(allFormats, includedFormats, excludedFormats) { (all, included, excluded) ->
         ChipFilterGroup(
@@ -119,6 +135,12 @@ class ExploreViewModel @Inject constructor(
     private val allStatuses = savedStateHandle.getMutableStateFlow<Set<String>?>(Constants.ALL_FILTERS + Constants.STATUSES, null)
     private val includedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.INCLUDED_FILTERS + Constants.STATUSES, emptySet())
     private val excludedStatuses = savedStateHandle.getMutableStateFlow<Set<String>>(Constants.EXCLUDED_FILTERS + Constants.STATUSES, emptySet())
+    private val statusSegregation = combine(
+        flow = includedStatuses,
+        flow2 = excludedStatuses,
+        transform = ::Pair
+    ).map { ChipFilterSegregation(it.first, it.second) }
+
     private val page = savedStateHandle.getMutableStateFlow(Constants.PAGE, 1)
 
     val chipStatusGroup = combine(allStatuses, includedStatuses, excludedStatuses) { (all, included, excluded) ->
@@ -138,7 +160,40 @@ class ExploreViewModel @Inject constructor(
         .combine(isDescending, ::Pair)
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
 
-    val isAdult = savedStateHandle.getMutableStateFlow<Boolean?>(Constants.IS_ADULT, false)
+    val isAdult = savedStateHandle.getStateFlow<Boolean?>(Constants.IS_ADULT, false)
+
+    val filterSheetOptions = combine(
+        flow = genreSegregation,
+        flow2 = seasonYear,
+        flow3 = formatSegregation,
+        flow4 = statusSegregation,
+        flow5 = isAdult.filterNotNull(),
+        flow6 = mediaType.onEach {
+            val mediaType = MediaType.valueOf(it)
+            if (mediaType == MediaType.MANGA) {
+                setMediaSeason(null)
+            }
+            setAllFilters(
+                filterType = ChipFilterType.FORMAT,
+                allFilters = when (MediaType.valueOf(it)) {
+                    MediaType.ANIME -> Media.Format.animeFormats()
+                    else -> Media.Format.mangaFormats()
+                }.map { format -> format.name }.toSet()
+            )
+            resetFilter(ChipFilterType.FORMAT)
+        },
+        transform = { genres, seasonYear, format, status, isAdult, type ->
+            FilterSheetOptions(
+                genres = genres,
+                seasonYear = seasonYear,
+                format = format,
+                status = status,
+                isAdult = isAdult,
+                mediaType = type,
+            )
+        }
+    )
+
     val isNsfwEnabled = preferencesRepository.isNsfwEnabled.filterNotNull()
 
     val prefs = combine(
@@ -155,42 +210,35 @@ class ExploreViewModel @Inject constructor(
     val explorePage = combine(
         flow = mediaSort,
         flow2 = searchQuery,
-        flow3 = includedGenres,
-        flow4 = excludedGenres,
-        flow5 = selectedSeason.combine(selectedYear, ::Pair),
-        flow6 = includedFormats,
-        flow7 = excludedFormats,
-        flow8 = includedStatuses,
-        flow9 = excludedStatuses,
-        flow10 = page,
-        flow11 = isAdult.filterNotNull(),
-        flow12 = prefs,
-        transform = ::Dodecuple,
-    ).debounce { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, _, _, page, isAdult, prefs) ->
+        flow3 = filterSheetOptions,
+        flow4 = page,
+        flow5 = prefs,
+        transform = ::Pentuple,
+    ).debounce {
         if (shouldDebounce) {
             500L
         } else {
             shouldDebounce = true
             0L
         }
-    }.flatMapLatest { (sort, searchQuery, includedGenres, excludedGenres, seasonYear, includedFormats, excludedFormats, includedStatuses, excludedStatuses, page, isAdult, prefs) ->
+    }.flatMapLatest { (sort, searchQuery, filterSheetOptions, page, prefs) ->
         flow {
             emit(Resource.loading())
             emit(
                 mediaListRepository.fetchMediaMediumList(
-                    mediaType = MediaType.ANIME,
+                    mediaType = MediaType.valueOf(filterSheetOptions.mediaType),
                     sort = listOf(sort),
                     page = page,
                     search = searchQuery,
-                    includedGenres = includedGenres.toList().ifEmpty { null },
-                    excludedGenres = excludedGenres.toList().ifEmpty { null },
-                    season = seasonYear.first?.let { MediaSeason.safeValueOf(it) },
-                    year = seasonYear.second,
-                    includedFormats = includedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
-                    excludedFormats = excludedFormats.map { MediaFormat.valueOf(it) }.ifEmpty { null },
-                    includedStatuses = includedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    excludedStatuses = excludedStatuses.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    isAdult = isAdult,
+                    includedGenres = filterSheetOptions.genres.included.toList().ifEmpty { null },
+                    excludedGenres = filterSheetOptions.genres.excluded.toList().ifEmpty { null },
+                    season = filterSheetOptions.seasonYear.season?.let { MediaSeason.safeValueOf(it) },
+                    year = filterSheetOptions.seasonYear.year,
+                    includedFormats = filterSheetOptions.format.included.map { MediaFormat.valueOf(it) }.ifEmpty { null },
+                    excludedFormats = filterSheetOptions.format.excluded.map { MediaFormat.valueOf(it) }.ifEmpty { null },
+                    includedStatuses = filterSheetOptions.status.included.map { MediaStatus.valueOf(it) }.ifEmpty { null },
+                    excludedStatuses = filterSheetOptions.status.excluded.map { MediaStatus.valueOf(it) }.ifEmpty { null },
+                    isAdult = filterSheetOptions.isAdult,
                     isNsfwEnabled = prefs.isNsfwEnabled,
                     language = prefs.language
                 ).asResource().first()
@@ -213,6 +261,10 @@ class ExploreViewModel @Inject constructor(
 
     fun setSearchQuery(searchQuery: String?) {
         savedStateHandle[SEARCH_QUERY] = searchQuery
+    }
+
+    fun setMediaType(type: String) {
+        savedStateHandle[Constants.MEDIA_TYPE_FILTER] = type
     }
 
     private fun setAllFilters(filterType: ChipFilterType, allFilters: Set<String>?) {
@@ -329,30 +381,41 @@ class ExploreViewModel @Inject constructor(
         val includedFilters: ImmutableList<String>,
         val excludedFilters: ImmutableList<String>,
     )
+
+    data class ChipFilterSegregation(
+        val included: Set<String>,
+        val excluded: Set<String>,
+    )
+
+    data class SeasonYear(
+        val season: String?,
+        val year: Int?,
+    )
+
+    data class FilterSheetOptions(
+        val genres: ChipFilterSegregation,
+        val seasonYear: SeasonYear,
+        val format: ChipFilterSegregation,
+        val status: ChipFilterSegregation,
+        val isAdult: Boolean,
+        val mediaType: String,
+    )
 }
 
 // TODO: Move this to core?
-data class Dodecuple<out A, out B, out C, out D, out E, out F, out G, out H, out I, out J, out K, out L>(
+data class Pentuple<out A, out B, out C, out D, out E>(
     val first: A,
     val second: B,
     val third: C,
     val fourth: D,
     val fifth: E,
-    val sixth: F,
-    val seventh: G,
-    val eighth: H,
-    val ninth: I,
-    val tenth: J,
-    val eleventh: K,
-    val twelfth: L
 ) {
     /**
-     * Returns string representation of the [Dodecuple] including its
-     * [first], [second], [third], [fourth], [fifth], [sixth], [seventh], [eighth], [ninth],
-     * [tenth], [eleventh], and [twelfth] values.
+     * Returns string representation of the [Pentuple] including its
+     * [first], [second], [third], [fourth], and [fifth]
      */
     override fun toString(): String =
-        "($first, $second, $third, $fourth, $fifth, $sixth, $seventh, $eighth, $ninth, $tenth, $eleventh, $twelfth)"
+        "($first, $second, $third, $fourth, $fifth)"
 }
 
 inline fun <
@@ -362,26 +425,14 @@ inline fun <
         T4,
         T5,
         T6,
-        T7,
-        T8,
-        T9,
-        T10,
-        T11,
-        T12,
         R
-> combine(
+        > combine(
     flow: Flow<T1>,
     flow2: Flow<T2>,
     flow3: Flow<T3>,
     flow4: Flow<T4>,
     flow5: Flow<T5>,
     flow6: Flow<T6>,
-    flow7: Flow<T7>,
-    flow8: Flow<T8>,
-    flow9: Flow<T9>,
-    flow10: Flow<T10>,
-    flow11: Flow<T11>,
-    flow12: Flow<T12>,
     crossinline transform: suspend (
         T1,
         T2,
@@ -389,12 +440,6 @@ inline fun <
         T4,
         T5,
         T6,
-        T7,
-        T8,
-        T9,
-        T10,
-        T11,
-        T12,
     ) -> R,
 ): Flow<R> = combine(
     flow,
@@ -403,12 +448,6 @@ inline fun <
     flow4,
     flow5,
     flow6,
-    flow7,
-    flow8,
-    flow9,
-    flow10,
-    flow11,
-    flow12,
 ) { args: Array<*> ->
     @Suppress("UNCHECKED_CAST")
     transform(
@@ -418,11 +457,5 @@ inline fun <
         args[3] as T4,
         args[4] as T5,
         args[5] as T6,
-        args[6] as T7,
-        args[7] as T8,
-        args[8] as T9,
-        args[9] as T10,
-        args[10] as T11,
-        args[11] as T12,
     )
 }

@@ -7,6 +7,7 @@ object Constants {
     const val SORT = "sort"
     const val ORDER = "order"
 
+    const val MEDIA_TYPE_FILTER = "media_type_filter"
     const val _ALL_FILTERS = "_all"
     const val ALL_FILTERS = "all"
     const val INCLUDED_FILTERS = "included"

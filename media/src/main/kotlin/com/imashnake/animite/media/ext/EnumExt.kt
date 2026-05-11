@@ -1,6 +1,7 @@
 package com.imashnake.animite.media.ext
 
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.media.R
 
 val Media.InfoItem.title get() = when(this) {
@@ -37,10 +38,9 @@ val Media.Format.icon get() = when(this) {
     Media.Format.OVA -> R.drawable.ova
     Media.Format.ONA -> R.drawable.ona
     Media.Format.MUSIC -> R.drawable.music
-//    Media.Format.MANGA -> R.drawable.manga
-//    Media.Format.NOVEL -> R.drawable.novel
-//    Media.Format.ONE_SHOT -> R.drawable.one_shot
-    else -> null
+    Media.Format.MANGA -> R.drawable.media_type_manga
+    Media.Format.NOVEL -> R.drawable.novel
+    Media.Format.ONE_SHOT -> R.drawable.one_shot
 }
 
 val Media.Status.res get() = when(this) {
@@ -140,4 +140,14 @@ val Media.Language.res get() = when (this) {
     Media.Language.ENGLISH -> R.string.language_english
     Media.Language.NATIVE -> R.string.language_native
     Media.Language.DEFAULT -> R.string.language_default
+}
+
+val MediaType.res get() = when (this) {
+    MediaType.ANIME -> R.string.media_type_anime
+    else -> R.string.media_type_manga
+}
+
+val MediaType.icon get() = when (this) {
+    MediaType.ANIME -> R.drawable.media_type_anime
+    else -> R.drawable.media_type_manga
 }

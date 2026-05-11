@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="coming_soon">Coming Soon</string>
+    <string name="coming_soon_social">Forums, Reviews and\nMore Coming Soon</string>
 </resources>
