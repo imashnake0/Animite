@@ -49,29 +49,6 @@ class ExploreViewModel @Inject constructor(
 ) : ViewModel() {
     private val navArgs = savedStateHandle.toRoute<ExploreRoute>()
 
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            ChipFilterType.entries.forEach { filterType ->
-                setAllFilters(
-                    filterType = filterType,
-                    allFilters = when (filterType) {
-                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres(
-                            preferencesRepository.isNsfwEnabled.filterNotNull().first()
-                        ).toSet()
-                        ChipFilterType.FORMAT -> Media.Format.animeFormats().map { it.name }.toSet()
-                        ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
-                    }
-                )
-            }
-            navArgs.genre?.let {
-                includeFilter(
-                    filterType = ChipFilterType.GENRE,
-                    filter = it
-                )
-            }
-        }
-    }
-
     val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, navArgs.sortName?.let { Media.Sort.valueOf(it) } ?: Media.Sort.POPULARITY)
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, navArgs.isDescending ?: true)
 
@@ -161,6 +138,29 @@ class ExploreViewModel @Inject constructor(
         .map { (sort, isDescending) -> Media.Sort.pollute(sort, isDescending) }
 
     val isAdult = savedStateHandle.getStateFlow<Boolean?>(Constants.IS_ADULT, false)
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            ChipFilterType.entries.forEach { filterType ->
+                setAllFilters(
+                    filterType = filterType,
+                    allFilters = when (filterType) {
+                        ChipFilterType.GENRE -> mediaListRepository.fetchMediaGenres(
+                            preferencesRepository.isNsfwEnabled.filterNotNull().first()
+                        ).toSet()
+                        ChipFilterType.FORMAT -> Media.Format.animeFormats().map { it.name }.toSet()
+                        ChipFilterType.STATUS -> Media.Status.entries.map { it.name }.toSet()
+                    }
+                )
+            }
+            navArgs.genre?.let {
+                includeFilter(
+                    filterType = ChipFilterType.GENRE,
+                    filter = it
+                )
+            }
+        }
+    }
 
     val filterSheetOptions = combine(
         flow = genreSegregation,
