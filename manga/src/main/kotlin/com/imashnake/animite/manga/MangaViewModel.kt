@@ -3,6 +3,7 @@ package com.imashnake.animite.manga
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
@@ -50,11 +51,13 @@ class MangaViewModel @Inject constructor(
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.TRENDING_NOW,
-            mediaType = MediaType.MANGA,
-            sort = listOf(MediaSort.TRENDING_DESC),
             useNetwork = useNetwork,
-            isNsfwEnabled = prefs.isNsfwEnabled,
-            language = prefs.language
+            filterStrategy = FilterStrategy(
+                mediaType = MediaType.MANGA,
+                sort = listOf(MediaSort.TRENDING_DESC),
+                isNsfwEnabled = prefs.isNsfwEnabled,
+                language = prefs.language
+            ),
         )
     }
     .asResource()
@@ -71,11 +74,13 @@ class MangaViewModel @Inject constructor(
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.ALL_TIME_POPULAR,
-            mediaType = MediaType.MANGA,
-            sort = listOf(MediaSort.POPULARITY_DESC),
             useNetwork = useNetwork,
-            isNsfwEnabled = prefs.isNsfwEnabled,
-            language = prefs.language
+            filterStrategy = FilterStrategy(
+                mediaType = MediaType.MANGA,
+                sort = listOf(MediaSort.POPULARITY_DESC),
+                isNsfwEnabled = prefs.isNsfwEnabled,
+                language = prefs.language
+            ),
         )
     }
     .asResource()

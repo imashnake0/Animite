@@ -4,6 +4,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
+import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Info
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
@@ -34,24 +35,17 @@ class AnilistMediaRepository(
 
     fun fetchMediaList(
         mediaListType: MediaList.Type,
-        mediaType: MediaType,
-        sort: List<MediaSort>,
         useNetwork: Boolean,
-        page: Int = 0,
-        perPage: Int = 10,
-        season: MediaSeason? = null,
-        seasonYear: Int? = null,
-        isNsfwEnabled: Boolean = false,
-        language: Media.Language = Media.Language.DEFAULT,
-    ): Flow<Result<MediaList>> {
-        return apolloClient.query(
+        filterStrategy: FilterStrategy,
+    ) = with(filterStrategy) {
+        apolloClient.query(
             MediaListQuery(
                 type = Optional.presentIfNotNull(mediaType),
                 page = Optional.presentIfNotNull(page),
                 perPage = Optional.presentIfNotNull(perPage),
                 sort = Optional.presentIfNotNull(sort),
                 season = Optional.presentIfNotNull(season),
-                seasonYear = Optional.presentIfNotNull(seasonYear),
+                seasonYear = Optional.presentIfNotNull(year),
                 isAdult = Optional.presentIfNotNull(if (isNsfwEnabled) null else false)
             )
         )
@@ -69,31 +63,13 @@ class AnilistMediaRepository(
                     Media.Small(query.mediaSmall, language)
                 }.toImmutableList(),
                 season = season?.sanitize(),
-                year = seasonYear,
+                year = year,
             )
         }
     }
 
-    fun fetchMediaMediumList(
-        mediaType: MediaType,
-        sort: List<MediaSort>,
-        page: Int = 0,
-        perPage: Int = 10,
-        genre: String? = null,
-        includedGenres: List<String>? = null,
-        excludedGenres: List<String>? = null,
-        season: MediaSeason? = null,
-        year: Int? = null,
-        includedFormats: List<MediaFormat>? = null,
-        excludedFormats: List<MediaFormat>? = null,
-        includedStatuses: List<MediaStatus>? = null,
-        excludedStatuses: List<MediaStatus>? = null,
-        search: String? = null,
-        isAdult: Boolean = false,
-        isNsfwEnabled: Boolean = false,
-        language: Media.Language = Media.Language.DEFAULT,
-    ): Flow<Result<Page<Media.Medium>>> {
-        return apolloClient.query(
+    fun fetchMediaMediumList(filterStrategy: FilterStrategy) = with(filterStrategy) {
+        apolloClient.query(
             MediaMediumListQuery(
                 type = Optional.presentIfNotNull(mediaType),
                 page = Optional.presentIfNotNull(page),

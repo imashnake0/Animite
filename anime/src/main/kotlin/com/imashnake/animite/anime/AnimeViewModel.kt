@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
@@ -63,11 +64,13 @@ class AnimeViewModel @Inject constructor(
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.TRENDING_NOW,
-            mediaType = MediaType.ANIME,
-            sort = listOf(MediaSort.TRENDING_DESC),
             useNetwork = useNetwork,
-            isNsfwEnabled = prefs.isNsfwEnabled,
-            language = prefs.language
+            filterStrategy = FilterStrategy(
+                mediaType = MediaType.ANIME,
+                sort = listOf(MediaSort.TRENDING_DESC),
+                isNsfwEnabled = prefs.isNsfwEnabled,
+                language = prefs.language
+            ),
         )
     }
     .asResource()
@@ -85,13 +88,15 @@ class AnimeViewModel @Inject constructor(
     ).flatMapLatest { (_, now, prefs) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.POPULAR_THIS_SEASON,
-            mediaType = MediaType.ANIME,
-            sort = listOf(MediaSort.POPULARITY_DESC),
-            season = now.month.season,
-            seasonYear = now.year,
             useNetwork = useNetwork,
-            isNsfwEnabled = prefs.isNsfwEnabled,
-            language = prefs.language
+            filterStrategy = FilterStrategy(
+                mediaType = MediaType.ANIME,
+                sort = listOf(MediaSort.POPULARITY_DESC),
+                season = now.month.season,
+                year = now.year,
+                isNsfwEnabled = prefs.isNsfwEnabled,
+                language = prefs.language
+            ),
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -108,13 +113,15 @@ class AnimeViewModel @Inject constructor(
         val season = now.month.season
         mediaListRepository.fetchMediaList(
             mediaListType = Type.UPCOMING_NEXT_SEASON,
-            mediaType = MediaType.ANIME,
-            sort = listOf(MediaSort.POPULARITY_DESC),
-            season = season.nextSeason,
-            seasonYear = season.nextSeasonYear(now),
             useNetwork = useNetwork,
-            isNsfwEnabled = prefs.isNsfwEnabled,
-            language = prefs.language
+            filterStrategy = FilterStrategy(
+                mediaType = MediaType.ANIME,
+                sort = listOf(MediaSort.POPULARITY_DESC),
+                season = season.nextSeason,
+                year = season.nextSeasonYear(now),
+                isNsfwEnabled = prefs.isNsfwEnabled,
+                language = prefs.language
+            ),
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -129,11 +136,13 @@ class AnimeViewModel @Inject constructor(
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
             mediaListType = Type.ALL_TIME_POPULAR,
-            mediaType = MediaType.ANIME,
-            sort = listOf(MediaSort.POPULARITY_DESC),
             useNetwork = useNetwork,
-            isNsfwEnabled = prefs.isNsfwEnabled,
-            language = prefs.language
+            filterStrategy = FilterStrategy(
+                mediaType = MediaType.ANIME,
+                sort = listOf(MediaSort.POPULARITY_DESC),
+                isNsfwEnabled = prefs.isNsfwEnabled,
+                language = prefs.language
+            ),
         )
     }
     .asResource()

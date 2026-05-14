@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaFormat
@@ -226,21 +227,23 @@ class ExploreViewModel @Inject constructor(
             emit(Resource.loading())
             emit(
                 mediaListRepository.fetchMediaMediumList(
-                    mediaType = MediaType.valueOf(filterSheetOptions.mediaType),
-                    sort = listOf(sort),
-                    page = page,
-                    search = searchQuery,
-                    includedGenres = filterSheetOptions.genres.included.toList().ifEmpty { null },
-                    excludedGenres = filterSheetOptions.genres.excluded.toList().ifEmpty { null },
-                    season = filterSheetOptions.seasonYear.season?.let { MediaSeason.safeValueOf(it) },
-                    year = filterSheetOptions.seasonYear.year,
-                    includedFormats = filterSheetOptions.format.included.map { MediaFormat.valueOf(it) }.ifEmpty { null },
-                    excludedFormats = filterSheetOptions.format.excluded.map { MediaFormat.valueOf(it) }.ifEmpty { null },
-                    includedStatuses = filterSheetOptions.status.included.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    excludedStatuses = filterSheetOptions.status.excluded.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    isAdult = filterSheetOptions.isAdult,
-                    isNsfwEnabled = prefs.isNsfwEnabled,
-                    language = prefs.language
+                    FilterStrategy(
+                        mediaType = MediaType.valueOf(filterSheetOptions.mediaType),
+                        sort = listOf(sort),
+                        page = page,
+                        search = searchQuery,
+                        includedGenres = filterSheetOptions.genres.included.toList().ifEmpty { null },
+                        excludedGenres = filterSheetOptions.genres.excluded.toList().ifEmpty { null },
+                        season = filterSheetOptions.seasonYear.season?.let { MediaSeason.safeValueOf(it) },
+                        year = filterSheetOptions.seasonYear.year,
+                        includedFormats = filterSheetOptions.format.included.map { MediaFormat.valueOf(it) }.ifEmpty { null },
+                        excludedFormats = filterSheetOptions.format.excluded.map { MediaFormat.valueOf(it) }.ifEmpty { null },
+                        includedStatuses = filterSheetOptions.status.included.map { MediaStatus.valueOf(it) }.ifEmpty { null },
+                        excludedStatuses = filterSheetOptions.status.excluded.map { MediaStatus.valueOf(it) }.ifEmpty { null },
+                        isAdult = filterSheetOptions.isAdult,
+                        isNsfwEnabled = prefs.isNsfwEnabled,
+                        language = prefs.language
+                    )
                 ).asResource().first()
             )
         }
