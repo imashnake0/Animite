@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -85,6 +86,7 @@ import androidx.compose.ui.util.fastRoundToInt
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.DayPart
@@ -128,6 +130,7 @@ fun SettingsPage(
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
+    val animeLists by viewModel.animeLists.collectAsState(initial = MediaList.Type.entries.minus(MediaList.Type.SEARCH).map { it.name }.toSet())
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -355,6 +358,11 @@ fun SettingsPage(
                                     icon = R.drawable.title_language,
                                     label = R.string.title_language,
                                     orientation = Item.Orientation.VERTICAL
+                                ),
+                                Item(
+                                    icon = R.drawable.list,
+                                    label = R.string.lists,
+                                    orientation = Item.Orientation.VERTICAL
                                 )
                             ),
                             onItemClick = { index ->
@@ -367,9 +375,8 @@ fun SettingsPage(
                                             } else HapticFeedbackType.ToggleOn
                                         )
                                     }
-                                    1 -> {
-
-                                    }
+                                    1 -> {}
+                                    2 -> {}
                                 }
                             },
                             isDarkMode = isDarkMode,
@@ -424,6 +431,67 @@ fun SettingsPage(
                                                 modifier = Modifier.weight(1f)
                                             ) {
                                                 Text(stringResource(language.res))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                2 -> {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(
+                                            ButtonGroupDefaults.ConnectedSpaceBetween
+                                        )
+                                    ) {
+                                        MediaList.Type.entries.minus(MediaList.Type.SEARCH).fastForEach { list ->
+                                            ToggleButton(
+                                                checked = animeLists.contains(list.name),
+                                                onCheckedChange = {
+                                                    if (animeLists.contains(list.name)) {
+                                                        viewModel.removeAnimeList(list.name)
+                                                    } else {
+                                                        viewModel.addAnimeList(list.name)
+                                                    }
+                                                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                                },
+                                                shapes = when (list) {
+                                                    MediaList.Type.TRENDING_NOW -> ButtonGroupDefaults.connectedLeadingButtonShapes(
+                                                        shape = RoundedCornerShape(
+                                                            topStart = CornerSize(percent = 50),
+                                                            topEnd = CornerSize(percent = 50),
+                                                            bottomStart = CornerSize(size = 8.dp),
+                                                            bottomEnd = CornerSize(size = 8.dp)
+                                                        ),
+                                                        pressedShape = RoundedCornerShape(
+                                                            topStart = CornerSize(percent = 50),
+                                                            topEnd = CornerSize(percent = 50),
+                                                            bottomStart = CornerSize(size = 8.dp),
+                                                            bottomEnd = CornerSize(size = 8.dp)
+                                                        ),
+                                                    )
+                                                    MediaList.Type.ALL_TIME_POPULAR -> ButtonGroupDefaults.connectedLeadingButtonShapes(
+                                                        shape = RoundedCornerShape(
+                                                            topStart = CornerSize(size = 8.dp),
+                                                            topEnd = CornerSize(size = 8.dp),
+                                                            bottomStart = CornerSize(percent = 50),
+                                                            bottomEnd = CornerSize(percent = 50),
+                                                        ),
+                                                        pressedShape = RoundedCornerShape(
+                                                            topStart = CornerSize(size = 8.dp),
+                                                            topEnd = CornerSize(size = 8.dp),
+                                                            bottomStart = CornerSize(percent = 50),
+                                                            bottomEnd = CornerSize(percent = 50),
+                                                        ),
+                                                    )
+                                                    else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                                },
+                                                colors = ToggleButtonDefaults.toggleButtonColors(
+                                                    containerColor = MaterialTheme.colorScheme.background
+                                                ),
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                list.title?.let {
+                                                    Text(it)
+                                                }
                                             }
                                         }
                                     }

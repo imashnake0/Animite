@@ -10,10 +10,6 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.sanitize.media.Page
-import com.imashnake.animite.api.anilist.type.MediaFormat
-import com.imashnake.animite.api.anilist.type.MediaSeason
-import com.imashnake.animite.api.anilist.type.MediaSort
-import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow

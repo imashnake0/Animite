@@ -3,10 +3,15 @@ package com.imashnake.animite.api.preferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
+import kotlinx.coroutines.flow.firstOrNull
+import kotlin.collections.plus
+import kotlin.collections.setOf
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
 private const val DEFAULT_DENSITY_KEY = "COMFY"
@@ -77,6 +82,15 @@ class PreferencesRepository internal constructor(
     val language = dataStore.getValue(languageKey, DEFAULT_LANGUAGE_KEY)
     suspend fun setLanguage(language: String) {
         dataStore.setValue(languageKey, language)
+    }
+
+    private val animeListsKey = stringSetPreferencesKey("anime_lists")
+    val animeLists = dataStore.getValue(
+        animeListsKey,
+        setOf("TRENDING_NOW", "POPULAR_THIS_SEASON", "UPCOMING_NEXT_SEASON", "ALL_TIME_POPULAR")
+    )
+    suspend fun setAnimeLists(lists: Set<String>) {
+        dataStore.setValue(animeListsKey, lists)
     }
 
     // region developer options

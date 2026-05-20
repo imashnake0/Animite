@@ -8,6 +8,7 @@ import com.imashnake.animite.core.ui.Density
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +22,7 @@ class SettingsViewModel @Inject constructor(
     val density = preferencesRepository.density.filterNotNull()
     val isNsfwEnabled = preferencesRepository.isNsfwEnabled.filterNotNull()
     val language = preferencesRepository.language.filterNotNull()
+    val animeLists = preferencesRepository.animeLists.filterNotNull()
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
 
@@ -45,6 +47,14 @@ class SettingsViewModel @Inject constructor(
 
     fun setLanguage(language: Media.Language) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setLanguage(language.name)
+    }
+
+    fun addAnimeList(list: String) = viewModelScope.launch(Dispatchers.IO) {
+        animeLists.firstOrNull()?.let { preferencesRepository.setAnimeLists(it.plus(list)) }
+    }
+
+    fun removeAnimeList(list: String) = viewModelScope.launch(Dispatchers.IO) {
+        animeLists.firstOrNull()?.let { preferencesRepository.setAnimeLists(it.minus(list)) }
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {

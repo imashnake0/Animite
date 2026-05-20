@@ -71,6 +71,7 @@ import com.imashnake.animite.navigation.R as navigationR
 @Composable
 @Suppress("LongMethod")
 fun AnimeScreen(
+    animeLists: Set<String>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     onNavigateToExplore: (ExploreRoute) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
@@ -95,11 +96,11 @@ fun AnimeScreen(
     val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
 
-    val rows = listOf(
-        trendingList,
-        popularList,
-        upcomingList,
-        allTimePopularList,
+    val rows = listOfNotNull(
+        trendingList.takeIf { animeLists.contains(MediaList.Type.TRENDING_NOW.name) },
+        popularList.takeIf { animeLists.contains(MediaList.Type.POPULAR_THIS_SEASON.name) },
+        upcomingList.takeIf { animeLists.contains(MediaList.Type.UPCOMING_NEXT_SEASON.name) },
+        allTimePopularList.takeIf { animeLists.contains(MediaList.Type.ALL_TIME_POPULAR.name) },
     )
 
     var isRefreshing by remember { mutableStateOf(false) }

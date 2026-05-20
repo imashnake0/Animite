@@ -113,6 +113,8 @@ class MainActivity : ComponentActivity() {
 
             val avatar by profileViewModel.viewerAvatar.collectAsState(initial = null)
 
+            val animeLists by settingsViewModel.animeLists.collectAsState(initial = MediaList.Type.entries.minus(MediaList.Type.SEARCH).map { it.name }.toSet())
+
             AnimiteTheme(
                 paddings = rememberDefaultPaddings(Density.valueOf(density)),
                 useDarkTheme = useDarkTheme,
@@ -121,6 +123,7 @@ class MainActivity : ComponentActivity() {
                 dayHour = dayHour
             ) {
                 MainScreen(
+                    animeLists = animeLists,
                     deviceScreenCornerRadius = getDeviceScreenCornerRadius(),
                     useDarkTheme = useDarkTheme,
                     isAmoled = isAmoled,
@@ -149,6 +152,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MainScreen(
+    animeLists: Set<String>,
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
     isAmoled: Boolean,
@@ -180,6 +184,7 @@ fun MainScreen(
                 NavHost(navController = navController, startDestination = AnimeRoute) {
                     composable<AnimeRoute> {
                         AnimeScreen(
+                            animeLists = animeLists,
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToExplore = navController::navigate,
                             scrollState = animeScrollState,
