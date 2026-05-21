@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -50,7 +49,7 @@ class MangaViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            mediaListType = Type.TRENDING_NOW,
+            title = "Trending Now",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.MANGA,
@@ -73,7 +72,7 @@ class MangaViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            mediaListType = Type.ALL_TIME_POPULAR,
+            title = "All Time Popular",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.MANGA,

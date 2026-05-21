@@ -7,7 +7,6 @@ import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Info
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.sanitize.media.Page
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -30,7 +29,7 @@ class AnilistMediaRepository(
 ) {
 
     fun fetchMediaList(
-        mediaListType: MediaList.Type,
+        title: String,
         useNetwork: Boolean,
         filterStrategy: FilterStrategy,
     ) = with(filterStrategy) {
@@ -54,12 +53,11 @@ class AnilistMediaRepository(
         .filter { it.exception == null }
         .asResult {
             MediaList(
-                type = mediaListType,
+                title = title,
                 list = it.page!!.media.orEmpty().filterNotNull().map { query ->
                     Media.Small(query.mediaSmall, language)
                 }.toImmutableList(),
-                season = season?.sanitize(),
-                year = year,
+                filterStrategy = filterStrategy
             )
         }
     }

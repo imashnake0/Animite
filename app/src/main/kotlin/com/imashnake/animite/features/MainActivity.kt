@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
 
             val avatar by profileViewModel.viewerAvatar.collectAsState(initial = null)
 
-            val animeLists by settingsViewModel.animeLists.collectAsState(initial = MediaList.Type.entries.minus(MediaList.Type.SEARCH).map { it.name }.toSet())
+            val animeLists by settingsViewModel.animeLists.collectAsState(initial = setOf("Trending Now", "Popular This Season", "Upcoming Next Season", "All Time Popular"))
 
             AnimiteTheme(
                 paddings = rememberDefaultPaddings(Density.valueOf(density)),
@@ -242,7 +242,7 @@ fun MainScreen(
                                 navController.navigate(
                                     MediaPage(
                                         id = id,
-                                        source = MediaList.Type.SEARCH.name,
+                                        source = "Explore",
                                         mediaType = mediaType.rawValue,
                                         title = title,
                                     )
@@ -296,7 +296,7 @@ fun MainScreen(
                 navController.navigate(
                     MediaPage(
                         id = id,
-                        source = MediaList.Type.SEARCH.name,
+                        source = "Search",
                         mediaType = mediaType.rawValue,
                         title = title,
                     )

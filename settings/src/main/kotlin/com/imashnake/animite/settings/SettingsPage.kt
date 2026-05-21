@@ -130,7 +130,7 @@ fun SettingsPage(
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
-    val animeLists by viewModel.animeLists.collectAsState(initial = MediaList.Type.entries.minus(MediaList.Type.SEARCH).map { it.name }.toSet())
+    val animeLists by viewModel.animeLists.collectAsState(initial = setOf("Trending Now", "Popular This Season", "Upcoming Next Season", "All Time Popular"))
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -442,19 +442,19 @@ fun SettingsPage(
                                             ButtonGroupDefaults.ConnectedSpaceBetween
                                         )
                                     ) {
-                                        MediaList.Type.entries.minus(MediaList.Type.SEARCH).fastForEach { list ->
+                                        listOf("Trending Now", "Popular This Season", "Upcoming Next Season", "All Time Popular").fastForEach { title ->
                                             ToggleButton(
-                                                checked = animeLists.contains(list.name),
+                                                checked = animeLists.contains(title),
                                                 onCheckedChange = {
-                                                    if (animeLists.contains(list.name)) {
-                                                        viewModel.removeAnimeList(list.name)
+                                                    if (animeLists.contains(title)) {
+                                                        viewModel.removeAnimeList(title)
                                                     } else {
-                                                        viewModel.addAnimeList(list.name)
+                                                        viewModel.addAnimeList(title)
                                                     }
                                                     haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                                 },
-                                                shapes = when (list) {
-                                                    MediaList.Type.TRENDING_NOW -> ButtonGroupDefaults.connectedLeadingButtonShapes(
+                                                shapes = when (title) {
+                                                    "Trending Now" -> ButtonGroupDefaults.connectedLeadingButtonShapes(
                                                         shape = RoundedCornerShape(
                                                             topStart = CornerSize(percent = 50),
                                                             topEnd = CornerSize(percent = 50),
@@ -468,7 +468,7 @@ fun SettingsPage(
                                                             bottomEnd = CornerSize(size = 8.dp)
                                                         ),
                                                     )
-                                                    MediaList.Type.ALL_TIME_POPULAR -> ButtonGroupDefaults.connectedLeadingButtonShapes(
+                                                    "All Time Popular" -> ButtonGroupDefaults.connectedLeadingButtonShapes(
                                                         shape = RoundedCornerShape(
                                                             topStart = CornerSize(size = 8.dp),
                                                             topEnd = CornerSize(size = 8.dp),
@@ -489,9 +489,7 @@ fun SettingsPage(
                                                 ),
                                                 modifier = Modifier.fillMaxWidth()
                                             ) {
-                                                list.title?.let {
-                                                    Text(it)
-                                                }
+                                                Text(title)
                                             }
                                         }
                                     }

@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.MediaList.Type
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -63,7 +62,8 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            mediaListType = Type.TRENDING_NOW,
+            // TODO: Un-hardcode this.
+            title = "Trending Now",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -87,7 +87,7 @@ class AnimeViewModel @Inject constructor(
         transform = ::Triple,
     ).flatMapLatest { (_, now, prefs) ->
         mediaListRepository.fetchMediaList(
-            mediaListType = Type.POPULAR_THIS_SEASON,
+            title = "Popular This Season",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -112,7 +112,7 @@ class AnimeViewModel @Inject constructor(
     ).flatMapLatest { (_, now, prefs) ->
         val season = now.month.season
         mediaListRepository.fetchMediaList(
-            mediaListType = Type.UPCOMING_NEXT_SEASON,
+            title = "Upcoming Next Season",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -135,7 +135,7 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            mediaListType = Type.ALL_TIME_POPULAR,
+            title = "All Time Popular",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,

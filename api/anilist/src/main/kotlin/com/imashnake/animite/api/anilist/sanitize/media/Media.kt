@@ -367,6 +367,15 @@ data class Media(
             fun pollute(sort: Sort, isDescending: Boolean): MediaSort {
                 return MediaSort.valueOf(sort.name + if (isDescending) "_DESC" else "")
             }
+
+            fun MediaSort.sanitize() = when (this) {
+                MediaSort.POPULARITY, MediaSort.POPULARITY_DESC -> POPULARITY
+                MediaSort.TRENDING, MediaSort.TRENDING_DESC -> TRENDING
+                MediaSort.FAVOURITES, MediaSort.FAVOURITES_DESC -> FAVOURITES
+                MediaSort.SCORE, MediaSort.SCORE_DESC -> SCORE
+                MediaSort.EPISODES, MediaSort.EPISODES_DESC -> EPISODES
+                else -> null
+            }
         }
     }
 
