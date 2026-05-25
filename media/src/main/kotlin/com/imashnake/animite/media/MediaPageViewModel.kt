@@ -13,7 +13,6 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
@@ -48,7 +47,7 @@ class MediaPageViewModel @Inject constructor(
                         language = preferencesRepository.language
                             .filterNotNull()
                             .mapNotNull { Media.Language.valueOf(it) }
-                            .first()
+                            .firstOrNull() ?: Media.Language.DEFAULT
                     )
                     .firstOrNull()
                     ?.getOrNull()

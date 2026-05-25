@@ -11,7 +11,7 @@ import com.apollographql.apollo.network.http.HttpInterceptorChain
 import com.apollographql.apollo.network.http.LoggingInterceptor
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 
 private const val BaseUrl = "https://graphql.anilist.co/"
 private val MemoryCacheFactory = MemoryCacheFactory(maxSizeBytes = 10 * 1024 * 1024)
@@ -46,7 +46,7 @@ fun createAuthenticatedApolloHttpClient(
         ): HttpResponse {
             return chain.proceed(
                 request.newBuilder().apply {
-                    preferencesRepository.accessToken.first()?.let {
+                    preferencesRepository.accessToken.firstOrNull()?.let {
                         addHeader("Authorization", "Bearer $it")
                     }
                 }.build()
