@@ -293,7 +293,7 @@ fun ExploreScreen(
                 ) {
                     if (it) {
                         MediaMediumList(
-                            mediaMediumList = explorePage.data?.list
+                            mediaMediumList = explorePage?.data?.list
                                 .orEmpty()
                                 .toImmutableList(),
                             onItemClick = { id, title ->
@@ -303,7 +303,7 @@ fun ExploreScreen(
                                     title
                                 )
                             },
-                            pageInfo = explorePage.data?.info,
+                            pageInfo = explorePage?.data?.info,
                             onPageChanged = viewModel::setPage,
                             shouldShowRank = true,
                             modifier = Modifier
