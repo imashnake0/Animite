@@ -51,7 +51,6 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
@@ -63,10 +62,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -78,7 +75,6 @@ import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -421,32 +417,21 @@ private fun SearchBar(
             )
         },
         trailingIcon = {
-            CompositionLocalProvider(
-                LocalRippleConfiguration provides RippleConfiguration(
-                    rippleAlpha = RippleAlpha(
-                        draggedAlpha = 0f,
-                        focusedAlpha = 0f,
-                        hoveredAlpha = 0f,
-                        pressedAlpha = 0f
-                    )
-                )
+            IconButton(
+                onClick = { onSearch(null) },
+                colors = IconButtonDefaults.iconButtonColors(),
+                modifier = Modifier
+                    .size(40.dp)
+                    .graphicsLayer {
+                        scaleX = closeIconSize
+                        scaleY = closeIconSize
+                    }
             ) {
-                IconButton(
-                    onClick = { onSearch(null) },
-                    colors = IconButtonDefaults.iconButtonColors(),
-                    modifier = Modifier
-                        .size(40.dp)
-                        .graphicsLayer {
-                            scaleX = closeIconSize
-                            scaleY = closeIconSize
-                        }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Close,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
     )
