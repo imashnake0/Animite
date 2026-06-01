@@ -8,10 +8,11 @@ android-libraryMultiplatform = { id = "com.android.kotlin.multiplatform.library"
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-apolloKotlin = { id = "com.apollographql.apollo", version.ref = "apollo" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+apollo-cache = { id = "com.apollographql.cache:normalized-cache-apollo-compiler-plugin", version.ref = "apolloCache" }
+apollo-kotlin = { id = "com.apollographql.apollo", version.ref = "apollo" }
 
 
 [versions]
@@ -37,6 +38,7 @@ navigation = "2.9.8"
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases.
 apollo = "5.0.0"
+apolloCache = "1.0.3"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore.
@@ -130,8 +132,8 @@ compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", versi
 compose-ui-toolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
 compose-test-ui-testJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
 apollo-runtime = { group = "com.apollographql.apollo", name = "apollo-runtime", version.ref = "apollo" }
-apollo-cache-memory = { group = "com.apollographql.apollo", name = "apollo-normalized-cache", version.ref = "apollo" }
-apollo-cache-sqlite = { group = "com.apollographql.apollo", name = "apollo-normalized-cache-sqlite", version.ref = "apollo" }
+apollo-cache-memory = { group = "com.apollographql.cache", name = "normalized-cache", version.ref = "apolloCache" }
+apollo-cache-sqlite = { group = "com.apollographql.cache", name = "normalized-cache-sqlite", version.ref = "apolloCache" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 ktor-engine-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }

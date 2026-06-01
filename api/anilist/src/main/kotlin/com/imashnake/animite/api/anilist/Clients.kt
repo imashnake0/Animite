@@ -3,12 +3,12 @@ package com.imashnake.animite.api.anilist
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.http.HttpRequest
 import com.apollographql.apollo.api.http.HttpResponse
-import com.apollographql.apollo.cache.normalized.api.MemoryCacheFactory
-import com.apollographql.apollo.cache.normalized.normalizedCache
-import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo.network.http.HttpInterceptor
 import com.apollographql.apollo.network.http.HttpInterceptorChain
 import com.apollographql.apollo.network.http.LoggingInterceptor
+import com.apollographql.cache.normalized.memory.MemoryCacheFactory
+import com.apollographql.cache.normalized.sql.SqlNormalizedCacheFactory
+import com.imashnake.animite.api.anilist.cache.Cache.cache
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
@@ -28,7 +28,7 @@ private val SqlCacheFactory
         .dispatcher(Dispatchers.IO)
         .serverUrl(BaseUrl)
         .addHttpInterceptor(LoggingInterceptor(LoggingInterceptor.Level.BODY))
-        .normalizedCache(cacheFactory)
+        .cache(cacheFactory)
         .build()
 }
 
@@ -59,6 +59,6 @@ fun createAuthenticatedApolloHttpClient(
         .serverUrl(BaseUrl)
         .addHttpInterceptor(httpInterceptor)
         .addHttpInterceptor(LoggingInterceptor(LoggingInterceptor.Level.BODY))
-        .normalizedCache(cacheFactory)
+        .cache(cacheFactory)
         .build()
 }

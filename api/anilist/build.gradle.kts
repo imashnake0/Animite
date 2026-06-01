@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.apolloKotlin)
+    alias(libs.plugins.apollo.kotlin)
     alias(libs.plugins.detekt)
 }
 
@@ -39,6 +39,9 @@ dependencies {
 apollo {
     service("anilist") {
         packageName = "com.imashnake.animite.api.anilist"
+
+        plugin("${libs.plugins.apollo.cache.get().pluginId}:${libs.versions.apolloCache.get()}")
+        pluginArgument("com.apollographql.cache.packageName", packageName.get())
     }
 }
 
