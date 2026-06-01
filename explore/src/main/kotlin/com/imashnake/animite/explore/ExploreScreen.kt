@@ -111,6 +111,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import androidx.compose.ui.util.fastFilter
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMap
@@ -248,7 +249,12 @@ fun ExploreScreen(
                 }
 
                 Sort(
-                    sorts = Media.Sort.entries.toImmutableList(),
+                    sorts = Media.Sort.entries.fastFilter {
+                        when (mediaType) {
+                            MediaType.MANGA.name -> it != Media.Sort.EPISODES
+                            else -> true
+                        }
+                    }.toImmutableList(),
                     selectedSort = selectedSort,
                     onSortSelected = { viewModel.setMediaSort(it) },
                     isDescending = isDescending,

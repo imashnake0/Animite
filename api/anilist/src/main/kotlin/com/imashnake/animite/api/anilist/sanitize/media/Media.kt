@@ -354,7 +354,9 @@ data class Media(
         TRENDING,
         FAVOURITES,
         SCORE,
-        EPISODES;
+        EPISODES,
+        // This is used to get the "Date Added" sort.
+        ID;
 
         companion object {
             fun safeValueOf(rawValue: String): Sort? = try {
