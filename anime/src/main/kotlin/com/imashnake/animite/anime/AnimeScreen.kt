@@ -94,12 +94,14 @@ fun AnimeScreen(
     val popularList by viewModel.popularMediaThisSeason.collectAsState()
     val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
+    val newlyAddedList by viewModel.newlyAdded.collectAsState()
 
     val rows = listOf(
         trendingList,
         popularList,
         upcomingList,
         allTimePopularList,
+        newlyAddedList,
     )
 
     var isRefreshing by remember { mutableStateOf(false) }
@@ -232,6 +234,14 @@ private fun AnimeRow(
                         ExploreRoute(
                             season = mediaList.season?.name,
                             year = mediaList.year,
+                        )
+                    )
+                }
+                MediaList.Type.NEWLY_ADDED -> {
+                    onNavigateToExplore(
+                        ExploreRoute(
+                            sortName = Media.Sort.ID.name,
+                            isDescending = true
                         )
                     )
                 }
