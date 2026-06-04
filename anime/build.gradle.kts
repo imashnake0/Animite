@@ -57,6 +57,8 @@ dependencies {
 
     // Kotlin
     implementation(libs.kotlinx.datetime)
+
+    implementation(libs.reorderable)
 }
 
 detekt {
