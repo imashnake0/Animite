@@ -125,6 +125,7 @@ val Media.Sort.res get() = when (this) {
     Media.Sort.FAVOURITES -> R.string.sort_favourites
     Media.Sort.SCORE -> R.string.sort_score
     Media.Sort.EPISODES -> R.string.sort_episodes
+    Media.Sort.ID -> R.string.sort_date_added
 }
 
 val Media.Sort.icon get() = when (this) {
@@ -133,6 +134,7 @@ val Media.Sort.icon get() = when (this) {
     Media.Sort.FAVOURITES -> R.drawable.favourites
     Media.Sort.SCORE -> R.drawable.score
     Media.Sort.EPISODES -> R.drawable.episodes
+    Media.Sort.ID -> R.drawable.date_added
 }
 
 val Media.Language.res get() = when (this) {

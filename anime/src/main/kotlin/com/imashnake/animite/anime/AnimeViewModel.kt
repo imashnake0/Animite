@@ -143,6 +143,27 @@ class AnimeViewModel @Inject constructor(
         initialValue = Resource.loading(),
     )
 
+    val newlyAdded = combine(
+        flow = refreshTrigger.onStart { emit(Unit) },
+        flow2 = prefs,
+        transform = ::Pair
+    ).flatMapLatest { (_, prefs) ->
+        mediaListRepository.fetchMediaList(
+            mediaListType = Type.NEWLY_ADDED,
+            mediaType = MediaType.ANIME,
+            sort = listOf(MediaSort.ID_DESC),
+            useNetwork = useNetwork,
+            isNsfwEnabled = prefs.isNsfwEnabled,
+            language = prefs.language
+        )
+    }
+    .asResource()
+    .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading(),
+    )
+
     val isLoading = combineTransform(
         listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)
     ) { resources ->

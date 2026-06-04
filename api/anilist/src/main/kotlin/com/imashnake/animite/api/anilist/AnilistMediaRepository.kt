@@ -56,7 +56,7 @@ class AnilistMediaRepository(
             )
         )
         .fetchPolicy(
-            fetchPolicy = if (useNetwork) {
+            if (useNetwork) {
                 FetchPolicy.NetworkFirst
             } else FetchPolicy.CacheFirst
         )
@@ -75,6 +75,7 @@ class AnilistMediaRepository(
     }
 
     fun fetchMediaMediumList(
+        useNetwork: Boolean,
         mediaType: MediaType,
         sort: List<MediaSort>,
         page: Int = 0,
@@ -119,7 +120,11 @@ class AnilistMediaRepository(
                 )
             )
         )
-        .fetchPolicy(FetchPolicy.CacheAndNetwork)
+        .fetchPolicy(
+            if (useNetwork) {
+                FetchPolicy.NetworkFirst
+            } else FetchPolicy.CacheFirst
+        )
         .toFlow()
         .filter { it.exception == null }
         .asResult { data ->

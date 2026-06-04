@@ -23,7 +23,9 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
@@ -33,6 +35,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -48,6 +51,10 @@ class ExploreViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
     private val navArgs = savedStateHandle.toRoute<ExploreRoute>()
+
+    private val refreshTrigger = MutableSharedFlow<Unit>()
+
+    var useNetwork = false
 
     val selectedSort = savedStateHandle.getStateFlow(Constants.SORT, navArgs.sortName?.let { Media.Sort.valueOf(it) } ?: Media.Sort.POPULARITY)
     val isDescending = savedStateHandle.getStateFlow(Constants.ORDER, navArgs.isDescending ?: true)
@@ -213,6 +220,7 @@ class ExploreViewModel @Inject constructor(
         flow3 = filterSheetOptions,
         flow4 = page,
         flow5 = prefs,
+        flow6 = refreshTrigger.onStart { emit(Unit) },
         transform = ::Pentuple,
     ).debounce {
         if (shouldDebounce) {
@@ -226,6 +234,7 @@ class ExploreViewModel @Inject constructor(
             emit(Resource.loading())
             emit(
                 mediaListRepository.fetchMediaMediumList(
+                    useNetwork = useNetwork,
                     mediaType = MediaType.valueOf(filterSheetOptions.mediaType),
                     sort = listOf(sort),
                     page = page,
@@ -237,8 +246,7 @@ class ExploreViewModel @Inject constructor(
                     includedFormats = filterSheetOptions.format.included.map { MediaFormat.valueOf(it) }.ifEmpty { null },
                     excludedFormats = filterSheetOptions.format.excluded.map { MediaFormat.valueOf(it) }.ifEmpty { null },
                     includedStatuses = filterSheetOptions.status.included.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    excludedStatuses = filterSheetOptions.status.excluded.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    isAdult = filterSheetOptions.isAdult,
+                    excludedStatuses = filterSheetOptions.status.excluded.map { MediaStatus.valueOf(it) }.ifEmpty { null }, isAdult = filterSheetOptions.isAdult,
                     isNsfwEnabled = prefs.isNsfwEnabled,
                     language = prefs.language
                 ).asResource().firstOrNull()
@@ -355,6 +363,15 @@ class ExploreViewModel @Inject constructor(
         savedStateHandle[Constants.PAGE] = 1
     }
 
+    fun refresh(setIsRefreshing: (Boolean) -> Unit) = viewModelScope.launch {
+        setIsRefreshing(true)
+        useNetwork = true
+        refreshTrigger.emit(Unit)
+        delay(1500L)
+        useNetwork = false
+        setIsRefreshing(false)
+    }
+
     val yearRange = getYears()
 
     private fun getYears(): IntRange {
@@ -403,19 +420,20 @@ class ExploreViewModel @Inject constructor(
 }
 
 // TODO: Move this to core?
-data class Pentuple<out A, out B, out C, out D, out E>(
+data class Pentuple<out A, out B, out C, out D, out E, out F>(
     val first: A,
     val second: B,
     val third: C,
     val fourth: D,
     val fifth: E,
+    val sixth: F,
 ) {
     /**
      * Returns string representation of the [Pentuple] including its
-     * [first], [second], [third], [fourth], and [fifth]
+     * [first], [second], [third], [fourth], [fifth], and [sixth].
      */
     override fun toString(): String =
-        "($first, $second, $third, $fourth, $fifth)"
+        "($first, $second, $third, $fourth, $fifth, $sixth)"
 }
 
 inline fun <

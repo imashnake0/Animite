@@ -83,10 +83,12 @@ fun MangaScreen(
 
     val trendingList by viewModel.trendingMedia.collectAsState()
     val allTimePopularList by viewModel.allTimePopular.collectAsState()
+    val newlyAddedList by viewModel.newlyAdded.collectAsState()
 
     val rows = listOf(
         trendingList,
         allTimePopularList,
+        newlyAddedList,
     )
 
     var isRefreshing by remember { mutableStateOf(false) }
@@ -197,6 +199,15 @@ private fun MangaRow(
                         ExploreRoute(
                             mediaType = MediaType.MANGA.name,
                             sortName = Media.Sort.POPULARITY.name,
+                            isDescending = true
+                        )
+                    )
+                }
+                MediaList.Type.NEWLY_ADDED -> {
+                    onNavigateToExplore(
+                        ExploreRoute(
+                            mediaType = MediaType.MANGA.name,
+                            sortName = Media.Sort.ID.name,
                             isDescending = true
                         )
                     )

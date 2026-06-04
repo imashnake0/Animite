@@ -15,6 +15,7 @@ data class MediaList(
         POPULAR_THIS_SEASON("Popular This Season"),
         UPCOMING_NEXT_SEASON("Upcoming Next Season"),
         ALL_TIME_POPULAR("All Time Popular"),
+        NEWLY_ADDED("Newly Added"),
         SEARCH,
     }
 }
