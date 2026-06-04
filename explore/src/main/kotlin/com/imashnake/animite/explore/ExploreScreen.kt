@@ -286,6 +286,12 @@ fun ExploreScreen(
                         .togetherWith(fadeOut(tween(1000)))
                 },
             ) {
+                val paddingOnTopOfList = insetAndNavigationPaddingValues.calculateTopPadding() +
+                        TextFieldDefaults.MinHeight +
+                        3 * LocalPaddings.current.small +
+                        LocalPaddings.current.tiny +
+                        with(LocalDensity.current) { 11.sp.toDp() }
+
                 if (it) {
                     PullToRefreshBox(
                         isRefreshing = isRefreshing,
@@ -297,13 +303,7 @@ fun ExploreScreen(
                                 state = pullToRefreshState,
                                 modifier = Modifier
                                     .align(Alignment.TopCenter)
-                                    .offset(
-                                        y = insetAndNavigationPaddingValues.calculateTopPadding()
-                                            + TextFieldDefaults.MinHeight
-                                                + 3 * LocalPaddings.current.small
-                                                + LocalPaddings.current.tiny
-                                                + with(LocalDensity.current) { 11.sp.toDp() }
-                                    ),
+                                    .offset(y = paddingOnTopOfList),
                             )
                         }
                     ) {
@@ -334,11 +334,7 @@ fun ExploreScreen(
                                 start = LocalPaddings.current.large,
                                 end = LocalPaddings.current.large,
                             ) + PaddingValues(
-                                top = insetAndNavigationPaddingValues.calculateTopPadding()
-                                        + TextFieldDefaults.MinHeight
-                                        + 3 * LocalPaddings.current.small
-                                        + LocalPaddings.current.tiny
-                                        + with(LocalDensity.current) { 11.sp.toDp() },
+                                top = paddingOnTopOfList,
                                 bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
                             )
                         )
@@ -352,9 +348,7 @@ fun ExploreScreen(
                             start = LocalPaddings.current.large,
                             end = LocalPaddings.current.large,
                         ) + PaddingValues(
-                            top = insetAndNavigationPaddingValues.calculateTopPadding()
-                                    + TextFieldDefaults.MinHeight
-                                    + 2 * LocalPaddings.current.small,
+                            top = paddingOnTopOfList,
                             bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
                         ),
                         modifier = Modifier
