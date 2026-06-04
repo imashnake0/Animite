@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.requiredSize
@@ -73,6 +74,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -184,7 +188,10 @@ fun ExploreScreen(
     val chipFormatGroup by viewModel.chipFormatGroup.collectAsState()
     val chipStatusGroup by viewModel.chipStatusGroup.collectAsState()
 
-    Box(modifier = modifier.fillMaxSize()) {
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullToRefreshState = rememberPullToRefreshState()
+
+    Box(modifier.fillMaxSize()) {
         val isNotAtTop by remember {
             derivedStateOf {
                 listState.firstVisibleItemScrollOffset != 0
@@ -197,103 +204,109 @@ fun ExploreScreen(
             } else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.9f),
             animationSpec = tween(500)
         )
-
-        Box {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(
-                    LocalPaddings.current.small + LocalPaddings.current.tiny
-                ),
+        Column(
+            verticalArrangement = Arrangement.spacedBy(
+                LocalPaddings.current.small + LocalPaddings.current.tiny
+            ),
+            modifier = Modifier
+                .background(barBackgroundColor)
+                .padding(insetAndNavigationPaddingValues.copy(bottom = 0.dp))
+                .fillMaxWidth()
+                .padding(vertical = LocalPaddings.current.small)
+                .zIndex(Float.MAX_VALUE)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .background(barBackgroundColor)
-                    .padding(insetAndNavigationPaddingValues.copy(bottom = 0.dp))
-                    .fillMaxWidth()
-                    .padding(vertical = LocalPaddings.current.small)
-                    .zIndex(Float.MAX_VALUE)
+                    .padding(horizontal = LocalPaddings.current.large)
+                    .height(IntrinsicSize.Max)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                SearchBar(
+                    searchQuery = searchQuery,
+                    onSearch = { viewModel.setSearchQuery(it) },
                     modifier = Modifier
-                        .padding(horizontal = LocalPaddings.current.large)
-                        .height(IntrinsicSize.Max)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                ) {
-                    SearchBar(
-                        searchQuery = searchQuery,
-                        onSearch = { viewModel.setSearchQuery(it) },
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                            .padding(horizontal = LocalPaddings.current.small)
-                            .weight(1f)
-                    )
-
-                    Surface(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = CircleShape,
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.tune),
-                            contentDescription = stringResource(R.string.tune),
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .clickable {
-                                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-                                    showFilterBottomSheet = true
-                                }
-                                .padding(8.dp)
-                                .size(24.dp)
-                        )
-                    }
-                }
-
-                Sort(
-                    sorts = Media.Sort.entries.fastFilter {
-                        when (mediaType) {
-                            MediaType.MANGA.name -> it != Media.Sort.EPISODES
-                            else -> true
-                        }
-                    }.toImmutableList(),
-                    selectedSort = selectedSort,
-                    onSortSelected = { viewModel.setMediaSort(it) },
-                    isDescending = isDescending,
-                    toggleOrder = { viewModel.setIsDescending(!isDescending) },
-                    expanded = isSortDropdownExpanded,
-                    setExpanded = {
-                        haptic.performHapticFeedback(
-                            if (it) {
-                                HapticFeedbackType.ToggleOn
-                            } else HapticFeedbackType.ToggleOff
-                        )
-                        isSortDropdownExpanded = it
-                    },
-                    insetAndNavigationPaddingValues = insetAndNavigationPaddingValues,
-                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = LocalPaddings.current.small)
+                        .weight(1f)
                 )
+
+                Surface(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = CircleShape,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.tune),
+                        contentDescription = stringResource(R.string.tune),
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .clickable {
+                                haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                                showFilterBottomSheet = true
+                            }
+                            .padding(8.dp)
+                            .size(24.dp)
+                    )
+                }
             }
 
-            Column(Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Spacer(modifier = Modifier.size(11.dp))
-                    Text(
-                        text = "",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium
+            Sort(
+                sorts = Media.Sort.entries.fastFilter {
+                    when (mediaType) {
+                        MediaType.MANGA.name -> it != Media.Sort.EPISODES
+                        else -> true
+                    }
+                }.toImmutableList(),
+                selectedSort = selectedSort,
+                onSortSelected = { viewModel.setMediaSort(it) },
+                isDescending = isDescending,
+                toggleOrder = { viewModel.setIsDescending(!isDescending) },
+                expanded = isSortDropdownExpanded,
+                setExpanded = {
+                    haptic.performHapticFeedback(
+                        if (it) {
+                            HapticFeedbackType.ToggleOn
+                        } else HapticFeedbackType.ToggleOff
                     )
-                }
+                    isSortDropdownExpanded = it
+                },
+                insetAndNavigationPaddingValues = insetAndNavigationPaddingValues,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-                AnimatedContent(
-                    targetState = explorePage is Resource.Success,
-                    transitionSpec = {
-                        fadeIn(tween(1000))
-                            .togetherWith(fadeOut(tween(1000)))
-                    },
-                ) {
-                    if (it) {
+        Column(Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)) {
+            AnimatedContent(
+                targetState = explorePage is Resource.Success,
+                transitionSpec = {
+                    fadeIn(tween(1000))
+                        .togetherWith(fadeOut(tween(1000)))
+                },
+            ) {
+                if (it) {
+                    PullToRefreshBox(
+                        isRefreshing = isRefreshing,
+                        onRefresh = { viewModel.refresh { huh -> isRefreshing = huh } },
+                        state = pullToRefreshState,
+                        indicator = {
+                            Indicator(
+                                isRefreshing = isRefreshing,
+                                state = pullToRefreshState,
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .offset(
+                                        y = insetAndNavigationPaddingValues.calculateTopPadding()
+                                            + TextFieldDefaults.MinHeight
+                                                + 3 * LocalPaddings.current.small
+                                                + LocalPaddings.current.tiny
+                                                + with(LocalDensity.current) { 11.sp.toDp() }
+                                    ),
+                            )
+                        }
+                    ) {
                         MediaMediumList(
                             mediaMediumList = explorePage?.data?.list
                                 .orEmpty()
@@ -323,60 +336,62 @@ fun ExploreScreen(
                             ) + PaddingValues(
                                 top = insetAndNavigationPaddingValues.calculateTopPadding()
                                         + TextFieldDefaults.MinHeight
-                                        + 2 * LocalPaddings.current.small,
+                                        + 3 * LocalPaddings.current.small
+                                        + LocalPaddings.current.tiny
+                                        + with(LocalDensity.current) { 11.sp.toDp() },
                                 bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
                             )
                         )
-                    } else {
-                        LoadingMediaMediumList(
-                            count = 10,
-                            contentPadding = PaddingValues(
-                                top = LocalPaddings.current.medium,
-                                bottom = LocalPaddings.current.large,
-                                start = LocalPaddings.current.large,
-                                end = LocalPaddings.current.large,
-                            ) + PaddingValues(
-                                top = insetAndNavigationPaddingValues.calculateTopPadding()
-                                        + TextFieldDefaults.MinHeight
-                                        + 2 * LocalPaddings.current.small,
-                                bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
-                            ),
-                            modifier = Modifier
-                                .consumeWindowInsets(
-                                    insetAndNavigationPaddingValues
-                                            + PaddingValues(bottom = LocalPaddings.current.large)
-                                )
-                                .imePadding(),
-                        )
                     }
-                }
-
-                if (showFilterBottomSheet) {
-                    FilterBottomSheet(
-                        sheetState = filterSheetState,
-                        onDismissRequest = { showFilterBottomSheet = false },
-                        deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
-                        mediaType = mediaType,
-                        onMediaTypeChanged = viewModel::setMediaType,
-                        chipGenreGroup = chipGenreGroup,
-                        season = season,
-                        selectSeason = viewModel::setMediaSeason,
-                        year = year,
-                        onYearChange = viewModel::setMediaYear,
-                        yearRange = viewModel.yearRange,
-                        isNsfwEnabled = isNsfwEnabled,
-                        isAdult = isAdult == true,
-                        setIsAdult = viewModel::setIsAdult,
-                        chipFormatGroup = chipFormatGroup,
-                        chipStatusGroup = chipStatusGroup,
-                        includeChipFilter = viewModel::includeFilter,
-                        excludeChipFilter = viewModel::excludeFilter,
-                        clearChipFilter = viewModel::clearFilter,
-                        resetChipFilters = viewModel::resetFilter,
-                        reset = viewModel::reset,
-                        modifier = Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)
+                } else {
+                    LoadingMediaMediumList(
+                        count = 10,
+                        contentPadding = PaddingValues(
+                            top = LocalPaddings.current.medium,
+                            bottom = LocalPaddings.current.large,
+                            start = LocalPaddings.current.large,
+                            end = LocalPaddings.current.large,
+                        ) + PaddingValues(
+                            top = insetAndNavigationPaddingValues.calculateTopPadding()
+                                    + TextFieldDefaults.MinHeight
+                                    + 2 * LocalPaddings.current.small,
+                            bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
+                        ),
+                        modifier = Modifier
+                            .consumeWindowInsets(
+                                insetAndNavigationPaddingValues
+                                        + PaddingValues(bottom = LocalPaddings.current.large)
+                            )
+                            .imePadding(),
                     )
                 }
+            }
+
+            if (showFilterBottomSheet) {
+                FilterBottomSheet(
+                    sheetState = filterSheetState,
+                    onDismissRequest = { showFilterBottomSheet = false },
+                    deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
+                    mediaType = mediaType,
+                    onMediaTypeChanged = viewModel::setMediaType,
+                    chipGenreGroup = chipGenreGroup,
+                    season = season,
+                    selectSeason = viewModel::setMediaSeason,
+                    year = year,
+                    onYearChange = viewModel::setMediaYear,
+                    yearRange = viewModel.yearRange,
+                    isNsfwEnabled = isNsfwEnabled,
+                    isAdult = isAdult == true,
+                    setIsAdult = viewModel::setIsAdult,
+                    chipFormatGroup = chipFormatGroup,
+                    chipStatusGroup = chipStatusGroup,
+                    includeChipFilter = viewModel::includeFilter,
+                    excludeChipFilter = viewModel::excludeFilter,
+                    clearChipFilter = viewModel::clearFilter,
+                    resetChipFilters = viewModel::resetFilter,
+                    reset = viewModel::reset,
+                    modifier = Modifier.padding(insetAndNavigationPaddingValues.horizontalOnly)
+                )
             }
         }
     }
