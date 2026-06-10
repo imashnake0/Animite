@@ -61,9 +61,9 @@ fun <T> MediaSmallRow(
     title: String?,
     mediaList: ImmutableList<T>,
     modifier: Modifier = Modifier,
-    contextChip: @Composable (RowScope.((() -> Unit)?) -> Unit)? = null,
     onListClick: (() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(),
+    contextChip: @Composable (RowScope.((() -> Unit)?) -> Unit)? = null,
     content: @Composable LazyItemScope.(Int, T) -> Unit
 ) {
     Column(

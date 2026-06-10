@@ -196,7 +196,7 @@ private fun AnimeRow(
     MediaSmallRow(
         title = mediaList.title,
         mediaList = mediaList.list,
-        contextChip = {
+        contextChip = { onListClick ->
             val season = mediaList.filterStrategy.season
             val year = mediaList.filterStrategy.year
             if (season != null && year != null) {
@@ -207,7 +207,7 @@ private fun AnimeRow(
                     },
                     text = "${season.sanitize()?.let { stringResource(it.res) }.orEmpty()} "
                             + year.toString(),
-                    onClick = {}
+                    onClick = onListClick
                 )
             } else {
                 EmptyChip()

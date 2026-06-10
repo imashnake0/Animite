@@ -38,8 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
-import com.imashnake.animite.api.anilist.sanitize.media.Media.Sort.Companion.isDescending
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Sort.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
