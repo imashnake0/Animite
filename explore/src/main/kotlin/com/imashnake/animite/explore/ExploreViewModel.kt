@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
+import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaFormat
@@ -211,17 +212,40 @@ class ExploreViewModel @Inject constructor(
         }
     )
 
-    var shouldDebounce = false
-
-    @OptIn(FlowPreview::class)
-    val explorePage = combine(
+    val filterStrategy = combine(
         flow = mediaSort,
         flow2 = searchQuery,
         flow3 = filterSheetOptions,
         flow4 = page,
         flow5 = prefs,
-        flow6 = refreshTrigger.onStart { emit(Unit) },
-        transform = ::Pentuple,
+        transform = { sort, searchQuery, filterSheetOptions, page, prefs ->
+            FilterStrategy(
+                mediaType = MediaType.valueOf(filterSheetOptions.mediaType),
+                sort = listOf(sort),
+                page = page,
+                search = searchQuery,
+                includedGenres = filterSheetOptions.genres.included.toList().ifEmpty { null },
+                excludedGenres = filterSheetOptions.genres.excluded.toList().ifEmpty { null },
+                season = filterSheetOptions.seasonYear.season?.let { MediaSeason.safeValueOf(it) },
+                year = filterSheetOptions.seasonYear.year,
+                includedFormats = filterSheetOptions.format.included.map { MediaFormat.valueOf(it) }.ifEmpty { null },
+                excludedFormats = filterSheetOptions.format.excluded.map { MediaFormat.valueOf(it) }.ifEmpty { null },
+                includedStatuses = filterSheetOptions.status.included.map { MediaStatus.valueOf(it) }.ifEmpty { null },
+                excludedStatuses = filterSheetOptions.status.excluded.map { MediaStatus.valueOf(it) }.ifEmpty { null },
+                isAdult = filterSheetOptions.isAdult,
+                isNsfwEnabled = prefs.isNsfwEnabled,
+                language = prefs.language
+            )
+        }
+    )
+
+    var shouldDebounce = false
+
+    @OptIn(FlowPreview::class)
+    val explorePage = combine(
+        flow = filterStrategy,
+        flow2 = refreshTrigger.onStart { emit(Unit) },
+        transform = ::Pair,
     ).debounce {
         if (shouldDebounce) {
             500L
@@ -229,27 +253,14 @@ class ExploreViewModel @Inject constructor(
             shouldDebounce = true
             0L
         }
-    }.flatMapLatest { (sort, searchQuery, filterSheetOptions, page, prefs) ->
+    }.flatMapLatest { (filterStrategy, _) ->
         flow {
             emit(Resource.loading())
             emit(
-                mediaListRepository.fetchMediaMediumList(
-                    useNetwork = useNetwork,
-                    mediaType = MediaType.valueOf(filterSheetOptions.mediaType),
-                    sort = listOf(sort),
-                    page = page,
-                    search = searchQuery,
-                    includedGenres = filterSheetOptions.genres.included.toList().ifEmpty { null },
-                    excludedGenres = filterSheetOptions.genres.excluded.toList().ifEmpty { null },
-                    season = filterSheetOptions.seasonYear.season?.let { MediaSeason.safeValueOf(it) },
-                    year = filterSheetOptions.seasonYear.year,
-                    includedFormats = filterSheetOptions.format.included.map { MediaFormat.valueOf(it) }.ifEmpty { null },
-                    excludedFormats = filterSheetOptions.format.excluded.map { MediaFormat.valueOf(it) }.ifEmpty { null },
-                    includedStatuses = filterSheetOptions.status.included.map { MediaStatus.valueOf(it) }.ifEmpty { null },
-                    excludedStatuses = filterSheetOptions.status.excluded.map { MediaStatus.valueOf(it) }.ifEmpty { null }, isAdult = filterSheetOptions.isAdult,
-                    isNsfwEnabled = prefs.isNsfwEnabled,
-                    language = prefs.language
-                ).asResource().firstOrNull()
+                mediaListRepository
+                    .fetchMediaMediumList(useNetwork, filterStrategy)
+                    .asResource()
+                    .firstOrNull()
             )
         }
     }
@@ -417,23 +428,6 @@ class ExploreViewModel @Inject constructor(
         val isAdult: Boolean,
         val mediaType: String,
     )
-}
-
-// TODO: Move this to core?
-data class Pentuple<out A, out B, out C, out D, out E, out F>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val fourth: D,
-    val fifth: E,
-    val sixth: F,
-) {
-    /**
-     * Returns string representation of the [Pentuple] including its
-     * [first], [second], [third], [fourth], [fifth], and [sixth].
-     */
-    override fun toString(): String =
-        "($first, $second, $third, $fourth, $fifth, $sixth)"
 }
 
 inline fun <

@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Sort.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
@@ -141,7 +143,7 @@ fun AnimeScreen(
                                                 onNavigateToMediaItem(
                                                     MediaPage(
                                                         id = media.id,
-                                                        source = mediaList.type.name,
+                                                        source = mediaList.title,
                                                         mediaType = MediaType.ANIME.rawValue,
                                                         title = media.title,
                                                     )
@@ -192,61 +194,38 @@ private fun AnimeRow(
 ) {
     val haptic = LocalHapticFeedback.current
     MediaSmallRow(
-        title = mediaList.type.title,
+        title = mediaList.title,
         mediaList = mediaList.list,
-        contextChip = when (mediaList.type) {
-            MediaList.Type.POPULAR_THIS_SEASON,
-            MediaList.Type.UPCOMING_NEXT_SEASON -> { { onListClick ->
+        contextChip = { onListClick ->
+            val season = mediaList.filterStrategy.season
+            val year = mediaList.filterStrategy.year
+            if (season != null && year != null) {
                 Chip(
                     color = MaterialTheme.colorScheme.primary,
-                    icon = mediaList.season?.icon?.let {
+                    icon = season.sanitize()?.icon?.let {
                         ImageVector.vectorResource(it)
                     },
-                    text = "${mediaList.season?.let { stringResource(it.res) }.orEmpty()} "
-                            + mediaList.year?.toString().orEmpty(),
+                    text = "${season.sanitize()?.let { stringResource(it.res) }.orEmpty()} "
+                            + year.toString(),
                     onClick = onListClick
                 )
-            } }
-            else -> { { EmptyChip() } }
+            } else {
+                EmptyChip()
+            }
         },
         onListClick = {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-            when (mediaList.type) {
-                MediaList.Type.TRENDING_NOW -> {
-                    onNavigateToExplore(
-                        ExploreRoute(
-                            sortName = Media.Sort.TRENDING.name,
-                            isDescending = true
-                        )
-                    )
-                }
-                MediaList.Type.ALL_TIME_POPULAR -> {
-                    onNavigateToExplore(
-                        ExploreRoute(
-                            sortName = Media.Sort.POPULARITY.name,
-                            isDescending = true
-                        )
-                    )
-                }
-                MediaList.Type.POPULAR_THIS_SEASON,
-                MediaList.Type.UPCOMING_NEXT_SEASON -> {
-                    onNavigateToExplore(
-                        ExploreRoute(
-                            season = mediaList.season?.name,
-                            year = mediaList.year,
-                        )
-                    )
-                }
-                MediaList.Type.NEWLY_ADDED -> {
-                    onNavigateToExplore(
-                        ExploreRoute(
-                            sortName = Media.Sort.ID.name,
-                            isDescending = true
-                        )
-                    )
-                }
-                else -> {}
-            }
+            val sort = mediaList.filterStrategy.sort.singleOrNull()?.sanitize()
+            onNavigateToExplore(
+                ExploreRoute(
+                    mediaType = MediaType.ANIME.name,
+                    sortName = sort?.first?.name,
+                    isDescending = sort?.second,
+                    season = mediaList.filterStrategy.season?.name,
+                    year = mediaList.filterStrategy.year,
+                    genre = mediaList.filterStrategy.genre
+                )
+            )
         },
         contentPadding = contentPadding,
         modifier = modifier.clip(RoundedCornerShape(LocalPaddings.current.large))
@@ -261,7 +240,7 @@ private fun AnimeRow(
                     sharedContentState = rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.type.name,
+                            source = mediaList.title,
                             sharedComponents = Card to Page,
                         )
                     ),
@@ -274,7 +253,7 @@ private fun AnimeRow(
                     rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.type.name,
+                            source = mediaList.title,
                             sharedComponents = Image to Image,
                         )
                     ),
