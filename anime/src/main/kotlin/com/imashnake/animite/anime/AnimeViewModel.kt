@@ -62,7 +62,7 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Trending Now???",
+            title = "Trending Now",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -86,7 +86,7 @@ class AnimeViewModel @Inject constructor(
         transform = ::Triple,
     ).flatMapLatest { (_, now, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Popular This Season???",
+            title = "Popular This Season",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -111,7 +111,7 @@ class AnimeViewModel @Inject constructor(
     ).flatMapLatest { (_, now, prefs) ->
         val season = now.month.season
         mediaListRepository.fetchMediaList(
-            title = "Upcoming Next Season???",
+            title = "Upcoming Next Season",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -134,7 +134,7 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "All Time Popular???",
+            title = "All Time Popular",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -157,7 +157,7 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Newly Added???",
+            title = "Newly Added",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
