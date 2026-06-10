@@ -369,6 +369,14 @@ data class Media(
             fun pollute(sort: Sort, isDescending: Boolean): MediaSort {
                 return MediaSort.valueOf(sort.name + if (isDescending) "_DESC" else "")
             }
+
+            fun MediaSort.isDescending() = this.name.contains("_DESC")
+
+            fun MediaSort.sanitize() = if (this.isDescending()) {
+                safeValueOf(this.name.removeSuffix("_DESC")) to true
+            } else {
+                safeValueOf(this.name) to false
+            }
         }
     }
 

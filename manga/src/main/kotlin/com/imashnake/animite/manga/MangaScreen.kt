@@ -38,6 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Sort.Companion.isDescending
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Sort.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
@@ -128,7 +131,7 @@ fun MangaScreen(
                                                 onNavigateToMediaItem(
                                                     MediaPage(
                                                         id = media.id,
-                                                        source = mediaList.type.name,
+                                                        source = mediaList.title,
                                                         mediaType = MediaType.MANGA.rawValue,
                                                         title = media.title,
                                                     )
@@ -179,41 +182,22 @@ private fun MangaRow(
 ) {
     val haptic = LocalHapticFeedback.current
     MediaSmallRow(
-        title = mediaList.type.title,
+        title = mediaList.title,
         mediaList = mediaList.list,
         contextChip = { EmptyChip() },
         onListClick = {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-            when (mediaList.type) {
-                MediaList.Type.TRENDING_NOW -> {
-                    onNavigateToExplore(
-                        ExploreRoute(
-                            mediaType = MediaType.MANGA.name,
-                            sortName = Media.Sort.TRENDING.name,
-                            isDescending = true
-                        )
-                    )
-                }
-                MediaList.Type.ALL_TIME_POPULAR -> {
-                    onNavigateToExplore(
-                        ExploreRoute(
-                            mediaType = MediaType.MANGA.name,
-                            sortName = Media.Sort.POPULARITY.name,
-                            isDescending = true
-                        )
-                    )
-                }
-                MediaList.Type.NEWLY_ADDED -> {
-                    onNavigateToExplore(
-                        ExploreRoute(
-                            mediaType = MediaType.MANGA.name,
-                            sortName = Media.Sort.ID.name,
-                            isDescending = true
-                        )
-                    )
-                }
-                else -> {}
-            }
+            val sort = mediaList.filterStrategy.sort.singleOrNull()?.sanitize()
+            onNavigateToExplore(
+                ExploreRoute(
+                    mediaType = MediaType.MANGA.name,
+                    sortName = sort?.first?.name,
+                    isDescending = sort?.second,
+                    season = mediaList.filterStrategy.season?.name,
+                    year = mediaList.filterStrategy.year,
+                    genre = mediaList.filterStrategy.genre
+                )
+            )
         },
         modifier = modifier,
         contentPadding = contentPadding,
@@ -228,7 +212,7 @@ private fun MangaRow(
                     sharedContentState = rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.type.name,
+                            source = mediaList.title,
                             sharedComponents = Card to Page,
                         )
                     ),
@@ -241,7 +225,7 @@ private fun MangaRow(
                     rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.type.name,
+                            source = mediaList.title,
                             sharedComponents = Image to Image,
                         )
                     ),

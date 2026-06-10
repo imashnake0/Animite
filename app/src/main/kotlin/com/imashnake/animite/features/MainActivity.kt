@@ -237,7 +237,7 @@ fun MainScreen(
                                 navController.navigate(
                                     MediaPage(
                                         id = id,
-                                        source = MediaList.Type.SEARCH.name,
+                                        source = "Search",
                                         mediaType = mediaType.rawValue,
                                         title = title,
                                     )
@@ -291,7 +291,7 @@ fun MainScreen(
                 navController.navigate(
                     MediaPage(
                         id = id,
-                        source = MediaList.Type.SEARCH.name,
+                        source = "Quick Search",
                         mediaType = mediaType.rawValue,
                         title = title,
                     )

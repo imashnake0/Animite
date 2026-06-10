@@ -7,13 +7,8 @@ import com.apollographql.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Info
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.sanitize.media.Page
-import com.imashnake.animite.api.anilist.type.MediaFormat
-import com.imashnake.animite.api.anilist.type.MediaSeason
-import com.imashnake.animite.api.anilist.type.MediaSort
-import com.imashnake.animite.api.anilist.type.MediaStatus
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
@@ -34,25 +29,18 @@ class AnilistMediaRepository(
 ) {
 
     fun fetchMediaList(
-        mediaListType: MediaList.Type,
-        mediaType: MediaType,
-        sort: List<MediaSort>,
+        title: String,
         useNetwork: Boolean,
-        page: Int = 0,
-        perPage: Int = 10,
-        season: MediaSeason? = null,
-        seasonYear: Int? = null,
-        isNsfwEnabled: Boolean = false,
-        language: Media.Language = Media.Language.DEFAULT,
-    ): Flow<Result<MediaList>> {
-        return apolloClient.query(
+        filterStrategy: FilterStrategy
+    ): Flow<Result<MediaList>> = with(filterStrategy) {
+        apolloClient.query(
             MediaListQuery(
                 type = Optional.presentIfNotNull(mediaType),
                 page = Optional.presentIfNotNull(page),
                 perPage = Optional.presentIfNotNull(perPage),
                 sort = Optional.presentIfNotNull(sort),
                 season = Optional.presentIfNotNull(season),
-                seasonYear = Optional.presentIfNotNull(seasonYear),
+                seasonYear = Optional.presentIfNotNull(year),
                 isAdult = Optional.presentIfNotNull(if (isNsfwEnabled) null else false)
             )
         )
@@ -65,12 +53,11 @@ class AnilistMediaRepository(
         .filter { it.exception == null }
         .asResult {
             MediaList(
-                type = mediaListType,
+                title = title,
                 list = it.page!!.media.orEmpty().filterNotNull().map { query ->
                     Media.Small(query.mediaSmall, language)
                 }.toImmutableList(),
-                season = season?.sanitize(),
-                year = seasonYear,
+                filterStrategy = this,
             )
         }
     }
