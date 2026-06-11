@@ -9,7 +9,7 @@ plugins {
 kotlin {
     jvmToolchain(21)
 
-    androidLibrary {
+    android {
         namespace = "com.imashnake.animite.core.ui"
         androidResources.enable = true
     }
