@@ -68,7 +68,7 @@ hilt = "1.4.0-rc01"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details.
-kotlin = "2.4.0"
+kotlin = "2.3.21"
 kotlinxTime = "0.8.0"
 kotlinxCollectionsImmutable = "0.5.0"
 coroutines = "1.11.0"
