@@ -10,6 +10,7 @@ import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
+import com.imashnake.animite.core.model.AnimeLists
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.media.ext.nextSeason
@@ -62,7 +63,6 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Trending Now",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -86,7 +86,6 @@ class AnimeViewModel @Inject constructor(
         transform = ::Triple,
     ).flatMapLatest { (_, now, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Popular This Season",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -111,7 +110,6 @@ class AnimeViewModel @Inject constructor(
     ).flatMapLatest { (_, now, prefs) ->
         val season = now.month.season
         mediaListRepository.fetchMediaList(
-            title = "Upcoming Next Season",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -134,7 +132,6 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "All Time Popular",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -157,7 +154,6 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Newly Added",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,

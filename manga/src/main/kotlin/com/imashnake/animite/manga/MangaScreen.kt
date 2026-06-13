@@ -43,6 +43,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
+import com.imashnake.animite.core.model.MangaLists
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.EmptyChip
@@ -57,6 +58,7 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import org.jetbrains.compose.resources.stringResource
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,12 +126,14 @@ fun MangaScreen(
                                     val mediaList = (row as? Resource.Success)?.data
                                     if (mediaList?.list.orEmpty().isNotEmpty()) {
                                         MangaRow(
+                                            index = index,
+                                            title = stringResource(MangaLists.entries[index].id),
                                             mediaList = mediaList!!,
                                             onItemClicked = { media ->
                                                 onNavigateToMediaItem(
                                                     MediaPage(
                                                         id = media.id,
-                                                        source = mediaList.title,
+                                                        source = index.toString(),
                                                         mediaType = MediaType.MANGA.rawValue,
                                                         title = media.title,
                                                     )
@@ -170,6 +174,8 @@ fun MangaScreen(
 
 @Composable
 private fun MangaRow(
+    index: Int,
+    title: String,
     mediaList: MediaList,
     onItemClicked: (Media.Small) -> Unit,
     onNavigateToExplore: (ExploreRoute) -> Unit,
@@ -180,7 +186,7 @@ private fun MangaRow(
 ) {
     val haptic = LocalHapticFeedback.current
     MediaSmallRow(
-        title = mediaList.title,
+        title = title,
         mediaList = mediaList.list,
         contextChip = { EmptyChip() },
         onListClick = {
@@ -210,7 +216,7 @@ private fun MangaRow(
                     sharedContentState = rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.title,
+                            source = index.toString(),
                             sharedComponents = Card to Page,
                         )
                     ),
@@ -223,7 +229,7 @@ private fun MangaRow(
                     rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.title,
+                            source = index.toString(),
                             sharedComponents = Image to Image,
                         )
                     ),

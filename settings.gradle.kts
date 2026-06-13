@@ -42,6 +42,7 @@ include(
     ":api:preferences",
     ":app",
     ":banner",
+    ":core:model",
     ":core:resource",
     ":core:ui",
     ":manga",
@@ -50,7 +51,7 @@ include(
     ":profile",
     ":settings",
     ":social",
-    ":explore",
+    ":explore"
 )
 
 android {

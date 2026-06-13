@@ -123,6 +123,7 @@ androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version.ref = "composeAnimation" }
+compose-components-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "composeMultiplatform" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "composeIcons" }

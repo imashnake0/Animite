@@ -36,6 +36,7 @@ dependencies {
     implementation(projects.media)
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
+    implementation(projects.core.model)
     implementation(projects.core.resource)
     implementation(projects.core.ui)
     implementation(projects.navigation)
@@ -43,6 +44,7 @@ dependencies {
     implementation(libs.kotlinx.collectionsImmutable)
 
     // Compose
+    implementation(libs.compose.components.resources)
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
