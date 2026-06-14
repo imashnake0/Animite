@@ -68,7 +68,6 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import org.jetbrains.compose.resources.stringResource
-import sh.calvin.reorderable.rememberReorderableLazyListState
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)

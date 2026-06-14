@@ -145,8 +145,6 @@ class AnimeViewModel @Inject constructor(
         )
     }.asResource { AnimeLists.NEWLY_ADDED to it }
 
-    val titlesIndices = preferencesRepository.animeListsIndices
-
     val lists = combine(
         trendingMedia,
         popularMediaThisSeason,
