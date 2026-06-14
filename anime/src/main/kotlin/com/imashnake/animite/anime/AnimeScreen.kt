@@ -94,19 +94,7 @@ fun AnimeScreen(
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
-    val trendingList by viewModel.trendingMedia.collectAsState()
-    val popularList by viewModel.popularMediaThisSeason.collectAsState()
-    val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
-    val allTimePopularList by viewModel.allTimePopular.collectAsState()
-    val newlyAddedList by viewModel.newlyAdded.collectAsState()
-
-    val rows = listOf(
-        trendingList,
-        popularList,
-        upcomingList,
-        allTimePopularList,
-        newlyAddedList,
-    )
+    val lists by viewModel.lists.collectAsState()
 
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
@@ -128,7 +116,7 @@ fun AnimeScreen(
                         )
                     },
                     content = {
-                        rows.fastForEachIndexed { index, row ->
+                        lists.fastForEachIndexed { index, row ->
                             AnimatedContent(
                                 targetState = row is Resource.Success,
                                 transitionSpec = {
@@ -137,12 +125,12 @@ fun AnimeScreen(
                                 },
                             ) {
                                 if (it) {
-                                    val mediaList = (row as? Resource.Success)?.data
-                                    if (mediaList?.list.orEmpty().isNotEmpty()) {
+                                    val titleToMediaList = (row as? Resource.Success)?.data!!
+                                    if (titleToMediaList.second.list.isNotEmpty()) {
                                         AnimeRow(
                                             index = index,
-                                            title = stringResource(AnimeLists.entries[index].id),
-                                            mediaList = mediaList!!,
+                                            title = stringResource(titleToMediaList.first.id),
+                                            mediaList = titleToMediaList.second,
                                             onItemClicked = { media ->
                                                 onNavigateToMediaItem(
                                                     MediaPage(

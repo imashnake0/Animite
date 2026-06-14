@@ -3,6 +3,7 @@ package com.imashnake.animite.api.preferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.byteArrayPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
@@ -22,6 +23,12 @@ private const val IS_DEV_OPTIONS_ENABLED = false
 class PreferencesRepository internal constructor(
     private val dataStore: DataStore<Preferences>
 ) {
+    private val animeListsIndicesKey = byteArrayPreferencesKey("anime_lists_indices")
+    val animeListsIndices = dataStore.getValue(animeListsIndicesKey, byteArrayOf(4, 2, 3, 1, 0))
+    suspend fun setAnimeListsIndices(animeListsIndices: ByteArray) {
+        dataStore.setValue(animeListsIndicesKey, animeListsIndices)
+    }
+
     // region profile
     private val accessTokenKey = stringPreferencesKey("access_token")
     val accessToken = dataStore.getValue(accessTokenKey, null)
