@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
+import kotlinx.coroutines.flow.firstOrNull
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
 private const val DEFAULT_DENSITY_KEY = "COMFY"
@@ -24,9 +25,14 @@ class PreferencesRepository internal constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     private val animeListsIndicesKey = byteArrayPreferencesKey("anime_lists_indices")
-    val animeListsIndices = dataStore.getValue(animeListsIndicesKey, byteArrayOf(4, 2, 3, 1, 0))
-    suspend fun setAnimeListsIndices(animeListsIndices: ByteArray) {
-        dataStore.setValue(animeListsIndicesKey, animeListsIndices)
+    val animeListsIndices = dataStore.getValue(animeListsIndicesKey, byteArrayOf(0, 1, 2, 3, 4))
+    suspend fun setAnimeListsIndices(from: Int, to: Int) {
+        dataStore.setValue(
+            animeListsIndicesKey,
+            animeListsIndices.firstOrNull()?.toMutableList()?.apply {
+                add(to, removeAt(from))
+            }?.toByteArray()
+        )
     }
 
     // region profile

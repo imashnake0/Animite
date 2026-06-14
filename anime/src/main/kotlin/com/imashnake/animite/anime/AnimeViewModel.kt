@@ -3,11 +3,9 @@ package com.imashnake.animite.anime
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.imashnake.animite.anime.combine
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
@@ -34,8 +32,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
-import kotlin.collections.emptyList
-import kotlin.let
 import kotlin.time.Clock
 
 @HiltViewModel
@@ -158,19 +154,19 @@ class AnimeViewModel @Inject constructor(
         allTimePopular,
         newlyAdded,
         preferencesRepository.animeListsIndices,
-    ) { trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular, newlyAdded, indices ->
+    ) { trending, popularThisSeason, upcomingNextSeason, allTimePopular, newlyAdded, indices ->
         mutableListOf(
-            trendingMedia,
-            popularMediaThisSeason,
-            upcomingMediaNextSeason,
+            trending,
+            popularThisSeason,
+            upcomingNextSeason,
             allTimePopular,
             newlyAdded
         ).apply {
             indices?.let {
                 // the bytes at the indices of indices represents the order of the lists
-                this[it[0].toInt()] = trendingMedia
-                this[it[1].toInt()] = popularMediaThisSeason
-                this[it[2].toInt()] = upcomingMediaNextSeason
+                this[it[0].toInt()] = trending
+                this[it[1].toInt()] = popularThisSeason
+                this[it[2].toInt()] = upcomingNextSeason
                 this[it[3].toInt()] = allTimePopular
                 this[it[4].toInt()] = newlyAdded
             }

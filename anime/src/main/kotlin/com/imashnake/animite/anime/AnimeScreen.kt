@@ -50,7 +50,6 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
-import com.imashnake.animite.core.model.AnimeLists
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Chip
@@ -69,6 +68,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)
