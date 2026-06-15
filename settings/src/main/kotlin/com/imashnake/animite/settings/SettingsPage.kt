@@ -466,6 +466,7 @@ fun SettingsPage(
                                                 ) {
                                                     Row(
                                                         horizontalArrangement = Arrangement.SpaceBetween,
+                                                        verticalAlignment = Alignment.CenterVertically,
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
                                                         Text(text = stringResource(item.id),)
