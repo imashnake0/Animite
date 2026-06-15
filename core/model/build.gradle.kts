@@ -7,31 +7,19 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
     jvmToolchain(21)
 
     androidLibrary {
-        namespace = "com.imashnake.animite.core.ui"
+        namespace = "com.imashnake.animite.core.model"
         androidResources.enable = true
     }
 
     sourceSets {
         commonMain.dependencies {
             implementation(libs.bundles.compose)
-            implementation(libs.compose.animation.graphics)
-            implementation(libs.compose.material.icons.core)
-            implementation(libs.compose.ui.toolingPreview)
             implementation(libs.compose.components.resources)
-
-            // Compose Markdown
-            implementation(libs.boswelja.composeMarkdown.material3)
-
-            // Coil
-            implementation(libs.bundles.coil)
-
-            // Kotlin
-            implementation(libs.kotlinx.collectionsImmutable)
-            implementation(libs.kotlinx.datetime)
-
+            implementation(libs.androidx.core.ktx)
         }
     }
 }

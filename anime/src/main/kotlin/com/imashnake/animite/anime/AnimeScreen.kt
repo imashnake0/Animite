@@ -67,6 +67,7 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import org.jetbrains.compose.resources.stringResource
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,19 +93,7 @@ fun AnimeScreen(
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
-    val trendingList by viewModel.trendingMedia.collectAsState()
-    val popularList by viewModel.popularMediaThisSeason.collectAsState()
-    val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
-    val allTimePopularList by viewModel.allTimePopular.collectAsState()
-    val newlyAddedList by viewModel.newlyAdded.collectAsState()
-
-    val rows = listOf(
-        trendingList,
-        popularList,
-        upcomingList,
-        allTimePopularList,
-        newlyAddedList,
-    )
+    val lists by viewModel.lists.collectAsState()
 
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
@@ -126,7 +115,7 @@ fun AnimeScreen(
                         )
                     },
                     content = {
-                        rows.fastForEachIndexed { index, row ->
+                        lists.fastForEachIndexed { index, row ->
                             AnimatedContent(
                                 targetState = row is Resource.Success,
                                 transitionSpec = {
@@ -135,15 +124,17 @@ fun AnimeScreen(
                                 },
                             ) {
                                 if (it) {
-                                    val mediaList = (row as? Resource.Success)?.data
-                                    if (mediaList?.list.orEmpty().isNotEmpty()) {
+                                    val titleToMediaList = (row as? Resource.Success)?.data!!
+                                    if (titleToMediaList.second.list.isNotEmpty()) {
                                         AnimeRow(
-                                            mediaList = mediaList!!,
+                                            index = index,
+                                            title = stringResource(titleToMediaList.first.id),
+                                            mediaList = titleToMediaList.second,
                                             onItemClicked = { media ->
                                                 onNavigateToMediaItem(
                                                     MediaPage(
                                                         id = media.id,
-                                                        source = mediaList.title,
+                                                        source = index.toString(),
                                                         mediaType = MediaType.ANIME.rawValue,
                                                         title = media.title,
                                                     )
@@ -184,6 +175,8 @@ fun AnimeScreen(
 
 @Composable
 private fun AnimeRow(
+    index: Int,
+    title: String,
     mediaList: MediaList,
     onItemClicked: (Media.Small) -> Unit,
     onNavigateToExplore: (ExploreRoute) -> Unit,
@@ -194,7 +187,7 @@ private fun AnimeRow(
 ) {
     val haptic = LocalHapticFeedback.current
     MediaSmallRow(
-        title = mediaList.title,
+        title = title,
         mediaList = mediaList.list,
         contextChip = { onListClick ->
             val season = mediaList.filterStrategy.season
@@ -240,7 +233,7 @@ private fun AnimeRow(
                     sharedContentState = rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.title,
+                            source = index.toString(),
                             sharedComponents = Card to Page,
                         )
                     ),
@@ -253,7 +246,7 @@ private fun AnimeRow(
                     rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.title,
+                            source = index.toString(),
                             sharedComponents = Image to Image,
                         )
                     ),

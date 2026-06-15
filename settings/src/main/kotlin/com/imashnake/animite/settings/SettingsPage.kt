@@ -56,6 +56,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -99,6 +100,8 @@ import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.ReorderableColumn
 
 private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
@@ -128,6 +131,7 @@ fun SettingsPage(
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
+    val animeLists by viewModel.animeLists.collectAsState(initial = null)
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -355,6 +359,11 @@ fun SettingsPage(
                                     icon = R.drawable.title_language,
                                     label = R.string.title_language,
                                     orientation = Item.Orientation.VERTICAL
+                                ),
+                                Item(
+                                    icon = R.drawable.list_order,
+                                    label = R.string.anime_lists,
+                                    orientation = Item.Orientation.VERTICAL
                                 )
                             ),
                             onItemClick = { index ->
@@ -424,6 +433,55 @@ fun SettingsPage(
                                                 modifier = Modifier.weight(1f)
                                             ) {
                                                 Text(stringResource(language.res))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                2 -> {
+                                    ReorderableColumn(
+                                        list = animeLists.orEmpty(),
+                                        onSettle = viewModel::setAnimeListsIndices,
+                                        verticalArrangement = Arrangement.spacedBy(
+                                            ButtonGroupDefaults.ConnectedSpaceBetween
+                                        ),
+                                        onMove = {
+                                            haptic.performHapticFeedback(
+                                                HapticFeedbackType.SegmentFrequentTick
+                                            )
+                                        }
+                                    ) { _, item, _ ->
+                                        key(item!!.id) {
+                                            ReorderableItem {
+                                                ToggleButton(
+                                                    checked = false,
+                                                    onCheckedChange = {
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.SegmentTick
+                                                        )
+                                                    },
+                                                    // TODO: Fix the shapes.
+                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(),
+                                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                                        containerColor = MaterialTheme.colorScheme.background
+                                                    ),
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Row(
+                                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        Text(text = stringResource(item.id))
+                                                        Icon(
+                                                            imageVector = ImageVector.vectorResource(
+                                                                R.drawable.drag_handle
+                                                            ),
+                                                            contentDescription = "Drag Handle",
+                                                            modifier = Modifier.draggableHandle()
+                                                        )
+                                                    }
+                                                }
                                             }
                                         }
                                     }
