@@ -46,7 +46,7 @@ datastore = "1.2.1"
 
 # COIL
 # https://github.com/coil-kt/coil/blob/main/CHANGELOG.md
-coil = "3.4.0"
+coil = "3.5.0"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose
