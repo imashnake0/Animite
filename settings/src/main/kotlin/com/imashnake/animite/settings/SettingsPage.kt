@@ -13,7 +13,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -53,7 +52,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -446,7 +444,12 @@ fun SettingsPage(
                                         onSettle = viewModel::setAnimeListsIndices,
                                         verticalArrangement = Arrangement.spacedBy(
                                             ButtonGroupDefaults.ConnectedSpaceBetween
-                                        )
+                                        ),
+                                        onMove = {
+                                            haptic.performHapticFeedback(
+                                                HapticFeedbackType.SegmentFrequentTick
+                                            )
+                                        }
                                     ) { _, item, _ ->
                                         key(item!!.id) {
                                             ReorderableItem {
@@ -469,7 +472,7 @@ fun SettingsPage(
                                                         verticalAlignment = Alignment.CenterVertically,
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
-                                                        Text(text = stringResource(item.id),)
+                                                        Text(text = stringResource(item.id))
                                                         Icon(
                                                             imageVector = ImageVector.vectorResource(
                                                                 R.drawable.drag_handle
