@@ -152,21 +152,15 @@ class AnimeViewModel @Inject constructor(
         allTimePopular,
         newlyAdded,
         preferencesRepository.animeListsIndices,
-    ) { trending, popularThisSeason, upcomingNextSeason, allTimePopular, newlyAdded, indices ->
-        mutableListOf(
-            trending,
-            popularThisSeason,
-            upcomingNextSeason,
-            allTimePopular,
-            newlyAdded
-        ).apply {
-            indices?.let {
-                // the bytes at the indices of indices represents the order of the lists
-                this[it[0].toInt()] = trending
-                this[it[1].toInt()] = popularThisSeason
-                this[it[2].toInt()] = upcomingNextSeason
-                this[it[3].toInt()] = allTimePopular
-                this[it[4].toInt()] = newlyAdded
+    ) { trendingNow, popularThisSeason, upcomingNextSeason, allTimePopular, newlyAdded, indices ->
+        indices?.toMutableList().orEmpty().map {
+            when (it.toInt()) {
+                0 -> trendingNow
+                1 -> popularThisSeason
+                2 -> upcomingNextSeason
+                3 -> allTimePopular
+                4 -> newlyAdded
+                else -> Resource.error("Unknown List")
             }
         }
     }.stateIn(

@@ -448,7 +448,7 @@ fun SettingsPage(
                                             ButtonGroupDefaults.ConnectedSpaceBetween
                                         )
                                     ) { _, item, _ ->
-                                        key(item.id) {
+                                        key(item!!.id) {
                                             ReorderableItem {
                                                 ToggleButton(
                                                     checked = false,

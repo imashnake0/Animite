@@ -26,7 +26,17 @@ class SettingsViewModel @Inject constructor(
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
     val animeLists = preferencesRepository.animeListsIndices.map { indices ->
-        AnimeLists.entries.withIndex().sortedBy { indices?.get(it.index) }.map { it.value }
+        indices?.map {
+            // each int from 0 to 4 maps to a AnimeList
+            when (it.toInt()) {
+                0 -> AnimeLists.TRENDING_NOW
+                1 -> AnimeLists.POPULAR_THIS_SEASON
+                2 -> AnimeLists.UPCOMING_NEXT_SEASON
+                3 -> AnimeLists.ALL_TIME_POPULAR
+                4 -> AnimeLists.NEWLY_ADDED
+                else -> null
+            }
+        }
     }
 
     fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {
