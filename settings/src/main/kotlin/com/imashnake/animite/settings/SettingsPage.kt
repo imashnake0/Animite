@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -206,6 +207,7 @@ fun SettingsPage(
                                     else -> {}
                                 }
                             },
+                            onItemLongClick = {},
                             isDarkMode = isDarkMode,
                             modifier = Modifier.fillMaxWidth()
                         ) { index ->
@@ -377,8 +379,16 @@ fun SettingsPage(
                                             } else HapticFeedbackType.ToggleOn
                                         )
                                     }
-                                    1 -> {
-
+                                    1 -> {}
+                                }
+                            },
+                            onItemLongClick = { index ->
+                                when (index) {
+                                    2 -> {
+                                        viewModel.resetAnimeLists()
+                                        haptic.performHapticFeedback(
+                                            HapticFeedbackType.LongPress
+                                        )
                                     }
                                 }
                             },
@@ -450,7 +460,8 @@ fun SettingsPage(
                                             haptic.performHapticFeedback(
                                                 HapticFeedbackType.SegmentFrequentTick
                                             )
-                                        }
+                                        },
+                                        modifier = Modifier.animateContentSize()
                                     ) { index, animeList, _ ->
                                         key(animeList!!.id) {
                                             ReorderableItem {
@@ -544,6 +555,7 @@ fun SettingsPage(
                                     ),
                                 ),
                                 onItemClick = {},
+                                onItemLongClick = {},
                                 isDarkMode = isDarkMode,
                             ) { index ->
                                 when (index) {
@@ -620,6 +632,7 @@ private fun Items(
     isDarkMode: Boolean,
     modifier: Modifier = Modifier,
     onItemClick: (Int) -> Unit,
+    onItemLongClick: (Int) -> Unit,
     itemCustomIcon: @Composable (() -> Unit)? = null,
     itemContent: @Composable (Int) -> Unit,
 ) {
@@ -653,6 +666,7 @@ private fun Items(
                             )
                         },
                         onItemClick = { onItemClick(index) },
+                        onItemLongClick = { onItemLongClick(index) },
                         background = if (isDarkMode) {
                             MaterialTheme.colorScheme.surfaceContainer
                         } else MaterialTheme.colorScheme.surface
@@ -669,6 +683,7 @@ private fun Items(
                             bottomStart = bottom,
                         ),
                         onItemClick = { onItemClick(index) },
+                        onItemLongClick = { onItemLongClick(index) },
                         background = if (isDarkMode) {
                             MaterialTheme.colorScheme.surfaceContainer
                         } else MaterialTheme.colorScheme.surface
@@ -691,6 +706,7 @@ private fun HorizontalItem(
     shape: Shape,
     background: Color,
     onItemClick: () -> Unit,
+    onItemLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     customIcon: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
@@ -706,7 +722,10 @@ private fun HorizontalItem(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(shape)
-                .clickable { onItemClick() }
+                .combinedClickable(
+                    onClick = onItemClick,
+                    onLongClick = onItemLongClick,
+                )
                 .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
@@ -736,6 +755,7 @@ private fun VerticalItem(
     shape: Shape,
     background: Color,
     onItemClick: () -> Unit,
+    onItemLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     customIcon: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
@@ -750,7 +770,10 @@ private fun VerticalItem(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(shape)
-                .clickable { onItemClick() }
+                .combinedClickable(
+                    onClick = onItemClick,
+                    onLongClick = onItemLongClick,
+                )
                 .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
@@ -1021,6 +1044,7 @@ private fun PreviewItems() {
                 )
             ),
             onItemClick = {},
+            onItemLongClick = {},
             isDarkMode = false,
             modifier = Modifier.fillMaxWidth().padding(horizontal = padding)
         ) { index ->

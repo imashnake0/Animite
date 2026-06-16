@@ -42,6 +42,9 @@ class PreferencesRepository internal constructor(
             }?.toByteArray()
         )
     }
+    suspend fun resetAnimeLists() {
+        dataStore.setValue(animeListsIndicesKey, byteArrayOf(1, 2, 3, 4, 5))
+    }
 
     // region profile
     private val accessTokenKey = stringPreferencesKey("access_token")

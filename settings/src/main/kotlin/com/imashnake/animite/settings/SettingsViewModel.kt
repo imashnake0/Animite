@@ -78,4 +78,8 @@ class SettingsViewModel @Inject constructor(
     fun toggleAnimeList(index: Int) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.toggleAnimeList(index)
     }
+
+    fun resetAnimeLists() = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.resetAnimeLists()
+    }
 }
