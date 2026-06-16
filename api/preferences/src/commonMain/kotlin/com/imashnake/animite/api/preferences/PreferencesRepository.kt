@@ -25,12 +25,20 @@ class PreferencesRepository internal constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     private val animeListsIndicesKey = byteArrayPreferencesKey("anime_lists_indices")
-    val animeListsIndices = dataStore.getValue(animeListsIndicesKey, byteArrayOf(0, 1, 2, 3, 4))
+    val animeListsIndices = dataStore.getValue(animeListsIndicesKey, byteArrayOf(1, 2, 3, 4, 5))
     suspend fun setAnimeListsIndices(from: Int, to: Int) {
         dataStore.setValue(
             animeListsIndicesKey,
             animeListsIndices.firstOrNull()?.toMutableList()?.apply {
                 add(to, removeAt(from))
+            }?.toByteArray()
+        )
+    }
+    suspend fun toggleAnimeList(index: Int) {
+        dataStore.setValue(
+            animeListsIndicesKey,
+            animeListsIndices.firstOrNull()?.toMutableList()?.apply {
+                set(index, (get(index) * -1).toByte())
             }?.toByteArray()
         )
     }

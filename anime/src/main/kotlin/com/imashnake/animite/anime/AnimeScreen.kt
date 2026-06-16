@@ -117,46 +117,51 @@ fun AnimeScreen(
                     content = {
                         lists.fastForEachIndexed { index, row ->
                             AnimatedContent(
-                                targetState = row is Resource.Success,
+                                targetState = row,
                                 transitionSpec = {
                                     fadeIn(tween(500, delayMillis = index * 100))
                                         .togetherWith(fadeOut(tween(500)))
                                 },
                             ) {
-                                if (it) {
-                                    val titleToMediaList = (row as? Resource.Success)?.data!!
-                                    if (titleToMediaList.second.list.isNotEmpty()) {
-                                        AnimeRow(
-                                            index = index,
-                                            title = stringResource(titleToMediaList.first.id),
-                                            mediaList = titleToMediaList.second,
-                                            onItemClicked = { media ->
-                                                onNavigateToMediaItem(
-                                                    MediaPage(
-                                                        id = media.id,
-                                                        source = index.toString(),
-                                                        mediaType = MediaType.ANIME.rawValue,
-                                                        title = media.title,
+                                when (it) {
+                                    is Resource.Success -> {
+                                        val titleToMediaList = row.data
+                                        if (titleToMediaList?.second?.list?.isNotEmpty() == true) {
+                                            AnimeRow(
+                                                index = index,
+                                                title = stringResource(titleToMediaList.first.id),
+                                                mediaList = titleToMediaList.second,
+                                                onItemClicked = { media ->
+                                                    onNavigateToMediaItem(
+                                                        MediaPage(
+                                                            id = media.id,
+                                                            source = index.toString(),
+                                                            mediaType = MediaType.ANIME.rawValue,
+                                                            title = media.title,
+                                                        )
                                                     )
-                                                )
-                                            },
-                                            onNavigateToExplore = onNavigateToExplore,
-                                            sharedTransitionScope = sharedTransitionScope,
-                                            animatedVisibilityScope = animatedVisibilityScope,
+                                                },
+                                                onNavigateToExplore = onNavigateToExplore,
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                                contentPadding = PaddingValues(
+                                                    horizontal = LocalPaddings.current.large,
+                                                    vertical = LocalPaddings.current.large / 2,
+                                                ) + insetAndNavigationPaddingValues.horizontalOnly
+                                            )
+                                        }
+                                    }
+                                    is Resource.Loading -> {
+                                        LoadingMediaSmallRow(
+                                            count = 10,
                                             contentPadding = PaddingValues(
                                                 horizontal = LocalPaddings.current.large,
                                                 vertical = LocalPaddings.current.large / 2,
                                             ) + insetAndNavigationPaddingValues.horizontalOnly
                                         )
                                     }
-                                } else {
-                                    LoadingMediaSmallRow(
-                                        count = 10,
-                                        contentPadding = PaddingValues(
-                                            horizontal = LocalPaddings.current.large,
-                                            vertical = LocalPaddings.current.large / 2,
-                                        ) + insetAndNavigationPaddingValues.horizontalOnly
-                                    )
+                                    // TODO: Show error UI.
+                                    is Resource.Error -> {}
                                 }
                             }
                         }

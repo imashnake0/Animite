@@ -132,6 +132,7 @@ fun SettingsPage(
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
     val animeLists by viewModel.animeLists.collectAsState(initial = null)
+    val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf())
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -450,12 +451,13 @@ fun SettingsPage(
                                                 HapticFeedbackType.SegmentFrequentTick
                                             )
                                         }
-                                    ) { _, item, _ ->
-                                        key(item!!.id) {
+                                    ) { index, animeList, _ ->
+                                        key(animeList!!.id) {
                                             ReorderableItem {
                                                 ToggleButton(
-                                                    checked = false,
+                                                    checked = animeListsIndices[index] > 0,
                                                     onCheckedChange = {
+                                                        viewModel.toggleAnimeList(animeList)
                                                         haptic.performHapticFeedback(
                                                             HapticFeedbackType.SegmentTick
                                                         )
@@ -472,7 +474,7 @@ fun SettingsPage(
                                                         verticalAlignment = Alignment.CenterVertically,
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
-                                                        Text(text = stringResource(item.id))
+                                                        Text(text = stringResource(animeList.id))
                                                         Icon(
                                                             imageVector = ImageVector.vectorResource(
                                                                 R.drawable.drag_handle

@@ -27,17 +27,18 @@ class SettingsViewModel @Inject constructor(
     val dayHour = preferencesRepository.dayHour
     val animeLists = preferencesRepository.animeListsIndices.map { indices ->
         indices?.map {
-            // each int from 0 to 4 maps to a AnimeList
+            // each int from +-1 to +-5 maps to a AnimeList
             when (it.toInt()) {
-                0 -> AnimeLists.TRENDING_NOW
-                1 -> AnimeLists.POPULAR_THIS_SEASON
-                2 -> AnimeLists.UPCOMING_NEXT_SEASON
-                3 -> AnimeLists.ALL_TIME_POPULAR
-                4 -> AnimeLists.NEWLY_ADDED
+                1, -1 -> AnimeLists.TRENDING_NOW
+                2, -2 -> AnimeLists.POPULAR_THIS_SEASON
+                3, -3 -> AnimeLists.UPCOMING_NEXT_SEASON
+                4, -4 -> AnimeLists.ALL_TIME_POPULAR
+                5, -5 -> AnimeLists.NEWLY_ADDED
                 else -> null
             }
         }
     }
+    val animeListsIndices = preferencesRepository.animeListsIndices.filterNotNull()
 
     fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setTheme(theme.name)
@@ -72,5 +73,9 @@ class SettingsViewModel @Inject constructor(
 
     fun setAnimeListsIndices(from: Int, to: Int) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setAnimeListsIndices(from, to)
+    }
+
+    fun toggleAnimeList(animeList: AnimeLists) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.toggleAnimeList(animeList.ordinal)
     }
 }
