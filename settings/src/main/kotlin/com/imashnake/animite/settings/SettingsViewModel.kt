@@ -75,7 +75,7 @@ class SettingsViewModel @Inject constructor(
         preferencesRepository.setAnimeListsIndices(from, to)
     }
 
-    fun toggleAnimeList(animeList: AnimeLists) = viewModelScope.launch(Dispatchers.IO) {
-        preferencesRepository.toggleAnimeList(animeList.ordinal)
+    fun toggleAnimeList(index: Int) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.toggleAnimeList(index)
     }
 }

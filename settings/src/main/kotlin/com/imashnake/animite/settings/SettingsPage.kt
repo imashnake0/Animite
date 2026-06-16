@@ -457,7 +457,7 @@ fun SettingsPage(
                                                 ToggleButton(
                                                     checked = animeListsIndices[index] > 0,
                                                     onCheckedChange = {
-                                                        viewModel.toggleAnimeList(animeList)
+                                                        viewModel.toggleAnimeList(index)
                                                         haptic.performHapticFeedback(
                                                             HapticFeedbackType.SegmentTick
                                                         )
