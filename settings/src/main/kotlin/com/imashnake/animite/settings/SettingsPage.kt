@@ -132,7 +132,7 @@ fun SettingsPage(
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
     val animeLists by viewModel.animeLists.collectAsState(initial = null)
-    val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf())
+    val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
