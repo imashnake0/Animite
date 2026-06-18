@@ -371,7 +371,7 @@ fun SettingsPage(
                                 ),
                                 Item(
                                     icon = R.drawable.list_order_alt,
-                                    label = R.string.anime_lists,
+                                    label = R.string.manga_lists,
                                     orientation = Item.Orientation.VERTICAL
                                 )
                             ),
