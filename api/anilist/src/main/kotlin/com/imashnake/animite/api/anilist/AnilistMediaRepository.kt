@@ -92,8 +92,8 @@ class AnilistMediaRepository(
         )
         .fetchPolicy(
             if (useNetwork) {
-                FetchPolicy.NetworkFirst
-            } else FetchPolicy.CacheFirst
+                FetchPolicy.NetworkOnly
+            } else FetchPolicy.NetworkFirst
         )
         .toFlow()
         .filter { it.exception == null }
