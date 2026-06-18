@@ -36,7 +36,7 @@ class SettingsViewModel @Inject constructor(
                 5, -5 -> AnimeLists.NEWLY_ADDED
                 else -> null
             }
-        }
+        }.orEmpty().filterNotNull()
     }
     val animeListsIndices = preferencesRepository.animeListsIndices.filterNotNull()
 

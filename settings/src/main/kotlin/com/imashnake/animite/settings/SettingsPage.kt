@@ -132,7 +132,7 @@ fun SettingsPage(
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
-    val animeLists by viewModel.animeLists.collectAsState(initial = null)
+    val animeLists by viewModel.animeLists.collectAsState(initial = emptyList())
     val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
@@ -451,7 +451,7 @@ fun SettingsPage(
 
                                 2 -> {
                                     ReorderableColumn(
-                                        list = animeLists.orEmpty(),
+                                        list = animeLists,
                                         onSettle = viewModel::setAnimeListsIndices,
                                         verticalArrangement = Arrangement.spacedBy(
                                             ButtonGroupDefaults.ConnectedSpaceBetween
@@ -463,7 +463,7 @@ fun SettingsPage(
                                         },
                                         modifier = Modifier.animateContentSize()
                                     ) { index, animeList, _ ->
-                                        key(animeList!!.id) {
+                                        key(animeList) {
                                             ReorderableItem {
                                                 ToggleButton(
                                                     checked = animeListsIndices[index] > 0,
@@ -485,7 +485,7 @@ fun SettingsPage(
                                                         verticalAlignment = Alignment.CenterVertically,
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
-                                                        Text(text = stringResource(animeList.id))
+                                                        Text(text = stringResource(animeList.res))
                                                         Icon(
                                                             imageVector = ImageVector.vectorResource(
                                                                 R.drawable.drag_handle

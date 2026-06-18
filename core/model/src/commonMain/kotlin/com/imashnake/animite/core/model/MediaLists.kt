@@ -8,7 +8,7 @@ import animite.core.model.generated.resources.trending_now
 import animite.core.model.generated.resources.upcoming_next_season
 import org.jetbrains.compose.resources.StringResource
 
-public enum class AnimeLists(public val id: StringResource) {
+public enum class AnimeLists(public val res: StringResource) {
     TRENDING_NOW(Res.string.trending_now),
     POPULAR_THIS_SEASON(Res.string.popular_this_season),
     UPCOMING_NEXT_SEASON(Res.string.upcoming_next_season),

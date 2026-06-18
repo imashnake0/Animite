@@ -129,7 +129,7 @@ fun AnimeScreen(
                                         if (titleToMediaList?.second?.list?.isNotEmpty() == true) {
                                             AnimeRow(
                                                 index = index,
-                                                title = stringResource(titleToMediaList.first.id),
+                                                title = stringResource(titleToMediaList.first.res),
                                                 mediaList = titleToMediaList.second,
                                                 onItemClicked = { media ->
                                                     onNavigateToMediaItem(
