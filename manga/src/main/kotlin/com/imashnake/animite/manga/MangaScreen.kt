@@ -43,7 +43,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
-import com.imashnake.animite.core.model.MangaLists
+import com.imashnake.animite.core.model.MangaList
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.EmptyChip
@@ -127,7 +127,7 @@ fun MangaScreen(
                                     if (mediaList?.list.orEmpty().isNotEmpty()) {
                                         MangaRow(
                                             index = index,
-                                            title = stringResource(MangaLists.entries[index].id),
+                                            title = stringResource(MangaList.entries[index].res),
                                             mediaList = mediaList!!,
                                             onItemClicked = { media ->
                                                 onNavigateToMediaItem(

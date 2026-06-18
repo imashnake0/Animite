@@ -52,7 +52,7 @@ class AnilistMediaRepository(
         .filter { it.exception == null }
         .asResult {
             MediaList(
-                list = it.page!!.media.orEmpty().filterNotNull().map { query ->
+                list = it.page?.media.orEmpty().filterNotNull().map { query ->
                     Media.Small(query.mediaSmall, language)
                 }.toImmutableList(),
                 filterStrategy = this,

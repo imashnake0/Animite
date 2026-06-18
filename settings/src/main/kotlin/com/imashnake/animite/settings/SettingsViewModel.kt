@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.preferences.PreferencesRepository
-import com.imashnake.animite.core.model.AnimeLists
+import com.imashnake.animite.core.model.AnimeList
 import com.imashnake.animite.core.ui.Density
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,15 +25,15 @@ class SettingsViewModel @Inject constructor(
     val language = preferencesRepository.language.filterNotNull()
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
-    val animeLists = preferencesRepository.animeListsIndices.map { indices ->
+    val animeList = preferencesRepository.animeListsIndices.map { indices ->
         indices?.map {
             // each int from +-1 to +-5 maps to a AnimeList
             when (it.toInt()) {
-                1, -1 -> AnimeLists.TRENDING_NOW
-                2, -2 -> AnimeLists.POPULAR_THIS_SEASON
-                3, -3 -> AnimeLists.UPCOMING_NEXT_SEASON
-                4, -4 -> AnimeLists.ALL_TIME_POPULAR
-                5, -5 -> AnimeLists.NEWLY_ADDED
+                1, -1 -> AnimeList.TRENDING_NOW
+                2, -2 -> AnimeList.POPULAR_THIS_SEASON
+                3, -3 -> AnimeList.UPCOMING_NEXT_SEASON
+                4, -4 -> AnimeList.ALL_TIME_POPULAR
+                5, -5 -> AnimeList.NEWLY_ADDED
                 else -> null
             }
         }.orEmpty().filterNotNull()
