@@ -43,7 +43,6 @@ import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
-import com.imashnake.animite.core.model.MangaList
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.EmptyChip
@@ -84,15 +83,7 @@ fun MangaScreen(
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
-    val trendingList by viewModel.trendingMedia.collectAsState()
-    val allTimePopularList by viewModel.allTimePopular.collectAsState()
-    val newlyAddedList by viewModel.newlyAdded.collectAsState()
-
-    val rows = listOf(
-        trendingList,
-        allTimePopularList,
-        newlyAddedList,
-    )
+    val lists by viewModel.lists.collectAsState()
 
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
@@ -114,48 +105,53 @@ fun MangaScreen(
                         )
                     },
                     content = {
-                        rows.fastForEachIndexed { index, row ->
+                        lists.fastForEachIndexed { index, resource ->
                             AnimatedContent(
-                                targetState = row is Resource.Success,
+                                targetState = resource,
                                 transitionSpec = {
                                     fadeIn(tween(500, delayMillis = index * 100))
                                         .togetherWith(fadeOut(tween(500)))
                                 },
                             ) {
-                                if (it) {
-                                    val mediaList = (row as? Resource.Success)?.data
-                                    if (mediaList?.list.orEmpty().isNotEmpty()) {
-                                        MangaRow(
-                                            index = index,
-                                            title = stringResource(MangaList.entries[index].res),
-                                            mediaList = mediaList!!,
-                                            onItemClicked = { media ->
-                                                onNavigateToMediaItem(
-                                                    MediaPage(
-                                                        id = media.id,
-                                                        source = index.toString(),
-                                                        mediaType = MediaType.MANGA.rawValue,
-                                                        title = media.title,
+                                when (it) {
+                                    is Resource.Success -> {
+                                        val mangaRow = resource.data
+                                        if (mangaRow?.mediaList?.list?.isNotEmpty() == true) {
+                                            MangaRow(
+                                                index = index,
+                                                title = stringResource(mangaRow.title),
+                                                mediaList = mangaRow.mediaList,
+                                                onItemClicked = { media ->
+                                                    onNavigateToMediaItem(
+                                                        MediaPage(
+                                                            id = media.id,
+                                                            source = index.toString(),
+                                                            mediaType = MediaType.MANGA.rawValue,
+                                                            title = media.title,
+                                                        )
                                                     )
-                                                )
-                                            },
-                                            onNavigateToExplore = onNavigateToExplore,
-                                            sharedTransitionScope = sharedTransitionScope,
-                                            animatedVisibilityScope = animatedVisibilityScope,
+                                                },
+                                                onNavigateToExplore = onNavigateToExplore,
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                                contentPadding = PaddingValues(
+                                                    horizontal = LocalPaddings.current.large,
+                                                    vertical = LocalPaddings.current.large / 2,
+                                                ) + insetAndNavigationPaddingValues.horizontalOnly
+                                            )
+                                        }
+                                    }
+                                    is Resource.Loading -> {
+                                        LoadingMediaSmallRow(
+                                            count = 10,
                                             contentPadding = PaddingValues(
                                                 horizontal = LocalPaddings.current.large,
                                                 vertical = LocalPaddings.current.large / 2,
                                             ) + insetAndNavigationPaddingValues.horizontalOnly
                                         )
                                     }
-                                } else {
-                                    LoadingMediaSmallRow(
-                                        count = 10,
-                                        contentPadding = PaddingValues(
-                                            horizontal = LocalPaddings.current.large,
-                                            vertical = LocalPaddings.current.large / 2,
-                                        ) + insetAndNavigationPaddingValues.horizontalOnly
-                                    )
+                                    // TODO: Show error UI.
+                                    is Resource.Error -> {}
                                 }
                             }
                         }

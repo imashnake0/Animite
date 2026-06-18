@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.StringResource
 import javax.inject.Inject
 import kotlin.time.Clock
 
@@ -73,7 +74,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }.asResource { AnimeRow(AnimeList.TRENDING_NOW, it) }
+    }.asResource { AnimeRow(AnimeList.TRENDING_NOW.res, it) }
 
     val popularMediaThisSeason = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -92,7 +93,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }.asResource { AnimeRow(AnimeList.POPULAR_THIS_SEASON, it) }
+    }.asResource { AnimeRow(AnimeList.POPULAR_THIS_SEASON.res, it) }
 
     val upcomingMediaNextSeason = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -112,7 +113,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }.asResource { AnimeRow(AnimeList.UPCOMING_NEXT_SEASON, it) }
+    }.asResource { AnimeRow(AnimeList.UPCOMING_NEXT_SEASON.res, it) }
 
     val allTimePopular = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -128,7 +129,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }.asResource { AnimeRow(AnimeList.ALL_TIME_POPULAR, it) }
+    }.asResource { AnimeRow(AnimeList.ALL_TIME_POPULAR.res, it) }
 
     val newlyAdded = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -144,7 +145,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }.asResource { AnimeRow(AnimeList.NEWLY_ADDED, it) }
+    }.asResource { AnimeRow(AnimeList.NEWLY_ADDED.res, it) }
 
     val lists = combine(
         trendingMedia,
@@ -177,7 +178,7 @@ class AnimeViewModel @Inject constructor(
     )
 
     val isLoading = combineTransform(
-        listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)
+        listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular, newlyAdded)
     ) { resources ->
         emit(!resources.none { it is Resource.Loading<*> })
     }.stateIn(viewModelScope, SharingStarted.Lazily, true)
@@ -197,7 +198,7 @@ class AnimeViewModel @Inject constructor(
 }
 
 data class AnimeRow(
-    val title: AnimeList,
+    val title: StringResource,
     val mediaList: MediaList,
 )
 

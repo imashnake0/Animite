@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
+import com.imashnake.animite.core.model.MangaList
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +25,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
 import javax.inject.Inject
+import kotlin.collections.mapNotNull
+import kotlin.collections.orEmpty
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -57,13 +62,7 @@ class MangaViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }
-    .asResource()
-    .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(1000),
-        initialValue = Resource.loading(),
-    )
+    }.asResource { MangaRow(MangaList.TRENDING_NOW.res, it) }
 
     val allTimePopular = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -79,13 +78,7 @@ class MangaViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }
-    .asResource()
-    .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(1000),
-        initialValue = Resource.loading(),
-    )
+    }.asResource { MangaRow(MangaList.ALL_TIME_POPULAR.res, it) }
 
     val newlyAdded = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -101,16 +94,34 @@ class MangaViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }
-    .asResource()
-    .stateIn(
+    }.asResource { MangaRow(MangaList.NEWLY_ADDED.res, it) }
+
+    val lists = combine(
+        trendingMedia,
+        allTimePopular,
+        newlyAdded,
+        preferencesRepository.mangaListsIndices,
+    ) { trendingNow, allTimePopular, newlyAdded, indices ->
+        indices?.toMutableList().orEmpty().mapNotNull {
+            when (it.toInt()) {
+                1 -> trendingNow
+                2 -> allTimePopular
+                3 -> newlyAdded
+                else -> null
+            }
+        }
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(1000),
-        initialValue = Resource.loading(),
+        initialValue = listOf(
+            Resource.loading(),
+            Resource.loading(),
+            Resource.loading(),
+        ),
     )
 
     val isLoading = combineTransform(
-        listOf(trendingMedia, allTimePopular)
+        listOf(trendingMedia, allTimePopular, newlyAdded)
     ) { resources ->
         emit(!resources.none { it is Resource.Loading<*> })
     }.stateIn(viewModelScope, SharingStarted.Lazily, true)
@@ -124,3 +135,8 @@ class MangaViewModel @Inject constructor(
         setIsRefreshing(false)
     }
 }
+
+data class MangaRow(
+    val title: StringResource,
+    val mediaList: MediaList,
+)

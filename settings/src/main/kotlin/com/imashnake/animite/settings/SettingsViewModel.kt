@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.model.AnimeList
+import com.imashnake.animite.core.model.MangaList
 import com.imashnake.animite.core.ui.Density
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +40,19 @@ class SettingsViewModel @Inject constructor(
         }.orEmpty().filterNotNull()
     }
     val animeListsIndices = preferencesRepository.animeListsIndices.filterNotNull()
+
+    val mangaList = preferencesRepository.mangaListsIndices.map { indices ->
+        indices?.map {
+            // each int from +-1 to +-3 maps to a MangaList
+            when (it.toInt()) {
+                1, -1 -> MangaList.TRENDING_NOW
+                2, -2 -> MangaList.ALL_TIME_POPULAR
+                3, -3 -> MangaList.NEWLY_ADDED
+                else -> null
+            }
+        }.orEmpty().filterNotNull()
+    }
+    val mangaListsIndices = preferencesRepository.mangaListsIndices.filterNotNull()
 
     fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setTheme(theme.name)
@@ -81,5 +95,17 @@ class SettingsViewModel @Inject constructor(
 
     fun resetAnimeLists() = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.resetAnimeLists()
+    }
+
+    fun setMangaListsIndices(from: Int, to: Int) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setMangaListsIndices(from, to)
+    }
+
+    fun toggleMangaList(index: Int) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.toggleMangaList(index)
+    }
+
+    fun resetMangaLists() = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.resetMangaLists()
     }
 }

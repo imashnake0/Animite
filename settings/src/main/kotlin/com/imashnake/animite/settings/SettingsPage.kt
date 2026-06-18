@@ -133,6 +133,8 @@ fun SettingsPage(
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
     val animeLists by viewModel.animeList.collectAsState(initial = emptyList())
     val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
+    val mangaLists by viewModel.mangaList.collectAsState(initial = emptyList())
+    val mangaListsIndices by viewModel.mangaListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -366,6 +368,11 @@ fun SettingsPage(
                                     icon = R.drawable.list_order,
                                     label = R.string.anime_lists,
                                     orientation = Item.Orientation.VERTICAL
+                                ),
+                                Item(
+                                    icon = R.drawable.list_order_alt,
+                                    label = R.string.anime_lists,
+                                    orientation = Item.Orientation.VERTICAL
                                 )
                             ),
                             onItemClick = { index ->
@@ -385,6 +392,12 @@ fun SettingsPage(
                                 when (index) {
                                     2 -> {
                                         viewModel.resetAnimeLists()
+                                        haptic.performHapticFeedback(
+                                            HapticFeedbackType.LongPress
+                                        )
+                                    }
+                                    3 -> {
+                                        viewModel.resetMangaLists()
                                         haptic.performHapticFeedback(
                                             HapticFeedbackType.LongPress
                                         )
@@ -488,7 +501,57 @@ fun SettingsPage(
                                                             imageVector = ImageVector.vectorResource(
                                                                 R.drawable.drag_handle
                                                             ),
-                                                            contentDescription = "Drag Handle",
+                                                            contentDescription = stringResource(R.string.drag_handle),
+                                                            modifier = Modifier.draggableHandle()
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                3 -> {
+                                    ReorderableColumn(
+                                        list = mangaLists,
+                                        onSettle = viewModel::setMangaListsIndices,
+                                        verticalArrangement = Arrangement.spacedBy(
+                                            ButtonGroupDefaults.ConnectedSpaceBetween
+                                        ),
+                                        onMove = {
+                                            haptic.performHapticFeedback(
+                                                HapticFeedbackType.SegmentFrequentTick
+                                            )
+                                        }
+                                    ) { index, mangaList, _ ->
+                                        key(mangaList) {
+                                            ReorderableItem {
+                                                ToggleButton(
+                                                    checked = mangaListsIndices[index] > 0,
+                                                    onCheckedChange = {
+                                                        viewModel.toggleMangaList(index)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.SegmentTick
+                                                        )
+                                                    },
+                                                    // TODO: Fix the shapes.
+                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(),
+                                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                                        containerColor = MaterialTheme.colorScheme.background
+                                                    ),
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Row(
+                                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        Text(text = stringResource(mangaList.res))
+                                                        Icon(
+                                                            imageVector = ImageVector.vectorResource(
+                                                                R.drawable.drag_handle
+                                                            ),
+                                                            contentDescription = stringResource(R.string.drag_handle),
                                                             modifier = Modifier.draggableHandle()
                                                         )
                                                     }
