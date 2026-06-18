@@ -6,7 +6,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -460,8 +459,7 @@ fun SettingsPage(
                                             haptic.performHapticFeedback(
                                                 HapticFeedbackType.SegmentFrequentTick
                                             )
-                                        },
-                                        modifier = Modifier.animateContentSize()
+                                        }
                                     ) { index, animeList, _ ->
                                         key(animeList) {
                                             ReorderableItem {
