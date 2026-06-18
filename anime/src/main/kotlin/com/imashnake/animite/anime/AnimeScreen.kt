@@ -115,9 +115,9 @@ fun AnimeScreen(
                         )
                     },
                     content = {
-                        lists.fastForEachIndexed { index, row ->
+                        lists.fastForEachIndexed { index, resource ->
                             AnimatedContent(
-                                targetState = row,
+                                targetState = resource,
                                 transitionSpec = {
                                     fadeIn(tween(500, delayMillis = index * 100))
                                         .togetherWith(fadeOut(tween(500)))
@@ -125,12 +125,12 @@ fun AnimeScreen(
                             ) {
                                 when (it) {
                                     is Resource.Success -> {
-                                        val titleToMediaList = row.data
-                                        if (titleToMediaList?.second?.list?.isNotEmpty() == true) {
+                                        val animeRow = resource.data
+                                        if (animeRow?.mediaList?.list?.isNotEmpty() == true) {
                                             AnimeRow(
                                                 index = index,
-                                                title = stringResource(titleToMediaList.first.res),
-                                                mediaList = titleToMediaList.second,
+                                                title = stringResource(animeRow.title),
+                                                mediaList = animeRow.mediaList,
                                                 onItemClicked = { media ->
                                                     onNavigateToMediaItem(
                                                         MediaPage(

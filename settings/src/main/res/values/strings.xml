@@ -17,6 +17,8 @@
     <string name="nsfw">NSFW</string>
     <string name="title_language">Title Language</string>
     <string name="anime_lists">Anime Lists</string>
+    <string name="manga_lists">Manga Lists</string>
+    <string name="drag_handle">Drag Handle</string>
 
     <string name="about">About</string>
 

@@ -24,6 +24,7 @@ private const val IS_DEV_OPTIONS_ENABLED = false
 class PreferencesRepository internal constructor(
     private val dataStore: DataStore<Preferences>
 ) {
+    // region anime
     private val animeListsIndicesKey = byteArrayPreferencesKey("anime_lists_indices")
     val animeListsIndices = dataStore.getValue(animeListsIndicesKey, byteArrayOf(1, 2, 3, 4, 5))
     suspend fun setAnimeListsIndices(from: Int, to: Int) {
@@ -45,6 +46,31 @@ class PreferencesRepository internal constructor(
     suspend fun resetAnimeLists() {
         dataStore.setValue(animeListsIndicesKey, byteArrayOf(1, 2, 3, 4, 5))
     }
+    // endregion
+
+    // region manga
+    private val mangaListsIndicesKey = byteArrayPreferencesKey("manga_lists_indices")
+    val mangaListsIndices = dataStore.getValue(mangaListsIndicesKey, byteArrayOf(1, 2, 3))
+    suspend fun setMangaListsIndices(from: Int, to: Int) {
+        dataStore.setValue(
+            mangaListsIndicesKey,
+            mangaListsIndices.firstOrNull()?.toMutableList()?.apply {
+                add(to, removeAt(from))
+            }?.toByteArray()
+        )
+    }
+    suspend fun toggleMangaList(index: Int) {
+        dataStore.setValue(
+            mangaListsIndicesKey,
+            mangaListsIndices.firstOrNull()?.toMutableList()?.apply {
+                set(index, (get(index) * -1).toByte())
+            }?.toByteArray()
+        )
+    }
+    suspend fun resetMangaLists() {
+        dataStore.setValue(mangaListsIndicesKey, byteArrayOf(1, 2, 3))
+    }
+    // endregion
 
     // region profile
     private val accessTokenKey = stringPreferencesKey("access_token")
