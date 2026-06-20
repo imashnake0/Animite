@@ -6,10 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.explore.FilterStrategy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.api.anilist.sanitize.settings.Prefs
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
+import com.imashnake.animite.core.model.AnimeList
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.media.ext.nextSeason
@@ -18,6 +20,7 @@ import com.imashnake.animite.media.ext.season
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -29,6 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.StringResource
 import javax.inject.Inject
 import kotlin.time.Clock
 
@@ -62,7 +66,6 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Trending Now",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -71,13 +74,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }
-    .asResource()
-    .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(1000),
-        initialValue = Resource.loading(),
-    )
+    }.asResource { AnimeRow(AnimeList.TRENDING_NOW.res, it) }
 
     val popularMediaThisSeason = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -86,7 +83,6 @@ class AnimeViewModel @Inject constructor(
         transform = ::Triple,
     ).flatMapLatest { (_, now, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Popular This Season",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -97,11 +93,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }.asResource().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(1000),
-        initialValue = Resource.loading(),
-    )
+    }.asResource { AnimeRow(AnimeList.POPULAR_THIS_SEASON.res, it) }
 
     val upcomingMediaNextSeason = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -111,7 +103,6 @@ class AnimeViewModel @Inject constructor(
     ).flatMapLatest { (_, now, prefs) ->
         val season = now.month.season
         mediaListRepository.fetchMediaList(
-            title = "Upcoming Next Season",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -122,11 +113,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }.asResource().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(1000),
-        initialValue = Resource.loading(),
-    )
+    }.asResource { AnimeRow(AnimeList.UPCOMING_NEXT_SEASON.res, it) }
 
     val allTimePopular = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -134,7 +121,6 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "All Time Popular",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -143,13 +129,7 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }
-    .asResource()
-    .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(1000),
-        initialValue = Resource.loading(),
-    )
+    }.asResource { AnimeRow(AnimeList.ALL_TIME_POPULAR.res, it) }
 
     val newlyAdded = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -157,7 +137,6 @@ class AnimeViewModel @Inject constructor(
         transform = ::Pair
     ).flatMapLatest { (_, prefs) ->
         mediaListRepository.fetchMediaList(
-            title = "Newly Added",
             useNetwork = useNetwork,
             filterStrategy = FilterStrategy(
                 mediaType = MediaType.ANIME,
@@ -166,16 +145,40 @@ class AnimeViewModel @Inject constructor(
                 language = prefs.language
             ),
         )
-    }
-    .asResource()
-    .stateIn(
+    }.asResource { AnimeRow(AnimeList.NEWLY_ADDED.res, it) }
+
+    val lists = combine(
+        trendingMedia,
+        popularMediaThisSeason,
+        upcomingMediaNextSeason,
+        allTimePopular,
+        newlyAdded,
+        preferencesRepository.animeListsIndices,
+    ) { trendingNow, popularThisSeason, upcomingNextSeason, allTimePopular, newlyAdded, indices ->
+        indices?.toMutableList().orEmpty().mapNotNull {
+            when (it.toInt()) {
+                1 -> trendingNow
+                2 -> popularThisSeason
+                3 -> upcomingNextSeason
+                4 -> allTimePopular
+                5 -> newlyAdded
+                else -> null
+            }
+        }
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(1000),
-        initialValue = Resource.loading(),
+        initialValue = listOf(
+            Resource.loading(),
+            Resource.loading(),
+            Resource.loading(),
+            Resource.loading(),
+            Resource.loading(),
+        ),
     )
 
     val isLoading = combineTransform(
-        listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular)
+        listOf(trendingMedia, popularMediaThisSeason, upcomingMediaNextSeason, allTimePopular, newlyAdded)
     ) { resources ->
         emit(!resources.none { it is Resource.Loading<*> })
     }.stateIn(viewModelScope, SharingStarted.Lazily, true)
@@ -193,3 +196,51 @@ class AnimeViewModel @Inject constructor(
         const val NOW = "now"
     }
 }
+
+data class AnimeRow(
+    val title: StringResource,
+    val mediaList: MediaList,
+)
+
+inline fun <
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        R
+        > combine(
+    flow: Flow<T1>,
+    flow2: Flow<T2>,
+    flow3: Flow<T3>,
+    flow4: Flow<T4>,
+    flow5: Flow<T5>,
+    flow6: Flow<T6>,
+    crossinline transform: suspend (
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+    ) -> R,
+): Flow<R> = combine(
+    flow,
+    flow2,
+    flow3,
+    flow4,
+    flow5,
+    flow6,
+) { args: Array<*> ->
+    @Suppress("UNCHECKED_CAST")
+    transform(
+        args[0] as T1,
+        args[1] as T2,
+        args[2] as T3,
+        args[3] as T4,
+        args[4] as T5,
+        args[5] as T6,
+    )
+}
+

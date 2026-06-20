@@ -67,6 +67,7 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import org.jetbrains.compose.resources.stringResource
 import com.imashnake.animite.navigation.R as navigationR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,19 +93,7 @@ fun AnimeScreen(
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
-    val trendingList by viewModel.trendingMedia.collectAsState()
-    val popularList by viewModel.popularMediaThisSeason.collectAsState()
-    val upcomingList by viewModel.upcomingMediaNextSeason.collectAsState()
-    val allTimePopularList by viewModel.allTimePopular.collectAsState()
-    val newlyAddedList by viewModel.newlyAdded.collectAsState()
-
-    val rows = listOf(
-        trendingList,
-        popularList,
-        upcomingList,
-        allTimePopularList,
-        newlyAddedList,
-    )
+    val lists by viewModel.lists.collectAsState()
 
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
@@ -126,46 +115,53 @@ fun AnimeScreen(
                         )
                     },
                     content = {
-                        rows.fastForEachIndexed { index, row ->
+                        lists.fastForEachIndexed { index, resource ->
                             AnimatedContent(
-                                targetState = row is Resource.Success,
+                                targetState = resource,
                                 transitionSpec = {
                                     fadeIn(tween(500, delayMillis = index * 100))
                                         .togetherWith(fadeOut(tween(500)))
                                 },
                             ) {
-                                if (it) {
-                                    val mediaList = (row as? Resource.Success)?.data
-                                    if (mediaList?.list.orEmpty().isNotEmpty()) {
-                                        AnimeRow(
-                                            mediaList = mediaList!!,
-                                            onItemClicked = { media ->
-                                                onNavigateToMediaItem(
-                                                    MediaPage(
-                                                        id = media.id,
-                                                        source = mediaList.title,
-                                                        mediaType = MediaType.ANIME.rawValue,
-                                                        title = media.title,
+                                when (it) {
+                                    is Resource.Success -> {
+                                        val animeRow = resource.data
+                                        if (animeRow?.mediaList?.list?.isNotEmpty() == true) {
+                                            AnimeRow(
+                                                index = index,
+                                                title = stringResource(animeRow.title),
+                                                mediaList = animeRow.mediaList,
+                                                onItemClicked = { media ->
+                                                    onNavigateToMediaItem(
+                                                        MediaPage(
+                                                            id = media.id,
+                                                            source = index.toString(),
+                                                            mediaType = MediaType.ANIME.rawValue,
+                                                            title = media.title,
+                                                        )
                                                     )
-                                                )
-                                            },
-                                            onNavigateToExplore = onNavigateToExplore,
-                                            sharedTransitionScope = sharedTransitionScope,
-                                            animatedVisibilityScope = animatedVisibilityScope,
+                                                },
+                                                onNavigateToExplore = onNavigateToExplore,
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                                contentPadding = PaddingValues(
+                                                    horizontal = LocalPaddings.current.large,
+                                                    vertical = LocalPaddings.current.large / 2,
+                                                ) + insetAndNavigationPaddingValues.horizontalOnly
+                                            )
+                                        }
+                                    }
+                                    is Resource.Loading -> {
+                                        LoadingMediaSmallRow(
+                                            count = 10,
                                             contentPadding = PaddingValues(
                                                 horizontal = LocalPaddings.current.large,
                                                 vertical = LocalPaddings.current.large / 2,
                                             ) + insetAndNavigationPaddingValues.horizontalOnly
                                         )
                                     }
-                                } else {
-                                    LoadingMediaSmallRow(
-                                        count = 10,
-                                        contentPadding = PaddingValues(
-                                            horizontal = LocalPaddings.current.large,
-                                            vertical = LocalPaddings.current.large / 2,
-                                        ) + insetAndNavigationPaddingValues.horizontalOnly
-                                    )
+                                    // TODO: Show error UI.
+                                    is Resource.Error -> {}
                                 }
                             }
                         }
@@ -184,6 +180,8 @@ fun AnimeScreen(
 
 @Composable
 private fun AnimeRow(
+    index: Int,
+    title: String,
     mediaList: MediaList,
     onItemClicked: (Media.Small) -> Unit,
     onNavigateToExplore: (ExploreRoute) -> Unit,
@@ -194,7 +192,7 @@ private fun AnimeRow(
 ) {
     val haptic = LocalHapticFeedback.current
     MediaSmallRow(
-        title = mediaList.title,
+        title = title,
         mediaList = mediaList.list,
         contextChip = { onListClick ->
             val season = mediaList.filterStrategy.season
@@ -240,7 +238,7 @@ private fun AnimeRow(
                     sharedContentState = rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.title,
+                            source = index.toString(),
                             sharedComponents = Card to Page,
                         )
                     ),
@@ -253,7 +251,7 @@ private fun AnimeRow(
                     rememberSharedContentState(
                         SharedContentKey(
                             id = media.id,
-                            source = mediaList.title,
+                            source = index.toString(),
                             sharedComponents = Image to Image,
                         )
                     ),

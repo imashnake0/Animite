@@ -29,7 +29,6 @@ class AnilistMediaRepository(
 ) {
 
     fun fetchMediaList(
-        title: String,
         useNetwork: Boolean,
         filterStrategy: FilterStrategy
     ): Flow<Result<MediaList>> = with(filterStrategy) {
@@ -53,8 +52,7 @@ class AnilistMediaRepository(
         .filter { it.exception == null }
         .asResult {
             MediaList(
-                title = title,
-                list = it.page!!.media.orEmpty().filterNotNull().map { query ->
+                list = it.page?.media.orEmpty().filterNotNull().map { query ->
                     Media.Small(query.mediaSmall, language)
                 }.toImmutableList(),
                 filterStrategy = this,
@@ -94,8 +92,8 @@ class AnilistMediaRepository(
         )
         .fetchPolicy(
             if (useNetwork) {
-                FetchPolicy.NetworkFirst
-            } else FetchPolicy.CacheFirst
+                FetchPolicy.NetworkOnly
+            } else FetchPolicy.NetworkFirst
         )
         .toFlow()
         .filter { it.exception == null }

@@ -3,10 +3,12 @@ package com.imashnake.animite.api.preferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.byteArrayPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
+import kotlinx.coroutines.flow.firstOrNull
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
 private const val DEFAULT_DENSITY_KEY = "COMFY"
@@ -22,6 +24,54 @@ private const val IS_DEV_OPTIONS_ENABLED = false
 class PreferencesRepository internal constructor(
     private val dataStore: DataStore<Preferences>
 ) {
+    // region anime
+    private val animeListsIndicesKey = byteArrayPreferencesKey("anime_lists_indices")
+    val animeListsIndices = dataStore.getValue(animeListsIndicesKey, byteArrayOf(1, 2, 3, 4, 5))
+    suspend fun setAnimeListsIndices(from: Int, to: Int) {
+        dataStore.setValue(
+            animeListsIndicesKey,
+            animeListsIndices.firstOrNull()?.toMutableList()?.apply {
+                add(to, removeAt(from))
+            }?.toByteArray()
+        )
+    }
+    suspend fun toggleAnimeList(index: Int) {
+        dataStore.setValue(
+            animeListsIndicesKey,
+            animeListsIndices.firstOrNull()?.toMutableList()?.apply {
+                set(index, (get(index) * -1).toByte())
+            }?.toByteArray()
+        )
+    }
+    suspend fun resetAnimeLists() {
+        dataStore.setValue(animeListsIndicesKey, byteArrayOf(1, 2, 3, 4, 5))
+    }
+    // endregion
+
+    // region manga
+    private val mangaListsIndicesKey = byteArrayPreferencesKey("manga_lists_indices")
+    val mangaListsIndices = dataStore.getValue(mangaListsIndicesKey, byteArrayOf(1, 2, 3))
+    suspend fun setMangaListsIndices(from: Int, to: Int) {
+        dataStore.setValue(
+            mangaListsIndicesKey,
+            mangaListsIndices.firstOrNull()?.toMutableList()?.apply {
+                add(to, removeAt(from))
+            }?.toByteArray()
+        )
+    }
+    suspend fun toggleMangaList(index: Int) {
+        dataStore.setValue(
+            mangaListsIndicesKey,
+            mangaListsIndices.firstOrNull()?.toMutableList()?.apply {
+                set(index, (get(index) * -1).toByte())
+            }?.toByteArray()
+        )
+    }
+    suspend fun resetMangaLists() {
+        dataStore.setValue(mangaListsIndicesKey, byteArrayOf(1, 2, 3))
+    }
+    // endregion
+
     // region profile
     private val accessTokenKey = stringPreferencesKey("access_token")
     val accessToken = dataStore.getValue(accessTokenKey, null)

@@ -56,6 +56,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -99,6 +100,8 @@ import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.ReorderableColumn
 
 private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
@@ -128,6 +131,10 @@ fun SettingsPage(
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
+    val animeLists by viewModel.animeList.collectAsState(initial = emptyList())
+    val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
+    val mangaLists by viewModel.mangaList.collectAsState(initial = emptyList())
+    val mangaListsIndices by viewModel.mangaListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -201,6 +208,7 @@ fun SettingsPage(
                                     else -> {}
                                 }
                             },
+                            onItemLongClick = {},
                             isDarkMode = isDarkMode,
                             modifier = Modifier.fillMaxWidth()
                         ) { index ->
@@ -355,6 +363,16 @@ fun SettingsPage(
                                     icon = R.drawable.title_language,
                                     label = R.string.title_language,
                                     orientation = Item.Orientation.VERTICAL
+                                ),
+                                Item(
+                                    icon = R.drawable.list_order,
+                                    label = R.string.anime_lists,
+                                    orientation = Item.Orientation.VERTICAL
+                                ),
+                                Item(
+                                    icon = R.drawable.list_order_alt,
+                                    label = R.string.manga_lists,
+                                    orientation = Item.Orientation.VERTICAL
                                 )
                             ),
                             onItemClick = { index ->
@@ -367,8 +385,22 @@ fun SettingsPage(
                                             } else HapticFeedbackType.ToggleOn
                                         )
                                     }
-                                    1 -> {
-
+                                    1 -> {}
+                                }
+                            },
+                            onItemLongClick = { index ->
+                                when (index) {
+                                    2 -> {
+                                        viewModel.resetAnimeLists()
+                                        haptic.performHapticFeedback(
+                                            HapticFeedbackType.LongPress
+                                        )
+                                    }
+                                    3 -> {
+                                        viewModel.resetMangaLists()
+                                        haptic.performHapticFeedback(
+                                            HapticFeedbackType.LongPress
+                                        )
                                     }
                                 }
                             },
@@ -424,6 +456,106 @@ fun SettingsPage(
                                                 modifier = Modifier.weight(1f)
                                             ) {
                                                 Text(stringResource(language.res))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                2 -> {
+                                    ReorderableColumn(
+                                        list = animeLists,
+                                        onSettle = viewModel::setAnimeListsIndices,
+                                        verticalArrangement = Arrangement.spacedBy(
+                                            ButtonGroupDefaults.ConnectedSpaceBetween
+                                        ),
+                                        onMove = {
+                                            haptic.performHapticFeedback(
+                                                HapticFeedbackType.SegmentFrequentTick
+                                            )
+                                        }
+                                    ) { index, animeList, _ ->
+                                        key(animeList) {
+                                            ReorderableItem {
+                                                ToggleButton(
+                                                    checked = animeListsIndices[index] > 0,
+                                                    onCheckedChange = {
+                                                        viewModel.toggleAnimeList(index)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.SegmentTick
+                                                        )
+                                                    },
+                                                    // TODO: Fix the shapes.
+                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(),
+                                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                                        containerColor = MaterialTheme.colorScheme.background
+                                                    ),
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Row(
+                                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        Text(text = stringResource(animeList.res))
+                                                        Icon(
+                                                            imageVector = ImageVector.vectorResource(
+                                                                R.drawable.drag_handle
+                                                            ),
+                                                            contentDescription = stringResource(R.string.drag_handle),
+                                                            modifier = Modifier.draggableHandle()
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                3 -> {
+                                    ReorderableColumn(
+                                        list = mangaLists,
+                                        onSettle = viewModel::setMangaListsIndices,
+                                        verticalArrangement = Arrangement.spacedBy(
+                                            ButtonGroupDefaults.ConnectedSpaceBetween
+                                        ),
+                                        onMove = {
+                                            haptic.performHapticFeedback(
+                                                HapticFeedbackType.SegmentFrequentTick
+                                            )
+                                        }
+                                    ) { index, mangaList, _ ->
+                                        key(mangaList) {
+                                            ReorderableItem {
+                                                ToggleButton(
+                                                    checked = mangaListsIndices[index] > 0,
+                                                    onCheckedChange = {
+                                                        viewModel.toggleMangaList(index)
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.SegmentTick
+                                                        )
+                                                    },
+                                                    // TODO: Fix the shapes.
+                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(),
+                                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                                        containerColor = MaterialTheme.colorScheme.background
+                                                    ),
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Row(
+                                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        Text(text = stringResource(mangaList.res))
+                                                        Icon(
+                                                            imageVector = ImageVector.vectorResource(
+                                                                R.drawable.drag_handle
+                                                            ),
+                                                            contentDescription = stringResource(R.string.drag_handle),
+                                                            modifier = Modifier.draggableHandle()
+                                                        )
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -484,6 +616,7 @@ fun SettingsPage(
                                     ),
                                 ),
                                 onItemClick = {},
+                                onItemLongClick = {},
                                 isDarkMode = isDarkMode,
                             ) { index ->
                                 when (index) {
@@ -560,6 +693,7 @@ private fun Items(
     isDarkMode: Boolean,
     modifier: Modifier = Modifier,
     onItemClick: (Int) -> Unit,
+    onItemLongClick: (Int) -> Unit,
     itemCustomIcon: @Composable (() -> Unit)? = null,
     itemContent: @Composable (Int) -> Unit,
 ) {
@@ -593,6 +727,7 @@ private fun Items(
                             )
                         },
                         onItemClick = { onItemClick(index) },
+                        onItemLongClick = { onItemLongClick(index) },
                         background = if (isDarkMode) {
                             MaterialTheme.colorScheme.surfaceContainer
                         } else MaterialTheme.colorScheme.surface
@@ -609,6 +744,7 @@ private fun Items(
                             bottomStart = bottom,
                         ),
                         onItemClick = { onItemClick(index) },
+                        onItemLongClick = { onItemLongClick(index) },
                         background = if (isDarkMode) {
                             MaterialTheme.colorScheme.surfaceContainer
                         } else MaterialTheme.colorScheme.surface
@@ -631,6 +767,7 @@ private fun HorizontalItem(
     shape: Shape,
     background: Color,
     onItemClick: () -> Unit,
+    onItemLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     customIcon: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
@@ -646,7 +783,10 @@ private fun HorizontalItem(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(shape)
-                .clickable { onItemClick() }
+                .combinedClickable(
+                    onClick = onItemClick,
+                    onLongClick = onItemLongClick,
+                )
                 .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
@@ -676,6 +816,7 @@ private fun VerticalItem(
     shape: Shape,
     background: Color,
     onItemClick: () -> Unit,
+    onItemLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     customIcon: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
@@ -690,7 +831,10 @@ private fun VerticalItem(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(shape)
-                .clickable { onItemClick() }
+                .combinedClickable(
+                    onClick = onItemClick,
+                    onLongClick = onItemLongClick,
+                )
                 .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
@@ -961,6 +1105,7 @@ private fun PreviewItems() {
                 )
             ),
             onItemClick = {},
+            onItemLongClick = {},
             isDarkMode = false,
             modifier = Modifier.fillMaxWidth().padding(horizontal = padding)
         ) { index ->

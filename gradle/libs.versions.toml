@@ -18,7 +18,7 @@ apollo-kotlin = { id = "com.apollographql.apollo", version.ref = "apollo" }
 [versions]
 
 # Core Library Desugaring
-# https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md.
+# https://github.com/google/desugar_jdk_libs/blob/master/CHANGELOG.md
 desugaring = "2.1.5"
 
 # Android Gradle Plugin
@@ -36,12 +36,12 @@ espresso = "3.7.0"
 navigation = "2.9.8"
 
 # Apollo Kotlin
-# https://github.com/apollographql/apollo-kotlin/releases.
+# https://github.com/apollographql/apollo-kotlin/releases
 apollo = "5.0.0"
 apolloCache = "1.0.3"
 
 # DataStore
-# https://developer.android.com/jetpack/androidx/releases/datastore.
+# https://developer.android.com/jetpack/androidx/releases/datastore
 datastore = "1.2.1"
 
 # COIL
@@ -49,7 +49,7 @@ datastore = "1.2.1"
 coil = "3.5.0"
 
 # Compose
-# https://developer.android.com/jetpack/androidx/releases/compose.
+# https://developer.android.com/jetpack/androidx/releases/compose
 composeAnimation = "1.11.2"
 composeFoundation = "1.11.2"
 composeMaterial = "1.11.2"
@@ -59,7 +59,7 @@ composeUi = "1.11.2"
 composeIcons = "1.7.8"
 
 # Dagger
-# https://github.com/google/dagger/releases.
+# https://github.com/google/dagger/releases
 dagger = "2.59.2"
 
 # Hilt
@@ -67,7 +67,7 @@ dagger = "2.59.2"
 hilt = "1.4.0-rc01"
 
 # Kotlin
-# https://kotlinlang.org/docs/releases.html#release-details.
+# https://kotlinlang.org/docs/releases.html#release-details
 kotlin = "2.3.21"
 kotlinxTime = "0.8.0"
 kotlinxCollectionsImmutable = "0.5.0"
@@ -79,32 +79,36 @@ serialization = "1.11.0"
 composeMultiplatform = "1.11.1"
 
 # KSP
-# https://github.com/google/ksp/releases.
+# https://github.com/google/ksp/releases
 ksp = "2.3.8"
 
 # Ktor
-# https://ktor.io/docs/releases.html#release-details.
+# https://ktor.io/docs/releases.html#release-details
 ktor = "3.5.0"
 
 # Test
-# https://github.com/junit-team/junit4/releases.
+# https://github.com/junit-team/junit4/releases
 junit = "4.13.2"
 
 # detekt
-# https://github.com/detekt/detekt/releases.
+# https://github.com/detekt/detekt/releases
 detekt = "1.23.8"
 
 # Compose Markdown
-# https://github.com/boswelja/compose-markdown.
+# https://github.com/boswelja/compose-markdown
 composeMarkdown = "1.1.5"
 
 # MaterialKolor
-# https://github.com/jordond/MaterialKolor.
+# https://github.com/jordond/MaterialKolor
 materialKolor = "4.1.1"
 
 # Cascade
 # https://github.com/saket/cascade/releases
 saketCascade = "2.3.0"
+
+# Reorderable
+# https://github.com/Calvin-LL/Reorderable/releases
+reorderable = "3.1.0"
 
 [libraries]
 
@@ -119,6 +123,7 @@ androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref
 androidx-test-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version.ref = "composeAnimation" }
+compose-components-resources = { group = "org.jetbrains.compose.components", name = "components-resources", version.ref = "composeMultiplatform" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "composeIcons" }
@@ -156,6 +161,7 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-contentNegotation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 saket-cascade = { group = "me.saket.cascade", name = "cascade-compose", version.ref = "saketCascade" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 [bundles]
 
