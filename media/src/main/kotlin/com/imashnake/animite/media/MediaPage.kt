@@ -63,10 +63,12 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -176,14 +178,20 @@ fun MediaPage(
     val media = viewModel.uiState
 
     var showDetailsSheet by remember { mutableStateOf(false) }
-    val detailsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    val detailsSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    )
 
     var selectedTimeSpanIndex by remember { mutableIntStateOf(0) }
     val haptic = LocalHapticFeedback.current
 
     var showCharacterSheet by remember { mutableStateOf(false) }
     var showStaffSheet by remember { mutableStateOf(false) }
-    val creditSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    val creditSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    )
     val creditPagerState = rememberPagerState(pageCount = { media.characters.orEmpty().size })
     val coroutineScope = rememberCoroutineScope()
 

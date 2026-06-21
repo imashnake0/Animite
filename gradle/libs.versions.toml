@@ -22,15 +22,15 @@ apollo-kotlin = { id = "com.apollographql.apollo", version.ref = "apollo" }
 desugaring = "2.1.5"
 
 # Android Gradle Plugin
-# https://developer.android.com/studio/releases/gradle-plugin
-agp = "9.0.1"
+# https://developer.android.com/studio/releases/gradle-plugin.
+agp = "9.2.1"
 
 # AndroidX
 # https://androidx.tech.
 activity = "1.13.0"
-core = "1.18.0"
+core = "1.19.0"
 coreSplashscreen = "1.2.0"
-lifecycle = "2.10.0"
+lifecycle = "2.11.0"
 extJunit = "1.3.0"
 espresso = "3.7.0"
 navigation = "2.9.8"
@@ -45,17 +45,17 @@ apolloCache = "1.0.4"
 datastore = "1.2.1"
 
 # COIL
-# https://github.com/coil-kt/coil/blob/main/CHANGELOG.md
-coil = "3.4.0"
+# https://github.com/coil-kt/coil/blob/main/CHANGELOG.md.
+coil = "3.5.0"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose
-composeAnimation = "1.11.2"
+composeAnimation = "1.11.3"
 composeFoundation = "1.11.3"
-composeMaterial = "1.11.2"
-composeMaterial3 = "1.5.0-alpha18"
-composeRuntime = "1.11.2"
-composeUi = "1.11.2"
+composeMaterial = "1.11.3"
+composeMaterial3 = "1.5.0-alpha22"
+composeRuntime = "1.11.3"
+composeUi = "1.11.3"
 composeIcons = "1.7.8"
 
 # Dagger
@@ -63,13 +63,13 @@ composeIcons = "1.7.8"
 dagger = "2.59.2"
 
 # Hilt
-# https://developer.android.com/jetpack/androidx/releases/hilt
-hilt = "1.3.0"
+# https://developer.android.com/jetpack/androidx/releases/hilt.
+hilt = "1.4.0-rc01"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details
-kotlin = "2.3.21"
-kotlinxTime = "0.7.1"
+kotlin = "2.4.0"
+kotlinxTime = "0.8.0"
 kotlinxCollectionsImmutable = "0.5.0"
 coroutines = "1.11.0"
 serialization = "1.11.0"
@@ -96,7 +96,7 @@ detekt = "1.23.8"
 
 # Compose Markdown
 # https://github.com/boswelja/compose-markdown
-composeMarkdown = "1.1.5"
+composeMarkdown = "1.3.0"
 
 # MaterialKolor
 # https://github.com/jordond/MaterialKolor
@@ -127,7 +127,6 @@ compose-components-resources = { group = "org.jetbrains.compose.components", nam
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 compose-material = { group = "androidx.compose.material", name = "material", version.ref = "composeMaterial" }
 compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "composeIcons" }
-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "composeIcons" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "composeRuntime" }
 compose-runtime-annotation = { group = "androidx.compose.runtime", name = "runtime-annotation", version.ref = "composeRuntime" }

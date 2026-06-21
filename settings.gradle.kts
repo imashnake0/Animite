@@ -31,7 +31,7 @@ dependencyResolutionManagement {
 }
 
 plugins {
-    id("com.android.settings") version "9.0.1"
+    id("com.android.settings") version "9.2.1"
 }
 
 rootProject.name = "Animite"
@@ -55,9 +55,9 @@ include(
 )
 
 android {
-    buildToolsVersion = "36.0.0"
-    compileSdk = 36
-    targetSdk = 36
+    buildToolsVersion = "37.0.0"
+    compileSdk = 37
+    targetSdk = 37
     minSdk = 29
 }
 
