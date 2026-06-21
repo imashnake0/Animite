@@ -69,10 +69,13 @@ tasks.withType<KotlinCompile>().configureEach {
     )
 }
 
-dependencies {
-    // Workaround Hilt using an old kotlin-metadata-jvm
-    ksp("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin}")
+// TODO: Remove when Dagger bumps Kotlin metadata dependency to 2.3.0
+//  (see also https://github.com/google/dagger/issues/5059)
+configurations.configureEach {
+    resolutionStrategy.force("org.jetbrains.kotlin:kotlin-metadata-jvm:2.3.0")
+}
 
+dependencies {
     // Workaround conflicting androidx-concurrent-futures from compose & androidx-junit
     implementation("androidx.concurrent:concurrent-futures:1.3.0")
 
