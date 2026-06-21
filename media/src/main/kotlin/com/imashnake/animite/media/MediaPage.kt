@@ -178,14 +178,20 @@ fun MediaPage(
     val media = viewModel.uiState
 
     var showDetailsSheet by remember { mutableStateOf(false) }
-    val detailsSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden, enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded))
+    val detailsSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    )
 
     var selectedTimeSpanIndex by remember { mutableIntStateOf(0) }
     val haptic = LocalHapticFeedback.current
 
     var showCharacterSheet by remember { mutableStateOf(false) }
     var showStaffSheet by remember { mutableStateOf(false) }
-    val creditSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden, enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded))
+    val creditSheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    )
     val creditPagerState = rememberPagerState(pageCount = { media.characters.orEmpty().size })
     val coroutineScope = rememberCoroutineScope()
 
