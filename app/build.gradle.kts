@@ -70,6 +70,12 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
+    // Workaround Hilt using an old kotlin-metadata-jvm
+    ksp("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin}")
+
+    // Workaround conflicting androidx-concurrent-futures from compose & androidx-junit
+    implementation("androidx.concurrent:concurrent-futures:1.3.0")
+
     implementation(projects.api.anilist)
     implementation(projects.api.mal)
     implementation(projects.api.preferences)
