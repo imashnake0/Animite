@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
@@ -38,6 +39,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -462,6 +464,7 @@ fun SettingsPage(
                                 }
 
                                 2 -> {
+                                    // TODO: Extract to core:ui.
                                     ReorderableColumn(
                                         list = animeLists,
                                         onSettle = viewModel::setAnimeListsIndices,
@@ -485,9 +488,13 @@ fun SettingsPage(
                                                         )
                                                     },
                                                     // TODO: Fix the shapes.
-                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(),
+                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(
+                                                        checkedShape = RoundedCornerShape(10.dp)
+                                                    ),
                                                     colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = MaterialTheme.colorScheme.background
+                                                        containerColor = MaterialTheme.colorScheme.background,
+                                                        checkedContentColor = MaterialTheme.colorScheme.onBackground,
+                                                        checkedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                                                     ),
                                                     modifier = Modifier.fillMaxWidth()
                                                 ) {
@@ -496,7 +503,19 @@ fun SettingsPage(
                                                         verticalAlignment = Alignment.CenterVertically,
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
-                                                        Text(text = stringResource(animeList.res))
+                                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                                            AnimatedVisibility(visible = animeListsIndices[index] > 0) {
+                                                                Row {
+                                                                    Icon(
+                                                                        imageVector = Icons.Rounded.Check,
+                                                                        contentDescription = null,
+                                                                        modifier = Modifier.size(20.dp)
+                                                                    )
+                                                                    Spacer(Modifier.size(LocalPaddings.current.small))
+                                                                }
+                                                            }
+                                                            Text(text = stringResource(animeList.res))
+                                                        }
                                                         Icon(
                                                             imageVector = ImageVector.vectorResource(
                                                                 R.drawable.drag_handle
@@ -535,9 +554,13 @@ fun SettingsPage(
                                                         )
                                                     },
                                                     // TODO: Fix the shapes.
-                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(),
+                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(
+                                                        checkedShape = RoundedCornerShape(10.dp)
+                                                    ),
                                                     colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = MaterialTheme.colorScheme.background
+                                                        containerColor = MaterialTheme.colorScheme.background,
+                                                        checkedContentColor = MaterialTheme.colorScheme.onBackground,
+                                                        checkedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                                                     ),
                                                     modifier = Modifier.fillMaxWidth()
                                                 ) {
@@ -546,7 +569,19 @@ fun SettingsPage(
                                                         verticalAlignment = Alignment.CenterVertically,
                                                         modifier = Modifier.fillMaxWidth()
                                                     ) {
-                                                        Text(text = stringResource(mangaList.res))
+                                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                                            AnimatedVisibility(visible = mangaListsIndices[index] > 0) {
+                                                                Row {
+                                                                    Icon(
+                                                                        imageVector = Icons.Rounded.Check,
+                                                                        contentDescription = null,
+                                                                        modifier = Modifier.size(20.dp)
+                                                                    )
+                                                                    Spacer(Modifier.size(LocalPaddings.current.small))
+                                                                }
+                                                            }
+                                                            Text(text = stringResource(mangaList.res))
+                                                        }
                                                         Icon(
                                                             imageVector = ImageVector.vectorResource(
                                                                 R.drawable.drag_handle

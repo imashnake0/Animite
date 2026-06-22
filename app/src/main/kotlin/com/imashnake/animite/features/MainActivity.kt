@@ -272,9 +272,10 @@ fun MainScreen(
                         scrollToTop = {
                             scope.launch {
                                 when (it) {
-                                    NavigationBarPaths.Explore -> exploreScrollState.animateScrollToItem(0)
-                                    NavigationBarPaths.Anime -> animeScrollState.animateScrollTo(0)
-                                    NavigationBarPaths.Manga -> mangaScrollState.animateScrollTo(0)
+                                    NavigationBarPaths.Explore -> { exploreScrollState.animateScrollToItem(0) }
+                                    // TODO: Fix ClassCastException.
+//                                    NavigationBarPaths.Anime -> { animeScrollState.animateScrollTo(0) }
+//                                    NavigationBarPaths.Manga -> { mangaScrollState.animateScrollTo(0) }
                                     else -> {}
                                 }
                             }
