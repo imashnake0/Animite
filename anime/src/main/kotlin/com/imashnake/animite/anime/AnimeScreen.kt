@@ -195,16 +195,13 @@ private fun AnimeRow(
         title = title,
         mediaList = mediaList.list,
         contextChip = { onListClick ->
-            val season = mediaList.filterStrategy.season
+            val season = mediaList.filterStrategy.season?.sanitize()
             val year = mediaList.filterStrategy.year
             if (season != null && year != null) {
                 Chip(
                     color = MaterialTheme.colorScheme.primary,
-                    icon = season.sanitize()?.icon?.let {
-                        ImageVector.vectorResource(it)
-                    },
-                    text = "${season.sanitize()?.let { stringResource(it.res) }.orEmpty()} "
-                            + year.toString(),
+                    icon = ImageVector.vectorResource(season.icon),
+                    text = listOf(stringResource(season.res), year).joinToString(separator = " "),
                     onClick = onListClick
                 )
             } else {
