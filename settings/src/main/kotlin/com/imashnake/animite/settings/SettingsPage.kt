@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
@@ -39,7 +38,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -58,7 +56,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -95,6 +92,7 @@ import com.imashnake.animite.core.ui.Density
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.LocalTimeContext
 import com.imashnake.animite.core.ui.TimeContext
+import com.imashnake.animite.core.ui.component.ReorderableList
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
@@ -102,8 +100,6 @@ import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
-import org.jetbrains.compose.resources.stringResource
-import sh.calvin.reorderable.ReorderableColumn
 
 private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
@@ -133,9 +129,9 @@ fun SettingsPage(
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
-    val animeLists by viewModel.animeList.collectAsState(initial = emptyList())
+    val animeLists by viewModel.animeList.collectAsState(initial = persistentListOf())
     val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
-    val mangaLists by viewModel.mangaList.collectAsState(initial = emptyList())
+    val mangaLists by viewModel.mangaList.collectAsState(initial = persistentListOf())
     val mangaListsIndices by viewModel.mangaListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
@@ -464,136 +460,23 @@ fun SettingsPage(
                                 }
 
                                 2 -> {
-                                    // TODO: Extract to core:ui.
-                                    ReorderableColumn(
+                                    ReorderableList(
                                         list = animeLists,
+                                        isItemChecked = { animeListsIndices[it] > 0 },
+                                        checkItem = viewModel::toggleAnimeList,
                                         onSettle = viewModel::setAnimeListsIndices,
-                                        verticalArrangement = Arrangement.spacedBy(
-                                            ButtonGroupDefaults.ConnectedSpaceBetween
-                                        ),
-                                        onMove = {
-                                            haptic.performHapticFeedback(
-                                                HapticFeedbackType.SegmentFrequentTick
-                                            )
-                                        }
-                                    ) { index, animeList, _ ->
-                                        key(animeList) {
-                                            ReorderableItem {
-                                                ToggleButton(
-                                                    checked = animeListsIndices[index] > 0,
-                                                    onCheckedChange = {
-                                                        viewModel.toggleAnimeList(index)
-                                                        haptic.performHapticFeedback(
-                                                            HapticFeedbackType.SegmentTick
-                                                        )
-                                                    },
-                                                    // TODO: Fix the shapes.
-                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(
-                                                        checkedShape = RoundedCornerShape(10.dp)
-                                                    ),
-                                                    colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = MaterialTheme.colorScheme.background,
-                                                        checkedContentColor = MaterialTheme.colorScheme.onBackground,
-                                                        checkedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                                    ),
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        modifier = Modifier.fillMaxWidth()
-                                                    ) {
-                                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                                            AnimatedVisibility(visible = animeListsIndices[index] > 0) {
-                                                                Row {
-                                                                    Icon(
-                                                                        imageVector = Icons.Rounded.Check,
-                                                                        contentDescription = null,
-                                                                        modifier = Modifier.size(20.dp)
-                                                                    )
-                                                                    Spacer(Modifier.size(LocalPaddings.current.small))
-                                                                }
-                                                            }
-                                                            Text(text = stringResource(animeList.res))
-                                                        }
-                                                        Icon(
-                                                            imageVector = ImageVector.vectorResource(
-                                                                R.drawable.drag_handle
-                                                            ),
-                                                            contentDescription = stringResource(R.string.drag_handle),
-                                                            modifier = Modifier.draggableHandle()
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                        transformItemText = { it.res }
+                                    )
                                 }
 
                                 3 -> {
-                                    ReorderableColumn(
+                                    ReorderableList(
                                         list = mangaLists,
+                                        isItemChecked = { mangaListsIndices[it] > 0 },
+                                        checkItem = viewModel::toggleMangaList,
                                         onSettle = viewModel::setMangaListsIndices,
-                                        verticalArrangement = Arrangement.spacedBy(
-                                            ButtonGroupDefaults.ConnectedSpaceBetween
-                                        ),
-                                        onMove = {
-                                            haptic.performHapticFeedback(
-                                                HapticFeedbackType.SegmentFrequentTick
-                                            )
-                                        }
-                                    ) { index, mangaList, _ ->
-                                        key(mangaList) {
-                                            ReorderableItem {
-                                                ToggleButton(
-                                                    checked = mangaListsIndices[index] > 0,
-                                                    onCheckedChange = {
-                                                        viewModel.toggleMangaList(index)
-                                                        haptic.performHapticFeedback(
-                                                            HapticFeedbackType.SegmentTick
-                                                        )
-                                                    },
-                                                    // TODO: Fix the shapes.
-                                                    shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(
-                                                        checkedShape = RoundedCornerShape(10.dp)
-                                                    ),
-                                                    colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = MaterialTheme.colorScheme.background,
-                                                        checkedContentColor = MaterialTheme.colorScheme.onBackground,
-                                                        checkedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                                    ),
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        modifier = Modifier.fillMaxWidth()
-                                                    ) {
-                                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                                            AnimatedVisibility(visible = mangaListsIndices[index] > 0) {
-                                                                Row {
-                                                                    Icon(
-                                                                        imageVector = Icons.Rounded.Check,
-                                                                        contentDescription = null,
-                                                                        modifier = Modifier.size(20.dp)
-                                                                    )
-                                                                    Spacer(Modifier.size(LocalPaddings.current.small))
-                                                                }
-                                                            }
-                                                            Text(text = stringResource(mangaList.res))
-                                                        }
-                                                        Icon(
-                                                            imageVector = ImageVector.vectorResource(
-                                                                R.drawable.drag_handle
-                                                            ),
-                                                            contentDescription = stringResource(R.string.drag_handle),
-                                                            modifier = Modifier.draggableHandle()
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                        transformItemText = { it.res }
+                                    )
                                 }
                             }
                         }

@@ -3,4 +3,6 @@
     <string name="comfy">COMFY</string>
     <string name="cozy">COZY</string>
     <string name="compact">COMPACT</string>
+
+    <string name="drag_handle">Drag Handle</string>
 </resources>

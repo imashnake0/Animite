@@ -21,6 +21,7 @@ kotlin {
             implementation(libs.compose.material.icons.core)
             implementation(libs.compose.ui.toolingPreview)
             implementation(libs.compose.components.resources)
+            implementation(libs.reorderable)
 
             // Compose Markdown
             implementation(libs.boswelja.composeMarkdown.material3)

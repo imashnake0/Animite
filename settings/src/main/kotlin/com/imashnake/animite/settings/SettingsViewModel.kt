@@ -8,6 +8,7 @@ import com.imashnake.animite.core.model.AnimeList
 import com.imashnake.animite.core.model.MangaList
 import com.imashnake.animite.core.ui.Density
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -37,7 +38,7 @@ class SettingsViewModel @Inject constructor(
                 5, -5 -> AnimeList.NEWLY_ADDED
                 else -> null
             }
-        }.orEmpty().filterNotNull()
+        }.orEmpty().filterNotNull().toImmutableList()
     }
     val animeListsIndices = preferencesRepository.animeListsIndices.filterNotNull()
 
@@ -50,7 +51,7 @@ class SettingsViewModel @Inject constructor(
                 3, -3 -> MangaList.NEWLY_ADDED
                 else -> null
             }
-        }.orEmpty().filterNotNull()
+        }.orEmpty().filterNotNull().toImmutableList()
     }
     val mangaListsIndices = preferencesRepository.mangaListsIndices.filterNotNull()
 
