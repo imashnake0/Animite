@@ -60,7 +60,7 @@ composeIcons = "1.7.8"
 
 # Dagger
 # https://github.com/google/dagger/releases
-dagger = "2.59.2"
+dagger = "2.60"
 
 # Hilt
 # https://developer.android.com/jetpack/androidx/releases/hilt.
