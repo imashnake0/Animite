@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,12 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import animite.core.ui.generated.resources.Res
-import animite.core.ui.generated.resources.arrow_up
-import animite.core.ui.generated.resources.close
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.ext.thenIf
-import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,17 +54,17 @@ fun BottomSheet(
                     }
             ) {
                 AnimatedContent(sheetState.targetValue) {
-                    val drawable = if (it == SheetValue.Expanded) {
-                        Res.drawable.close
+                    val (size, icon) = if (it == SheetValue.Expanded) {
+                        16.dp to Icons.Rounded.Close
                     } else {
-                        Res.drawable.arrow_up
+                        20.dp to Icons.Rounded.KeyboardArrowUp
                     }
                     Icon(
-                        painter = painterResource(drawable),
+                        imageVector = icon,
                         contentDescription = null,
                         modifier = Modifier
                             .padding(LocalPaddings.current.small)
-                            .size(20.dp)
+                            .size(size)
                     )
                 }
             }
