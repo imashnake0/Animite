@@ -37,8 +37,8 @@ navigation = "2.9.8"
 
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases
-apollo = "5.0.0"
-apolloCache = "1.0.4"
+apollo = "5.0.1"
+apolloCache = "1.0.5"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore
