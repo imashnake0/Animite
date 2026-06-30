@@ -63,6 +63,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -73,13 +74,15 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.banner.BannerLayout
+import com.imashnake.animite.banner.NestedScrollBannerLayout
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.ProgressIndicatorScreen
@@ -147,12 +150,13 @@ fun ProfileScreen(
                     LaunchedEffect(avatar) {
                         if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
                     }
-                    BannerLayout(
-                        banner = { modifier ->
+                    NestedScrollBannerLayout(
+                        banner = { ratio, modifier ->
                             Box {
                                 AsyncImage(
                                     model = crossfadeModel(banner),
                                     contentDescription = null,
+                                    alpha = ratio,
                                     modifier = modifier,
                                     contentScale = ContentScale.Crop
                                 )
@@ -170,19 +174,31 @@ fun ProfileScreen(
                                                 topStart = LocalPaddings.current.small,
                                                 topEnd = LocalPaddings.current.small,
                                             )
-                                        ),
-                                )
-                                SettingsAndMore(
-                                    onNavigateToSettings = onNavigateToSettings,
-                                    logOut = { isLogOutDialogShown = true },
-                                    refresh = { viewModel.refresh { isDropdownExpanded = false } },
-                                    expanded = isDropdownExpanded,
-                                    setExpanded = { isDropdownExpanded = it },
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .padding(allPaddingValues.copy(bottom = 0.dp)),
+                                        ).graphicsLayer {
+                                            transformOrigin = TransformOrigin(0.5f, 1f)
+                                            alpha = ratio
+                                            scaleX = ratio.fastCoerceIn(0.5f, 1f)
+                                            scaleY = ratio.fastCoerceIn(0.5f, 1f)
+                                        },
                                 )
                             }
+                            SettingsAndMore(
+                                onNavigateToSettings = onNavigateToSettings,
+                                logOut = { isLogOutDialogShown = true },
+                                refresh = { viewModel.refresh { isDropdownExpanded = false } },
+                                expanded = isDropdownExpanded,
+                                setExpanded = { isDropdownExpanded = it },
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(allPaddingValues.copy(bottom = 0.dp))
+                                    .padding(
+                                        start = LocalPaddings.current.large,
+                                        bottom = LocalPaddings.current.large,
+                                        end = LocalPaddings.current.large
+                                    )
+                                    .padding(top = LocalPaddings.current.large * ratio)
+                                    .zIndex(5f),
+                            )
                         },
                         content = {
                             Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.ultraTiny)) {
@@ -283,7 +299,7 @@ private fun SettingsAndMore(
     Row(
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(LocalPaddings.current.large)
+        modifier = modifier
     ) {
         SettingsIcon(onNavigateToSettings = onNavigateToSettings)
 
