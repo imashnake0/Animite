@@ -3,6 +3,7 @@ package com.imashnake.animite.banner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -70,8 +71,11 @@ fun BannerLayout(
 
 @Composable
 fun NestedScrollBannerLayout(
-    banner: @Composable (Float, Modifier) -> Unit,
+    banner: @Composable BoxScope.(Float, Modifier) -> Unit,
+    bannerElevatedContent: @Composable BoxScope.(Float) -> Unit,
     content: @Composable ColumnScope.() -> Unit,
+    isExpanded: Boolean,
+    setIsExpanded: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     maxBannerHeight: Dp = dimensionResource(R.dimen.banner_height),
     contentPadding: PaddingValues = PaddingValues(),
@@ -83,29 +87,29 @@ fun NestedScrollBannerLayout(
     val statusBarHeight = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
     val minBannerHeight = statusBarHeight + LocalPaddings.current.large
 
-    val nestedScrollConnection = remember {
+    val nestedScrollConnection = remember(isExpanded) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                // Calculate the change in image size based on scroll delta
-                val delta = available.y / 5
-                val newImageSize = bannerHeight + delta.dp
-                val previousImageSize = bannerHeight
+                val newSize = bannerHeight + (available.y / 5).dp
+                if (isExpanded) {
+                    bannerHeight = newSize.coerceIn(minBannerHeight, maxBannerHeight)
+                    ratio = (bannerHeight - minBannerHeight) / (maxBannerHeight - minBannerHeight)
 
-                // Constrain the image size within the allowed bounds
-                bannerHeight = newImageSize.coerceIn(minBannerHeight, maxBannerHeight)
-                val consumed = bannerHeight - previousImageSize
+                    if (ratio == 0f) setIsExpanded(false)
+                }
 
-                // Calculate the scale for the image
-                ratio = (bannerHeight - minBannerHeight) / (maxBannerHeight - minBannerHeight)
-
-                // Return the consumed scroll amount
-                return Offset(0f, consumed.value)
+                return Offset.Zero
             }
         }
     }
 
     Box(modifier.nestedScroll(nestedScrollConnection)) {
-
+        banner(
+            ratio,
+            Modifier
+                .height(bannerHeight)
+                .fillMaxWidth()
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -114,11 +118,6 @@ fun NestedScrollBannerLayout(
                 .padding(contentPadding),
             verticalArrangement = verticalArrangement
         ) { content() }
-        banner(
-            ratio,
-            Modifier
-                .height(bannerHeight)
-                .fillMaxWidth()
-        )
+        bannerElevatedContent(ratio)
     }
 }

@@ -63,7 +63,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -74,9 +73,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastForEachIndexed
-import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
@@ -138,6 +135,8 @@ fun ProfileScreen(
     var isLogOutDialogShown by remember { mutableStateOf(false) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
 
+    var isBannerExpanded by remember { mutableStateOf(true) }
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -151,6 +150,8 @@ fun ProfileScreen(
                         if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
                     }
                     NestedScrollBannerLayout(
+                        isExpanded = isBannerExpanded,
+                        setIsExpanded = { isBannerExpanded = it },
                         banner = { ratio, modifier ->
                             Box {
                                 AsyncImage(
@@ -174,14 +175,12 @@ fun ProfileScreen(
                                                 topStart = LocalPaddings.current.small,
                                                 topEnd = LocalPaddings.current.small,
                                             )
-                                        ).graphicsLayer {
-                                            transformOrigin = TransformOrigin(0.5f, 1f)
-                                            alpha = ratio
-                                            scaleX = ratio.fastCoerceIn(0.5f, 1f)
-                                            scaleY = ratio.fastCoerceIn(0.5f, 1f)
-                                        },
+                                        )
+                                        .graphicsLayer { alpha = ratio },
                                 )
                             }
+                        },
+                        bannerElevatedContent = { ratio ->
                             SettingsAndMore(
                                 onNavigateToSettings = onNavigateToSettings,
                                 logOut = { isLogOutDialogShown = true },
@@ -197,7 +196,6 @@ fun ProfileScreen(
                                         end = LocalPaddings.current.large
                                     )
                                     .padding(top = LocalPaddings.current.large * ratio)
-                                    .zIndex(5f),
                             )
                         },
                         content = {
