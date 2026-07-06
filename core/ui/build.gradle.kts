@@ -23,9 +23,6 @@ kotlin {
             implementation(libs.compose.components.resources)
             implementation(libs.reorderable)
 
-            // Compose Markdown
-            implementation(libs.boswelja.composeMarkdown.material3)
-
             // Coil
             implementation(libs.bundles.coil)
 

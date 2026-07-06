@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -76,6 +77,7 @@ fun NestedScrollBannerLayout(
     modifier: Modifier = Modifier,
     maxBannerHeight: Dp = dimensionResource(R.dimen.banner_height),
     contentPadding: PaddingValues = PaddingValues(),
+    contentBackgroundColor: Color = MaterialTheme.colorScheme.background,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(LocalPaddings.current.large)
 ) {
     val density = LocalDensity.current
@@ -143,7 +145,7 @@ fun NestedScrollBannerLayout(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = with(density) { bannerHeightPx.toDp() })
-                .background(MaterialTheme.colorScheme.background)
+                .background(contentBackgroundColor)
                 .padding(contentPadding),
             verticalArrangement = verticalArrangement
         ) { content() }

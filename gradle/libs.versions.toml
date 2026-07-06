@@ -95,8 +95,8 @@ junit = "4.13.2"
 detekt = "1.23.8"
 
 # Compose Markdown
-# https://github.com/boswelja/compose-markdown
-composeMarkdown = "1.3.0"
+# https://github.com/mikepenz/multiplatform-markdown-renderer/releases
+composeMarkdown = "0.43.0"
 
 # MaterialKolor
 # https://github.com/jordond/MaterialKolor
@@ -143,7 +143,6 @@ coil-network = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", versio
 ktor-engine-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-engine-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-engine-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
-boswelja-composeMarkdown-material3 = { group = "io.github.boswelja.markdown", name = "material3", version.ref = "composeMarkdown" }
 kotlinx-collectionsImmutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -162,6 +161,8 @@ ktor-contentNegotation = { module = "io.ktor:ktor-client-content-negotiation", v
 ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 saket-cascade = { group = "me.saket.cascade", name = "cascade-compose", version.ref = "saketCascade" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+mikepenz-composeMarkdown = { group = "com.mikepenz", name = "multiplatform-markdown-renderer-m3-android", version.ref = "composeMarkdown" }
+
 
 [bundles]
 

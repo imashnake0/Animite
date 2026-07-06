@@ -61,7 +61,7 @@ dependencies {
     implementation(libs.compose.ui.toolingPreview)
 
     // Compose Markdown
-    implementation(libs.boswelja.composeMarkdown.material3)
+    implementation(libs.mikepenz.composeMarkdown)
 
     // Cascade Compose
     implementation(libs.saket.cascade)

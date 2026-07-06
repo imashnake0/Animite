@@ -1,5 +1,7 @@
 package com.imashnake.animite.profile.tabs
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -26,15 +28,18 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.StatsRow
+import com.imashnake.animite.core.ui.ext.maxHeight
+import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.profile.R
+import com.mikepenz.markdown.m3.Markdown
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
@@ -58,6 +63,8 @@ fun AboutTab(
             .padding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
+        UserDescription(user.description)
+
         StatsRow(
             stats = user.stats,
             modifier = Modifier.fillMaxWidth()
@@ -77,6 +84,22 @@ fun AboutTab(
         }
 
         if (user.genres.isNotEmpty()) Genres(user.genres)
+    }
+}
+
+@Composable
+private fun UserDescription(description: String?, modifier: Modifier = Modifier) {
+    description?.let {
+        Crossfade(targetState = description, modifier = modifier.animateContentSize()) {
+            Box {
+                NestedScrollableContent(
+                    modifier = Modifier
+                        .maxHeight(dimensionResource(R.dimen.user_about_description_height))
+                ) { contentModifier ->
+                    Markdown(it, modifier = contentModifier)
+                }
+            }
+        }
     }
 }
 
@@ -112,9 +135,8 @@ private fun Genres(
             genres.fastForEach {
                 Text(
                     text = it.genre,
-                    style = m3TextStyles().textStyle.copy(
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)
-                    )
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         }
