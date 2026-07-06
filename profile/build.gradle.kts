@@ -46,8 +46,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
 
-    implementation("com.mikepenz:multiplatform-markdown-renderer-m3-android:0.43.0")
-
     // Navigation
     implementation(libs.androidx.navigationCommon)
 
