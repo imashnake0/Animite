@@ -12,8 +12,8 @@ plugins {
 android {
     defaultConfig {
         applicationId = "com.imashnake.animite"
-        versionCode = 41
-        versionName = "0.7.2-alpha01"
+        versionCode = 42
+        versionName = "0.7.3-alpha01"
     }
 
     signingConfigs {
