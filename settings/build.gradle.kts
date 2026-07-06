@@ -64,9 +64,6 @@ dependencies {
 
     implementation(libs.materialKolor)
 
-    // Compose Markdown
-    implementation(libs.boswelja.composeMarkdown.material3)
-
     // Cascade Compose
     implementation(libs.saket.cascade)
 

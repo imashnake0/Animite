@@ -2,9 +2,7 @@ package com.imashnake.animite.profile
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -62,8 +60,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -77,8 +73,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
-import com.boswelja.markdown.material3.MarkdownDocument
-import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.banner.NestedScrollBannerLayout
 import com.imashnake.animite.core.resource.Resource
@@ -88,10 +82,7 @@ import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.ext.maxHeight
-import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.media.MediaPage
-import com.imashnake.animite.profile.ext.animiteBlockQuoteStyle
-import com.imashnake.animite.profile.ext.animiteCodeBlockStyle
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
@@ -158,7 +149,7 @@ fun ProfileScreen(
                     ) {
                         NestedScrollBannerLayout(
                             banner = { ratio, modifier ->
-                                Box {
+                                Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) {
                                     AsyncImage(
                                         model = crossfadeModel(banner),
                                         contentDescription = null,
@@ -227,6 +218,7 @@ fun ProfileScreen(
                                     )
                                 }
                             },
+                            contentBackgroundColor = MaterialTheme.colorScheme.surfaceContainer,
                             contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
                         )
                     }
@@ -256,31 +248,6 @@ fun ProfileScreen(
                     isDropdownExpanded = false
                 },
             )
-    }
-}
-
-// TODO: Properly parse the user description and add this back.
-@Composable
-private fun UserDescription(description: String?, modifier: Modifier = Modifier) {
-    description?.let {
-        Crossfade(targetState = description, modifier = modifier.animateContentSize()) {
-            Box {
-                NestedScrollableContent { contentModifier ->
-                    MarkdownDocument(
-                        markdown = it,
-                        // TODO: Fix typography and make this an `animiteTextStyle()`.
-                        textStyles = m3TextStyles().copy(
-                            textStyle = m3TextStyles().textStyle.copy(
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)
-                            )
-                        ),
-                        blockQuoteStyle = animiteBlockQuoteStyle(),
-                        codeBlockStyle = animiteCodeBlockStyle(),
-                        modifier = contentModifier,
-                    )
-                }
-            }
-        }
     }
 }
 
@@ -322,7 +289,7 @@ private fun SettingsAndMore(
                     modifier = Modifier
                         .clickable { setExpanded(!expanded) }
                         .padding(LocalPaddings.current.medium)
-                        .size(LocalPaddings.current.large)
+                        .size(20.dp)
                 )
             }
             CascadeDropdownMenu(
@@ -445,7 +412,7 @@ private fun UserTabs(
         if (!scrollableTabs) {
             PrimaryTabRow(
                 selectedTabIndex = pagerState.currentPage,
-                containerColor = MaterialTheme.colorScheme.background,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 divider = {},
                 modifier = Modifier.padding(horizontalContentPadding)
             ) {
@@ -483,7 +450,7 @@ private fun UserTabs(
         } else {
             PrimaryScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
-                containerColor = MaterialTheme.colorScheme.background,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 edgePadding = LocalPaddings.current.small,
                 divider = {},
                 modifier = Modifier.padding(horizontalContentPadding)
@@ -519,14 +486,7 @@ private fun UserTabs(
             state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            onBackground.copy(alpha = 0.03f),
-                            Color.Transparent
-                        )
-                    )
-                )
+                .background(MaterialTheme.colorScheme.background)
         ) { page ->
 
             val tabContentPadding = PaddingValues(
