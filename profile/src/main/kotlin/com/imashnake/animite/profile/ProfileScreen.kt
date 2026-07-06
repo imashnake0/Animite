@@ -36,7 +36,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -50,6 +49,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -79,7 +80,7 @@ import coil3.compose.AsyncImage
 import com.boswelja.markdown.material3.MarkdownDocument
 import com.boswelja.markdown.material3.m3TextStyles
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.banner.BannerLayout
+import com.imashnake.animite.banner.NestedScrollBannerLayout
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.ProgressIndicatorScreen
@@ -147,70 +148,88 @@ fun ProfileScreen(
                     LaunchedEffect(avatar) {
                         if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
                     }
-                    BannerLayout(
-                        banner = { modifier ->
-                            Box {
-                                AsyncImage(
-                                    model = crossfadeModel(banner),
-                                    contentDescription = null,
-                                    modifier = modifier,
-                                    contentScale = ContentScale.Crop
-                                )
-                                AsyncImage(
-                                    model = crossfadeModel(avatar),
-                                    contentDescription = "Avatar",
-                                    modifier = Modifier
-                                        .align(Alignment.BottomStart)
-                                        .padding(start = LocalPaddings.current.large)
-                                        .padding(allPaddingValues.horizontalOnly)
-                                        .wrapContentSize()
-                                        .maxHeight(100.dp)
-                                        .clip(
-                                            RoundedCornerShape(
-                                                topStart = LocalPaddings.current.small,
-                                                topEnd = LocalPaddings.current.small,
+
+                    var isRefreshing by remember { mutableStateOf(false) }
+                    val pullToRefreshState = rememberPullToRefreshState()
+                    PullToRefreshBox(
+                        isRefreshing = isRefreshing,
+                        onRefresh = { viewModel.refresh { isRefreshing = it } },
+                        state = pullToRefreshState,
+                    ) {
+                        NestedScrollBannerLayout(
+                            banner = { ratio, modifier ->
+                                Box {
+                                    AsyncImage(
+                                        model = crossfadeModel(banner),
+                                        contentDescription = null,
+                                        alpha = ratio,
+                                        modifier = modifier,
+                                        contentScale = ContentScale.Crop
+                                    )
+                                    AsyncImage(
+                                        model = crossfadeModel(avatar),
+                                        contentDescription = "Avatar",
+                                        modifier = Modifier
+                                            .align(Alignment.BottomStart)
+                                            .padding(start = LocalPaddings.current.large)
+                                            .padding(allPaddingValues.horizontalOnly)
+                                            .wrapContentSize()
+                                            .maxHeight(100.dp)
+                                            .clip(
+                                                RoundedCornerShape(
+                                                    topStart = LocalPaddings.current.small,
+                                                    topEnd = LocalPaddings.current.small,
+                                                )
                                             )
-                                        ),
-                                )
+                                            .graphicsLayer { alpha = ratio },
+                                    )
+                                }
+                            },
+                            bannerElevatedContent = { ratio ->
                                 SettingsAndMore(
                                     onNavigateToSettings = onNavigateToSettings,
                                     logOut = { isLogOutDialogShown = true },
-                                    refresh = { viewModel.refresh { isDropdownExpanded = false } },
                                     expanded = isDropdownExpanded,
                                     setExpanded = { isDropdownExpanded = it },
                                     modifier = Modifier
                                         .align(Alignment.TopEnd)
-                                        .padding(allPaddingValues.copy(bottom = 0.dp)),
+                                        .padding(allPaddingValues.copy(bottom = 0.dp))
+                                        .padding(
+                                            start = LocalPaddings.current.large,
+                                            bottom = LocalPaddings.current.large,
+                                            end = LocalPaddings.current.large
+                                        )
+                                        .padding(top = LocalPaddings.current.large * ratio)
                                 )
-                            }
-                        },
-                        content = {
-                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.ultraTiny)) {
-                                Column(
-                                    modifier = Modifier
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .padding(allPaddingValues.horizontalOnly)
-                                ) {
-                                    Text(
-                                        text = name,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        style = MaterialTheme.typography.titleLarge,
-                                        overflow = TextOverflow.Ellipsis,
+                            },
+                            content = {
+                                Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.ultraTiny)) {
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(horizontal = LocalPaddings.current.large)
+                                            .padding(allPaddingValues.horizontalOnly)
+                                    ) {
+                                        Text(
+                                            text = name,
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            style = MaterialTheme.typography.titleLarge,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    }
+                                    UserTabs(
+                                        user = this@run,
+                                        animeCollection = viewerAnimeLists.data,
+                                        mangaCollection = viewerMangaLists.data,
+                                        onNavigateToMediaItem = onNavigateToMediaItem,
+                                        sharedTransitionScope = sharedTransitionScope,
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        contentPadding = navigationComponentPaddingValues + insetPaddingValues,
                                     )
                                 }
-                                UserTabs(
-                                    user = this@run,
-                                    animeCollection = viewerAnimeLists.data,
-                                    mangaCollection = viewerMangaLists.data,
-                                    onNavigateToMediaItem = onNavigateToMediaItem,
-                                    sharedTransitionScope = sharedTransitionScope,
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    contentPadding = navigationComponentPaddingValues + insetPaddingValues,
-                                )
-                            }
-                        },
-                        contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
-                    )
+                            },
+                            contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
+                        )
+                    }
                 }
                 else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
             }
@@ -271,7 +290,6 @@ private fun SettingsAndMore(
     expanded: Boolean,
     setExpanded: (Boolean) -> Unit,
     logOut: () -> Unit,
-    refresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val cascadeState = rememberCascadeState()
@@ -283,7 +301,7 @@ private fun SettingsAndMore(
     Row(
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(LocalPaddings.current.large)
+        modifier = modifier
     ) {
         SettingsIcon(onNavigateToSettings = onNavigateToSettings)
 
@@ -319,22 +337,6 @@ private fun SettingsAndMore(
                 ),
                 offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
             ) {
-                // TODO: This is horrible UX, use nested scroll <-> pull to refresh.
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.refresh)) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Refresh,
-                            contentDescription = stringResource(R.string.refresh),
-                        )
-                    },
-                    colors = MenuDefaults.itemColors(
-                        leadingIconColor = MaterialTheme.colorScheme.primary
-                    ),
-                    onClick = refresh,
-                    contentPadding = PaddingValues(LocalPaddings.current.medium)
-                )
-
                 // TODO: The material3 DropdownMenuItem doesn't respect layout direction padding.
                 //  Figure out why/create an issue. saket-cascade works just fine.
                 DropdownMenuItem(

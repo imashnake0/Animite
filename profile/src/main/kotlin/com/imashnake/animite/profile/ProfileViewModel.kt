@@ -14,6 +14,7 @@ import com.imashnake.animite.navigation.ProfileRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -101,11 +102,13 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun refresh(onRefresh: () -> Unit) = viewModelScope.launch {
-        onRefresh()
+    fun refresh(setIsRefreshing: (Boolean) -> Unit) = viewModelScope.launch {
+        setIsRefreshing(true)
         useNetwork = true
         refreshTrigger.emit(Unit)
+        delay(1500L)
         useNetwork = false
+        setIsRefreshing(false)
     }
 
     val viewerAvatar = preferencesRepository.viewerAvatar

@@ -5,6 +5,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -85,7 +86,7 @@ private fun UserMediaLists(
 
     Column(
         modifier =  modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(contentPadding.verticalOnly),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
