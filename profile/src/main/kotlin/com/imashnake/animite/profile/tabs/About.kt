@@ -53,6 +53,7 @@ fun AboutTab(
 
     Column(
         modifier = modifier
+            .fillMaxHeight()
             .verticalScroll(scrollState)
             .padding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)

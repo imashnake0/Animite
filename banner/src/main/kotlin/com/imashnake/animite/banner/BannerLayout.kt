@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,7 +27,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastCoerceIn
 import com.imashnake.animite.core.ui.LocalPaddings
 
 /**
@@ -74,30 +73,60 @@ fun NestedScrollBannerLayout(
     banner: @Composable BoxScope.(Float, Modifier) -> Unit,
     bannerElevatedContent: @Composable BoxScope.(Float) -> Unit,
     content: @Composable ColumnScope.() -> Unit,
-    isExpanded: Boolean,
-    setIsExpanded: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     maxBannerHeight: Dp = dimensionResource(R.dimen.banner_height),
     contentPadding: PaddingValues = PaddingValues(),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(LocalPaddings.current.large)
 ) {
-    var bannerHeight by remember { mutableStateOf(maxBannerHeight) }
-    var ratio by remember { mutableFloatStateOf(1f) }
     val density = LocalDensity.current
+    var bannerHeightPx by remember { mutableFloatStateOf(with(density) { maxBannerHeight.toPx() }) }
+    var ratio by remember { mutableFloatStateOf(1f) }
     val statusBarHeight = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
-    val minBannerHeight = statusBarHeight + LocalPaddings.current.large
+    val minBannerHeightPx = with(density) { (statusBarHeight + LocalPaddings.current.large).toPx() }
+    val maxBannerHeightPx = with(density) { maxBannerHeight.toPx() }
 
-    val nestedScrollConnection = remember(isExpanded) {
+    // Copied from TopAppBar.ExitUntilCollapsedScrollBehavior
+    val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val newSize = bannerHeight + (available.y / 5).dp
-                if (isExpanded) {
-                    bannerHeight = newSize.coerceIn(minBannerHeight, maxBannerHeight)
-                    ratio = (bannerHeight - minBannerHeight) / (maxBannerHeight - minBannerHeight)
+                // Don't intercept if scrolling down.
+                if (available.y > 0f) return Offset.Zero
 
-                    if (ratio == 0f) setIsExpanded(false)
+                val prevBannerHeight = bannerHeightPx
+                bannerHeightPx = (bannerHeightPx + available.y).fastCoerceIn(minBannerHeightPx, maxBannerHeightPx)
+                ratio = (bannerHeightPx - minBannerHeightPx) / (maxBannerHeightPx - minBannerHeightPx)
+                return if (prevBannerHeight != bannerHeightPx) {
+                    // We're in the middle of top app bar collapse or expand.
+                    // Consume only the scroll on the Y axis.
+                    available.copy(x = 0f)
+                } else {
+                    Offset.Zero
+                }
+            }
+
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource,
+            ): Offset {
+                if (available.y < 0f || consumed.y < 0f) {
+                    // When scrolling up, just update the state's height offset.
+                    val oldBannerHeight = bannerHeightPx
+                    bannerHeightPx = (bannerHeightPx + consumed.y).fastCoerceIn(minBannerHeightPx, maxBannerHeightPx)
+                    ratio = (bannerHeightPx - minBannerHeightPx) / (maxBannerHeightPx - minBannerHeightPx)
+
+                    return Offset(0f, bannerHeightPx - oldBannerHeight)
                 }
 
+                if (available.y > 0f) {
+                    // Adjust the height offset in case the consumed delta Y is less than what was
+                    // recorded as available delta Y in the pre-scroll.
+                    val oldBannerHeight = bannerHeightPx
+                    bannerHeightPx = (bannerHeightPx + available.y).fastCoerceIn(minBannerHeightPx, maxBannerHeightPx)
+                    ratio = (bannerHeightPx - minBannerHeightPx) / (maxBannerHeightPx - minBannerHeightPx)
+
+                    return Offset(0f, bannerHeightPx - oldBannerHeight)
+                }
                 return Offset.Zero
             }
         }
@@ -107,13 +136,13 @@ fun NestedScrollBannerLayout(
         banner(
             ratio,
             Modifier
-                .height(bannerHeight)
+                .height(with(density) { bannerHeightPx.toDp() })
                 .fillMaxWidth()
         )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = bannerHeight)
+                .padding(top = with(density) { bannerHeightPx.toDp() })
                 .background(MaterialTheme.colorScheme.background)
                 .padding(contentPadding),
             verticalArrangement = verticalArrangement
