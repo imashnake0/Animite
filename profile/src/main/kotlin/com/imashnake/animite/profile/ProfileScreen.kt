@@ -153,7 +153,7 @@ fun ProfileScreen(
                                     AsyncImage(
                                         model = crossfadeModel(banner),
                                         contentDescription = null,
-                                        alpha = ratio,
+                                        alpha = 1.2f * ratio - 0.2f,
                                         modifier = modifier,
                                         contentScale = ContentScale.Crop
                                     )
@@ -172,7 +172,7 @@ fun ProfileScreen(
                                                     topEnd = LocalPaddings.current.small,
                                                 )
                                             )
-                                            .graphicsLayer { alpha = ratio },
+                                            .graphicsLayer { alpha = 1.5f * ratio - 0.5f },
                                     )
                                 }
                             },
