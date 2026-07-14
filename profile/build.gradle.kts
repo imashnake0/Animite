@@ -62,6 +62,7 @@ dependencies {
 
     // Compose Markdown
     implementation(libs.mikepenz.composeMarkdown)
+    implementation(libs.mikepenz.composeMarkdown.coil)
 
     // Cascade Compose
     implementation(libs.saket.cascade)

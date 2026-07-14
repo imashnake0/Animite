@@ -41,11 +41,13 @@ import com.imashnake.animite.core.ui.component.StatsRow
 import com.imashnake.animite.core.ui.ext.maxHeight
 import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.profile.R
+import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownColor
 import com.mikepenz.markdown.m3.markdownTypography
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
+import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 
 /**
  * Viewer's stats and genre distribution.
@@ -104,6 +106,7 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
                         content = it,
                         modifier = contentModifier,
                         colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
+                        flavour = GFMFlavourDescriptor(),
                         typography = markdownTypography(
                             text = MaterialTheme.typography.bodyMedium,
                             paragraph = MaterialTheme.typography.bodyMedium,
@@ -115,6 +118,7 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
                                 ).toSpanStyle()
                             )
                         ),
+                        imageTransformer = Coil3ImageTransformerImpl
                     )
                 }
             }
