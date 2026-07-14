@@ -106,6 +106,7 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
                         content = it,
                         modifier = contentModifier,
                         colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
+                        // TODO: Impl `AnilistFlavourDescriptor` and pass it here to handle custom stuff.
                         flavour = GFMFlavourDescriptor(),
                         typography = markdownTypography(
                             text = MaterialTheme.typography.bodyMedium,

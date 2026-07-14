@@ -69,7 +69,6 @@ dependencies {
 
     // Coil
     implementation(libs.bundles.coil)
-    implementation(libs.coil.gif)
 
     // Kotlin
     implementation(libs.kotlinx.collectionsImmutable)

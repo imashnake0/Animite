@@ -179,6 +179,7 @@ compose = [
 coil = [
     "coil-compose",
     "coil-network",
+    "coil-gif",
     "ktor-engine-android"
 ]
 
