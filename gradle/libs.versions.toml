@@ -139,6 +139,7 @@ apollo-runtime = { group = "com.apollographql.apollo", name = "apollo-runtime", 
 apollo-cache-memory = { group = "com.apollographql.cache", name = "normalized-cache", version.ref = "apolloCache" }
 apollo-cache-sqlite = { group = "com.apollographql.cache", name = "normalized-cache-sqlite", version.ref = "apolloCache" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
 coil-network = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 ktor-engine-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-engine-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
