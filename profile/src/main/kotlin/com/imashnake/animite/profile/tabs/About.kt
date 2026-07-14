@@ -30,7 +30,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.profile.User
@@ -40,6 +42,8 @@ import com.imashnake.animite.core.ui.ext.maxHeight
 import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.profile.R
 import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownColor
+import com.mikepenz.markdown.m3.markdownTypography
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
@@ -96,7 +100,22 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
                     modifier = Modifier
                         .maxHeight(dimensionResource(R.dimen.user_about_description_height))
                 ) { contentModifier ->
-                    Markdown(it, modifier = contentModifier)
+                    Markdown(
+                        content = it,
+                        modifier = contentModifier,
+                        colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
+                        typography = markdownTypography(
+                            text = MaterialTheme.typography.bodyMedium,
+                            paragraph = MaterialTheme.typography.bodyMedium,
+                            textLink = TextLinkStyles(
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textDecoration = TextDecoration.Underline,
+                                    baselineShift = null
+                                ).toSpanStyle()
+                            )
+                        ),
+                    )
                 }
             }
         }
