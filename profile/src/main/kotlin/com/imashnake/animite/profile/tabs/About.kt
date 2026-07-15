@@ -94,7 +94,10 @@ fun AboutTab(
 }
 
 @Composable
-private fun UserDescription(description: String?, modifier: Modifier = Modifier) {
+private fun UserDescription(
+    description: String?,
+    modifier: Modifier = Modifier
+) {
     description?.let {
         Crossfade(targetState = description, modifier = modifier.animateContentSize()) {
             Box {
@@ -107,6 +110,8 @@ private fun UserDescription(description: String?, modifier: Modifier = Modifier)
                         modifier = contentModifier,
                         colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
                         // TODO: Impl `AnilistFlavourDescriptor` and pass it here to handle custom stuff.
+                        //   https://github.com/JetBrains/markdown#extending-the-parser ->
+                        //   implement your own markdown flavour.
                         flavour = GFMFlavourDescriptor(),
                         typography = markdownTypography(
                             text = MaterialTheme.typography.bodyMedium,
