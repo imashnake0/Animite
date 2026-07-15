@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -46,7 +47,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.anime.AnimeScreen
-import com.imashnake.animite.api.anilist.sanitize.media.MediaList
 import com.imashnake.animite.core.ui.Density
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
@@ -102,6 +102,7 @@ class MainActivity : ComponentActivity() {
             val useSystemColorScheme by settingsViewModel.useSystemColorScheme.collectAsState(initial = false)
             val isAmoled by settingsViewModel.isAmoled.collectAsState(initial = false)
             val density by settingsViewModel.density.collectAsState(initial = Density.COMFY.name)
+            val showUserDescription by settingsViewModel.showUserDescription.collectAsStateWithLifecycle(initialValue = true)
 
             val useDarkTheme = when(Theme.valueOf(theme)) {
                 Theme.DARK -> true
@@ -125,6 +126,7 @@ class MainActivity : ComponentActivity() {
                     useDarkTheme = useDarkTheme,
                     isAmoled = isAmoled,
                     avatar = avatar,
+                    showUserDescription = showUserDescription,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
@@ -153,6 +155,7 @@ fun MainScreen(
     useDarkTheme: Boolean,
     isAmoled: Boolean,
     avatar: String?,
+    showUserDescription: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
@@ -219,6 +222,7 @@ fun MainScreen(
                         ProfileScreen(
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToSettings = navController::navigate,
+                            showUserDescription = showUserDescription,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )

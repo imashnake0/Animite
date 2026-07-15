@@ -19,6 +19,9 @@
     <string name="anime_lists">Anime Lists</string>
     <string name="manga_lists">Manga Lists</string>
 
+    <string name="profile_settings">Profile</string>
+    <string name="show_description">Show description</string>
+
     <string name="about">About</string>
 
     <string name="app_icon">App Icon</string>

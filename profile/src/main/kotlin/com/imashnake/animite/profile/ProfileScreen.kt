@@ -100,6 +100,7 @@ private const val DROP_DOWN_ITEMS_COUNT = 2
 fun ProfileScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     onNavigateToSettings: (SettingsPage) -> Unit,
+    showUserDescription: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -212,6 +213,7 @@ fun ProfileScreen(
                                         animeCollection = viewerAnimeLists.data,
                                         mangaCollection = viewerMangaLists.data,
                                         onNavigateToMediaItem = onNavigateToMediaItem,
+                                        showUserDescription = showUserDescription,
                                         sharedTransitionScope = sharedTransitionScope,
                                         animatedVisibilityScope = animatedVisibilityScope,
                                         contentPadding = navigationComponentPaddingValues + insetPaddingValues,
@@ -395,6 +397,7 @@ private fun UserTabs(
     animeCollection: User.MediaCollection?,
     mangaCollection: User.MediaCollection?,
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    showUserDescription: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -497,6 +500,7 @@ private fun UserTabs(
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(
                         user = user,
+                        showUserDescription = showUserDescription,
                         contentPadding = tabContentPadding,
                     )
                     ProfileTab.ANIME -> MediaTab(

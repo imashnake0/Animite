@@ -59,6 +59,7 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 @Composable
 fun AboutTab(
     user: User,
+    showUserDescription: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -71,7 +72,9 @@ fun AboutTab(
             .padding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        UserDescription(description = user.description)
+        if (showUserDescription) {
+            UserDescription(description = user.description)
+        }
 
         StatsRow(
             stats = user.stats,
