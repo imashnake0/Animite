@@ -22,7 +22,7 @@ Some apps that I referred to while developing:
 - [AniTrend](https://github.com/AniTrend/anitrend-v2)
 
 Libraries:
-- [Compose Markdown](https://github.com/boswelja/compose-markdown)
+- Compose Markdown: [boswelja/compose-markdown](https://github.com/boswelja/compose-markdown), [mikepenz/markdown-renderer](https://github.com/mikepenz/multiplatform-markdown-renderer)
 - [MaterialKolor](https://github.com/jordond/MaterialKolor)
 
 ## [License](https://github.com/imashnake0/Animite/blob/15eaac4a80c1e6eef3a4d6c861cab05670fb174b/LICENSE.txt)
