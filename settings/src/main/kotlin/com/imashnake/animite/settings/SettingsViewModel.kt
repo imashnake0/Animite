@@ -41,6 +41,7 @@ class SettingsViewModel @Inject constructor(
         }.orEmpty().filterNotNull().toImmutableList()
     }
     val animeListsIndices = preferencesRepository.animeListsIndices.filterNotNull()
+    val showUserDescription = preferencesRepository.showUserDescription.filterNotNull()
 
     val mangaList = preferencesRepository.mangaListsIndices.map { indices ->
         indices?.map {
@@ -76,6 +77,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setLanguage(language: Media.Language) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setLanguage(language.name)
+    }
+
+    fun setShowUserDescription(showUserDescription: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setShowUserDescription(showUserDescription)
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {

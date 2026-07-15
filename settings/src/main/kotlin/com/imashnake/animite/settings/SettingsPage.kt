@@ -128,6 +128,7 @@ fun SettingsPage(
     val selectedDensity by viewModel.density.collectAsState(initial = Density.COMFY.name)
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
+    val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
     val animeLists by viewModel.animeList.collectAsState(initial = persistentListOf())
     val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
@@ -476,6 +477,65 @@ fun SettingsPage(
                                         checkItem = viewModel::toggleMangaList,
                                         onSettle = viewModel::setMangaListsIndices,
                                         transformItemText = { it.res }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                        Text(
+                            text = stringResource(R.string.profile_settings),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.titleLarge,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                        Items(
+                            items = persistentListOf(
+                                Item(
+                                    icon = R.drawable.user_description,
+                                    label = R.string.show_description,
+                                    orientation = Item.Orientation.HORIZONTAL
+                                ),
+                            ),
+                            onItemClick = { index ->
+                                when (index) {
+                                    0 -> {
+                                        viewModel.setShowUserDescription(!showUserDescription)
+                                        haptic.performHapticFeedback(
+                                            hapticFeedbackType = if (showUserDescription) {
+                                                HapticFeedbackType.ToggleOff
+                                            } else HapticFeedbackType.ToggleOn
+                                        )
+                                    }
+                                }
+                            },
+                            onItemLongClick = {},
+                            isDarkMode = isDarkMode,
+                        ) { index ->
+                            when (index) {
+                                0 -> {
+                                    Switch(
+                                        checked = showUserDescription,
+                                        onCheckedChange = {
+                                            viewModel.setShowUserDescription(it)
+                                            haptic.performHapticFeedback(
+                                                hapticFeedbackType = if (!it) {
+                                                    HapticFeedbackType.ToggleOff
+                                                } else HapticFeedbackType.ToggleOn
+                                            )
+                                        },
+                                        thumbContent = {
+                                            if (showUserDescription) {
+                                                Icon(
+                                                    imageVector = ImageVector.vectorResource(R.drawable.eye),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        },
                                     )
                                 }
                             }
