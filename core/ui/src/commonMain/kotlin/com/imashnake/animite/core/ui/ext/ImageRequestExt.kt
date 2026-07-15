@@ -15,6 +15,5 @@ import com.imashnake.animite.core.ui.Constants
 fun crossfadeModel(model: String?) = ImageRequest
     .Builder(LocalContext.current)
     .data(model)
-    .crossfade(true)
     .crossfade(Constants.CROSSFADE_DURATION)
     .build()
