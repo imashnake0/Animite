@@ -4,6 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,15 +26,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.profile.User
@@ -41,15 +42,9 @@ import com.imashnake.animite.core.ui.component.StatsRow
 import com.imashnake.animite.core.ui.ext.maxHeight
 import com.imashnake.animite.core.ui.layout.NestedScrollableContent
 import com.imashnake.animite.profile.R
-import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
-import com.mikepenz.markdown.m3.Markdown
-import com.mikepenz.markdown.m3.markdownColor
-import com.mikepenz.markdown.m3.markdownTypography
-import com.mikepenz.markdown.model.markdownAnnotator
-import com.mikepenz.markdown.model.markdownAnnotatorConfig
+import com.imashnake.animite.profile.UserDescriptionMarkdown
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
-import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 
 /**
  * Viewer's stats and genre distribution.
@@ -60,6 +55,7 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 fun AboutTab(
     user: User,
     showUserDescription: Boolean,
+    onUserDescriptionClick: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -73,7 +69,10 @@ fun AboutTab(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
         if (showUserDescription) {
-            UserDescription(description = user.description)
+            UserDescription(
+                description = user.description,
+                onDescriptionClick = onUserDescriptionClick
+            )
         }
 
         StatsRow(
@@ -101,36 +100,23 @@ fun AboutTab(
 @Composable
 private fun UserDescription(
     description: String?,
+    onDescriptionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     description?.let {
-        Crossfade(targetState = description, modifier = modifier.animateContentSize()) {
+        Crossfade(
+            targetState = description,
+            modifier = modifier
+                .animateContentSize()
+                .clip(RoundedCornerShape(LocalPaddings.current.small))
+                .clickable { onDescriptionClick() }
+                .padding(horizontal = LocalPaddings.current.small)
+        ) {
             NestedScrollableContent(
                 modifier = Modifier.maxHeight(dimensionResource(R.dimen.user_about_description_height)),
                 contentModifier = Modifier.fillMaxWidth()
             ) { modifier ->
-                Markdown(
-                    content = it,
-                    modifier = modifier,
-                    colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
-                    // TODO: Impl `AnilistFlavourDescriptor` and pass it here to handle custom stuff.
-                    //   https://github.com/JetBrains/markdown#extending-the-parser ->
-                    //   implement your own markdown flavour.
-                    flavour = GFMFlavourDescriptor(),
-                    annotator = markdownAnnotator(markdownAnnotatorConfig(eolAsNewLine = true)),
-                    typography = markdownTypography(
-                        text = MaterialTheme.typography.bodyMedium,
-                        paragraph = MaterialTheme.typography.bodyMedium,
-                        textLink = TextLinkStyles(
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = MaterialTheme.colorScheme.primary,
-                                textDecoration = TextDecoration.Underline,
-                                baselineShift = null
-                            ).toSpanStyle()
-                        )
-                    ),
-                    imageTransformer = Coil3ImageTransformerImpl
-                )
+                UserDescriptionMarkdown(it, modifier)
             }
         }
     }

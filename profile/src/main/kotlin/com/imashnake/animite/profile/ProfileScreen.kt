@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
@@ -43,12 +44,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -64,9 +67,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -77,6 +83,7 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.banner.NestedScrollBannerLayout
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.ProgressIndicatorScreen
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.crossfadeModel
@@ -88,19 +95,28 @@ import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
 import com.imashnake.animite.settings.SettingsPage
+import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownColor
+import com.mikepenz.markdown.m3.markdownTypography
+import com.mikepenz.markdown.model.markdownAnnotator
+import com.mikepenz.markdown.model.markdownAnnotatorConfig
 import kotlinx.coroutines.launch
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
+import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import com.imashnake.animite.navigation.R as navigationR
 
 private const val DROP_DOWN_ITEMS_COUNT = 2
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod")
 @Composable
 fun ProfileScreen(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     onNavigateToSettings: (SettingsPage) -> Unit,
     showUserDescription: Boolean,
+    deviceScreenCornerRadius: Int,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -127,6 +143,12 @@ fun ProfileScreen(
 
     var isLogOutDialogShown by remember { mutableStateOf(false) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
+
+    val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
+        deviceScreenCornerRadius.toDp()
+    }
+    var showUserDescriptionSheet by remember { mutableStateOf(false) }
+    val userDescriptionSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
 
     Box(
         contentAlignment = Alignment.Center,
@@ -206,6 +228,9 @@ fun ProfileScreen(
                                             color = MaterialTheme.colorScheme.onBackground,
                                             style = MaterialTheme.typography.titleLarge,
                                             overflow = TextOverflow.Ellipsis,
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(LocalPaddings.current.small))
+                                                .clickable { showUserDescriptionSheet = true }
                                         )
                                     }
                                     UserTabs(
@@ -214,6 +239,7 @@ fun ProfileScreen(
                                         mangaCollection = viewerMangaLists.data,
                                         onNavigateToMediaItem = onNavigateToMediaItem,
                                         showUserDescription = showUserDescription,
+                                        onUserDescriptionClick = { showUserDescriptionSheet = true },
                                         sharedTransitionScope = sharedTransitionScope,
                                         animatedVisibilityScope = animatedVisibilityScope,
                                         contentPadding = navigationComponentPaddingValues + insetPaddingValues,
@@ -223,6 +249,38 @@ fun ProfileScreen(
                             contentBackgroundColor = MaterialTheme.colorScheme.surfaceContainer,
                             contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
                         )
+                    }
+
+                    if (showUserDescriptionSheet) {
+                        BottomSheet(
+                            sheetState = userDescriptionSheetState,
+                            onDismissRequest = { showUserDescriptionSheet = false },
+                            deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
+                            contentPadding = PaddingValues(
+                                horizontal = LocalPaddings.current.large,
+                                vertical = LocalPaddings.current.medium
+                            ),
+                            modifier = Modifier,
+                        ) { paddingValues, modifier ->
+                            Column(modifier) {
+                                Text(
+                                    text = this@run.name,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                        .padding(paddingValues)
+                                )
+
+                                this@run.description?.let {
+                                    UserDescriptionMarkdown(
+                                        content = it,
+                                        modifier = Modifier.padding(paddingValues)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
                 else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
@@ -398,6 +456,7 @@ private fun UserTabs(
     mangaCollection: User.MediaCollection?,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     showUserDescription: Boolean,
+    onUserDescriptionClick: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -501,6 +560,7 @@ private fun UserTabs(
                     ProfileTab.ABOUT -> AboutTab(
                         user = user,
                         showUserDescription = showUserDescription,
+                        onUserDescriptionClick = onUserDescriptionClick,
                         contentPadding = tabContentPadding,
                     )
                     ProfileTab.ANIME -> MediaTab(
@@ -528,4 +588,33 @@ private fun UserTabs(
             }
         }
     }
+}
+
+@Composable
+fun UserDescriptionMarkdown(
+    content: String,
+    modifier: Modifier = Modifier
+) {
+    Markdown(
+        content = content,
+        modifier = modifier,
+        colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
+        // TODO: Impl `AnilistFlavourDescriptor` and pass it here to handle custom stuff.
+        //   https://github.com/JetBrains/markdown#extending-the-parser ->
+        //   implement your own markdown flavour.
+        flavour = GFMFlavourDescriptor(),
+        annotator = markdownAnnotator(markdownAnnotatorConfig(eolAsNewLine = true)),
+        typography = markdownTypography(
+            text = MaterialTheme.typography.bodyMedium,
+            paragraph = MaterialTheme.typography.bodyMedium,
+            textLink = TextLinkStyles(
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline,
+                    baselineShift = null
+                ).toSpanStyle()
+            )
+        ),
+        imageTransformer = Coil3ImageTransformerImpl
+    )
 }

@@ -223,6 +223,7 @@ fun MainScreen(
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToSettings = navController::navigate,
                             showUserDescription = showUserDescription,
+                            deviceScreenCornerRadius = deviceScreenCornerRadius,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
