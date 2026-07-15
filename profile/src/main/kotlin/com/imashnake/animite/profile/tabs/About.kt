@@ -45,6 +45,8 @@ import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownColor
 import com.mikepenz.markdown.m3.markdownTypography
+import com.mikepenz.markdown.model.markdownAnnotator
+import com.mikepenz.markdown.model.markdownAnnotatorConfig
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
@@ -69,7 +71,7 @@ fun AboutTab(
             .padding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)
     ) {
-        UserDescription(user.description)
+        UserDescription(description = user.description)
 
         StatsRow(
             stats = user.stats,
@@ -100,33 +102,32 @@ private fun UserDescription(
 ) {
     description?.let {
         Crossfade(targetState = description, modifier = modifier.animateContentSize()) {
-            Box {
-                NestedScrollableContent(
-                    modifier = Modifier
-                        .maxHeight(dimensionResource(R.dimen.user_about_description_height))
-                ) { contentModifier ->
-                    Markdown(
-                        content = it,
-                        modifier = contentModifier,
-                        colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
-                        // TODO: Impl `AnilistFlavourDescriptor` and pass it here to handle custom stuff.
-                        //   https://github.com/JetBrains/markdown#extending-the-parser ->
-                        //   implement your own markdown flavour.
-                        flavour = GFMFlavourDescriptor(),
-                        typography = markdownTypography(
-                            text = MaterialTheme.typography.bodyMedium,
-                            paragraph = MaterialTheme.typography.bodyMedium,
-                            textLink = TextLinkStyles(
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    textDecoration = TextDecoration.Underline,
-                                    baselineShift = null
-                                ).toSpanStyle()
-                            )
-                        ),
-                        imageTransformer = Coil3ImageTransformerImpl
-                    )
-                }
+            NestedScrollableContent(
+                modifier = Modifier.maxHeight(dimensionResource(R.dimen.user_about_description_height)),
+                contentModifier = Modifier.fillMaxWidth()
+            ) { modifier ->
+                Markdown(
+                    content = it,
+                    modifier = modifier,
+                    colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
+                    // TODO: Impl `AnilistFlavourDescriptor` and pass it here to handle custom stuff.
+                    //   https://github.com/JetBrains/markdown#extending-the-parser ->
+                    //   implement your own markdown flavour.
+                    flavour = GFMFlavourDescriptor(),
+                    annotator = markdownAnnotator(markdownAnnotatorConfig(eolAsNewLine = true)),
+                    typography = markdownTypography(
+                        text = MaterialTheme.typography.bodyMedium,
+                        paragraph = MaterialTheme.typography.bodyMedium,
+                        textLink = TextLinkStyles(
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                textDecoration = TextDecoration.Underline,
+                                baselineShift = null
+                            ).toSpanStyle()
+                        )
+                    ),
+                    imageTransformer = Coil3ImageTransformerImpl
+                )
             }
         }
     }

@@ -22,10 +22,16 @@ fun NestedScrollableContent(
     modifier: Modifier = Modifier,
     gradientSize: Dp = 8.dp,
     gradientColor: Color = MaterialTheme.colorScheme.background,
-    content: @Composable (Modifier) -> Unit,
+    contentModifier: Modifier = Modifier,
+    content: @Composable (Modifier) -> Unit
 ) {
     Box(modifier) {
-        content(Modifier.verticalScroll(rememberScrollState()).padding(vertical = gradientSize))
+        content(
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = gradientSize)
+                .then(contentModifier)
+        )
 
         Box(
             modifier = Modifier
