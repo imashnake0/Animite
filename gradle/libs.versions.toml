@@ -139,6 +139,7 @@ apollo-runtime = { group = "com.apollographql.apollo", name = "apollo-runtime", 
 apollo-cache-memory = { group = "com.apollographql.cache", name = "normalized-cache", version.ref = "apolloCache" }
 apollo-cache-sqlite = { group = "com.apollographql.cache", name = "normalized-cache-sqlite", version.ref = "apolloCache" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil" }
 coil-network = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 ktor-engine-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-engine-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
@@ -162,6 +163,7 @@ ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", versi
 saket-cascade = { group = "me.saket.cascade", name = "cascade-compose", version.ref = "saketCascade" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 mikepenz-composeMarkdown = { group = "com.mikepenz", name = "multiplatform-markdown-renderer-m3-android", version.ref = "composeMarkdown" }
+mikepenz-composeMarkdown-coil = { group = "com.mikepenz", name = "multiplatform-markdown-renderer-coil3", version.ref = "composeMarkdown" }
 
 
 [bundles]
@@ -177,6 +179,7 @@ compose = [
 coil = [
     "coil-compose",
     "coil-network",
+    "coil-gif",
     "ktor-engine-android"
 ]
 
