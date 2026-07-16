@@ -1,4 +1,4 @@
-package com.imashnake.animite.media
+package com.imashnake.animite.explore
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -55,6 +55,7 @@ import com.imashnake.animite.core.ui.component.CharacterCard
 import com.imashnake.animite.core.ui.component.LoadingMediaSmall
 import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 

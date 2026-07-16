@@ -42,7 +42,7 @@ import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.explore.R
-import com.imashnake.animite.media.MediaMediumList
+import com.imashnake.animite.explore.MediaMediumList
 import com.imashnake.animite.navigation.R as navigationR
 
 /**

@@ -131,8 +131,6 @@ import com.imashnake.animite.core.ui.component.ChipFlowRow
 import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
-import com.imashnake.animite.media.LoadingMediaMediumList
-import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.media.ext.icon
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
