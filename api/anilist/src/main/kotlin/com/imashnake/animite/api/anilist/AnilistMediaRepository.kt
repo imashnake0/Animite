@@ -110,14 +110,14 @@ class AnilistMediaRepository(
     fun fetchMedia(
         id: Int?,
         mediaType: MediaType,
-        recommendationCount: Int = 10,
+        perPage: Int = 10,
         language: Media.Language = Media.Language.DEFAULT,
     ): Flow<Result<Media>> {
         return apolloClient.query(
             MediaQuery(
                 id = Optional.presentIfNotNull(id),
                 type = Optional.presentIfNotNull(mediaType),
-                recommendationsPerPage = Optional.presentIfNotNull(recommendationCount)
+                perPage = Optional.presentIfNotNull(perPage)
             )
         )
         .fetchPolicy(FetchPolicy.CacheAndNetwork)
