@@ -4,11 +4,14 @@ import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -130,6 +133,8 @@ fun SettingsPage(
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
+    val listSize by viewModel.listSize.collectAsState(initial = 10)
+
     val animeLists by viewModel.animeList.collectAsState(initial = persistentListOf())
     val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
     val mangaLists by viewModel.mangaList.collectAsState(initial = persistentListOf())
@@ -295,6 +300,7 @@ fun SettingsPage(
                                                     text = it.label(),
                                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                                                     fontSize = 10.sp,
+                                                    style = MaterialTheme.typography.labelSmall,
                                                     modifier = Modifier.align(
                                                         when (it) {
                                                             Density.COMFY -> Alignment.CenterStart
@@ -364,6 +370,11 @@ fun SettingsPage(
                                     orientation = Item.Orientation.VERTICAL
                                 ),
                                 Item(
+                                    icon = R.drawable.list_size,
+                                    label = R.string.list_size,
+                                    orientation = Item.Orientation.VERTICAL
+                                ),
+                                Item(
                                     icon = R.drawable.list_order,
                                     label = R.string.anime_lists,
                                     orientation = Item.Orientation.VERTICAL
@@ -384,18 +395,23 @@ fun SettingsPage(
                                             } else HapticFeedbackType.ToggleOn
                                         )
                                     }
-                                    1 -> {}
                                 }
                             },
                             onItemLongClick = { index ->
                                 when (index) {
                                     2 -> {
-                                        viewModel.resetAnimeLists()
+                                        viewModel.setListSize(10)
                                         haptic.performHapticFeedback(
                                             HapticFeedbackType.LongPress
                                         )
                                     }
                                     3 -> {
+                                        viewModel.resetAnimeLists()
+                                        haptic.performHapticFeedback(
+                                            HapticFeedbackType.LongPress
+                                        )
+                                    }
+                                    4 -> {
                                         viewModel.resetMangaLists()
                                         haptic.performHapticFeedback(
                                             HapticFeedbackType.LongPress
@@ -461,6 +477,38 @@ fun SettingsPage(
                                 }
 
                                 2 -> {
+                                    Slider(
+                                        value = listSize.toFloat(),
+                                        onValueChange = {
+                                            haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                            viewModel.setListSize(it.fastRoundToInt())
+                                        },
+                                        colors = SliderDefaults.colors(
+                                            activeTickColor = SliderDefaults.colors().activeTrackColor,
+                                            inactiveTickColor = SliderDefaults.colors().inactiveTrackColor
+                                        ),
+                                        steps = 46,
+                                        valueRange = 5f..50f,
+                                        thumb = {
+                                            AnimatedContent(
+                                                targetState = listSize,
+                                                transitionSpec = {
+                                                    scaleIn(initialScale = 0.92f, animationSpec = tween(220, delayMillis = 90))
+                                                        .togetherWith(fadeOut(animationSpec = tween(90)))
+                                                },
+                                            ) {
+                                                Text(
+                                                    text = it.toString(),
+                                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                                                    fontSize = 12.sp,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+
+                                3 -> {
                                     ReorderableList(
                                         list = animeLists,
                                         isItemChecked = { animeListsIndices[it] > 0 },
@@ -470,7 +518,7 @@ fun SettingsPage(
                                     )
                                 }
 
-                                3 -> {
+                                4 -> {
                                     ReorderableList(
                                         list = mangaLists,
                                         isItemChecked = { mangaListsIndices[it] > 0 },

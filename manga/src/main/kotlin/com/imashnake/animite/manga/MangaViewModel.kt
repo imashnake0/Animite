@@ -43,8 +43,9 @@ class MangaViewModel @Inject constructor(
     val prefs = combine(
         flow = preferencesRepository.isNsfwEnabled.filterNotNull(),
         flow2 = preferencesRepository.language.filterNotNull(),
-        transform = { isNsfwEnabled, language ->
-            Prefs(isNsfwEnabled, Media.Language.valueOf(language))
+        flow3 = preferencesRepository.listSize.filterNotNull(),
+        transform = { isNsfwEnabled, language, listSize ->
+            Prefs(isNsfwEnabled, Media.Language.valueOf(language), listSize)
         }
     )
 
@@ -59,7 +60,8 @@ class MangaViewModel @Inject constructor(
                 mediaType = MediaType.MANGA,
                 sort = listOf(MediaSort.TRENDING_DESC),
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize
             ),
         )
     }.asResource { MangaRow(MangaList.TRENDING_NOW.res, it) }
@@ -75,7 +77,8 @@ class MangaViewModel @Inject constructor(
                 mediaType = MediaType.MANGA,
                 sort = listOf(MediaSort.POPULARITY_DESC),
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize
             ),
         )
     }.asResource { MangaRow(MangaList.ALL_TIME_POPULAR.res, it) }
@@ -91,7 +94,8 @@ class MangaViewModel @Inject constructor(
                 mediaType = MediaType.MANGA,
                 sort = listOf(MediaSort.ID_DESC),
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize
             ),
         )
     }.asResource { MangaRow(MangaList.NEWLY_ADDED.res, it) }

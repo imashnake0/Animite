@@ -47,7 +47,8 @@ class MediaPageViewModel @Inject constructor(
                         language = preferencesRepository.language
                             .filterNotNull()
                             .mapNotNull { Media.Language.valueOf(it) }
-                            .firstOrNull() ?: Media.Language.DEFAULT
+                            .firstOrNull() ?: Media.Language.DEFAULT,
+                        perPage = preferencesRepository.listSize.firstOrNull() ?: 10
                     )
                     .firstOrNull()
                     ?.getOrNull()

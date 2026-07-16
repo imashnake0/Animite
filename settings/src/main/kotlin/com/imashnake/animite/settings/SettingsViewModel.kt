@@ -25,6 +25,7 @@ class SettingsViewModel @Inject constructor(
     val density = preferencesRepository.density.filterNotNull()
     val isNsfwEnabled = preferencesRepository.isNsfwEnabled.filterNotNull()
     val language = preferencesRepository.language.filterNotNull()
+    val listSize = preferencesRepository.listSize.filterNotNull()
     val isDevOptionsEnabled = preferencesRepository.isDevOptionsEnabled.filterNotNull()
     val dayHour = preferencesRepository.dayHour
     val animeList = preferencesRepository.animeListsIndices.map { indices ->
@@ -77,6 +78,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setLanguage(language: Media.Language) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setLanguage(language.name)
+    }
+
+    fun setListSize(listSize: Int) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setListSize(listSize)
     }
 
     fun setShowUserDescription(showUserDescription: Boolean) = viewModelScope.launch(Dispatchers.IO) {

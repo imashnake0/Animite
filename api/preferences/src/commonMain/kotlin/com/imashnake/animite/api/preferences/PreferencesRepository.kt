@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.byteArrayPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
@@ -128,6 +129,12 @@ class PreferencesRepository internal constructor(
     val language = dataStore.getValue(languageKey, DEFAULT_LANGUAGE_KEY)
     suspend fun setLanguage(language: String) {
         dataStore.setValue(languageKey, language)
+    }
+
+    private val listSizeKey = intPreferencesKey("list_size")
+    val listSize = dataStore.getValue(listSizeKey, 10)
+    suspend fun setListSize(listSize: Int) {
+        dataStore.setValue(listSizeKey, listSize)
     }
 
     private val showUserDescriptionKey = booleanPreferencesKey("show_user_description")

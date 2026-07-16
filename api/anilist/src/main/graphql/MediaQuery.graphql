@@ -1,7 +1,7 @@
 query MediaQuery(
     $id: Int,
     $type: MediaType,
-    $recommendationsPerPage: Int
+    $perPage: Int
 ) {
     media: Media(id: $id, type: $type) {
         id
@@ -35,7 +35,7 @@ query MediaQuery(
         characters(
             sort: [RELEVANCE, ROLE, FAVOURITES_DESC],
             page: 0,
-            perPage: 10
+            perPage: $perPage
         ) {
             edges {
                 role
@@ -48,7 +48,7 @@ query MediaQuery(
         staff(
             sort: [RELEVANCE, ROLE, FAVOURITES_DESC],
             page: 0,
-            perPage: 10
+            perPage: $perPage
         ) {
             edges {
                 role
@@ -83,7 +83,7 @@ query MediaQuery(
         recommendations(
             sort: RATING_DESC,
             page: 0,
-            perPage: $recommendationsPerPage
+            perPage: $perPage
         ) {
             nodes {
                 mediaRecommendation {
