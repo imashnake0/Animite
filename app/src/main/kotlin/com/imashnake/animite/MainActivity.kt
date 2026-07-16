@@ -65,7 +65,7 @@ import com.imashnake.animite.navigation.ProfileRoute
 import com.imashnake.animite.navigation.SocialRoute
 import com.imashnake.animite.profile.ProfileScreen
 import com.imashnake.animite.profile.ProfileViewModel
-import com.imashnake.animite.profile.dev.internal.ANILIST_AUTH_DEEPLINK
+import com.imashnake.animite.profile.dev.ANILIST_AUTH_DEEPLINK
 import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme

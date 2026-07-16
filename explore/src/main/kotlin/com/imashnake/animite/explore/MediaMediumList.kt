@@ -53,6 +53,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.CharacterCard
 import com.imashnake.animite.core.ui.component.LoadingMediaSmall
+import com.imashnake.animite.core.ui.component.MediaMediumCard
 import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.R
@@ -157,7 +158,7 @@ private fun MediaMediumItem(
                 )
             }
 
-            CharacterCard(
+            MediaMediumCard(
                 image = item.coverImage,
                 tag = null,
                 label = null,
