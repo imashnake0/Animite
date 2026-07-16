@@ -148,7 +148,7 @@ data class Media(
             if (rankings == null) return persistentListOf()
             val (allTimeRankings, yearSeasonRankings) = rankings.filterNotNull().partition { it.allTime == true }
 
-            return persistentListOf(getAllTimeRankings(allTimeRankings, averageScore)).addAll(
+            return persistentListOf(getAllTimeRankings(allTimeRankings, averageScore)).addingAll(
                 elements = getYearSeasonRankings(yearSeasonRankings)
             )
         }
