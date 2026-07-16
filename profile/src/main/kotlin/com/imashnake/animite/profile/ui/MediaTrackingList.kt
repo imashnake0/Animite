@@ -44,7 +44,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.LoadingMediaSmall
 import com.imashnake.animite.core.ui.component.MediaMediumCard
@@ -55,8 +57,8 @@ import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun MediaTrackingList(
-    mediaMediumList: ImmutableList<Media.Tracking>,
+fun MediaTrackingLists(
+    namedLists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     onItemClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
@@ -68,26 +70,37 @@ fun MediaTrackingList(
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
-        items(mediaMediumList.size, key = { mediaMediumList[it].id }) { index ->
-            MediaMediumItem(
-                item = mediaMediumList[index],
-                onClick = onItemClick,
-                modifier = Modifier
-                    .animateItem()
-                    .height(80.dp)
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 18.dp,
-                            bottomStart = 18.dp,
-                            topEnd = if (index == 0) 18.dp else LocalPaddings.current.small,
-                            bottomEnd = if (index == mediaMediumList.lastIndex) {
-                                18.dp
-                            } else LocalPaddings.current.small,
-                        )
+        namedLists.fastForEach { namedList ->
+            item {
+                namedList.name?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
                     )
-                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
-            )
+                }
+            }
+            items(namedList.list.size, key = { namedList.list[it].id }) { index ->
+                MediaMediumItem(
+                    item = namedList.list[index],
+                    onClick = onItemClick,
+                    modifier = Modifier
+                        .animateItem()
+                        .height(80.dp)
+                        .fillMaxWidth()
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 18.dp,
+                                bottomStart = 18.dp,
+                                topEnd = if (index == 0) 18.dp else LocalPaddings.current.small,
+                                bottomEnd = if (index == namedList.list.lastIndex) {
+                                    18.dp
+                                } else LocalPaddings.current.small,
+                            )
+                        )
+                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
+                )
+            }
         }
     }
 }

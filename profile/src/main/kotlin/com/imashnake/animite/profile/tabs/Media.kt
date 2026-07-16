@@ -1,5 +1,6 @@
 package com.imashnake.animite.profile.tabs
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,7 +31,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.profile.R
-import com.imashnake.animite.profile.ui.MediaTrackingList
+import com.imashnake.animite.profile.ui.MediaTrackingLists
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -84,17 +86,13 @@ private fun UserMediaLists(
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     Column(
-        modifier =  modifier
-            .fillMaxSize()
-            .padding(contentPadding.verticalOnly),
+        modifier =  modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
     ) {
-        lists.fastForEach { namedList ->
-            MediaTrackingList(
-                mediaMediumList = namedList.list,
-                onItemClick = { _, _ -> },
-                contentPadding = contentPadding
-            )
-        }
+        MediaTrackingLists(
+            namedLists = lists,
+            onItemClick = { _, _ -> },
+            contentPadding = contentPadding
+        )
     }
 }
