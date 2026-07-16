@@ -82,7 +82,7 @@ fun MediaMediumList(
             val rank = if (!shouldShowRank) {
                 null
             } else {
-                (index + 1) + (pageInfo?.currentPage?.minus(1)?.times(10) ?: 1)
+                (index + 1) + (pageInfo?.currentPage?.minus(1)?.times(pageInfo.perPage) ?: 1)
             }
             MediaMediumItem(
                 item = mediaMediumList[index],

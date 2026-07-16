@@ -55,8 +55,9 @@ class AnimeViewModel @Inject constructor(
     val prefs = combine(
         flow = preferencesRepository.isNsfwEnabled.filterNotNull(),
         flow2 = preferencesRepository.language.filterNotNull(),
-        transform = { isNsfwEnabled, language ->
-            Prefs(isNsfwEnabled, Media.Language.valueOf(language))
+        flow3 = preferencesRepository.listSize.filterNotNull(),
+        transform = { isNsfwEnabled, language, listSize ->
+            Prefs(isNsfwEnabled, Media.Language.valueOf(language), listSize)
         }
     )
 
@@ -71,7 +72,8 @@ class AnimeViewModel @Inject constructor(
                 mediaType = MediaType.ANIME,
                 sort = listOf(MediaSort.TRENDING_DESC),
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize
             ),
         )
     }.asResource { AnimeRow(AnimeList.TRENDING_NOW.res, it) }
@@ -90,7 +92,8 @@ class AnimeViewModel @Inject constructor(
                 season = now.month.season,
                 year = now.year,
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize
             ),
         )
     }.asResource { AnimeRow(AnimeList.POPULAR_THIS_SEASON.res, it) }
@@ -110,7 +113,8 @@ class AnimeViewModel @Inject constructor(
                 season = season.nextSeason,
                 year = season.nextSeasonYear(now),
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize
             ),
         )
     }.asResource { AnimeRow(AnimeList.UPCOMING_NEXT_SEASON.res, it) }
@@ -126,7 +130,8 @@ class AnimeViewModel @Inject constructor(
                 mediaType = MediaType.ANIME,
                 sort = listOf(MediaSort.POPULARITY_DESC),
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize
             ),
         )
     }.asResource { AnimeRow(AnimeList.ALL_TIME_POPULAR.res, it) }
@@ -142,7 +147,8 @@ class AnimeViewModel @Inject constructor(
                 mediaType = MediaType.ANIME,
                 sort = listOf(MediaSort.ID_DESC),
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize
             ),
         )
     }.asResource { AnimeRow(AnimeList.NEWLY_ADDED.res, it) }

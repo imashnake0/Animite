@@ -207,8 +207,9 @@ class ExploreViewModel @Inject constructor(
     val prefs = combine(
         flow = preferencesRepository.isNsfwEnabled.filterNotNull(),
         flow2 = preferencesRepository.language.filterNotNull(),
-        transform = { isNsfwEnabled, language ->
-            Prefs(isNsfwEnabled, Media.Language.valueOf(language))
+        flow3 = preferencesRepository.listSize.filterNotNull(),
+        transform = { isNsfwEnabled, language, listSize ->
+            Prefs(isNsfwEnabled, Media.Language.valueOf(language), listSize)
         }
     )
 
@@ -234,7 +235,8 @@ class ExploreViewModel @Inject constructor(
                 excludedStatuses = filterSheetOptions.status.excluded.map { MediaStatus.valueOf(it) }.ifEmpty { null },
                 isAdult = filterSheetOptions.isAdult,
                 isNsfwEnabled = prefs.isNsfwEnabled,
-                language = prefs.language
+                language = prefs.language,
+                perPage = prefs.listSize,
             )
         }
     )

@@ -102,7 +102,7 @@ class AnilistMediaRepository(
                 list = data.page!!.media.orEmpty().filterNotNull().map { query ->
                     Media.Medium(query.mediaMedium, language)
                 }.toImmutableList(),
-                info = data.page.pageInfo?.let { Info(it) }
+                info = data.page.pageInfo?.let { Info(it, filterStrategy.perPage) }
             )
         }
     }

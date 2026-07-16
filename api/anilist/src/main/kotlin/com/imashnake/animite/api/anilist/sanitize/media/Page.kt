@@ -15,10 +15,15 @@ data class Info(
     val currentPage: Int?,
     val lastPage: Int?,
     val hasNextPage: Boolean?,
+    val perPage: Int
 ) {
-    constructor(pageInfo: MediaMediumListQuery.PageInfo) : this(
+    constructor(
+        pageInfo: MediaMediumListQuery.PageInfo,
+        perPage: Int
+    ) : this(
         currentPage = pageInfo.currentPage,
         lastPage = pageInfo.lastPage,
-        hasNextPage = pageInfo.hasNextPage
+        hasNextPage = pageInfo.hasNextPage,
+        perPage = perPage
     )
 }
