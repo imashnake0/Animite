@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.searchbar
+package com.imashnake.animite.explore.searchbar
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -36,7 +36,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
-import com.imashnake.animite.R
+import com.imashnake.animite.explore.R
 
 /**
  * A Floating Action Button-esque collapsible search bar. When collapsed, it displays a search icon.

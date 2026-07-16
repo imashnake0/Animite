@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.theme
+package com.imashnake.animite.theme
 
 import android.os.Build
 import androidx.compose.animation.core.tween

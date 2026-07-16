@@ -24,4 +24,13 @@
 
     <string name="reset_all">Reset all</string>
     <string name="done">Done</string>
+
+    <!-- SearchFrontDrop -->
+    <string name="quick_search">Quick Search</string>
+    <string name="collapse">Collapse</string>
+    <string name="close">Close</string>
+    <plurals name="episodes">
+        <item quantity="one">%1$d episode</item>
+        <item quantity="other">%1$d episodes</item>
+    </plurals>
 </resources>

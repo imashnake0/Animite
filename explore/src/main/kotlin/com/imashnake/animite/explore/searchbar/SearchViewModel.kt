@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.searchbar
+package com.imashnake.animite.explore.searchbar
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

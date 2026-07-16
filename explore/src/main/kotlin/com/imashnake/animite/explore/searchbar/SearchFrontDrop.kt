@@ -1,4 +1,4 @@
-package com.imashnake.animite.features.searchbar
+package com.imashnake.animite.explore.searchbar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -38,11 +38,10 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.imashnake.animite.R
 import com.imashnake.animite.api.anilist.type.MediaType
-import com.imashnake.animite.core.ui.Constants
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.ext.copy
+import com.imashnake.animite.explore.R
 import com.imashnake.animite.media.MediaMediumList
 import com.imashnake.animite.navigation.R as navigationR
 
@@ -85,7 +84,7 @@ fun SearchFrontDrop(
         targetValue = MaterialTheme.colorScheme.background.copy(
             alpha = if (isExpanded) 0.95f else 0f
         ),
-        animationSpec = tween(Constants.CROSSFADE_DURATION),
+        animationSpec = tween(750, 250),
         label = "show_front_drop"
     )
 
@@ -97,9 +96,9 @@ fun SearchFrontDrop(
 
     searchList.data?.let {
         AnimatedVisibility(
-            visible = it.isNotEmpty(),
-            enter = fadeIn(tween(750)),
-            exit = fadeOut(tween(750)),
+            visible = it.isNotEmpty() || isExpanded,
+            enter = fadeIn(tween(500)),
+            exit = fadeOut(tween(500)),
         ) {
             MediaMediumList(
                 mediaMediumList = it,

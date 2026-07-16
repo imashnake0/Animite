@@ -1,4 +1,4 @@
-package com.imashnake.animite.features
+package com.imashnake.animite
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -45,15 +45,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
-import com.imashnake.animite.BuildConfig
 import com.imashnake.animite.anime.AnimeScreen
 import com.imashnake.animite.core.ui.Density
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.explore.ExploreScreen
-import com.imashnake.animite.features.searchbar.SearchFrontDrop
-import com.imashnake.animite.features.theme.AnimiteTheme
-import com.imashnake.animite.features.theme.manropeFontFamily
+import com.imashnake.animite.explore.searchbar.SearchFrontDrop
+import com.imashnake.animite.theme.AnimiteTheme
+import com.imashnake.animite.theme.manropeFontFamily
 import com.imashnake.animite.manga.MangaScreen
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.AnimeRoute
