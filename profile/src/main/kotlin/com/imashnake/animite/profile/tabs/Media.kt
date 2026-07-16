@@ -29,6 +29,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.profile.R
+import com.imashnake.animite.profile.ui.MediaTrackingList
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -75,78 +76,25 @@ fun MediaTab(
 
 @Composable
 private fun UserMediaLists(
-    lists: ImmutableList<User.MediaCollection.NamedList>,
+    lists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val scrollState = rememberScrollState()
-
     Column(
         modifier =  modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
             .padding(contentPadding.verticalOnly),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
     ) {
         lists.fastForEach { namedList ->
-            MediaSmallRow(
-                title = namedList.name,
-                mediaList = namedList.list,
-                contentPadding = contentPadding.horizontalOnly,
-            ) { _, item ->
-                with(sharedTransitionScope) {
-                    val media = item as Media.Small
-                    MediaCard(
-                        image = media.coverImage,
-                        tag = null,
-                        label = media.title,
-                        onClick = {
-                            onNavigateToMediaItem(
-                                MediaPage(
-                                    id = media.id,
-                                    source = namedList.name.orEmpty(),
-                                    mediaType = media.type.name,
-                                    title = media.title,
-                                )
-                            )
-                        },
-                        modifier = Modifier.sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = namedList.name,
-                                    sharedComponents = Card to Page,
-                                )
-                            ),
-                            animatedVisibilityScope,
-                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                        ).animateItem(),
-                        imageModifier = Modifier.sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = namedList.name,
-                                    sharedComponents = Image to Image,
-                                )
-                            ),
-                            animatedVisibilityScope,
-                        ),
-                        textModifier = Modifier.sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = namedList.name,
-                                    sharedComponents = Text to Text,
-                                )
-                            ),
-                            animatedVisibilityScope,
-                        ).skipToLookaheadSize(),
-                    )
-                }
-            }
+            MediaTrackingList(
+                mediaMediumList = namedList.list,
+                onItemClick = { _, _ -> },
+                contentPadding = contentPadding
+            )
         }
     }
 }

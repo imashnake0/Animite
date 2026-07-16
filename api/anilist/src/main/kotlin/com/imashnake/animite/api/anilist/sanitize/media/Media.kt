@@ -9,6 +9,7 @@ import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaMedium
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
+import com.imashnake.animite.api.anilist.fragment.MediaTracking
 import com.imashnake.animite.api.anilist.fragment.StaffSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
@@ -712,6 +713,42 @@ data class Media(
                 .filter { it?.name != null }
                 .map { it!!.name }
                 .toImmutableList(),
+            format = query.format?.sanitize(),
+            episodes = query.episodes
+        )
+    }
+
+    @Immutable
+    data class Tracking(
+        /** @see id */
+        val id: Int,
+        /** @see coverImage */
+        val coverImage: String?,
+        /** @see title */
+        val title: String?,
+        /** @see season */
+        val season: Season?,
+        /** @see seasonYear */
+        val seasonYear: Int?,
+        /** @see format */
+        val format: Format?,
+        /** @see episodes */
+        val episodes: Int?,
+    ) {
+        internal constructor(
+            query: MediaTracking,
+            language: Language
+        ) : this(
+            id = query.id,
+            coverImage = query.coverImage?.large,
+            title = when (language) {
+                Language.DEFAULT -> query.title?.userPreferred
+                Language.ROMAJI -> query.title?.romaji
+                Language.ENGLISH -> query.title?.english
+                Language.NATIVE -> query.title?.native
+            } ?: query.title?.userPreferred,
+            season = query.season?.sanitize(),
+            seasonYear = query.seasonYear,
             format = query.format?.sanitize(),
             episodes = query.episodes
         )

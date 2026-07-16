@@ -28,7 +28,7 @@ query UserMediaListQuery($userId: Int, $type: MediaType) {
             name
             entries {
                 media {
-                    ...MediaSmall
+                    ...MediaTracking
                 }
             }
         }
