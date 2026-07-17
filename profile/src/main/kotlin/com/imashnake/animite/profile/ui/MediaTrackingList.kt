@@ -24,8 +24,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,8 +41,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +59,7 @@ import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
+import com.imashnake.animite.profile.dev.res
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -73,18 +78,43 @@ fun MediaTrackingLists(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
         namedLists.fastForEachIndexed { index, namedList ->
-            stickyHeader {
+            stickyHeader(key = namedList.name) {
                 namedList.name?.let {
-                    Text(
-                        text = it,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+                    Box(
                         modifier = Modifier
+                            .height(70.dp)
+                            .fillMaxWidth()
+                            .clip(CircleShape)
                             .clickable {
-                                listVisibility[index]?.let { visibility -> listVisibility[index] = !visibility }
+                                listVisibility[index]?.let { visibility ->
+                                    listVisibility[index] = !visibility
+                                }
                             }
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
                             .animateItem()
-                    )
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
+                                .padding(start = 25.dp)
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(try {
+                                    Names.valueOf(it.uppercase()).res
+                                } catch (_: Exception) { com.imashnake.animite.navigation.R.drawable.anime }),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = it,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                            )
+                        }
+                    }
                 }
             }
             if (listVisibility[index] ?: true) {
@@ -93,6 +123,7 @@ fun MediaTrackingLists(
                         item = namedList.list[it],
                         onClick = onItemClick,
                         modifier = Modifier
+                            .padding(horizontal = 35.dp)
                             .animateItem()
                             .height(80.dp)
                             .fillMaxWidth()
@@ -100,7 +131,7 @@ fun MediaTrackingLists(
                                 RoundedCornerShape(
                                     topStart = 18.dp,
                                     bottomStart = 18.dp,
-                                    topEnd = if (index == 0) 18.dp else LocalPaddings.current.small,
+                                    topEnd = if (it == 0) 18.dp else LocalPaddings.current.small,
                                     bottomEnd = if (it == namedList.list.lastIndex) {
                                         18.dp
                                     } else LocalPaddings.current.small,
@@ -110,7 +141,6 @@ fun MediaTrackingLists(
                     )
                 }
             }
-            item { Spacer(Modifier.size(LocalPaddings.current.medium)) }
         }
     }
 }
@@ -141,7 +171,7 @@ private fun MediaTrackingItem(
                 Text(
                     text = item.title.orEmpty(),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1
                 )
 
@@ -328,4 +358,12 @@ fun PreviewLoadingMediaMediumItem() {
                 .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
         )
     }
+}
+
+enum class Names {
+    COMPLETED,
+    PAUSED,
+    DROPPED,
+    REWATCHING,
+    PLANNING
 }

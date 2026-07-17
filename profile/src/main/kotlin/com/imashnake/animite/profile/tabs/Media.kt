@@ -86,7 +86,7 @@ private fun UserMediaLists(
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     Column(
-        modifier =  modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
     ) {
         MediaTrackingLists(
