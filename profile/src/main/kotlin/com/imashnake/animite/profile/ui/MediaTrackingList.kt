@@ -3,6 +3,7 @@ package com.imashnake.animite.profile.ui
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -57,10 +60,11 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.LoadingMediaSmall
 import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
-import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
+import com.imashnake.animite.profile.R
 import com.imashnake.animite.profile.dev.res
 import kotlinx.collections.immutable.ImmutableList
+import com.imashnake.animite.media.R as mediaR
 
 @Composable
 fun MediaTrackingLists(
@@ -120,15 +124,30 @@ fun MediaTrackingLists(
                                 style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
                             )
                         }
-                        Text(
-                            text = namedList.list.size.toString(),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                            style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                             // TODO: Deal with hard dimens.
                             modifier = Modifier
                                 .padding(end = 25.dp)
                                 .align(Alignment.CenterEnd)
-                        )
+                        ) {
+                            Text(
+                                text = namedList.list.size.toString(),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                            )
+
+                            val iconRotation by animateFloatAsState(if (listVisibility[index] ?: true) 0f else -90f)
+                            Icon(
+                                painter = painterResource(R.drawable.drop_down),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(top = 2.dp)
+                                    .requiredSize(16.dp)
+                                    .graphicsLayer { rotationZ = iconRotation }
+                            )
+                        }
                     }
                 }
             }
@@ -265,7 +284,7 @@ private fun MediaTrackingItem(
                     item.episodes?.let {
                         Text(
                             text = pluralStringResource(
-                                id = R.plurals.episode_count,
+                                id = mediaR.plurals.episode_count,
                                 count = it,
                                 formatArgs = arrayOf(it)
                             ),
