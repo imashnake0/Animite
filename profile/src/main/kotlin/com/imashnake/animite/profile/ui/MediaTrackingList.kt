@@ -223,26 +223,7 @@ private fun MediaTrackingItem(
                     }
 
                     if (item.season != null && item.format != null) {
-                        val infiniteTransition = rememberInfiniteTransition(label = "divider")
-                        val angle by infiniteTransition.animateFloat(
-                            initialValue = 0f,
-                            targetValue = 360f,
-                            animationSpec = infiniteRepeatable(
-                                animation = tween(6000, easing = LinearEasing),
-                                repeatMode = RepeatMode.Restart
-                            ),
-                            label = "rotation"
-                        )
-                        Box(
-                            modifier = Modifier
-                                .graphicsLayer { rotationZ = angle }
-                                .padding(horizontal = LocalPaddings.current.small)
-                                .size(4.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                                    shape = MaterialShapes.Triangle.toShape()
-                                )
-                        )
+                        Divider()
                     }
 
                     item.season?.let {
@@ -256,26 +237,7 @@ private fun MediaTrackingItem(
                     }
 
                     if (item.episodes != null && item.season != null) {
-                        val infiniteTransition = rememberInfiniteTransition(label = "divider")
-                        val angle by infiniteTransition.animateFloat(
-                            initialValue = 0f,
-                            targetValue = 360f,
-                            animationSpec = infiniteRepeatable(
-                                animation = tween(6000, easing = LinearEasing),
-                                repeatMode = RepeatMode.Restart
-                            ),
-                            label = "rotation"
-                        )
-                        Box(
-                            modifier = Modifier
-                                .graphicsLayer { rotationZ = angle }
-                                .padding(horizontal = LocalPaddings.current.small)
-                                .size(4.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                                    shape = MaterialShapes.Triangle.toShape()
-                                )
-                        )
+                        Divider()
                     }
 
                     item.episodes?.let {
@@ -298,14 +260,41 @@ private fun MediaTrackingItem(
         item.score?.let { score ->
             Text(
                 text = score.value.toString(),
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                color = Color(score.color).copy(alpha = 0.7f),
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                color = Color(score.color).copy(alpha = 0.6f),          
                 modifier = Modifier
                     .padding(end = LocalPaddings.current.medium)
                     .align(Alignment.CenterEnd)
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun Divider(
+    modifier: Modifier = Modifier
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "divider")
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(6000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+    Box(
+        modifier = Modifier
+            .graphicsLayer { rotationZ = angle }
+            .padding(horizontal = LocalPaddings.current.small)
+            .size(4.dp)
+            .background(
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                shape = MaterialShapes.Triangle.toShape()
+            )
+    )
 }
 
 // TODO: Move this and support manga.
