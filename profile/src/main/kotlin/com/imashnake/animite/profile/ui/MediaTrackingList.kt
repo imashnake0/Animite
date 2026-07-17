@@ -39,6 +39,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.LoadingMediaSmall
 import com.imashnake.animite.core.ui.component.MediaTrackingCard
@@ -72,12 +72,12 @@ import com.imashnake.animite.media.R as mediaR
 fun MediaTrackingLists(
     type: Media.Small.Type,
     namedLists: ImmutableList<User.MediaCollection.NamedTrackingList>,
+    listVisibility: SnapshotStateMap<Int, Boolean>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val listVisibility = remember { mutableStateMapOf(*List(namedLists.size) { it to true }.toTypedArray()) }
     LazyColumn(
         state = state,
         modifier = modifier,
@@ -223,8 +223,6 @@ private fun MediaTrackingItem(
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1
                 )
-
-
 
                 Spacer(Modifier.size(LocalPaddings.current.medium))
 

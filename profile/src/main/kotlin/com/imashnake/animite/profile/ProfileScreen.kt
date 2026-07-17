@@ -56,6 +56,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -468,6 +469,17 @@ private fun UserTabs(
     val onBackground = MaterialTheme.colorScheme.onBackground
     val horizontalContentPadding = contentPadding.horizontalOnly
 
+    val animeListVisibility = remember {
+        mutableStateMapOf(
+            *List(animeCollection?.namedLists?.size ?: 0) { it to true }.toTypedArray()
+        )
+    }
+    val mangaListVisibility = remember {
+        mutableStateMapOf(
+            *List(mangaCollection?.namedLists?.size ?: 0) { it to true }.toTypedArray()
+        )
+    }
+
     var scrollableTabs by remember { mutableStateOf(false) }
 
     Column(modifier) {
@@ -570,11 +582,13 @@ private fun UserTabs(
                     )
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
+                        listVisibility = animeListVisibility,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         contentPadding = mediaTabContentPadding,
                     )
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
+                        listVisibility = mangaListVisibility,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         contentPadding = mediaTabContentPadding,
                     )

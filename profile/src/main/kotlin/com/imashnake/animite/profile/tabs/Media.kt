@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.imashnake.animite.api.anilist.sanitize.media.Media
@@ -23,6 +24,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
+    listVisibility: SnapshotStateMap<Int, Boolean>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -45,6 +47,7 @@ fun MediaTab(
             UserMediaLists(
                 type = mediaCollection.type,
                 lists = mediaCollection.namedLists,
+                listVisibility = listVisibility,
                 onNavigateToMediaItem = onNavigateToMediaItem,
                 modifier = modifier,
                 contentPadding = contentPadding,
@@ -57,6 +60,7 @@ fun MediaTab(
 private fun UserMediaLists(
     type: Media.Small.Type,
     lists: ImmutableList<User.MediaCollection.NamedTrackingList>,
+    listVisibility: SnapshotStateMap<Int, Boolean>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -64,6 +68,7 @@ private fun UserMediaLists(
     MediaTrackingLists(
         type = type,
         namedLists = lists,
+        listVisibility = listVisibility,
         onNavigateToMediaItem = onNavigateToMediaItem,
         contentPadding = contentPadding,
         modifier = modifier.fillMaxSize()
