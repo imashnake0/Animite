@@ -39,7 +39,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
@@ -105,7 +104,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -128,6 +126,7 @@ import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.ChipFlowRow
+import com.imashnake.animite.core.ui.component.DropDownIcon
 import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
@@ -1135,15 +1134,8 @@ private fun CollapsibleRow(
                     color = MaterialTheme.colorScheme.onBackground,
                     style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
                 )
-                val iconRotation by animateFloatAsState(if (isVisible) 0f else -90f)
-                Icon(
-                    painter = painterResource(R.drawable.drop_down),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(top = 2.dp)
-                        .requiredSize(16.dp)
-                        .graphicsLayer { rotationZ = iconRotation }
-                )
+
+                DropDownIcon(isVisible, modifier = Modifier.padding(top = 2.dp))
             }
         }
 

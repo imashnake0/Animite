@@ -3,7 +3,6 @@ package com.imashnake.animite.profile.ui
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -41,7 +39,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -53,6 +50,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.DropDownIcon
 import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.media.ext.res
@@ -126,16 +124,7 @@ fun MediaTrackingLists(
                                 style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
                             )
 
-                            val iconRotation by animateFloatAsState(if (listVisibility[index] ?: true) 0f else -90f)
-                            // TODO: Move to core:ui and reuse from explore.
-                            Icon(
-                                painter = painterResource(R.drawable.drop_down),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .padding(top = 2.dp)
-                                    .requiredSize(16.dp)
-                                    .graphicsLayer { rotationZ = iconRotation }
-                            )
+                            DropDownIcon(isDroppedDown = listVisibility[index] ?: true)
                         }
                     }
                 }
