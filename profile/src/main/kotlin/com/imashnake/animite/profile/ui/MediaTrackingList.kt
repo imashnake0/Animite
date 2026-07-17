@@ -50,8 +50,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.Media.ListNames.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.media.MediaPage
