@@ -727,7 +727,7 @@ data class Media(
         val seasonYear: Int?,
         val format: Format?,
         val episodes: Int?,
-        val score: Float?,
+        val score: Score?,
     ) {
         internal constructor(
             query: MediaTracking,
@@ -746,7 +746,29 @@ data class Media(
             seasonYear = query.seasonYear,
             format = query.format?.sanitize(),
             episodes = query.episodes,
-            score = score
+            score = score?.let { Score(it) }
+        )
+    }
+
+    data class Score(
+        val value: Float,
+        val color: Long,
+    ) {
+        companion object {
+            private const val RED = 0xffff7770
+            private const val ORANGE = 0xffffc863
+            private const val LIME = 0xffb8ff70
+            private const val GREEN = 0xff63ff88
+        }
+
+        internal constructor(score: Float) : this(
+            value = score,
+            color = when {
+                score < 5f -> RED
+                score < 7f -> ORANGE
+                score < 9f -> LIME
+                else -> GREEN
+            }
         )
     }
 }

@@ -37,6 +37,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
@@ -44,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
@@ -293,14 +295,16 @@ private fun MediaTrackingItem(
             }
         }
 
-        Text(
-            text = item.score.toString(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .padding(end = LocalPaddings.current.medium)
-                .align(Alignment.CenterEnd)
-        )
+        item.score?.let { score ->
+            Text(
+                text = score.value.toString(),
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                color = Color(score.color).copy(alpha = 0.7f),
+                modifier = Modifier
+                    .padding(end = LocalPaddings.current.medium)
+                    .align(Alignment.CenterEnd)
+            )
+        }
     }
 }
 
