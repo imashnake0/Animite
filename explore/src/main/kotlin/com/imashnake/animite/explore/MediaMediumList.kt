@@ -1,11 +1,5 @@
 package com.imashnake.animite.explore
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,8 +44,9 @@ import androidx.compose.ui.unit.dp
 import com.imashnake.animite.api.anilist.sanitize.media.Info
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.component.CharacterCard
+import com.imashnake.animite.core.ui.component.Divider
 import com.imashnake.animite.core.ui.component.LoadingMediaSmall
+import com.imashnake.animite.core.ui.component.MediaMediumCard
 import com.imashnake.animite.core.ui.component.Paginator
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.R
@@ -157,7 +151,7 @@ private fun MediaMediumItem(
                 )
             }
 
-            CharacterCard(
+            MediaMediumCard(
                 image = item.coverImage,
                 tag = null,
                 label = null,
@@ -210,26 +204,7 @@ private fun MediaMediumItem(
                     }
 
                     if (item.format != null && item.episodes != null) {
-                        val infiniteTransition = rememberInfiniteTransition(label = "divider")
-                        val angle by infiniteTransition.animateFloat(
-                            initialValue = 0f,
-                            targetValue = 360f,
-                            animationSpec = infiniteRepeatable(
-                                animation = tween(6000, easing = LinearEasing),
-                                repeatMode = RepeatMode.Restart
-                            ),
-                            label = "rotation"
-                        )
-                        Box(
-                            modifier = Modifier
-                                .graphicsLayer { rotationZ = angle }
-                                .padding(horizontal = LocalPaddings.current.small)
-                                .size(4.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                                    shape = MaterialShapes.Cookie4Sided.toShape()
-                                )
-                        )
+                        Divider(shape = MaterialShapes.Cookie4Sided.toShape())
                     }
 
                     item.episodes?.let {

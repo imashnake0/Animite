@@ -27,8 +27,9 @@ query UserMediaListQuery($userId: Int, $type: MediaType) {
         lists {
             name
             entries {
+                score(format: POINT_10_DECIMAL)
                 media {
-                    ...MediaSmall
+                    ...MediaTracking
                 }
             }
         }

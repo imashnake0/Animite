@@ -9,6 +9,7 @@ import com.imashnake.animite.api.anilist.fragment.AnimeInfo
 import com.imashnake.animite.api.anilist.fragment.CharacterSmall
 import com.imashnake.animite.api.anilist.fragment.MediaMedium
 import com.imashnake.animite.api.anilist.fragment.MediaSmall
+import com.imashnake.animite.api.anilist.fragment.MediaTracking
 import com.imashnake.animite.api.anilist.fragment.StaffSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
@@ -714,6 +715,60 @@ data class Media(
                 .toImmutableList(),
             format = query.format?.sanitize(),
             episodes = query.episodes
+        )
+    }
+
+    @Immutable
+    data class Tracking(
+        val id: Int,
+        val coverImage: String?,
+        val title: String?,
+        val season: Season?,
+        val seasonYear: Int?,
+        val format: Format?,
+        val episodes: Int?,
+        val score: Score?,
+    ) {
+        internal constructor(
+            query: MediaTracking,
+            score: Float?,
+            language: Language
+        ) : this(
+            id = query.id,
+            coverImage = query.coverImage?.large,
+            title = when (language) {
+                Language.DEFAULT -> query.title?.userPreferred
+                Language.ROMAJI -> query.title?.romaji
+                Language.ENGLISH -> query.title?.english
+                Language.NATIVE -> query.title?.native
+            } ?: query.title?.userPreferred,
+            season = query.season?.sanitize(),
+            seasonYear = query.seasonYear,
+            format = query.format?.sanitize(),
+            episodes = query.episodes,
+            score = score?.let { Score(it) }
+        )
+    }
+
+    data class Score(
+        val value: Float,
+        val color: Long,
+    ) {
+        companion object {
+            private const val RED = 0xffff7770
+            private const val ORANGE = 0xffffc863
+            private const val LIME = 0xffb8ff70
+            private const val GREEN = 0xff63ff88
+        }
+
+        internal constructor(score: Float) : this(
+            value = score,
+            color = when {
+                score < 5f -> RED
+                score < 7f -> ORANGE
+                score < 9f -> LIME
+                else -> GREEN
+            }
         )
     }
 }

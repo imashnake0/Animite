@@ -1,16 +1,20 @@
 package com.imashnake.animite.api.anilist.sanitize.profile
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import com.imashnake.animite.api.anilist.UserMediaListQuery
 import com.imashnake.animite.api.anilist.fragment.User
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Language
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
+import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
+
+private const val EXCEPTION_TAG = "exception"
 
 /**
  * Sanitized [User].
@@ -46,7 +50,7 @@ data class User(
 
     // region Fave
     /** @see User.favourites */
-    val favourites: ImmutableList<MediaCollection.NamedList>,
+    val favourites: ImmutableList<FavouriteCollection.FavouriteList>,
     // endregion
 ) {
     data class Stat(
@@ -71,23 +75,52 @@ data class User(
     @Immutable
     data class MediaCollection(
         val type: Type,
-        val namedLists: ImmutableList<NamedList>,
+        val namedLists: ImmutableList<NamedTrackingList>,
     ) {
         @Immutable
-        data class NamedList(
+        data class NamedTrackingList(
             val name: String?,
-            val list: ImmutableList<Any>,
+            val existingListName: ListNames?,
+            val list: ImmutableList<Media.Tracking>,
         ) {
             internal constructor(
                 query: UserMediaListQuery.List,
                 language: Language
             ) : this(
                 name = query.name,
+                existingListName = query.name?.sanitize(),
                 list = query.entries.orEmpty().mapNotNull {
-                    Media.Small(it?.media?.mediaSmall ?: return@mapNotNull null, language)
+                    Media.Tracking(
+                        query = it?.media?.mediaTracking ?: return@mapNotNull null,
+                        score = it.score?.toFloat(),
+                        language = language
+                    )
                 }.toImmutableList()
             )
+        }
 
+        internal constructor(
+            query: UserMediaListQuery.Data,
+            type: MediaType?,
+            language: Language
+        ) : this(
+            type = type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
+            namedLists = query.mediaListCollection?.lists.orEmpty().mapNotNull {
+                NamedTrackingList(it ?: return@mapNotNull null, language)
+            }.toImmutableList()
+        )
+    }
+
+    @Immutable
+    data class FavouriteCollection(
+        val type: Type,
+        val favouriteList: ImmutableList<FavouriteList>,
+    ) {
+        @Immutable
+        data class FavouriteList(
+            val name: String?,
+            val list: ImmutableList<Any>,
+        ) {
             internal constructor(
                 query: User.Anime1,
                 language: Language
@@ -115,17 +148,6 @@ data class User(
                 }.toImmutableList()
             )
         }
-
-        internal constructor(
-            query: UserMediaListQuery.Data,
-            type: MediaType?,
-            language: Language
-        ) : this(
-            type = type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
-            namedLists = query.mediaListCollection?.lists.orEmpty().mapNotNull {
-                NamedList(it ?: return@mapNotNull null, language)
-            }.toImmutableList()
-        )
     }
 
     internal constructor(
@@ -161,9 +183,9 @@ data class User(
             }.sortedByDescending { it.mediaCount }
         }.toImmutableList(),
         favourites = listOfNotNull(
-            query.favourites?.anime?.let { MediaCollection.NamedList(it, language) }.takeIf { it?.list?.isNotEmpty() == true },
-            query.favourites?.manga?.let { MediaCollection.NamedList(it, language) }.takeIf { it?.list?.isNotEmpty() == true },
-            query.favourites?.characters?.let { MediaCollection.NamedList(it) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.anime?.let { FavouriteCollection.FavouriteList(it, language) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.manga?.let { FavouriteCollection.FavouriteList(it, language) }.takeIf { it?.list?.isNotEmpty() == true },
+            query.favourites?.characters?.let { FavouriteCollection.FavouriteList(it) }.takeIf { it?.list?.isNotEmpty() == true },
         ).toImmutableList()
     )
 
@@ -171,5 +193,33 @@ data class User(
         Anime,
         Manga,
         Characters,
+    }
+
+    enum class ListNames {
+        // Anime lists
+        WATCHING,
+        COMPLETED,
+        PAUSED,
+        DROPPED,
+        REWATCHING,
+        PLANNING,
+
+        // Manga lists
+        READING,
+        REREADING,
+        PLAN_TO_READ,
+
+        CUSTOM_OR_UNKNOWN;
+
+        companion object {
+            fun safeValueOf(rawValue: String?): ListNames = try {
+                ListNames.valueOf(rawValue?.uppercase().toString())
+            } catch (e: IllegalArgumentException) {
+                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Format $rawValue not found.")
+                CUSTOM_OR_UNKNOWN
+            }
+
+            fun String?.sanitize() = safeValueOf(this)
+        }
     }
 }

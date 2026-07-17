@@ -21,6 +21,11 @@
 
     <string name="genres">Genres</string>
 
+    <plurals name="ep_count">
+        <item quantity="one">%1$d ep</item>
+        <item quantity="other">%1$d eps</item>
+    </plurals>
+
     <string name="no_anime">No Anime</string>
     <string name="no_manga">No Manga</string>
     <string name="no_media">No Media</string>

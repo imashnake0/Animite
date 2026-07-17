@@ -1,34 +1,18 @@
 package com.imashnake.animite.profile.tabs
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.util.fastForEach
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.core.ui.ext.horizontalOnly
-import com.imashnake.animite.core.ui.ext.verticalOnly
 import com.imashnake.animite.core.ui.screen.FallbackScreen
-import com.imashnake.animite.core.ui.LocalPaddings
-import com.imashnake.animite.core.ui.component.MediaCard
-import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.media.MediaPage
-import com.imashnake.animite.navigation.SharedContentKey
-import com.imashnake.animite.navigation.SharedContentKey.Component.Card
-import com.imashnake.animite.navigation.SharedContentKey.Component.Image
-import com.imashnake.animite.navigation.SharedContentKey.Component.Page
-import com.imashnake.animite.navigation.SharedContentKey.Component.Text
 import com.imashnake.animite.profile.R
+import com.imashnake.animite.profile.ui.MediaTrackingLists
 import kotlinx.collections.immutable.ImmutableList
 
 /**
@@ -40,9 +24,8 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
+    listVisibility: SnapshotStateMap<Int, Boolean>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -62,10 +45,10 @@ fun MediaTab(
 
         else -> if (!mediaCollection?.namedLists.isNullOrEmpty()) {
             UserMediaLists(
+                type = mediaCollection.type,
                 lists = mediaCollection.namedLists,
+                listVisibility = listVisibility,
                 onNavigateToMediaItem = onNavigateToMediaItem,
-                sharedTransitionScope = sharedTransitionScope,
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = modifier,
                 contentPadding = contentPadding,
             )
@@ -75,78 +58,19 @@ fun MediaTab(
 
 @Composable
 private fun UserMediaLists(
-    lists: ImmutableList<User.MediaCollection.NamedList>,
+    type: Media.Small.Type,
+    lists: ImmutableList<User.MediaCollection.NamedTrackingList>,
+    listVisibility: SnapshotStateMap<Int, Boolean>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val scrollState = rememberScrollState()
-
-    Column(
-        modifier =  modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(contentPadding.verticalOnly),
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
-    ) {
-        lists.fastForEach { namedList ->
-            MediaSmallRow(
-                title = namedList.name,
-                mediaList = namedList.list,
-                contentPadding = contentPadding.horizontalOnly,
-            ) { _, item ->
-                with(sharedTransitionScope) {
-                    val media = item as Media.Small
-                    MediaCard(
-                        image = media.coverImage,
-                        tag = null,
-                        label = media.title,
-                        onClick = {
-                            onNavigateToMediaItem(
-                                MediaPage(
-                                    id = media.id,
-                                    source = namedList.name.orEmpty(),
-                                    mediaType = media.type.name,
-                                    title = media.title,
-                                )
-                            )
-                        },
-                        modifier = Modifier.sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = namedList.name,
-                                    sharedComponents = Card to Page,
-                                )
-                            ),
-                            animatedVisibilityScope,
-                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                        ).animateItem(),
-                        imageModifier = Modifier.sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = namedList.name,
-                                    sharedComponents = Image to Image,
-                                )
-                            ),
-                            animatedVisibilityScope,
-                        ),
-                        textModifier = Modifier.sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = namedList.name,
-                                    sharedComponents = Text to Text,
-                                )
-                            ),
-                            animatedVisibilityScope,
-                        ).skipToLookaheadSize(),
-                    )
-                }
-            }
-        }
-    }
+    MediaTrackingLists(
+        type = type,
+        namedLists = lists,
+        listVisibility = listVisibility,
+        onNavigateToMediaItem = onNavigateToMediaItem,
+        contentPadding = contentPadding,
+        modifier = modifier.fillMaxSize()
+    )
 }

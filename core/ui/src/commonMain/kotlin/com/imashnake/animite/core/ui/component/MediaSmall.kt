@@ -205,6 +205,70 @@ fun MediaCard(
 }
 
 /**
+ * A [Card] that is the size of [CharacterCard].
+ *
+ * @param image A URL of the image to be shown in the card that this component is.
+ * @param label A label for the [image], if this is `null`, the [label] is not shown.
+ * @param onClick Action to happen when the card is clicked.
+ */
+@Composable
+fun MediaMediumCard(
+    image: String?,
+    tag: String?,
+    tagMinLines: Int,
+    label: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
+) {
+    MediaSmall(
+        image = image,
+        onClick = onClick,
+        imageHeight = 137.dp,
+        cardWidth = 96.dp,
+        modifier = modifier,
+        imageModifier = imageModifier,
+        textModifier = textModifier,
+        tag = tag,
+        tagMinLines = tagMinLines,
+        label = label
+    )
+}
+
+/**
+ * A [Card] that is smaller (for tracking lists).
+ *
+ * @param image A URL of the image to be shown in the card that this component is.
+ * @param label A label for the [image], if this is `null`, the [label] is not shown.
+ * @param onClick Action to happen when the card is clicked.
+ */
+@Composable
+fun MediaTrackingCard(
+    image: String?,
+    tag: String?,
+    tagMinLines: Int,
+    label: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
+) {
+    MediaSmall(
+        image = image,
+        onClick = onClick,
+        imageHeight = 80.dp,
+        cardWidth = 56.dp,
+        modifier = modifier,
+        imageModifier = imageModifier,
+        textModifier = textModifier,
+        tag = tag,
+        tagMinLines = tagMinLines,
+        label = label
+    )
+}
+
+/**
  * A [Card] that displays a character thumbnail, and an optional label.
  *
  * @param image A URL of the image to be shown in the card that this component is.

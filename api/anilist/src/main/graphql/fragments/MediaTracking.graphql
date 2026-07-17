@@ -1,0 +1,16 @@
+fragment MediaTracking on Media {
+    id
+    coverImage {
+        large
+    }
+    title {
+        userPreferred
+        romaji
+        english
+        native
+    }
+    season
+    seasonYear
+    format
+    episodes
+}

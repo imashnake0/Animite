@@ -56,6 +56,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -468,6 +469,17 @@ private fun UserTabs(
     val onBackground = MaterialTheme.colorScheme.onBackground
     val horizontalContentPadding = contentPadding.horizontalOnly
 
+    val animeListVisibility = remember(animeCollection?.namedLists?.size) {
+        mutableStateMapOf(
+            *List(animeCollection?.namedLists?.size ?: 0) { it to true }.toTypedArray()
+        )
+    }
+    val mangaListVisibility = remember(mangaCollection?.namedLists?.size) {
+        mutableStateMapOf(
+            *List(mangaCollection?.namedLists?.size ?: 0) { it to true }.toTypedArray()
+        )
+    }
+
     var scrollableTabs by remember { mutableStateOf(false) }
 
     Column(modifier) {
@@ -555,6 +567,11 @@ private fun UserTabs(
                 all = LocalPaddings.current.large
             ) + contentPadding.copy(top = 0.dp)
 
+            val mediaTabContentPadding = PaddingValues(
+                vertical = LocalPaddings.current.large,
+                horizontal = LocalPaddings.current.medium
+            ) + contentPadding.copy(top = 0.dp)
+
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(
@@ -565,17 +582,15 @@ private fun UserTabs(
                     )
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
+                        listVisibility = animeListVisibility,
                         onNavigateToMediaItem = onNavigateToMediaItem,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        contentPadding = tabContentPadding,
+                        contentPadding = mediaTabContentPadding,
                     )
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
+                        listVisibility = mangaListVisibility,
                         onNavigateToMediaItem = onNavigateToMediaItem,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        contentPadding = tabContentPadding,
+                        contentPadding = mediaTabContentPadding,
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
