@@ -78,10 +78,13 @@ fun MediaTrackingLists(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
         namedLists.fastForEachIndexed { index, namedList ->
+            // TODO: See if you can change the radius:
+            //  https://medium.com/@yuriyskul/how-to-track-and-detect-sticky-headers-stuck-states-in-jetpack-compose-f4f2499f2ae8
             stickyHeader(key = namedList.name) {
                 namedList.name?.let {
                     Box(
                         modifier = Modifier
+                            // TODO: Deal with hard dimens.
                             .height(70.dp)
                             .fillMaxWidth()
                             .clip(CircleShape)
@@ -98,14 +101,17 @@ fun MediaTrackingLists(
                             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                             modifier = Modifier
                                 .align(Alignment.CenterStart)
+                                // TODO: Deal with hard dimens.
                                 .padding(start = 25.dp)
                         ) {
                             Icon(
+                                // TODO: Cleanup
                                 imageVector = ImageVector.vectorResource(try {
                                     Names.valueOf(it.uppercase()).res
                                 } catch (_: Exception) { com.imashnake.animite.navigation.R.drawable.anime }),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                // TODO: Deal with hard dimens.
                                 modifier = Modifier.size(20.dp)
                             )
                             Text(
@@ -114,6 +120,15 @@ fun MediaTrackingLists(
                                 style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
                             )
                         }
+                        Text(
+                            text = namedList.list.size.toString(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                            // TODO: Deal with hard dimens.
+                            modifier = Modifier
+                                .padding(end = 25.dp)
+                                .align(Alignment.CenterEnd)
+                        )
                     }
                 }
             }
@@ -123,6 +138,7 @@ fun MediaTrackingLists(
                         item = namedList.list[it],
                         onClick = onItemClick,
                         modifier = Modifier
+                            // TODO: Deal with hard dimens.
                             .padding(horizontal = 35.dp)
                             .animateItem()
                             .height(80.dp)
@@ -338,6 +354,7 @@ fun LoadingMediaMediumList(
     }
 }
 
+// TODO: Cleanup
 @Preview
 @Composable
 fun PreviewLoadingMediaMediumList() {
@@ -360,6 +377,7 @@ fun PreviewLoadingMediaMediumItem() {
     }
 }
 
+// TODO: Move this.
 enum class Names {
     COMPLETED,
     PAUSED,

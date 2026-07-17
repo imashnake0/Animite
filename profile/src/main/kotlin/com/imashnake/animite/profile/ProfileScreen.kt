@@ -555,6 +555,11 @@ private fun UserTabs(
                 all = LocalPaddings.current.large
             ) + contentPadding.copy(top = 0.dp)
 
+            val mediaTabContentPadding = PaddingValues(
+                vertical = LocalPaddings.current.large,
+                horizontal = LocalPaddings.current.medium
+            ) + contentPadding.copy(top = 0.dp)
+
             Box(Modifier.fillMaxSize()) {
                 when (ProfileTab.entries[page]) {
                     ProfileTab.ABOUT -> AboutTab(
@@ -568,14 +573,14 @@ private fun UserTabs(
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
-                        contentPadding = tabContentPadding,
+                        contentPadding = mediaTabContentPadding,
                     )
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
-                        contentPadding = tabContentPadding,
+                        contentPadding = mediaTabContentPadding,
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(
                         favouriteLists = user.favourites,
