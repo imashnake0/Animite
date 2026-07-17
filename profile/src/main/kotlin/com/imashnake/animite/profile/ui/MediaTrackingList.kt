@@ -37,8 +37,6 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,7 +64,6 @@ import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
 import com.imashnake.animite.profile.dev.res
 import kotlinx.collections.immutable.ImmutableList
-import com.imashnake.animite.media.R as mediaR
 
 @Composable
 fun MediaTrackingLists(
@@ -255,7 +252,7 @@ private fun MediaTrackingItem(
                                 .size(4.dp)
                                 .background(
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                                    shape = MaterialShapes.Cookie4Sided.toShape()
+                                    shape = MaterialShapes.Triangle.toShape()
                                 )
                         )
                     }
@@ -288,7 +285,7 @@ private fun MediaTrackingItem(
                                 .size(4.dp)
                                 .background(
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                                    shape = MaterialShapes.Cookie4Sided.toShape()
+                                    shape = MaterialShapes.Triangle.toShape()
                                 )
                         )
                     }
@@ -296,7 +293,7 @@ private fun MediaTrackingItem(
                     item.episodes?.let {
                         Text(
                             text = pluralStringResource(
-                                id = mediaR.plurals.episode_count,
+                                id = R.plurals.ep_count,
                                 count = it,
                                 formatArgs = arrayOf(it)
                             ),
