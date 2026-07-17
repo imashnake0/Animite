@@ -5,4 +5,8 @@
     <dimen name="user_about_height_landscape">50dp</dimen>
 
     <dimen name="markdown_block_corner_radius">3dp</dimen>
+
+    <dimen name="tracking_list_header_height">70dp</dimen>
+    <dimen name="tracking_list_header_icon_size">20dp</dimen>
+    <dimen name="tracking_list_item_height">80dp</dimen>
 </resources>

@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -73,14 +74,11 @@ fun MediaTrackingLists(
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
         namedLists.fastForEachIndexed { index, namedList ->
-            // TODO: See if you can change the radius:
-            //  https://medium.com/@yuriyskul/how-to-track-and-detect-sticky-headers-stuck-states-in-jetpack-compose-f4f2499f2ae8
             stickyHeader(key = namedList.name) {
                 namedList.name?.let {
                     Box(
                         modifier = Modifier
-                            // TODO: Deal with hard dimens.
-                            .height(70.dp)
+                            .height(dimensionResource(R.dimen.tracking_list_header_height))
                             .fillMaxWidth()
                             .clip(CircleShape)
                             .clickable {
@@ -91,13 +89,14 @@ fun MediaTrackingLists(
                             .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
                             .animateItem()
                     ) {
+                        val iconPadding = (dimensionResource(R.dimen.tracking_list_header_height)
+                                - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                             modifier = Modifier
                                 .align(Alignment.CenterStart)
-                                // TODO: Deal with hard dimens.
-                                .padding(start = 25.dp)
+                                .padding(iconPadding)
                         ) {
                             Icon(
                                 // TODO: Cleanup
@@ -106,8 +105,7 @@ fun MediaTrackingLists(
                                 } catch (_: Exception) { com.imashnake.animite.navigation.R.drawable.anime }),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                // TODO: Deal with hard dimens.
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
                             )
                             Text(
                                 text = it,
@@ -118,9 +116,8 @@ fun MediaTrackingLists(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            // TODO: Deal with hard dimens.
                             modifier = Modifier
-                                .padding(end = 25.dp)
+                                .padding(end = iconPadding)
                                 .align(Alignment.CenterEnd)
                         ) {
                             Text(
@@ -158,11 +155,9 @@ fun MediaTrackingLists(
                             )
                         },
                         modifier = Modifier
-                            // TODO: Deal with hard dimens.
-                            .padding(horizontal = 35.dp)
+                            .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
                             .animateItem()
-                            // TODO: Deal with hard dimens.
-                            .height(80.dp)
+                            .height(dimensionResource(R.dimen.tracking_list_item_height))
                             .fillMaxWidth()
                             .clip(
                                 RoundedCornerShape(
