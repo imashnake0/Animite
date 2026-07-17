@@ -56,10 +56,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.LoadingMediaSmall
 import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
+import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
 import com.imashnake.animite.profile.dev.res
@@ -68,8 +70,9 @@ import com.imashnake.animite.media.R as mediaR
 
 @Composable
 fun MediaTrackingLists(
+    type: Media.Small.Type,
     namedLists: ImmutableList<User.MediaCollection.NamedTrackingList>,
-    onItemClick: (Int, String?) -> Unit,
+    onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
@@ -156,7 +159,16 @@ fun MediaTrackingLists(
                 items(namedList.list.size, key = { namedList.list[it].id }) {
                     MediaTrackingItem(
                         item = namedList.list[it],
-                        onClick = onItemClick,
+                        onClick = { id, title ->
+                            onNavigateToMediaItem(
+                                MediaPage(
+                                    id = id,
+                                    source = "${namedList.name}" + type.type,
+                                    mediaType = type.name,
+                                    title = title
+                                )
+                            )
+                        },
                         modifier = Modifier
                             // TODO: Deal with hard dimens.
                             .padding(horizontal = 35.dp)

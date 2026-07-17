@@ -1,17 +1,13 @@
 package com.imashnake.animite.profile.tabs
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.LocalUiMediaScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.screen.FallbackScreen
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.R
@@ -28,8 +24,6 @@ import kotlinx.collections.immutable.ImmutableList
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -49,6 +43,7 @@ fun MediaTab(
 
         else -> if (!mediaCollection?.namedLists.isNullOrEmpty()) {
             UserMediaLists(
+                type = mediaCollection.type,
                 lists = mediaCollection.namedLists,
                 onNavigateToMediaItem = onNavigateToMediaItem,
                 modifier = modifier,
@@ -60,14 +55,16 @@ fun MediaTab(
 
 @Composable
 private fun UserMediaLists(
+    type: Media.Small.Type,
     lists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     MediaTrackingLists(
+        type = type,
         namedLists = lists,
-        onItemClick = { id, title ->  },
+        onNavigateToMediaItem = onNavigateToMediaItem,
         contentPadding = contentPadding,
         modifier = modifier.fillMaxSize()
     )
