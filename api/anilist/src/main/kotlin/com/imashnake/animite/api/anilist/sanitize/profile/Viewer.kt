@@ -1,16 +1,20 @@
 package com.imashnake.animite.api.anilist.sanitize.profile
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import com.imashnake.animite.api.anilist.UserMediaListQuery
 import com.imashnake.animite.api.anilist.fragment.User
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Language
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
+import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
+
+private const val EXCEPTION_TAG = "exception"
 
 /**
  * Sanitized [User].
@@ -76,6 +80,7 @@ data class User(
         @Immutable
         data class NamedTrackingList(
             val name: String?,
+            val existingListName: ListNames?,
             val list: ImmutableList<Media.Tracking>,
         ) {
             internal constructor(
@@ -83,6 +88,7 @@ data class User(
                 language: Language
             ) : this(
                 name = query.name,
+                existingListName = query.name?.sanitize(),
                 list = query.entries.orEmpty().mapNotNull {
                     Media.Tracking(
                         query = it?.media?.mediaTracking ?: return@mapNotNull null,
@@ -187,5 +193,33 @@ data class User(
         Anime,
         Manga,
         Characters,
+    }
+
+    enum class ListNames {
+        // Anime lists
+        WATCHING,
+        COMPLETED,
+        PAUSED,
+        DROPPED,
+        REWATCHING,
+        PLANNING,
+
+        // Manga lists
+        READING,
+        REREADING,
+        PLAN_TO_READ,
+
+        CUSTOM_OR_UNKNOWN;
+
+        companion object {
+            fun safeValueOf(rawValue: String?): ListNames = try {
+                ListNames.valueOf(rawValue?.uppercase().toString())
+            } catch (e: IllegalArgumentException) {
+                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Format $rawValue not found.")
+                CUSTOM_OR_UNKNOWN
+            }
+
+            fun String?.sanitize() = safeValueOf(this)
+        }
     }
 }

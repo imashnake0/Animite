@@ -469,12 +469,12 @@ private fun UserTabs(
     val onBackground = MaterialTheme.colorScheme.onBackground
     val horizontalContentPadding = contentPadding.horizontalOnly
 
-    val animeListVisibility = remember {
+    val animeListVisibility = remember(animeCollection?.namedLists?.size) {
         mutableStateMapOf(
             *List(animeCollection?.namedLists?.size ?: 0) { it to true }.toTypedArray()
         )
     }
-    val mangaListVisibility = remember {
+    val mangaListVisibility = remember(mangaCollection?.namedLists?.size) {
         mutableStateMapOf(
             *List(mangaCollection?.namedLists?.size ?: 0) { it to true }.toTypedArray()
         )

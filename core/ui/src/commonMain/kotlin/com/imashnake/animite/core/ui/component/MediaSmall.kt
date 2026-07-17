@@ -237,7 +237,7 @@ fun MediaMediumCard(
 }
 
 /**
- * A [Card] that is the size of [CharacterCard].
+ * A [Card] that is smaller (for tracking lists).
  *
  * @param image A URL of the image to be shown in the card that this component is.
  * @param label A label for the [image], if this is `null`, the [label] is not shown.
@@ -307,8 +307,8 @@ fun CharacterCard(
  * @param image A URL of the image to be shown in the card that this component is.
  * @param label A label for the [image], if this is `null`, the [label] is not shown.
  * @param onClick Action to happen when the card is clicked.
- * @param imageHeight Fixed height of the images in the 
- * @param cardWidth Width of the 
+ * @param imageHeight Fixed height of the images in the card.
+ * @param cardWidth Width of the card.
  */
 @Composable
 internal fun MediaSmall(

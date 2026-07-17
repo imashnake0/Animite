@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.Media.ListNames.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.MediaTrackingCard
@@ -101,10 +102,7 @@ fun MediaTrackingLists(
                                 .padding(iconPadding)
                         ) {
                             Icon(
-                                // TODO: Cleanup
-                                imageVector = ImageVector.vectorResource(try {
-                                    Names.valueOf(it.uppercase()).res
-                                } catch (_: Exception) { com.imashnake.animite.navigation.R.drawable.anime }),
+                                imageVector = ImageVector.vectorResource(it.sanitize().res),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
@@ -286,7 +284,7 @@ fun Divider(
         label = "rotation"
     )
     Box(
-        modifier = Modifier
+        modifier = modifier
             .graphicsLayer { rotationZ = angle }
             .padding(horizontal = LocalPaddings.current.small)
             .size(4.dp)
@@ -295,13 +293,4 @@ fun Divider(
                 shape = MaterialShapes.Triangle.toShape()
             )
     )
-}
-
-// TODO: Move this and support manga.
-enum class Names {
-    COMPLETED,
-    PAUSED,
-    DROPPED,
-    REWATCHING,
-    PLANNING
 }
