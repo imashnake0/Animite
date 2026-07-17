@@ -139,6 +139,7 @@ fun MediaTrackingLists(
                             )
 
                             val iconRotation by animateFloatAsState(if (listVisibility[index] ?: true) 0f else -90f)
+                            // TODO: Move to core:ui and reuse from explore.
                             Icon(
                                 painter = painterResource(R.drawable.drop_down),
                                 contentDescription = null,
@@ -160,6 +161,7 @@ fun MediaTrackingLists(
                             // TODO: Deal with hard dimens.
                             .padding(horizontal = 35.dp)
                             .animateItem()
+                            // TODO: Deal with hard dimens.
                             .height(80.dp)
                             .fillMaxWidth()
                             .clip(
