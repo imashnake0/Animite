@@ -30,6 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -61,6 +64,7 @@ fun MediaTrackingLists(
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
+    val haptic = LocalHapticFeedback.current
     LazyColumn(
         state = state,
         modifier = modifier,
@@ -76,6 +80,11 @@ fun MediaTrackingLists(
                             .fillMaxWidth()
                             .clip(CircleShape)
                             .clickable {
+                                if (listVisibility[index] == true) {
+                                    haptic.performHapticFeedback(ToggleOff)
+                                } else {
+                                    haptic.performHapticFeedback(ToggleOn)
+                                }
                                 listVisibility[index]?.let { visibility ->
                                     listVisibility[index] = !visibility
                                 }
