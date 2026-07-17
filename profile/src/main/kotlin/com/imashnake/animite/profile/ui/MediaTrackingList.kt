@@ -292,6 +292,15 @@ private fun MediaTrackingItem(
                 }
             }
         }
+
+        Text(
+            text = item.score.toString(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .padding(end = LocalPaddings.current.medium)
+                .align(Alignment.CenterEnd)
+        )
     }
 }
 

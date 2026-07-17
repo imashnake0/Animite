@@ -84,7 +84,11 @@ data class User(
             ) : this(
                 name = query.name,
                 list = query.entries.orEmpty().mapNotNull {
-                    Media.Tracking(it?.media?.mediaTracking ?: return@mapNotNull null, language)
+                    Media.Tracking(
+                        query = it?.media?.mediaTracking ?: return@mapNotNull null,
+                        score = it.score?.toFloat(),
+                        language = language
+                    )
                 }.toImmutableList()
             )
         }

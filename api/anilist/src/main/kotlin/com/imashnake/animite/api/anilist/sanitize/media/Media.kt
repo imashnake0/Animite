@@ -720,23 +720,18 @@ data class Media(
 
     @Immutable
     data class Tracking(
-        /** @see id */
         val id: Int,
-        /** @see coverImage */
         val coverImage: String?,
-        /** @see title */
         val title: String?,
-        /** @see season */
         val season: Season?,
-        /** @see seasonYear */
         val seasonYear: Int?,
-        /** @see format */
         val format: Format?,
-        /** @see episodes */
         val episodes: Int?,
+        val score: Float?,
     ) {
         internal constructor(
             query: MediaTracking,
+            score: Float?,
             language: Language
         ) : this(
             id = query.id,
@@ -750,7 +745,8 @@ data class Media(
             season = query.season?.sanitize(),
             seasonYear = query.seasonYear,
             format = query.format?.sanitize(),
-            episodes = query.episodes
+            episodes = query.episodes,
+            score = score
         )
     }
 }
