@@ -261,7 +261,7 @@ private fun MediaTrackingItem(
             Text(
                 text = score.value.toString(),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = Color(score.color).copy(alpha = 0.6f),          
+                color = Color(score.color).copy(alpha = 0.6f),
                 modifier = Modifier
                     .padding(end = LocalPaddings.current.medium)
                     .align(Alignment.CenterEnd)
