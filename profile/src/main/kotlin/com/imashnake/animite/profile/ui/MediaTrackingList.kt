@@ -33,6 +33,8 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,12 +46,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.LoadingMediaSmall
-import com.imashnake.animite.core.ui.component.MediaMediumCard
 import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.R
@@ -64,50 +65,59 @@ fun MediaTrackingLists(
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
+    val listVisibility = remember { mutableStateMapOf(*List(namedLists.size) { it to true }.toTypedArray()) }
     LazyColumn(
         state = state,
         modifier = modifier,
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
-        namedLists.fastForEach { namedList ->
-            item {
+        namedLists.fastForEachIndexed { index, namedList ->
+            stickyHeader {
                 namedList.name?.let {
                     Text(
                         text = it,
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+                        modifier = Modifier
+                            .clickable {
+                                listVisibility[index]?.let { visibility -> listVisibility[index] = !visibility }
+                            }
+                            .animateItem()
                     )
                 }
             }
-            items(namedList.list.size, key = { namedList.list[it].id }) { index ->
-                MediaMediumItem(
-                    item = namedList.list[index],
-                    onClick = onItemClick,
-                    modifier = Modifier
-                        .animateItem()
-                        .height(80.dp)
-                        .fillMaxWidth()
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 18.dp,
-                                bottomStart = 18.dp,
-                                topEnd = if (index == 0) 18.dp else LocalPaddings.current.small,
-                                bottomEnd = if (index == namedList.list.lastIndex) {
-                                    18.dp
-                                } else LocalPaddings.current.small,
+            if (listVisibility[index] ?: true) {
+                items(namedList.list.size, key = { namedList.list[it].id }) {
+                    MediaTrackingItem(
+                        item = namedList.list[it],
+                        onClick = onItemClick,
+                        modifier = Modifier
+                            .animateItem()
+                            .height(80.dp)
+                            .fillMaxWidth()
+                            .clip(
+                                RoundedCornerShape(
+                                    topStart = 18.dp,
+                                    bottomStart = 18.dp,
+                                    topEnd = if (index == 0) 18.dp else LocalPaddings.current.small,
+                                    bottomEnd = if (it == namedList.list.lastIndex) {
+                                        18.dp
+                                    } else LocalPaddings.current.small,
+                                )
                             )
-                        )
-                        .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
-                )
+                            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
+                    )
+                }
             }
+            item { Spacer(Modifier.size(LocalPaddings.current.medium)) }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun MediaMediumItem(
+private fun MediaTrackingItem(
     item: Media.Tracking,
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier

@@ -175,7 +175,7 @@ private fun MediaMediumItem(
                 Text(
                     text = item.title.orEmpty(),
                     color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1
                 )
 

@@ -91,7 +91,7 @@ private fun UserMediaLists(
     ) {
         MediaTrackingLists(
             namedLists = lists,
-            onItemClick = { _, _ -> },
+            onItemClick = { id, title ->  },
             contentPadding = contentPadding
         )
     }
