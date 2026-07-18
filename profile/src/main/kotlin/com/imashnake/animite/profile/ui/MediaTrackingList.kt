@@ -74,59 +74,71 @@ fun MediaTrackingLists(
         namedLists.fastForEachIndexed { index, namedList ->
             stickyHeader(key = namedList.name) {
                 namedList.name?.let {
-                    Box(
-                        modifier = Modifier
-                            .height(dimensionResource(R.dimen.tracking_list_header_height))
-                            .fillMaxWidth()
-                            .clip(CircleShape)
-                            .clickable {
-                                if (listVisibility[index] == true) {
-                                    haptic.performHapticFeedback(ToggleOff)
-                                } else {
-                                    haptic.performHapticFeedback(ToggleOn)
+                    Column(Modifier.animateItem()) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .size(LocalPaddings.current.small)
+                                .background(MaterialTheme.colorScheme.background)
+                        )
+                        Box(
+                            modifier = Modifier
+                                .height(dimensionResource(R.dimen.tracking_list_header_height))
+                                .fillMaxWidth()
+                                .clip(CircleShape)
+                                .clickable {
+                                    if (listVisibility[index] == true) {
+                                        haptic.performHapticFeedback(ToggleOff)
+                                    } else {
+                                        haptic.performHapticFeedback(ToggleOn)
+                                    }
+                                    listVisibility[index]?.let { visibility ->
+                                        listVisibility[index] = !visibility
+                                    }
                                 }
-                                listVisibility[index]?.let { visibility ->
-                                    listVisibility[index] = !visibility
-                                }
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                                        alpha = 0.95f
+                                    )
+                                )
+                        ) {
+                            val iconPadding =
+                                (dimensionResource(R.dimen.tracking_list_header_height)
+                                        - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(iconPadding)
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(it.sanitize().res),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
+                                )
+                                Text(
+                                    text = it,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                                )
                             }
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
-                            .animateItem()
-                    ) {
-                        val iconPadding = (dimensionResource(R.dimen.tracking_list_header_height)
-                                - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(iconPadding)
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(it.sanitize().res),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
-                            )
-                            Text(
-                                text = it,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                            )
-                        }
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            modifier = Modifier
-                                .padding(end = iconPadding)
-                                .align(Alignment.CenterEnd)
-                        ) {
-                            Text(
-                                text = namedList.list.size.toString(),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                modifier = Modifier
+                                    .padding(end = iconPadding)
+                                    .align(Alignment.CenterEnd)
+                            ) {
+                                Text(
+                                    text = namedList.list.size.toString(),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                                    style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                                )
 
-                            DropDownIcon(isDroppedDown = listVisibility[index] ?: true)
+                                DropDownIcon(isDroppedDown = listVisibility[index] ?: true)
+                            }
                         }
                     }
                 }

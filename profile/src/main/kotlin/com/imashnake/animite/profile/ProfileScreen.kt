@@ -568,8 +568,10 @@ private fun UserTabs(
             ) + contentPadding.copy(top = 0.dp)
 
             val mediaTabContentPadding = PaddingValues(
-                vertical = LocalPaddings.current.large,
-                horizontal = LocalPaddings.current.medium
+                top = LocalPaddings.current.small,
+                start = LocalPaddings.current.medium,
+                end = LocalPaddings.current.medium,
+                bottom = LocalPaddings.current.medium
             ) + contentPadding.copy(top = 0.dp)
 
             Box(Modifier.fillMaxSize()) {
