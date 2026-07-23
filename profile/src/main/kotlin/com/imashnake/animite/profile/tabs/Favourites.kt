@@ -138,6 +138,8 @@ private fun UserFavouriteLists(
                         }
                     }
                     is Media.Credit -> {
+                        // TODO: Make character sheet top level (like quick search) or have a
+                        //  dedicated page.
                         CharacterCard(
                             image = item.image,
                             tag = null,

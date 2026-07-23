@@ -21,6 +21,9 @@
 
     <string name="genres">Genres</string>
 
+    <string name="expand_all">Expand All</string>
+    <string name="collapse_all">Collapse All</string>
+
     <plurals name="ep_count">
         <item quantity="one">%1$d ep</item>
         <item quantity="other">%1$d eps</item>

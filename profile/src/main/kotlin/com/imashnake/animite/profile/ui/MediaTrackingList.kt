@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -53,6 +54,9 @@ import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
 import com.imashnake.animite.profile.dev.res
 import kotlinx.collections.immutable.ImmutableList
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 @Composable
 fun MediaTrackingLists(
@@ -64,13 +68,17 @@ fun MediaTrackingLists(
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val haptic = LocalHapticFeedback.current
     LazyColumn(
         state = state,
         modifier = modifier,
         contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
+        item {
+            ListOptions(
+                expandAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = true } },
+                collapseAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = false } }
+            )
+        }
         namedLists.fastForEachIndexed { index, namedList ->
             stickyHeader(key = namedList.name) {
                 namedList.name?.let {
@@ -81,101 +89,183 @@ fun MediaTrackingLists(
                                 .size(LocalPaddings.current.small)
                                 .background(MaterialTheme.colorScheme.background)
                         )
-                        Box(
-                            modifier = Modifier
-                                .height(dimensionResource(R.dimen.tracking_list_header_height))
-                                .fillMaxWidth()
-                                .clip(CircleShape)
-                                .clickable {
-                                    if (listVisibility[index] == true) {
-                                        haptic.performHapticFeedback(ToggleOff)
-                                    } else {
-                                        haptic.performHapticFeedback(ToggleOn)
-                                    }
-                                    listVisibility[index]?.let { visibility ->
-                                        listVisibility[index] = !visibility
-                                    }
-                                }
-                                .background(
-                                    MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-                                        alpha = 0.95f
-                                    )
-                                )
-                        ) {
-                            val iconPadding =
-                                (dimensionResource(R.dimen.tracking_list_header_height)
-                                        - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                modifier = Modifier
-                                    .align(Alignment.CenterStart)
-                                    .padding(iconPadding)
-                            ) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(it.sanitize().res),
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
-                                )
-                                Text(
-                                    text = it,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                                )
-                            }
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                modifier = Modifier
-                                    .padding(end = iconPadding)
-                                    .align(Alignment.CenterEnd)
-                            ) {
-                                Text(
-                                    text = namedList.list.size.toString(),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                    style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                                )
-
-                                DropDownIcon(isDroppedDown = listVisibility[index] ?: true)
-                            }
-                        }
+                        HeaderPill(
+                            name = it,
+                            size = namedList.list.size,
+                            index = index,
+                            listVisibility = listVisibility,
+                        )
                     }
                 }
             }
             if (listVisibility[index] ?: true) {
-                items(namedList.list.size, key = { namedList.list[it].id }) {
-                    MediaTrackingItem(
-                        item = namedList.list[it],
-                        onClick = { id, title ->
-                            onNavigateToMediaItem(
-                                MediaPage(
-                                    id = id,
-                                    source = "${namedList.name}" + type.type,
-                                    mediaType = type.name,
-                                    title = title
+                items(namedList.list.size, key = { index.toString() + namedList.list[it].id }) {
+                    Column(Modifier.animateItem()) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .size(LocalPaddings.current.small)
+                                .background(MaterialTheme.colorScheme.background)
+                        )
+                        MediaTrackingItem(
+                            item = namedList.list[it],
+                            onClick = { id, title ->
+                                onNavigateToMediaItem(
+                                    MediaPage(
+                                        id = id,
+                                        source = "${namedList.name}" + type.type,
+                                        mediaType = type.name,
+                                        title = title
+                                    )
                                 )
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
-                            .animateItem()
-                            .height(dimensionResource(R.dimen.tracking_list_item_height))
-                            .fillMaxWidth()
-                            .clip(
-                                RoundedCornerShape(
-                                    topStart = 18.dp,
-                                    bottomStart = 18.dp,
-                                    topEnd = if (it == 0) 18.dp else LocalPaddings.current.small,
-                                    bottomEnd = if (it == namedList.list.lastIndex) {
-                                        18.dp
-                                    } else LocalPaddings.current.small,
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
+                                .height(dimensionResource(R.dimen.tracking_list_item_height))
+                                .fillMaxWidth()
+                                .clip(
+                                    RoundedCornerShape(
+                                        topStart = 18.dp,
+                                        bottomStart = 18.dp,
+                                        topEnd = if (it == 0) 18.dp else LocalPaddings.current.small,
+                                        bottomEnd = if (it == namedList.list.lastIndex) {
+                                            18.dp
+                                        } else LocalPaddings.current.small,
+                                    )
                                 )
-                            )
-                            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
-                    )
+                                .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
+                        )
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ListOptions(
+    expandAll: () -> Unit,
+    collapseAll: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .padding(top = LocalPaddings.current.small)
+            .padding(vertical = LocalPaddings.current.small)
+            .fillMaxWidth()
+    ) {
+        ListOption(
+            icon = ImageVector.vectorResource(R.drawable.expand_all),
+            text = stringResource(R.string.expand_all),
+            onClick = expandAll
+        )
+        ListOption(
+            icon = ImageVector.vectorResource(R.drawable.collapse_all),
+            text = stringResource(R.string.collapse_all),
+            onClick = collapseAll
+        )
+    }
+}
+
+@Composable
+private fun ListOption(
+    icon: ImageVector,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val haptic = LocalHapticFeedback.current
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+        modifier = modifier
+            .clip(CircleShape)
+            .clickable { haptic.performHapticFeedback(HapticFeedbackType.ContextClick); onClick() }
+            .padding(LocalPaddings.current.tiny)
+            .padding(end = LocalPaddings.current.tiny)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(dimensionResource(R.dimen.list_options_icon_size))
+        )
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelSmall.copy(baselineShift = null),
+        )
+    }
+}
+
+@Composable
+private fun HeaderPill(
+    name: String,
+    size: Int,
+    index: Int,
+    listVisibility: SnapshotStateMap<Int, Boolean>,
+    modifier: Modifier = Modifier
+) {
+    val haptic = LocalHapticFeedback.current
+    Box(
+        modifier = modifier
+            .height(dimensionResource(R.dimen.tracking_list_header_height))
+            .fillMaxWidth()
+            .clip(CircleShape)
+            .clickable {
+                if (listVisibility[index] == true) {
+                    haptic.performHapticFeedback(ToggleOff)
+                } else {
+                    haptic.performHapticFeedback(ToggleOn)
+                }
+                listVisibility[index]?.let { visibility ->
+                    listVisibility[index] = !visibility
+                }
+            }
+            .background(
+                MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                    alpha = 0.95f
+                )
+            )
+    ) {
+        val iconPadding =
+            (dimensionResource(R.dimen.tracking_list_header_height)
+                    - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(iconPadding)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(name.sanitize().res),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
+            )
+            Text(
+                text = name,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            modifier = Modifier
+                .padding(end = iconPadding)
+                .align(Alignment.CenterEnd)
+        ) {
+            Text(
+                text = size.toString(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+            )
+
+            DropDownIcon(isDroppedDown = listVisibility[index] ?: true)
         }
     }
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.libraryMultiplatform)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -14,6 +15,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.datastore)
+            implementation(libs.kotlinx.serialization.json)
         }
     }
 }
