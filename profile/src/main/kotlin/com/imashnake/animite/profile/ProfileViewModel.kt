@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,7 +52,11 @@ class ProfileViewModel @Inject constructor(
     ).flatMapLatest {
         userRepository.fetchViewer(useNetwork, Media.Language.valueOf(it.second))
     }.asResource().onEach {
-        it.data?.let { user -> preferencesRepository.setViewerId(user.id) }
+        it.data?.let { user ->
+            preferencesRepository.setViewerId(user.id)
+            preferencesRepository.setAnimeListOrder(user.animeListOrder)
+            preferencesRepository.setMangaListOrder(user.mangaListOrder)
+        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(1000),
@@ -60,15 +65,22 @@ class ProfileViewModel @Inject constructor(
 
     val viewerAnimeLists = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
-        flow2 = preferencesRepository.viewerId.filterNotNull(),
-        flow3 = preferencesRepository.language.filterNotNull(),
+        flow2 = combine(
+            preferencesRepository.viewerId.filterNotNull(),
+            preferencesRepository.language.filterNotNull(),
+            ::Pair
+        ),
+        flow3 = preferencesRepository.animeListOrder.filterNotNull().map {
+            Json.decodeFromString<List<String>>(it)
+        },
         transform = ::Triple,
     ).flatMapLatest {
         userRepository.fetchUserMediaList(
-            id = it.second.toIntOrNull(),
+            id = it.second.first.toIntOrNull(),
             type = MediaType.ANIME,
             useNetwork = useNetwork,
-            language = Media.Language.valueOf(it.third)
+            language = Media.Language.valueOf(it.second.second),
+            mediaListOrder = it.third
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -78,15 +90,22 @@ class ProfileViewModel @Inject constructor(
 
     val viewerMangaLists = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
-        flow2 = preferencesRepository.viewerId.filterNotNull(),
-        flow3 = preferencesRepository.language.filterNotNull(),
+        flow2 = combine(
+            preferencesRepository.viewerId.filterNotNull(),
+            preferencesRepository.language.filterNotNull(),
+            ::Pair
+        ),
+        flow3 = preferencesRepository.mangaListOrder.filterNotNull().map {
+            Json.decodeFromString<List<String>>(it)
+        },
         transform = ::Triple,
     ).flatMapLatest {
         userRepository.fetchUserMediaList(
-            id = it.second.toIntOrNull(),
+            id = it.second.first.toIntOrNull(),
             type = MediaType.MANGA,
             useNetwork = useNetwork,
-            language = Media.Language.valueOf(it.third)
+            language = Media.Language.valueOf(it.second.second),
+            mediaListOrder = it.third
         )
     }.asResource().stateIn(
         scope = viewModelScope,

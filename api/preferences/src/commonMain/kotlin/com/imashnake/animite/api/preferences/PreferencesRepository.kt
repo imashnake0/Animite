@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.imashnake.animite.api.preferences.ext.getValue
 import com.imashnake.animite.api.preferences.ext.setValue
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.serialization.json.Json
 
 private const val DEFAULT_THEME_KEY = "DEVICE_THEME"
 private const val DEFAULT_DENSITY_KEY = "COMFY"
@@ -85,6 +86,18 @@ class PreferencesRepository internal constructor(
     val viewerId = dataStore.getValue(viewerIdKey, null)
     suspend fun setViewerId(viewerId: Int?) {
         dataStore.setValue(viewerIdKey, viewerId.toString())
+    }
+
+    private val animeListOrderKey = stringPreferencesKey("anime_list_order")
+    val animeListOrder = dataStore.getValue(animeListOrderKey, null)
+    suspend fun setAnimeListOrder(animeListOrder: List<String>?) {
+        dataStore.setValue(animeListOrderKey, Json.encodeToString(animeListOrder))
+    }
+
+    private val mangaListOrderKey = stringPreferencesKey("manga_list_order")
+    val mangaListOrder = dataStore.getValue(mangaListOrderKey, null)
+    suspend fun setMangaListOrder(mangaListOrder: List<String>?) {
+        dataStore.setValue(mangaListOrderKey, Json.encodeToString(mangaListOrder))
     }
 
     private val viewerAvatarKey = stringPreferencesKey("viewer_avatar")

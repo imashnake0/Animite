@@ -11,6 +11,7 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Compani
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlin.collections.indexOf
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
 
@@ -46,6 +47,13 @@ data class User(
     val stats: ImmutableList<Stat>,
     /** @see User.Anime.genres */
     val genres: ImmutableList<Genre>,
+    // endregion
+
+    // region Anime
+    /** @see User.AnimeList.sectionOrder */
+    val animeListOrder: List<String>,
+    /** @see User.MangaList.sectionOrder */
+    val mangaListOrder: List<String>,
     // endregion
 
     // region Fave
@@ -102,10 +110,13 @@ data class User(
         internal constructor(
             query: UserMediaListQuery.Data,
             type: MediaType?,
-            language: Language
+            language: Language,
+            mediaListOrder: List<String>
         ) : this(
             type = type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
-            namedLists = query.mediaListCollection?.lists.orEmpty().mapNotNull {
+            namedLists = query.mediaListCollection?.lists.orEmpty().sortedBy {
+                mediaListOrder.indexOf(it?.name)
+            }.mapNotNull {
                 NamedTrackingList(it ?: return@mapNotNull null, language)
             }.toImmutableList()
         )
@@ -182,6 +193,8 @@ data class User(
                 it.mediaCount > totalCount/20
             }.sortedByDescending { it.mediaCount }
         }.toImmutableList(),
+        animeListOrder = query.mediaListOptions?.animeList?.sectionOrder.orEmpty().filterNotNull(),
+        mangaListOrder = query.mediaListOptions?.mangaList?.sectionOrder.orEmpty().filterNotNull(),
         favourites = listOfNotNull(
             query.favourites?.anime?.let { FavouriteCollection.FavouriteList(it, language) }.takeIf { it?.list?.isNotEmpty() == true },
             query.favourites?.manga?.let { FavouriteCollection.FavouriteList(it, language) }.takeIf { it?.list?.isNotEmpty() == true },

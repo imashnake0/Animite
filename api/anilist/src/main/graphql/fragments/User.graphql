@@ -34,4 +34,12 @@ fragment User on User {
             }
         }
     }
+    mediaListOptions {
+        animeList {
+            sectionOrder
+        }
+        mangaList {
+            sectionOrder
+        }
+    }
 }
