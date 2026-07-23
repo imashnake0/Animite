@@ -149,7 +149,7 @@ private fun ListOptions(
     modifier: Modifier = Modifier
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .padding(top = LocalPaddings.current.small)
@@ -179,7 +179,7 @@ private fun ListOption(
     val haptic = LocalHapticFeedback.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
         modifier = modifier
             .clip(CircleShape)
             .clickable { haptic.performHapticFeedback(HapticFeedbackType.ContextClick); onClick() }
