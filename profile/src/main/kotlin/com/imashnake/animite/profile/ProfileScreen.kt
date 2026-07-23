@@ -469,6 +469,7 @@ private fun UserTabs(
     val onBackground = MaterialTheme.colorScheme.onBackground
     val horizontalContentPadding = contentPadding.horizontalOnly
 
+    // TODO: Store these in prefs.
     val animeListVisibility = remember(animeCollection?.namedLists?.size) {
         mutableStateMapOf(
             *List(animeCollection?.namedLists?.size ?: 0) { it to true }.toTypedArray()
