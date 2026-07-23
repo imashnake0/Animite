@@ -99,7 +99,7 @@ fun MediaTrackingLists(
                 }
             }
             if (listVisibility[index] ?: true) {
-                items(namedList.list.size, key = { namedList.list[it].id }) {
+                items(namedList.list.size, key = { index.toString() + namedList.list[it].id }) {
                     Column(Modifier.animateItem()) {
                         Spacer(
                             modifier = Modifier
