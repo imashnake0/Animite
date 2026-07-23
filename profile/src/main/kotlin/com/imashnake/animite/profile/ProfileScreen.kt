@@ -568,7 +568,6 @@ private fun UserTabs(
             ) + contentPadding.copy(top = 0.dp)
 
             val mediaTabContentPadding = PaddingValues(
-                top = LocalPaddings.current.small,
                 start = LocalPaddings.current.medium,
                 end = LocalPaddings.current.medium,
                 bottom = LocalPaddings.current.medium

@@ -69,7 +69,6 @@ fun MediaTrackingLists(
         state = state,
         modifier = modifier,
         contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
     ) {
         namedLists.fastForEachIndexed { index, namedList ->
             stickyHeader(key = namedList.name) {
@@ -145,35 +144,42 @@ fun MediaTrackingLists(
             }
             if (listVisibility[index] ?: true) {
                 items(namedList.list.size, key = { namedList.list[it].id }) {
-                    MediaTrackingItem(
-                        item = namedList.list[it],
-                        onClick = { id, title ->
-                            onNavigateToMediaItem(
-                                MediaPage(
-                                    id = id,
-                                    source = "${namedList.name}" + type.type,
-                                    mediaType = type.name,
-                                    title = title
+                    Column(Modifier.animateItem()) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .size(LocalPaddings.current.small)
+                                .background(MaterialTheme.colorScheme.background)
+                        )
+                        MediaTrackingItem(
+                            item = namedList.list[it],
+                            onClick = { id, title ->
+                                onNavigateToMediaItem(
+                                    MediaPage(
+                                        id = id,
+                                        source = "${namedList.name}" + type.type,
+                                        mediaType = type.name,
+                                        title = title
+                                    )
                                 )
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
-                            .animateItem()
-                            .height(dimensionResource(R.dimen.tracking_list_item_height))
-                            .fillMaxWidth()
-                            .clip(
-                                RoundedCornerShape(
-                                    topStart = 18.dp,
-                                    bottomStart = 18.dp,
-                                    topEnd = if (it == 0) 18.dp else LocalPaddings.current.small,
-                                    bottomEnd = if (it == namedList.list.lastIndex) {
-                                        18.dp
-                                    } else LocalPaddings.current.small,
+                            },
+                            modifier = Modifier
+                                .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
+                                .height(dimensionResource(R.dimen.tracking_list_item_height))
+                                .fillMaxWidth()
+                                .clip(
+                                    RoundedCornerShape(
+                                        topStart = 18.dp,
+                                        bottomStart = 18.dp,
+                                        topEnd = if (it == 0) 18.dp else LocalPaddings.current.small,
+                                        bottomEnd = if (it == namedList.list.lastIndex) {
+                                            18.dp
+                                        } else LocalPaddings.current.small,
+                                    )
                                 )
-                            )
-                            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
-                    )
+                                .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.025f))
+                        )
+                    }
                 }
             }
         }
