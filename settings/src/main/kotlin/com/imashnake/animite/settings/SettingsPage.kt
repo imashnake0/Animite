@@ -133,8 +133,6 @@ fun SettingsPage(
     val selectedDensity by viewModel.density.collectAsState(initial = Density.COMFY.name)
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
-    val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
-    val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
     val listSize by viewModel.listSize.collectAsState(initial = 10)
 
@@ -142,6 +140,12 @@ fun SettingsPage(
     val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
     val mangaLists by viewModel.mangaList.collectAsState(initial = persistentListOf())
     val mangaListsIndices by viewModel.mangaListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
+
+    val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
+    val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
+    // TODO: Get from network/prefs.
+    var selectedColorIndex by remember { mutableIntStateOf(0) }
+
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -565,14 +569,6 @@ fun SettingsPage(
                                             } else HapticFeedbackType.ToggleOn
                                         )
                                     }
-                                    1 -> {
-                                        viewModel.setUseProfileColor(!useProfileColor)
-                                        haptic.performHapticFeedback(
-                                            hapticFeedbackType = if (useProfileColor) {
-                                                HapticFeedbackType.ToggleOff
-                                            } else HapticFeedbackType.ToggleOn
-                                        )
-                                    }
                                 }
                             },
                             onItemLongClick = {},
@@ -583,17 +579,15 @@ fun SettingsPage(
                                             horizontalArrangement = Arrangement.spacedBy(
                                                 ButtonGroupDefaults.ConnectedSpaceBetween
                                             ),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(top = LocalPaddings.current.medium)
+                                            modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            // TODO: Get from network/prefs.
-                                            var selectedColor by remember { mutableIntStateOf(0) }
-
                                             ProfileColor.entries.fastForEachIndexed { index, profileColor ->
                                                 ToggleButton(
-                                                    checked = index == selectedColor,
-                                                    onCheckedChange = { selectedColor = index },
+                                                    checked = index == selectedColorIndex && useProfileColor,
+                                                    onCheckedChange = {
+                                                        selectedColorIndex = index
+                                                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                                    },
                                                     shapes = when (index) {
                                                         0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                                                         ProfileColor.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
@@ -601,17 +595,16 @@ fun SettingsPage(
                                                     },
                                                     enabled = useProfileColor,
                                                     colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = profileColor.color.darken(),
+                                                        containerColor = profileColor.color.darken(2f),
                                                         contentColor = Color.White,
-                                                        disabledContainerColor = profileColor.color.darken(),
                                                         checkedContainerColor = profileColor.color,
                                                         checkedContentColor = Color.White,
                                                     ),
                                                     modifier = Modifier.weight(1f)
                                                 ) {
-                                                    if (index == 0) {
+                                                    if (index == selectedColorIndex && useProfileColor) {
                                                         profileColor.label?.let { id ->
-                                                            Text(stringResource(id), fontSize = 11.sp)
+                                                            Text(stringResource(id), fontSize = 7.sp)
                                                         } ?: Icon(
                                                             imageVector = Icons.Filled.Check,
                                                             contentDescription = null,
