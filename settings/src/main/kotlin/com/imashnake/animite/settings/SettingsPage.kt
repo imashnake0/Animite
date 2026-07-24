@@ -602,6 +602,7 @@ fun SettingsPage(
                                     )
                                 }
                                 1 -> {
+                                    // TODO: Add color options and mutate.
                                     Switch(
                                         checked = useProfileColor,
                                         onCheckedChange = {
