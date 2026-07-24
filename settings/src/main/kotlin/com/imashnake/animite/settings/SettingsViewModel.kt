@@ -43,6 +43,7 @@ class SettingsViewModel @Inject constructor(
     }
     val animeListsIndices = preferencesRepository.animeListsIndices.filterNotNull()
     val showUserDescription = preferencesRepository.showUserDescription.filterNotNull()
+    val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
 
     val mangaList = preferencesRepository.mangaListsIndices.map { indices ->
         indices?.map {
@@ -86,6 +87,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setShowUserDescription(showUserDescription: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setShowUserDescription(showUserDescription)
+    }
+
+    fun setUseProfileColor(useProfileColor: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setUseProfileColor(useProfileColor)
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {

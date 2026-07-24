@@ -9,6 +9,7 @@ import com.imashnake.animite.media.ext.modify
 import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
 
+// TODO: Move this to core:ui and reuse in profile screen.
 /**
  * Remembers a new Material3 [ColorScheme] based on the given color, or falls back to the default
  * color scheme.

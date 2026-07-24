@@ -1,6 +1,5 @@
 package com.imashnake.animite.api.anilist.sanitize.media
 
-import android.graphics.Color
 import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -49,7 +48,7 @@ data class Media(
     /** @see MediaQuery.Media.coverImage */
     val coverImage: String?,
     /** @see MediaQuery.CoverImage.color */
-    val color: Int,
+    val color: String,
     /** @see MediaQuery.Media.title */
     val title: String?,
     /** @see MediaQuery.Media.description */
@@ -584,7 +583,7 @@ data class Media(
         id = query.id,
         bannerImage = query.bannerImage,
         coverImage = query.coverImage?.extraLarge ?: query.coverImage?.large ?: query.coverImage?.medium,
-        color = query.coverImage?.color?.let { Color.parseColor(it) } ?: Color.TRANSPARENT,
+        color = query.coverImage?.color ?: "#00000000",
         title = when (language) {
             Language.DEFAULT -> query.title?.userPreferred
             Language.ROMAJI -> query.title?.romaji

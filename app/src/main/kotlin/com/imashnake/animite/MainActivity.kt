@@ -223,6 +223,8 @@ fun MainScreen(
                             onNavigateToSettings = navController::navigate,
                             showUserDescription = showUserDescription,
                             deviceScreenCornerRadius = deviceScreenCornerRadius,
+                            useDarkTheme = useDarkTheme,
+                            isAmoled = isAmoled,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
