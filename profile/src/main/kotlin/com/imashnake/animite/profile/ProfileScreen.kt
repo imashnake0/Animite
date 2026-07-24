@@ -165,6 +165,7 @@ fun ProfileScreen(
             isLoggedIn -> when {
                 data.all { it is Resource.Success } -> viewer.data?.run {
                     MaterialTheme(
+                        // TODO: Add option to disable profile color usage.
                         colorScheme = rememberColorSchemeFor(
                             color = color?.toColorInt(),
                             useDarkTheme = useDarkTheme,
