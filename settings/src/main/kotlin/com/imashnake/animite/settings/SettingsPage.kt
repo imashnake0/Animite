@@ -100,6 +100,7 @@ import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.ext.res
+import com.materialkolor.ktx.darken
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
@@ -575,6 +576,47 @@ fun SettingsPage(
                                 }
                             },
                             onItemLongClick = {},
+                            itemSubContent = {
+                                when (it) {
+                                    1 -> {
+                                        Row(
+                                            horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = LocalPaddings.current.medium)
+                                        ) {
+                                            ProfileColor.entries.fastForEachIndexed { index, profileColor ->
+                                                ToggleButton(
+                                                    checked = index == 1,
+                                                    onCheckedChange = {  },
+                                                    shapes = when (index) {
+                                                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                        ProfileColor.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                                    },
+                                                    enabled = useProfileColor,
+                                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                                        containerColor = profileColor.color.darken(),
+                                                        contentColor = Color.White,
+                                                        disabledContainerColor = profileColor.color.darken(),
+                                                        checkedContainerColor = profileColor.color,
+                                                        checkedContentColor = Color.White,
+                                                    ),
+                                                    modifier = Modifier.weight(1f)
+                                                ) {
+                                                    profileColor.label?.let { id ->
+                                                        Text(stringResource(id))
+                                                    } ?: Icon(
+                                                        imageVector = Icons.Filled.Check,
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
                             isDarkMode = isDarkMode,
                         ) { index ->
                             when (index) {
@@ -760,7 +802,8 @@ private fun Items(
     onItemClick: (Int) -> Unit,
     onItemLongClick: (Int) -> Unit,
     itemCustomIcon: @Composable (() -> Unit)? = null,
-    itemContent: @Composable (Int) -> Unit,
+    itemSubContent: @Composable ((Int) -> Unit)? = null,
+    itemContent: @Composable (Int) -> Unit
 ) {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         Column(
@@ -795,7 +838,8 @@ private fun Items(
                         onItemLongClick = { onItemLongClick(index) },
                         background = if (isDarkMode) {
                             MaterialTheme.colorScheme.surfaceContainer
-                        } else MaterialTheme.colorScheme.surface
+                        } else MaterialTheme.colorScheme.surface,
+                        subContent = { itemSubContent?.invoke(index) }
                     ) {
                         itemContent(index)
                     }
@@ -835,6 +879,7 @@ private fun HorizontalItem(
     onItemLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     customIcon: @Composable (() -> Unit)? = null,
+    subContent: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
@@ -842,9 +887,8 @@ private fun HorizontalItem(
         // Remove default M3 padding
         LocalMinimumInteractiveComponentSize provides 0.dp,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
             modifier = modifier
                 .fillMaxWidth()
                 .clip(shape)
@@ -855,21 +899,27 @@ private fun HorizontalItem(
                 .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
-            if (customIcon != null) {
-                customIcon()
-            } else {
-                Icon(
-                    imageVector = ImageVector.vectorResource(item.second.icon),
-                    contentDescription = null,
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (customIcon != null) {
+                    customIcon()
+                } else {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(item.second.icon),
+                        contentDescription = null,
+                    )
+                }
+                Text(
+                    text = stringResource(item.second.label),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.weight(1f),
                 )
+                content()
             }
-            Text(
-                text = stringResource(item.second.label),
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.weight(1f),
-            )
-            content()
+            subContent?.invoke()
         }
     }
 }
@@ -1242,6 +1292,19 @@ enum class Theme(@param:StringRes val theme: Int) {
     DARK(R.string.dark),
     LIGHT(R.string.light),
     DEVICE_THEME(R.string.system),
+}
+
+enum class ProfileColor(
+    val color: Color,
+    @param:StringRes val label: Int? = null
+) {
+    BLUE(Color(0xFF007BA7), R.string.mlue),
+    PURPLE(Color(0xFFC262FF)),
+    PINK(Color(0xFFFF6C93)),
+    ORANGE(Color(0xFFEE9500)),
+    RED(Color(0xFFF84A4B)),
+    GREEN(Color(0xFF06C94B)),
+    GRAY(Color(0xFF989898));
 }
 
 @Serializable

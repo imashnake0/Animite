@@ -8,7 +8,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Language
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
 import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
-import com.imashnake.animite.api.anilist.sanitize.profile.User.ProfileColors.Companion.toHexString
+import com.imashnake.animite.api.anilist.sanitize.profile.User.ProfileColor.Companion.toHexString
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -206,19 +206,19 @@ data class User(
     )
 
     /** Profile highlight color (blue, purple, pink, orange, red, green, gray) */
-    enum class ProfileColors {
+    enum class ProfileColor {
         BLUE, PURPLE, PINK, ORANGE, RED, GREEN, GRAY;
 
         companion object {
-            fun safeValueOf(rawValue: String): ProfileColors? = try {
-                ProfileColors.valueOf(rawValue)
+            fun safeValueOf(rawValue: String): ProfileColor? = try {
+                ProfileColor.valueOf(rawValue)
             } catch (e: IllegalArgumentException) {
                 Log.e(EXCEPTION_TAG, "safeValueOf: $e; Profile color $rawValue doesn't exist!.")
                 null
             }
 
             internal fun String?.toHexString(): String {
-                val color =  when(this?.let { ProfileColors.safeValueOf(it.uppercase()) }) {
+                val color =  when(this?.let { ProfileColor.safeValueOf(it.uppercase()) }) {
                     BLUE -> "#007BA7"
                     PURPLE -> "#E0AFFF"
                     PINK -> "#F2BDCD"
