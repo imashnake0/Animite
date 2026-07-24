@@ -139,6 +139,7 @@ fun ProfileScreen(
     val allPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
+    val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
     val viewerAvatar by viewModel.viewerAvatar.collectAsState(initial = "")
     val viewer by viewModel.viewer.collectAsState()
     val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
@@ -165,12 +166,13 @@ fun ProfileScreen(
             isLoggedIn -> when {
                 data.all { it is Resource.Success } -> viewer.data?.run {
                     MaterialTheme(
-                        // TODO: Add option to disable profile color usage.
-                        colorScheme = rememberColorSchemeFor(
-                            color = color?.toColorInt(),
-                            useDarkTheme = useDarkTheme,
-                            isAmoled = isAmoled
-                        )
+                        colorScheme = if (useProfileColor) {
+                            rememberColorSchemeFor(
+                                color = color?.toColorInt(),
+                                useDarkTheme = useDarkTheme,
+                                isAmoled = isAmoled
+                            )
+                        } else MaterialTheme.colorScheme
                     ) {
                         LaunchedEffect(avatar) {
                             if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)

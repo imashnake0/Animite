@@ -110,6 +110,7 @@ private const val PRIVACY_POLICY = "https://imashnake.deno.dev/animite.html"
 private const val SYSTEM_DAY_PART = "SYSTEM"
 private const val ANIMITE = "Animite"
 
+// TODO: What a hodgepodge, do something.
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPage(
@@ -132,6 +133,7 @@ fun SettingsPage(
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
     val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
+    val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
     val listSize by viewModel.listSize.collectAsState(initial = 10)
 
@@ -174,7 +176,7 @@ fun SettingsPage(
                                     orientation = Item.Orientation.VERTICAL
                                 ),
                                 Item(
-                                    icon = R.drawable.palette,
+                                    icon = R.drawable.paint_brush,
                                     label = R.string.palette,
                                     orientation = Item.Orientation.HORIZONTAL
                                 ),
@@ -546,6 +548,11 @@ fun SettingsPage(
                                     label = R.string.show_description,
                                     orientation = Item.Orientation.HORIZONTAL
                                 ),
+                                Item(
+                                    icon = R.drawable.palette,
+                                    label = R.string.profile_color,
+                                    orientation = Item.Orientation.HORIZONTAL
+                                ),
                             ),
                             onItemClick = { index ->
                                 when (index) {
@@ -553,6 +560,14 @@ fun SettingsPage(
                                         viewModel.setShowUserDescription(!showUserDescription)
                                         haptic.performHapticFeedback(
                                             hapticFeedbackType = if (showUserDescription) {
+                                                HapticFeedbackType.ToggleOff
+                                            } else HapticFeedbackType.ToggleOn
+                                        )
+                                    }
+                                    1 -> {
+                                        viewModel.setUseProfileColor(!useProfileColor)
+                                        haptic.performHapticFeedback(
+                                            hapticFeedbackType = if (useProfileColor) {
                                                 HapticFeedbackType.ToggleOff
                                             } else HapticFeedbackType.ToggleOn
                                         )
@@ -578,6 +593,29 @@ fun SettingsPage(
                                             if (showUserDescription) {
                                                 Icon(
                                                     imageVector = ImageVector.vectorResource(R.drawable.eye),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        },
+                                    )
+                                }
+                                1 -> {
+                                    Switch(
+                                        checked = useProfileColor,
+                                        onCheckedChange = {
+                                            viewModel.setUseProfileColor(it)
+                                            haptic.performHapticFeedback(
+                                                hapticFeedbackType = if (!it) {
+                                                    HapticFeedbackType.ToggleOff
+                                                } else HapticFeedbackType.ToggleOn
+                                            )
+                                        },
+                                        thumbContent = {
+                                            if (useProfileColor) {
+                                                Icon(
+                                                    imageVector = ImageVector.vectorResource(R.drawable.fill_bucket),
                                                     contentDescription = null,
                                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                                     tint = MaterialTheme.colorScheme.primary

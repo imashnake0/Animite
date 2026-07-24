@@ -19,6 +19,7 @@ private const val IS_AMOLED = false
 private const val IS_NSFW_ENABLED = false
 private const val DEFAULT_LANGUAGE_KEY = "DEFAULT"
 private const val SHOW_USER_DESCRIPTION = true
+private const val USE_PROFILE_COLOR = true
 private const val IS_DEV_OPTIONS_ENABLED = false
 
 /**
@@ -154,6 +155,12 @@ class PreferencesRepository internal constructor(
     val showUserDescription = dataStore.getValue(showUserDescriptionKey, SHOW_USER_DESCRIPTION)
     suspend fun setShowUserDescription(showUserDescription: Boolean) {
         dataStore.setValue(showUserDescriptionKey, showUserDescription)
+    }
+
+    private val useProfileColorKey = booleanPreferencesKey("use_profile_color")
+    val useProfileColor = dataStore.getValue(useProfileColorKey, USE_PROFILE_COLOR)
+    suspend fun setUseProfileColor(useProfileColor: Boolean) {
+        dataStore.setValue(useProfileColorKey, useProfileColor)
     }
 
     // region developer options
