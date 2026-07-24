@@ -580,15 +580,20 @@ fun SettingsPage(
                                 when (it) {
                                     1 -> {
                                         Row(
-                                            horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                ButtonGroupDefaults.ConnectedSpaceBetween
+                                            ),
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(top = LocalPaddings.current.medium)
                                         ) {
+                                            // TODO: Get from network/prefs.
+                                            var selectedColor by remember { mutableIntStateOf(0) }
+
                                             ProfileColor.entries.fastForEachIndexed { index, profileColor ->
                                                 ToggleButton(
-                                                    checked = index == 1,
-                                                    onCheckedChange = {  },
+                                                    checked = index == selectedColor,
+                                                    onCheckedChange = { selectedColor = index },
                                                     shapes = when (index) {
                                                         0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                                                         ProfileColor.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
@@ -604,13 +609,15 @@ fun SettingsPage(
                                                     ),
                                                     modifier = Modifier.weight(1f)
                                                 ) {
-                                                    profileColor.label?.let { id ->
-                                                        Text(stringResource(id))
-                                                    } ?: Icon(
-                                                        imageVector = Icons.Filled.Check,
-                                                        contentDescription = null,
-                                                        modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                    )
+                                                    if (index == 0) {
+                                                        profileColor.label?.let { id ->
+                                                            Text(stringResource(id), fontSize = 11.sp)
+                                                        } ?: Icon(
+                                                            imageVector = Icons.Filled.Check,
+                                                            contentDescription = null,
+                                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }
@@ -644,7 +651,6 @@ fun SettingsPage(
                                     )
                                 }
                                 1 -> {
-                                    // TODO: Add color options and mutate.
                                     Switch(
                                         checked = useProfileColor,
                                         onCheckedChange = {
