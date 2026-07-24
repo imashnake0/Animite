@@ -6,6 +6,9 @@ fragment User on User {
         large
     }
     bannerImage
+    options {
+        profileColor
+    }
     statistics {
         anime {
             count

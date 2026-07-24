@@ -78,6 +78,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.sanitize.profile.User
@@ -91,6 +92,7 @@ import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.ext.maxHeight
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.media.rememberColorSchemeFor
 import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
@@ -118,6 +120,8 @@ fun ProfileScreen(
     onNavigateToSettings: (SettingsPage) -> Unit,
     showUserDescription: Boolean,
     deviceScreenCornerRadius: Int,
+    useDarkTheme: Boolean,
+    isAmoled: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -160,132 +164,150 @@ fun ProfileScreen(
         when {
             isLoggedIn -> when {
                 data.all { it is Resource.Success } -> viewer.data?.run {
-                    LaunchedEffect(avatar) {
-                        if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
-                    }
-
-                    var isRefreshing by remember { mutableStateOf(false) }
-                    val pullToRefreshState = rememberPullToRefreshState()
-                    PullToRefreshBox(
-                        isRefreshing = isRefreshing,
-                        onRefresh = { viewModel.refresh { isRefreshing = it } },
-                        state = pullToRefreshState,
+                    MaterialTheme(
+                        colorScheme = rememberColorSchemeFor(
+                            color = color?.toColorInt(),
+                            useDarkTheme = useDarkTheme,
+                            isAmoled = isAmoled
+                        )
                     ) {
-                        NestedScrollBannerLayout(
-                            banner = { ratio, modifier ->
-                                Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) {
-                                    AsyncImage(
-                                        model = crossfadeModel(banner),
-                                        contentDescription = null,
-                                        alpha = 1.2f * ratio - 0.2f,
-                                        modifier = modifier,
-                                        contentScale = ContentScale.Crop
-                                    )
-                                    AsyncImage(
-                                        model = crossfadeModel(avatar),
-                                        contentDescription = "Avatar",
-                                        modifier = Modifier
-                                            .align(Alignment.BottomStart)
-                                            .padding(start = LocalPaddings.current.large)
-                                            .padding(allPaddingValues.horizontalOnly)
-                                            .wrapContentSize()
-                                            .maxHeight(100.dp)
-                                            .clip(
-                                                RoundedCornerShape(
-                                                    topStart = LocalPaddings.current.small,
-                                                    topEnd = LocalPaddings.current.small,
-                                                )
-                                            )
-                                            .graphicsLayer { alpha = 1.5f * ratio - 0.5f },
-                                    )
-                                }
-                            },
-                            bannerElevatedContent = { ratio ->
-                                SettingsAndMore(
-                                    onNavigateToSettings = onNavigateToSettings,
-                                    logOut = { isLogOutDialogShown = true },
-                                    expanded = isDropdownExpanded,
-                                    setExpanded = { isDropdownExpanded = it },
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .padding(allPaddingValues.copy(bottom = 0.dp))
-                                        .padding(
-                                            start = LocalPaddings.current.large,
-                                            bottom = LocalPaddings.current.large,
-                                            end = LocalPaddings.current.large
+                        LaunchedEffect(avatar) {
+                            if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
+                        }
+
+                        var isRefreshing by remember { mutableStateOf(false) }
+                        val pullToRefreshState = rememberPullToRefreshState()
+                        PullToRefreshBox(
+                            isRefreshing = isRefreshing,
+                            onRefresh = { viewModel.refresh { isRefreshing = it } },
+                            state = pullToRefreshState,
+                        ) {
+                            NestedScrollBannerLayout(
+                                banner = { ratio, modifier ->
+                                    Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) {
+                                        AsyncImage(
+                                            model = crossfadeModel(banner),
+                                            contentDescription = null,
+                                            alpha = 1.2f * ratio - 0.2f,
+                                            modifier = modifier,
+                                            contentScale = ContentScale.Crop
                                         )
-                                        .padding(top = LocalPaddings.current.large * ratio)
-                                )
-                            },
-                            content = {
-                                Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.ultraTiny)) {
-                                    Column(
-                                        modifier = Modifier
-                                            .padding(horizontal = LocalPaddings.current.large)
-                                            .padding(allPaddingValues.horizontalOnly)
-                                    ) {
-                                        Text(
-                                            text = name,
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            style = MaterialTheme.typography.titleLarge,
-                                            overflow = TextOverflow.Ellipsis,
+                                        AsyncImage(
+                                            model = crossfadeModel(avatar),
+                                            contentDescription = "Avatar",
                                             modifier = Modifier
-                                                .clip(RoundedCornerShape(LocalPaddings.current.small))
-                                                .clickable { showUserDescriptionSheet = true }
+                                                .align(Alignment.BottomStart)
+                                                .padding(start = LocalPaddings.current.large)
+                                                .padding(allPaddingValues.horizontalOnly)
+                                                .wrapContentSize()
+                                                .maxHeight(100.dp)
+                                                .clip(
+                                                    RoundedCornerShape(
+                                                        topStart = LocalPaddings.current.small,
+                                                        topEnd = LocalPaddings.current.small,
+                                                    )
+                                                )
+                                                .graphicsLayer { alpha = 1.5f * ratio - 0.5f },
                                         )
                                     }
-                                    UserTabs(
-                                        user = this@run,
-                                        animeCollection = viewerAnimeLists.data,
-                                        mangaCollection = viewerMangaLists.data,
-                                        onNavigateToMediaItem = onNavigateToMediaItem,
-                                        showUserDescription = showUserDescription,
-                                        onUserDescriptionClick = { showUserDescriptionSheet = true },
-                                        sharedTransitionScope = sharedTransitionScope,
-                                        animatedVisibilityScope = animatedVisibilityScope,
-                                        contentPadding = navigationComponentPaddingValues + insetPaddingValues,
+                                },
+                                bannerElevatedContent = { ratio ->
+                                    SettingsAndMore(
+                                        onNavigateToSettings = onNavigateToSettings,
+                                        logOut = { isLogOutDialogShown = true },
+                                        expanded = isDropdownExpanded,
+                                        setExpanded = { isDropdownExpanded = it },
+                                        modifier = Modifier
+                                            .align(Alignment.TopEnd)
+                                            .padding(allPaddingValues.copy(bottom = 0.dp))
+                                            .padding(
+                                                start = LocalPaddings.current.large,
+                                                bottom = LocalPaddings.current.large,
+                                                end = LocalPaddings.current.large
+                                            )
+                                            .padding(top = LocalPaddings.current.large * ratio)
                                     )
-                                }
-                            },
-                            contentBackgroundColor = MaterialTheme.colorScheme.surfaceContainer,
-                            contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
-                        )
-                    }
+                                },
+                                content = {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(
+                                            LocalPaddings.current.ultraTiny
+                                        )
+                                    ) {
+                                        Column(
+                                            modifier = Modifier
+                                                .padding(horizontal = LocalPaddings.current.large)
+                                                .padding(allPaddingValues.horizontalOnly)
+                                        ) {
+                                            Text(
+                                                text = name,
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                style = MaterialTheme.typography.titleLarge,
+                                                overflow = TextOverflow.Ellipsis,
+                                                modifier = Modifier
+                                                    .clip(RoundedCornerShape(LocalPaddings.current.small))
+                                                    .clickable {
+                                                        showUserDescriptionSheet = true
+                                                    }
+                                            )
+                                        }
+                                        UserTabs(
+                                            user = this@run,
+                                            animeCollection = viewerAnimeLists.data,
+                                            mangaCollection = viewerMangaLists.data,
+                                            onNavigateToMediaItem = onNavigateToMediaItem,
+                                            showUserDescription = showUserDescription,
+                                            onUserDescriptionClick = {
+                                                showUserDescriptionSheet = true
+                                            },
+                                            sharedTransitionScope = sharedTransitionScope,
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                            contentPadding = navigationComponentPaddingValues + insetPaddingValues,
+                                        )
+                                    }
+                                },
+                                contentBackgroundColor = MaterialTheme.colorScheme.surfaceContainer,
+                                contentPadding = PaddingValues(top = LocalPaddings.current.large / 2)
+                            )
+                        }
 
-                    if (showUserDescriptionSheet) {
-                        BottomSheet(
-                            sheetState = userDescriptionSheetState,
-                            onDismissRequest = { showUserDescriptionSheet = false },
-                            deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
-                            contentPadding = PaddingValues(
-                                horizontal = LocalPaddings.current.large,
-                                vertical = LocalPaddings.current.medium
-                            ),
-                            modifier = Modifier,
-                        ) { paddingValues, modifier ->
-                            Column(modifier) {
-                                Text(
-                                    text = this@run.name,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                                        .padding(paddingValues)
-                                )
-
-                                this@run.description?.let {
-                                    UserDescriptionMarkdown(
-                                        content = it,
-                                        modifier = Modifier.padding(paddingValues)
+                        if (showUserDescriptionSheet) {
+                            BottomSheet(
+                                sheetState = userDescriptionSheetState,
+                                onDismissRequest = { showUserDescriptionSheet = false },
+                                deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
+                                contentPadding = PaddingValues(
+                                    horizontal = LocalPaddings.current.large,
+                                    vertical = LocalPaddings.current.medium
+                                ),
+                                modifier = Modifier,
+                            ) { paddingValues, modifier ->
+                                Column(modifier) {
+                                    Text(
+                                        text = this@run.name,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                            .padding(paddingValues)
                                     )
+
+                                    this@run.description?.let {
+                                        UserDescriptionMarkdown(
+                                            content = it,
+                                            modifier = Modifier.padding(paddingValues)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
                 else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
             }
+
             else -> {
                 SettingsIcon(
                     onNavigateToSettings = onNavigateToSettings,

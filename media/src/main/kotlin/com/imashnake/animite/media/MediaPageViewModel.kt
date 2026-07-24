@@ -3,6 +3,7 @@ package com.imashnake.animite.media
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -56,7 +57,7 @@ class MediaPageViewModel @Inject constructor(
                 uiState = uiState.copy(
                     bannerImage = media?.bannerImage,
                     coverImage = media?.coverImage,
-                    color = media?.color,
+                    color = media?.color?.toColorInt(),
                     description = media?.description,
                     nextAiring = media?.nextAiring,
                     info = media?.info,
