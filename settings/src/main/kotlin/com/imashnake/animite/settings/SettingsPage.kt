@@ -40,7 +40,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -265,7 +265,7 @@ fun SettingsPage(
                                         thumbContent = {
                                             if (useSystemColorScheme) {
                                                 Icon(
-                                                    imageVector = Icons.Filled.Check,
+                                                    imageVector = Icons.Rounded.Check,
                                                     contentDescription = null,
                                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                                     tint = MaterialTheme.colorScheme.primary
@@ -289,7 +289,7 @@ fun SettingsPage(
                                         thumbContent = {
                                             if (isAmoled) {
                                                 Icon(
-                                                    imageVector = Icons.Filled.Check,
+                                                    imageVector = Icons.Rounded.Check,
                                                     contentDescription = null,
                                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                                     tint = MaterialTheme.colorScheme.primary
@@ -595,18 +595,22 @@ fun SettingsPage(
                                                     },
                                                     enabled = useProfileColor,
                                                     colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = profileColor.color.darken(2f),
-                                                        contentColor = Color.White,
+                                                        containerColor = profileColor.color,
+                                                        contentColor = profileColor.color.darken(4f),
                                                         checkedContainerColor = profileColor.color,
-                                                        checkedContentColor = Color.White,
+                                                        checkedContentColor = profileColor.color.darken(4f),
                                                     ),
                                                     modifier = Modifier.weight(1f)
                                                 ) {
                                                     if (index == selectedColorIndex && useProfileColor) {
                                                         profileColor.label?.let { id ->
-                                                            Text(stringResource(id), fontSize = 7.sp)
+                                                            Text(
+                                                                text = stringResource(id),
+                                                                fontSize = 7.sp,
+                                                                maxLines = 1
+                                                            )
                                                         } ?: Icon(
-                                                            imageVector = Icons.Filled.Check,
+                                                            imageVector = Icons.Rounded.Check,
                                                             contentDescription = null,
                                                             modifier = Modifier.size(SwitchDefaults.IconSize),
                                                         )
@@ -1250,7 +1254,7 @@ private fun PreviewItems() {
                         thumbContent = {
                             if (useColorScheme) {
                                 Icon(
-                                    imageVector = Icons.Filled.Check,
+                                    imageVector = Icons.Rounded.Check,
                                     contentDescription = null,
                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                 )
