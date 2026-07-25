@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -67,7 +68,11 @@ class SettingsViewModel @Inject constructor(
     val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
     val profileColor = preferencesRepository.profileColor
         .filterNotNull()
-        .flatMapLatest { userRepository.updateUser(it) }
+        .flatMapLatest {
+            userRepository.updateUser(it).onEach {
+                preferencesRepository.setProfileColor(it.getOrNull())
+            }
+        }
         .asResource()
         .stateIn(
             scope = viewModelScope,
