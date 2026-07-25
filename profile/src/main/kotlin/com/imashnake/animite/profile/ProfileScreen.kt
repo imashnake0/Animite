@@ -140,6 +140,7 @@ fun ProfileScreen(
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
+    val profileColor by viewModel.profileColor.collectAsState(initial = "#007BA7")
     val viewerAvatar by viewModel.viewerAvatar.collectAsState(initial = "")
     val viewer by viewModel.viewer.collectAsState()
     val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
@@ -168,7 +169,7 @@ fun ProfileScreen(
                     MaterialTheme(
                         colorScheme = if (useProfileColor) {
                             rememberColorSchemeFor(
-                                color = color?.toColorInt(),
+                                color = profileColor.toColorInt(),
                                 useDarkTheme = useDarkTheme,
                                 isAmoled = isAmoled
                             )

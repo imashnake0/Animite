@@ -46,6 +46,7 @@ class ProfileViewModel @Inject constructor(
         .map { !it.isNullOrEmpty() }
 
     val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
+    val profileColor = preferencesRepository.profileColor.filterNotNull()
 
     val viewer = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
