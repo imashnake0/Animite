@@ -82,6 +82,7 @@ import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.sanitize.profile.User.Companion.profileColorToHex
 import com.imashnake.animite.banner.NestedScrollBannerLayout
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -169,16 +170,7 @@ fun ProfileScreen(
                     MaterialTheme(
                         colorScheme = if (useProfileColor) {
                             rememberColorSchemeFor(
-                                color = when(profileColor) {
-                                    "blue" -> "#007BA7"
-                                    "purple" -> "#E0AFFF"
-                                    "pink" -> "#F2BDCD"
-                                    "orange" -> "#F2B949"
-                                    "red" -> "#FA5053"
-                                    "green" -> "#0BDA51"
-                                    "gray" -> "#D9D9D9"
-                                    else -> "#007BA7"
-                                }.toColorInt(),
+                                color = profileColorToHex(profileColor).toColorInt(),
                                 useDarkTheme = useDarkTheme,
                                 isAmoled = isAmoled
                             )

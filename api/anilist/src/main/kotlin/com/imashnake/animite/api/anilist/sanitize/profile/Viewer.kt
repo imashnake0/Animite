@@ -171,16 +171,7 @@ data class User(
         description = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
-        color = when(query.options?.profileColor) {
-            "blue" -> "#007BA7"
-            "purple" -> "#E0AFFF"
-            "pink" -> "#F2BDCD"
-            "orange" -> "#F2B949"
-            "red" -> "#FA5053"
-            "green" -> "#0BDA51"
-            "gray" -> "#D9D9D9"
-            else -> "#007BA7"
-        },
+        color = profileColorToHex(query.options?.profileColor),
         // TODO: Replace with string resources.
         stats = listOfNotNull(
             query.statistics?.anime?.count?.toString()?.let {
@@ -245,6 +236,19 @@ data class User(
             }
 
             fun String?.sanitize() = safeValueOf(this)
+        }
+    }
+
+    companion object {
+        fun profileColorToHex(profileColor: String?) = when(profileColor) {
+            "blue" -> "#007BA7"
+            "purple" -> "#E0AFFF"
+            "pink" -> "#F2BDCD"
+            "orange" -> "#F2B949"
+            "red" -> "#FA5053"
+            "green" -> "#0BDA51"
+            "gray" -> "#D9D9D9"
+            else -> "#007BA7"
         }
     }
 }
