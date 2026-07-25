@@ -1301,12 +1301,12 @@ enum class ProfileColor(
     val color: Color,
     @param:StringRes val label: Int? = null
 ) {
-    BLUE(Color(0xFF007BA7), R.string.mlue),
     PURPLE(Color(0xFFC262FF)),
-    PINK(Color(0xFFFF6C93)),
-    ORANGE(Color(0xFFEE9500)),
-    RED(Color(0xFFF84A4B)),
+    BLUE(Color(0xFF0BA1DA), R.string.mlue),
     GREEN(Color(0xFF06C94B)),
+    ORANGE(Color(0xFFEE9500)),
+    PINK(Color(0xFFFF527E)),
+    RED(Color(0xFFFF3131)),
     GRAY(Color(0xFF989898));
 }
 
