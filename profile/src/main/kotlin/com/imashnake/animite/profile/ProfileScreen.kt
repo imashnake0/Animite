@@ -169,7 +169,16 @@ fun ProfileScreen(
                     MaterialTheme(
                         colorScheme = if (useProfileColor) {
                             rememberColorSchemeFor(
-                                color = profileColor.toColorInt(),
+                                color = when(profileColor) {
+                                    "blue" -> "#007BA7"
+                                    "purple" -> "#E0AFFF"
+                                    "pink" -> "#F2BDCD"
+                                    "orange" -> "#F2B949"
+                                    "red" -> "#FA5053"
+                                    "green" -> "#0BDA51"
+                                    "gray" -> "#D9D9D9"
+                                    else -> "#007BA7"
+                                }.toColorInt(),
                                 useDarkTheme = useDarkTheme,
                                 isAmoled = isAmoled
                             )
