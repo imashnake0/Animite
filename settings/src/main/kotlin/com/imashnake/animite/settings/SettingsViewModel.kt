@@ -2,6 +2,7 @@ package com.imashnake.animite.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.model.AnimeList
@@ -10,13 +11,16 @@ import com.imashnake.animite.core.ui.Density
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
+    private val userRepository: AnilistUserRepository,
     private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
     val theme = preferencesRepository.theme.filterNotNull()
@@ -58,6 +62,8 @@ class SettingsViewModel @Inject constructor(
     }
     val mangaListsIndices = preferencesRepository.mangaListsIndices.filterNotNull()
 
+    val profileColor = preferencesRepository.profileColor.filterNotNull()
+
     fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setTheme(theme.name)
     }
@@ -91,6 +97,14 @@ class SettingsViewModel @Inject constructor(
 
     fun setUseProfileColor(useProfileColor: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setUseProfileColor(useProfileColor)
+    }
+
+    fun setProfileColor(profileColor: String) = viewModelScope.launch(Dispatchers.IO) {
+        userRepository.updateUser(profileColor).collect { result ->
+            result.onSuccess { color ->
+                color?.let { preferencesRepository.setProfileColor(it) }
+            }
+        }
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {

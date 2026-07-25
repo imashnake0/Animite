@@ -143,9 +143,7 @@ fun SettingsPage(
 
     val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
-    // TODO: Get from network/prefs.
-    var selectedColorIndex by remember { mutableIntStateOf(0) }
-
+    val profileColor by viewModel.profileColor.collectAsState(initial = "blue")
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -581,11 +579,11 @@ fun SettingsPage(
                                             ),
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            ProfileColor.entries.fastForEachIndexed { index, profileColor ->
+                                            ProfileColor.entries.fastForEachIndexed { index, entry ->
                                                 ToggleButton(
-                                                    checked = index == selectedColorIndex && useProfileColor,
+                                                    checked = profileColor.equals(entry.name, ignoreCase = true) && useProfileColor,
                                                     onCheckedChange = {
-                                                        selectedColorIndex = index
+                                                        viewModel.setProfileColor(entry.name.lowercase())
                                                         haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                                     },
                                                     shapes = when (index) {
@@ -595,15 +593,15 @@ fun SettingsPage(
                                                     },
                                                     enabled = useProfileColor,
                                                     colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = profileColor.color,
-                                                        contentColor = profileColor.color.darken(4f),
-                                                        checkedContainerColor = profileColor.color,
-                                                        checkedContentColor = profileColor.color.darken(4f),
+                                                        containerColor = entry.color,
+                                                        contentColor = entry.color.darken(4f),
+                                                        checkedContainerColor = entry.color,
+                                                        checkedContentColor = entry.color.darken(4f),
                                                     ),
                                                     modifier = Modifier.weight(1f)
                                                 ) {
-                                                    if (index == selectedColorIndex && useProfileColor) {
-                                                        profileColor.label?.let { id ->
+                                                    if (profileColor.equals(entry.name, ignoreCase = true) && useProfileColor) {
+                                                        entry.label?.let { id ->
                                                             Text(
                                                                 text = stringResource(id),
                                                                 fontSize = 7.sp,
@@ -1299,7 +1297,7 @@ enum class Theme(@param:StringRes val theme: Int) {
 
 enum class ProfileColor(
     val color: Color,
-    @param:StringRes val label: Int? = null
+    @param:StringRes val label: Int? = null,
 ) {
     PURPLE(Color(0xFFC262FF)),
     BLUE(Color(0xFF0BA1DA), R.string.mlue),

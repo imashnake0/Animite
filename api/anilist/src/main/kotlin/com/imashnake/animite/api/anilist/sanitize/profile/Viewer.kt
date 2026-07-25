@@ -181,6 +181,7 @@ data class User(
             "gray" -> "#D9D9D9"
             else -> "#007BA7"
         },
+        // TODO: Replace with string resources.
         stats = listOfNotNull(
             query.statistics?.anime?.count?.toString()?.let {
                 Stat("TOTAL\nANIME", it)
