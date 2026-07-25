@@ -171,7 +171,7 @@ data class User(
         description = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
-        color = profileColorToHex(query.options?.profileColor),
+        color = query.options?.profileColor,
         // TODO: Replace with string resources.
         stats = listOfNotNull(
             query.statistics?.anime?.count?.toString()?.let {

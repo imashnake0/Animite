@@ -166,7 +166,7 @@ class PreferencesRepository internal constructor(
 
     private val profileColorKey = stringPreferencesKey("profile_color")
     val profileColor = dataStore.getValue(profileColorKey, PROFILE_COLOR)
-    suspend fun setProfileColor(profileColor: String) {
+    suspend fun setProfileColor(profileColor: String?) {
         dataStore.setValue(profileColorKey, profileColor)
     }
 
