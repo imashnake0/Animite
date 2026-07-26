@@ -1,0 +1,7 @@
+mutation UpdateUser($profileColor: String) {
+    UpdateUser(profileColor: $profileColor) {
+        options {
+            profileColor
+        }
+    }
+}

@@ -58,4 +58,12 @@ class AnilistUserRepository(
         .filter { it.exception == null }
         .asResult { User.MediaCollection(it, type, language, mediaListOrder) }
     }
+
+    fun updateUser(profileColor: String?): Flow<Result<String?>> {
+        return apolloClient
+            .mutation(UpdateUserMutation(Optional.presentIfNotNull(profileColor)))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+            .toFlow()
+            .asResult { it.UpdateUser?.options?.profileColor }
+    }
 }

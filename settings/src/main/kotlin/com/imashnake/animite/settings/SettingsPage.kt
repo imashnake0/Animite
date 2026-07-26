@@ -40,7 +40,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -90,6 +90,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
+import com.imashnake.animite.core.resource.Resource.Companion.loading
 import com.imashnake.animite.core.ui.DayPart
 import com.imashnake.animite.core.ui.Density
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -100,6 +101,7 @@ import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.ext.res
+import com.materialkolor.ktx.darken
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
@@ -132,8 +134,6 @@ fun SettingsPage(
     val selectedDensity by viewModel.density.collectAsState(initial = Density.COMFY.name)
 
     val isNsfwEnabled by viewModel.isNsfwEnabled.collectAsState(initial = false)
-    val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
-    val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
     val selectedLanguage by viewModel.language.collectAsState(initial = Media.Language.DEFAULT.name)
     val listSize by viewModel.listSize.collectAsState(initial = 10)
 
@@ -141,6 +141,10 @@ fun SettingsPage(
     val animeListsIndices by viewModel.animeListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
     val mangaLists by viewModel.mangaList.collectAsState(initial = persistentListOf())
     val mangaListsIndices by viewModel.mangaListsIndices.collectAsState(initial = byteArrayOf(1, 2, 3, 4, 5))
+
+    val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
+    val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
+    val profileColor by viewModel.profileColor.collectAsState(initial = loading())
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -260,7 +264,7 @@ fun SettingsPage(
                                         thumbContent = {
                                             if (useSystemColorScheme) {
                                                 Icon(
-                                                    imageVector = Icons.Filled.Check,
+                                                    imageVector = Icons.Rounded.Check,
                                                     contentDescription = null,
                                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                                     tint = MaterialTheme.colorScheme.primary
@@ -284,7 +288,7 @@ fun SettingsPage(
                                         thumbContent = {
                                             if (isAmoled) {
                                                 Icon(
-                                                    imageVector = Icons.Filled.Check,
+                                                    imageVector = Icons.Rounded.Check,
                                                     contentDescription = null,
                                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                                     tint = MaterialTheme.colorScheme.primary
@@ -564,17 +568,58 @@ fun SettingsPage(
                                             } else HapticFeedbackType.ToggleOn
                                         )
                                     }
-                                    1 -> {
-                                        viewModel.setUseProfileColor(!useProfileColor)
-                                        haptic.performHapticFeedback(
-                                            hapticFeedbackType = if (useProfileColor) {
-                                                HapticFeedbackType.ToggleOff
-                                            } else HapticFeedbackType.ToggleOn
-                                        )
-                                    }
                                 }
                             },
                             onItemLongClick = {},
+                            itemSubContent = {
+                                when (it) {
+                                    1 -> {
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                ButtonGroupDefaults.ConnectedSpaceBetween
+                                            ),
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            ProfileColor.entries.fastForEachIndexed { index, entry ->
+                                                ToggleButton(
+                                                    checked = profileColor.data.equals(entry.name, ignoreCase = true) && useProfileColor,
+                                                    onCheckedChange = {
+                                                        viewModel.setProfileColor(entry.name.lowercase())
+                                                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                                    },
+                                                    shapes = when (index) {
+                                                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                        ProfileColor.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                                    },
+                                                    enabled = useProfileColor,
+                                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                                        containerColor = entry.color,
+                                                        contentColor = entry.color.darken(4f),
+                                                        checkedContainerColor = entry.color,
+                                                        checkedContentColor = entry.color.darken(4f),
+                                                    ),
+                                                    modifier = Modifier.weight(1f)
+                                                ) {
+                                                    if (profileColor.data.equals(entry.name, ignoreCase = true) && useProfileColor) {
+                                                        entry.label?.let { id ->
+                                                            Text(
+                                                                text = stringResource(id),
+                                                                fontSize = 7.sp,
+                                                                maxLines = 1
+                                                            )
+                                                        } ?: Icon(
+                                                            imageVector = Icons.Rounded.Check,
+                                                            contentDescription = null,
+                                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
                             isDarkMode = isDarkMode,
                         ) { index ->
                             when (index) {
@@ -602,7 +647,6 @@ fun SettingsPage(
                                     )
                                 }
                                 1 -> {
-                                    // TODO: Add color options and mutate.
                                     Switch(
                                         checked = useProfileColor,
                                         onCheckedChange = {
@@ -760,7 +804,8 @@ private fun Items(
     onItemClick: (Int) -> Unit,
     onItemLongClick: (Int) -> Unit,
     itemCustomIcon: @Composable (() -> Unit)? = null,
-    itemContent: @Composable (Int) -> Unit,
+    itemSubContent: @Composable ((Int) -> Unit)? = null,
+    itemContent: @Composable (Int) -> Unit
 ) {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
         Column(
@@ -795,7 +840,8 @@ private fun Items(
                         onItemLongClick = { onItemLongClick(index) },
                         background = if (isDarkMode) {
                             MaterialTheme.colorScheme.surfaceContainer
-                        } else MaterialTheme.colorScheme.surface
+                        } else MaterialTheme.colorScheme.surface,
+                        subContent = { itemSubContent?.invoke(index) }
                     ) {
                         itemContent(index)
                     }
@@ -835,6 +881,7 @@ private fun HorizontalItem(
     onItemLongClick: () -> Unit,
     modifier: Modifier = Modifier,
     customIcon: @Composable (() -> Unit)? = null,
+    subContent: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
@@ -842,9 +889,8 @@ private fun HorizontalItem(
         // Remove default M3 padding
         LocalMinimumInteractiveComponentSize provides 0.dp,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
             modifier = modifier
                 .fillMaxWidth()
                 .clip(shape)
@@ -855,21 +901,27 @@ private fun HorizontalItem(
                 .background(background)
                 .padding(LocalPaddings.current.medium)
         ) {
-            if (customIcon != null) {
-                customIcon()
-            } else {
-                Icon(
-                    imageVector = ImageVector.vectorResource(item.second.icon),
-                    contentDescription = null,
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (customIcon != null) {
+                    customIcon()
+                } else {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(item.second.icon),
+                        contentDescription = null,
+                    )
+                }
+                Text(
+                    text = stringResource(item.second.label),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.weight(1f),
                 )
+                content()
             }
-            Text(
-                text = stringResource(item.second.label),
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.9f),
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.weight(1f),
-            )
-            content()
+            subContent?.invoke()
         }
     }
 }
@@ -1201,7 +1253,7 @@ private fun PreviewItems() {
                         thumbContent = {
                             if (useColorScheme) {
                                 Icon(
-                                    imageVector = Icons.Filled.Check,
+                                    imageVector = Icons.Rounded.Check,
                                     contentDescription = null,
                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                 )
@@ -1242,6 +1294,19 @@ enum class Theme(@param:StringRes val theme: Int) {
     DARK(R.string.dark),
     LIGHT(R.string.light),
     DEVICE_THEME(R.string.system),
+}
+
+enum class ProfileColor(
+    val color: Color,
+    @param:StringRes val label: Int? = null,
+) {
+    PURPLE(Color(0xFFC262FF)),
+    BLUE(Color(0xFF0BA1DA), R.string.mlue),
+    GREEN(Color(0xFF06C94B)),
+    ORANGE(Color(0xFFEE9500)),
+    PINK(Color(0xFFFF527E)),
+    RED(Color(0xFFFF3131)),
+    GRAY(Color(0xFF989898));
 }
 
 @Serializable

@@ -82,6 +82,7 @@ import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.sanitize.profile.User.Companion.profileColorToHex
 import com.imashnake.animite.banner.NestedScrollBannerLayout
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -140,6 +141,7 @@ fun ProfileScreen(
 
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
+    val profileColor by viewModel.profileColor.collectAsState(initial = "blue")
     val viewerAvatar by viewModel.viewerAvatar.collectAsState(initial = "")
     val viewer by viewModel.viewer.collectAsState()
     val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
@@ -168,7 +170,7 @@ fun ProfileScreen(
                     MaterialTheme(
                         colorScheme = if (useProfileColor) {
                             rememberColorSchemeFor(
-                                color = color?.toColorInt(),
+                                color = profileColorToHex(profileColor).toColorInt(),
                                 useDarkTheme = useDarkTheme,
                                 isAmoled = isAmoled
                             )

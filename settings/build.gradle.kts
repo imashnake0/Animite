@@ -36,6 +36,7 @@ dependencies {
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
     implementation(projects.core.model)
+    implementation(projects.core.resource)
     implementation(projects.core.ui)
     implementation(projects.banner)
     implementation(projects.media)

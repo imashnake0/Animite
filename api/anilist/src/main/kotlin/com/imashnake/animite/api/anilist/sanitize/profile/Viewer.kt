@@ -8,7 +8,6 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Language
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
 import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
-import com.imashnake.animite.api.anilist.sanitize.profile.User.ProfileColors.Companion.toHexString
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -172,7 +171,8 @@ data class User(
         description = query.about,
         avatar = query.avatar?.large,
         banner = query.bannerImage,
-        color = query.options?.profileColor?.toHexString(),
+        color = query.options?.profileColor,
+        // TODO: Replace with string resources.
         stats = listOfNotNull(
             query.statistics?.anime?.count?.toString()?.let {
                 Stat("TOTAL\nANIME", it)
@@ -205,36 +205,6 @@ data class User(
         ).toImmutableList()
     )
 
-    /** Profile highlight color (blue, purple, pink, orange, red, green, gray) */
-    enum class ProfileColors {
-        BLUE, PURPLE, PINK, ORANGE, RED, GREEN, GRAY;
-
-        companion object {
-            fun safeValueOf(rawValue: String): ProfileColors? = try {
-                ProfileColors.valueOf(rawValue)
-            } catch (e: IllegalArgumentException) {
-                Log.e(EXCEPTION_TAG, "safeValueOf: $e; Profile color $rawValue doesn't exist!.")
-                null
-            }
-
-            internal fun String?.toHexString(): String {
-                val color =  when(this?.let { ProfileColors.safeValueOf(it.uppercase()) }) {
-                    BLUE -> "#007BA7"
-                    PURPLE -> "#E0AFFF"
-                    PINK -> "#F2BDCD"
-                    ORANGE -> "#F2B949"
-                    RED -> "#FA5053"
-                    GREEN -> "#0BDA51"
-                    GRAY -> "#D9D9D9"
-                    null -> "#FF8DA1"
-                }
-                Log.d("whatiscolor", "toHexString: $color")
-
-                return color
-            }
-        }
-    }
-
     enum class Favouritables {
         Anime,
         Manga,
@@ -266,6 +236,19 @@ data class User(
             }
 
             fun String?.sanitize() = safeValueOf(this)
+        }
+    }
+
+    companion object {
+        fun profileColorToHex(profileColor: String?) = when(profileColor) {
+            "blue" -> "#007BA7"
+            "purple" -> "#E0AFFF"
+            "pink" -> "#F2BDCD"
+            "orange" -> "#F2B949"
+            "red" -> "#FA5053"
+            "green" -> "#0BDA51"
+            "gray" -> "#D9D9D9"
+            else -> "#007BA7"
         }
     }
 }

@@ -46,6 +46,7 @@ class ProfileViewModel @Inject constructor(
         .map { !it.isNullOrEmpty() }
 
     val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
+    val profileColor = preferencesRepository.profileColor.filterNotNull()
 
     val viewer = combine(
         flow = refreshTrigger.onStart { emit(Unit) },
@@ -56,6 +57,10 @@ class ProfileViewModel @Inject constructor(
     }.asResource().onEach {
         it.data?.let { user ->
             preferencesRepository.setViewerId(user.id)
+            // Don't update with cached color
+            if (useNetwork) {
+                preferencesRepository.setProfileColor(user.color)
+            }
             preferencesRepository.setAnimeListOrder(user.animeListOrder)
             preferencesRepository.setMangaListOrder(user.mangaListOrder)
         }

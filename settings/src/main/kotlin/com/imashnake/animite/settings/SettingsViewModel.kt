@@ -2,21 +2,31 @@ package com.imashnake.animite.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.model.AnimeList
 import com.imashnake.animite.core.model.MangaList
+import com.imashnake.animite.core.resource.Resource
+import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Density
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
+    private val userRepository: AnilistUserRepository,
     private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
     val theme = preferencesRepository.theme.filterNotNull()
@@ -42,9 +52,6 @@ class SettingsViewModel @Inject constructor(
         }.orEmpty().filterNotNull().toImmutableList()
     }
     val animeListsIndices = preferencesRepository.animeListsIndices.filterNotNull()
-    val showUserDescription = preferencesRepository.showUserDescription.filterNotNull()
-    val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
-
     val mangaList = preferencesRepository.mangaListsIndices.map { indices ->
         indices?.map {
             // each int from +-1 to +-3 maps to a MangaList
@@ -57,6 +64,21 @@ class SettingsViewModel @Inject constructor(
         }.orEmpty().filterNotNull().toImmutableList()
     }
     val mangaListsIndices = preferencesRepository.mangaListsIndices.filterNotNull()
+    val showUserDescription = preferencesRepository.showUserDescription.filterNotNull()
+    val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
+    val profileColor = preferencesRepository.profileColor
+        .filterNotNull()
+        .flatMapLatest {
+            userRepository.updateUser(it).onEach { profileColor ->
+                preferencesRepository.setProfileColor(profileColor.getOrNull())
+            }
+        }
+        .asResource()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = Resource.loading(),
+        )
 
     fun setTheme(theme: Theme) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setTheme(theme.name)
@@ -91,6 +113,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setUseProfileColor(useProfileColor: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setUseProfileColor(useProfileColor)
+    }
+
+    fun setProfileColor(profileColor: String) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setProfileColor(profileColor)
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {
