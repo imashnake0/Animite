@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
                 try {
                     fontFamilyResolver.preload(manropeFontFamily)
                 } catch (e: Exception) {
-                    Log.d(TAG, "onCreate: Failed to load font: ${e.cause}: ${e.message}")
+                    Log.e(TAG, "onCreate: Failed to load font: ${e.cause}: ${e.message}")
                 }
                 showSplashScreen = false
             }
