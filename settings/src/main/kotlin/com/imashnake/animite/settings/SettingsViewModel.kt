@@ -69,8 +69,8 @@ class SettingsViewModel @Inject constructor(
     val profileColor = preferencesRepository.profileColor
         .filterNotNull()
         .flatMapLatest {
-            userRepository.updateUser(it).onEach {
-                preferencesRepository.setProfileColor(it.getOrNull())
+            userRepository.updateUser(it).onEach { profileColor ->
+                preferencesRepository.setProfileColor(profileColor.getOrNull())
             }
         }
         .asResource()
