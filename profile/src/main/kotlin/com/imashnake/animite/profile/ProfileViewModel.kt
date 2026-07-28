@@ -58,9 +58,9 @@ class ProfileViewModel @Inject constructor(
         userRepository.fetchViewer(useNetwork, Media.Language.valueOf(it.second))
     }.asResource().onEach {
         it.data?.let { user ->
-            preferencesRepository.setViewerId(user.id)
             // Don't update with cache
             if (useNetwork) {
+                preferencesRepository.setViewerId(user.id)
                 preferencesRepository.setProfileColor(user.color)
                 preferencesRepository.setAnimeListOrder(user.animeListOrder)
                 preferencesRepository.setMangaListOrder(user.mangaListOrder)
@@ -148,13 +148,16 @@ class ProfileViewModel @Inject constructor(
         useNetwork = false
     }
 
-    fun refresh(setIsRefreshing: (Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
+    fun refresh(
+        shouldDelay: Boolean = true,
+        setIsRefreshing: (Boolean) -> Unit,
+    ) = viewModelScope.launch(Dispatchers.IO) {
         setIsRefreshing(true)
         useNetwork = true
         refreshTrigger.emit(Unit)
         animeListsRefreshTrigger.emit(Unit)
         mangaListsRefreshTrigger.emit(Unit)
-        delay(1500L)
+        if (shouldDelay) delay(1500L)
         useNetwork = false
         setIsRefreshing(false)
     }

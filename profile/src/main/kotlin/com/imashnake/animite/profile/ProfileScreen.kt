@@ -142,7 +142,14 @@ fun ProfileScreen(
     }
     val allPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullToRefreshState = rememberPullToRefreshState()
+
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
+    LaunchedEffect(isLoggedIn) {
+        viewModel.refresh(shouldDelay = false) {}
+    }
+
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
     val profileColor by viewModel.profileColor.collectAsState(initial = "blue")
     val viewerAvatar by viewModel.viewerAvatar.collectAsState(initial = "")
@@ -183,15 +190,12 @@ fun ProfileScreen(
                             if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
                         }
 
-                        var isRefreshing by remember { mutableStateOf(false) }
-                        val pullToRefreshState = rememberPullToRefreshState()
-
-                        var isBannerExpanded by remember { mutableStateOf(true) }
                         PullToRefreshBox(
                             isRefreshing = isRefreshing,
                             onRefresh = { viewModel.refresh { isRefreshing = it } },
                             state = pullToRefreshState,
                         ) {
+                            var isBannerExpanded by remember { mutableStateOf(true) }
                             NestedScrollBannerLayout(
                                 isExpanded = isBannerExpanded,
                                 banner = { ratio, modifier ->
