@@ -90,7 +90,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
-import com.imashnake.animite.core.resource.Resource.Companion.loading
 import com.imashnake.animite.core.ui.DayPart
 import com.imashnake.animite.core.ui.Density
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -144,7 +143,7 @@ fun SettingsPage(
 
     val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
-    val profileColor by viewModel.profileColor.collectAsState(initial = loading())
+    val profileColor by viewModel.profileColor.collectAsState(initial = "blue")
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -582,9 +581,9 @@ fun SettingsPage(
                                         ) {
                                             ProfileColor.entries.fastForEachIndexed { index, entry ->
                                                 ToggleButton(
-                                                    checked = profileColor.data.equals(entry.name, ignoreCase = true) && useProfileColor,
+                                                    checked = profileColor.equals(entry.name, ignoreCase = true) && useProfileColor,
                                                     onCheckedChange = {
-                                                        viewModel.setProfileColor(entry.name.lowercase())
+                                                        viewModel.updateProfileColor(entry.name.lowercase())
                                                         haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                                     },
                                                     shapes = when (index) {
@@ -601,7 +600,7 @@ fun SettingsPage(
                                                     ),
                                                     modifier = Modifier.weight(1f)
                                                 ) {
-                                                    if (profileColor.data.equals(entry.name, ignoreCase = true) && useProfileColor) {
+                                                    if (profileColor.equals(entry.name, ignoreCase = true) && useProfileColor) {
                                                         entry.label?.let { id ->
                                                             Text(
                                                                 text = stringResource(id),
