@@ -1,7 +1,18 @@
-mutation UpdateUser($profileColor: String) {
-    UpdateUser(profileColor: $profileColor) {
+mutation UpdateUser(
+    $profileColor: String,
+    $animeListOptions: MediaListOptionsInput
+) {
+    UpdateUser(
+        profileColor: $profileColor,
+        animeListOptions: $animeListOptions
+    ) {
         options {
             profileColor
+        }
+        mediaListOptions {
+            animeList {
+                sectionOrder
+            }
         }
     }
 }
