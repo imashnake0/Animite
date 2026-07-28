@@ -6,6 +6,7 @@ import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.type.MediaListOptionsInput
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
@@ -59,9 +60,27 @@ class AnilistUserRepository(
         .asResult { User.MediaCollection(it, type, language, mediaListOrder) }
     }
 
-    fun updateUser(profileColor: String?): Flow<Result<String?>> {
+    fun updateUser(
+        profileColor: String? = null,
+        animeSectionOrder: List<String>? = null,
+        mangaSectionOrder: List<String>? = null,
+    ): Flow<Result<String?>> {
         return apolloClient
-            .mutation(UpdateUserMutation(Optional.presentIfNotNull(profileColor)))
+            .mutation(
+                UpdateUserMutation(
+                    profileColor = Optional.presentIfNotNull(profileColor),
+                    animeListOptions = Optional.presentIfNotNull(
+                        MediaListOptionsInput(
+                            sectionOrder = Optional.presentIfNotNull(animeSectionOrder)
+                        )
+                    ),
+                    mangaListOptions = Optional.presentIfNotNull(
+                        MediaListOptionsInput(
+                            sectionOrder = Optional.presentIfNotNull(mangaSectionOrder)
+                        )
+                    )
+                )
+            )
             .fetchPolicy(FetchPolicy.NetworkOnly)
             .toFlow()
             .asResult { it.UpdateUser?.options?.profileColor }

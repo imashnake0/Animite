@@ -1,16 +1,21 @@
 mutation UpdateUser(
     $profileColor: String,
-    $animeListOptions: MediaListOptionsInput
+    $animeListOptions: MediaListOptionsInput,
+    $mangaListOptions: MediaListOptionsInput,
 ) {
     UpdateUser(
         profileColor: $profileColor,
         animeListOptions: $animeListOptions
+        mangaListOptions: $mangaListOptions
     ) {
         options {
             profileColor
         }
         mediaListOptions {
             animeList {
+                sectionOrder
+            }
+            mangaList {
                 sectionOrder
             }
         }
