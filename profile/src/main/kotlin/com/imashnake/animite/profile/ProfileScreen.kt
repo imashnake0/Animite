@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -66,9 +67,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -182,18 +185,22 @@ fun ProfileScreen(
 
                         var isRefreshing by remember { mutableStateOf(false) }
                         val pullToRefreshState = rememberPullToRefreshState()
+
+                        var isBannerExpanded by remember { mutableStateOf(true) }
                         PullToRefreshBox(
                             isRefreshing = isRefreshing,
                             onRefresh = { viewModel.refresh { isRefreshing = it } },
                             state = pullToRefreshState,
                         ) {
                             NestedScrollBannerLayout(
+                                isExpanded = isBannerExpanded,
                                 banner = { ratio, modifier ->
+                                    val animRatio by animateFloatAsState(ratio)
                                     Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) {
                                         AsyncImage(
                                             model = crossfadeModel(banner),
                                             contentDescription = null,
-                                            alpha = 1.2f * ratio - 0.2f,
+                                            alpha = 1.2f * animRatio - 0.2f,
                                             modifier = modifier,
                                             contentScale = ContentScale.Crop
                                         )
@@ -212,12 +219,15 @@ fun ProfileScreen(
                                                         topEnd = LocalPaddings.current.small,
                                                     )
                                                 )
-                                                .graphicsLayer { alpha = 1.5f * ratio - 0.5f },
+                                                .graphicsLayer { alpha = 1.5f * animRatio - 0.5f },
                                         )
                                     }
                                 },
                                 bannerElevatedContent = { ratio ->
+                                    val animRatio by animateFloatAsState(ratio)
                                     SettingsAndMore(
+                                        isBannerExpanded = isBannerExpanded,
+                                        onBannerExpanded = { isBannerExpanded = !isBannerExpanded },
                                         onNavigateToSettings = onNavigateToSettings,
                                         logOut = { isLogOutDialogShown = true },
                                         expanded = isDropdownExpanded,
@@ -230,7 +240,7 @@ fun ProfileScreen(
                                                 bottom = LocalPaddings.current.large,
                                                 end = LocalPaddings.current.large
                                             )
-                                            .padding(top = LocalPaddings.current.large * ratio)
+                                            .padding(top = LocalPaddings.current.large * animRatio)
                                     )
                                 },
                                 content = {
@@ -341,6 +351,8 @@ fun ProfileScreen(
 
 @Composable
 private fun SettingsAndMore(
+    isBannerExpanded: Boolean,
+    onBannerExpanded: () -> Unit,
     onNavigateToSettings: (SettingsPage) -> Unit,
     expanded: Boolean,
     setExpanded: (Boolean) -> Unit,
@@ -358,6 +370,8 @@ private fun SettingsAndMore(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
+        BannerHeightToggle(isBannerExpanded, onBannerExpanded)
+
         SettingsIcon(onNavigateToSettings = onNavigateToSettings)
 
         Box {
@@ -440,6 +454,35 @@ fun SettingsIcon(
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .clickable { onNavigateToSettings(SettingsPage) }
+                .padding(LocalPaddings.current.small)
+                .size(16.dp)
+                .graphicsLayer { rotationZ = angle }
+        )
+    }
+}
+
+@Composable
+fun BannerHeightToggle(
+    isExpanded: Boolean,
+    onToggleBannerHeight: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val haptic = LocalHapticFeedback.current
+    val angle by animateFloatAsState(if (isExpanded) 0f else 180f)
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = CircleShape,
+        modifier = modifier,
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.banner_toggle),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .clickable {
+                    haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                    onToggleBannerHeight()
+                }
                 .padding(LocalPaddings.current.small)
                 .size(16.dp)
                 .graphicsLayer { rotationZ = angle }

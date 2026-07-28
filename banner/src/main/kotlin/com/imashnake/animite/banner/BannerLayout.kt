@@ -1,5 +1,6 @@
 package com.imashnake.animite.banner
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +32,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.util.fastCoerceIn
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.ext.thenIf
 
 /**
  * Most screens and pages follow a banner-style layout in Animite.
@@ -74,6 +77,7 @@ fun NestedScrollBannerLayout(
     banner: @Composable BoxScope.(Float, Modifier) -> Unit,
     bannerElevatedContent: @Composable BoxScope.(Float) -> Unit,
     content: @Composable ColumnScope.() -> Unit,
+    isExpanded: Boolean,
     modifier: Modifier = Modifier,
     maxBannerHeight: Dp = dimensionResource(R.dimen.banner_height),
     contentPadding: PaddingValues = PaddingValues(),
@@ -85,6 +89,16 @@ fun NestedScrollBannerLayout(
     val maxBannerHeightPx = with(density) { maxBannerHeight.toPx() }
     var bannerHeightPx by remember { mutableFloatStateOf(maxBannerHeightPx) }
     var ratio by remember { mutableFloatStateOf(1f) }
+
+    LaunchedEffect(isExpanded) {
+        if (isExpanded) {
+            ratio = 1f
+            bannerHeightPx = maxBannerHeightPx
+        } else {
+            ratio = 0f
+            bannerHeightPx = minBannerHeightPx
+        }
+    }
 
     // Copied from TopAppBar.ExitUntilCollapsedScrollBehavior
     val nestedScrollConnection = remember {
@@ -133,17 +147,18 @@ fun NestedScrollBannerLayout(
         }
     }
 
-    Box(modifier.nestedScroll(nestedScrollConnection)) {
+    Box(modifier.thenIf(condition = isExpanded) { nestedScroll(nestedScrollConnection) }) {
+        val bannerHeight by animateFloatAsState(bannerHeightPx)
         banner(
             ratio,
             Modifier
-                .height(with(density) { bannerHeightPx.toDp() })
+                .height(with(density) { bannerHeight.toDp() })
                 .fillMaxWidth()
         )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = with(density) { bannerHeightPx.toDp() })
+                .padding(top = with(density) { bannerHeight.toDp() })
                 .background(contentBackgroundColor)
                 .padding(contentPadding),
             verticalArrangement = verticalArrangement
