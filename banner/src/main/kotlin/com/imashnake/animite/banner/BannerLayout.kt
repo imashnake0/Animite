@@ -81,11 +81,10 @@ fun NestedScrollBannerLayout(
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(LocalPaddings.current.large)
 ) {
     val density = LocalDensity.current
-    var bannerHeightPx by remember { mutableFloatStateOf(with(density) { maxBannerHeight.toPx() }) }
-    var ratio by remember { mutableFloatStateOf(1f) }
-    val statusBarHeight = with(density) { WindowInsets.statusBars.getTop(density).toDp() }
-    val minBannerHeightPx = with(density) { (statusBarHeight + LocalPaddings.current.large).toPx() }
+    val minBannerHeightPx = with(density) { WindowInsets.statusBars.getTop(this) + LocalPaddings.current.large.toPx() }
     val maxBannerHeightPx = with(density) { maxBannerHeight.toPx() }
+    var bannerHeightPx by remember { mutableFloatStateOf(maxBannerHeightPx) }
+    var ratio by remember { mutableFloatStateOf(1f) }
 
     // Copied from TopAppBar.ExitUntilCollapsedScrollBehavior
     val nestedScrollConnection = remember {
