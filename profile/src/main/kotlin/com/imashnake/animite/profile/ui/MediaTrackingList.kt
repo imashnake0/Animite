@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,9 +77,13 @@ fun MediaTrackingLists(
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
+    val namedLists = remember { namedLists.toMutableStateList() }
+
+    val haptic = LocalHapticFeedback.current
     var isReordering by remember { mutableStateOf(false) }
     val reorderableLazyListState = rememberReorderableLazyListState(state) { from, to ->
-        // Update the list
+        namedLists.apply { add(to.index - 1, removeAt(from.index - 1)) }
+        haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
     }
 
     LazyColumn(
@@ -185,7 +190,7 @@ private fun ListOptions(
             ListOption(
                 icon = ImageVector.vectorResource(R.drawable.expand_all),
                 text = stringResource(R.string.expand_all),
-                onClick = expandAll
+                onClick = { if (!isReordering) expandAll() }
             )
             ListOption(
                 icon = ImageVector.vectorResource(R.drawable.collapse_all),
@@ -271,8 +276,10 @@ private fun HeaderPill(
                 } else {
                     haptic.performHapticFeedback(ToggleOn)
                 }
-                listVisibility[index]?.let { visibility ->
-                    listVisibility[index] = !visibility
+                if (!isReordering) {
+                    listVisibility[index]?.let { visibility ->
+                        listVisibility[index] = !visibility
+                    }
                 }
             }
             .background(
