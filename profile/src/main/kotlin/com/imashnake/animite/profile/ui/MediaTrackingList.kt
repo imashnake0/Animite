@@ -76,7 +76,8 @@ fun MediaTrackingLists(
         item {
             ListOptions(
                 expandAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = true } },
-                collapseAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = false } }
+                collapseAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = false } },
+                modifier = Modifier.fillMaxWidth()
             )
         }
         namedLists.fastForEachIndexed { index, namedList ->
@@ -149,22 +150,29 @@ private fun ListOptions(
     modifier: Modifier = Modifier
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .padding(top = LocalPaddings.current.small)
             .padding(vertical = LocalPaddings.current.small)
-            .fillMaxWidth()
     ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+            ListOption(
+                icon = ImageVector.vectorResource(R.drawable.expand_all),
+                text = stringResource(R.string.expand_all),
+                onClick = expandAll
+            )
+            ListOption(
+                icon = ImageVector.vectorResource(R.drawable.collapse_all),
+                text = stringResource(R.string.collapse_all),
+                onClick = collapseAll
+            )
+        }
+
         ListOption(
-            icon = ImageVector.vectorResource(R.drawable.expand_all),
-            text = stringResource(R.string.expand_all),
-            onClick = expandAll
-        )
-        ListOption(
-            icon = ImageVector.vectorResource(R.drawable.collapse_all),
-            text = stringResource(R.string.collapse_all),
-            onClick = collapseAll
+            icon = ImageVector.vectorResource(R.drawable.reorder),
+            text = stringResource(R.string.reorder),
+            onClick = {}
         )
     }
 }
