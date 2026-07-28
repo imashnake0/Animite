@@ -25,6 +25,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -48,6 +49,7 @@ fun MediaTab(
                 type = mediaCollection.type,
                 lists = mediaCollection.namedLists,
                 listVisibility = listVisibility,
+                updateMediaListsOrder = updateMediaListsOrder,
                 onNavigateToMediaItem = onNavigateToMediaItem,
                 modifier = modifier,
                 contentPadding = contentPadding,
@@ -61,6 +63,7 @@ private fun UserMediaLists(
     type: Media.Small.Type,
     lists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -69,6 +72,7 @@ private fun UserMediaLists(
         type = type,
         namedLists = lists,
         listVisibility = listVisibility,
+        updateMediaListsOrder = updateMediaListsOrder,
         onNavigateToMediaItem = onNavigateToMediaItem,
         contentPadding = contentPadding,
         modifier = modifier.fillMaxSize()

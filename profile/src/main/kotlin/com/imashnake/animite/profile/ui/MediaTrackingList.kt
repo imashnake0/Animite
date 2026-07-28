@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.util.fastMapNotNull
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
@@ -73,6 +74,7 @@ fun MediaTrackingLists(
     type: Media.Small.Type,
     namedLists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
@@ -98,6 +100,7 @@ fun MediaTrackingLists(
                 expandAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = true } },
                 collapseAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = false } },
                 setIsReordering = { isReordering = it },
+                onDone = { updateMediaListsOrder(namedLists.fastMapNotNull { it.name }.toList()) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -178,6 +181,7 @@ private fun ListOptions(
     expandAll: () -> Unit,
     collapseAll: () -> Unit,
     setIsReordering: (Boolean) -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -209,7 +213,7 @@ private fun ListOptions(
                     icon = Icons.Rounded.Check,
                     text = stringResource(R.string.done),
                     onClick = {
-                        // TODO: Call update user with list order.
+                        onDone()
                         setIsReordering(false)
                     },
                     background = MaterialTheme.colorScheme.primaryContainer,

@@ -38,6 +38,8 @@ class ProfileViewModel @Inject constructor(
 
     private val navArgs = savedStateHandle.toRoute<ProfileRoute>()
     private val refreshTrigger = MutableSharedFlow<Unit>()
+    private val animeListsRefreshTrigger = MutableSharedFlow<Unit>()
+    private val mangaListsRefreshTrigger = MutableSharedFlow<Unit>()
 
     var useNetwork = false
 
@@ -71,7 +73,7 @@ class ProfileViewModel @Inject constructor(
     )
 
     val viewerAnimeLists = combine(
-        flow = refreshTrigger.onStart { emit(Unit) },
+        flow = animeListsRefreshTrigger.onStart { emit(Unit) },
         flow2 = combine(
             preferencesRepository.viewerId.filterNotNull(),
             preferencesRepository.language.filterNotNull(),
@@ -96,7 +98,7 @@ class ProfileViewModel @Inject constructor(
     )
 
     val viewerMangaLists = combine(
-        flow = refreshTrigger.onStart { emit(Unit) },
+        flow = mangaListsRefreshTrigger.onStart { emit(Unit) },
         flow2 = combine(
             preferencesRepository.viewerId.filterNotNull(),
             preferencesRepository.language.filterNotNull(),
@@ -120,21 +122,49 @@ class ProfileViewModel @Inject constructor(
         initialValue = Resource.loading(),
     )
 
+    fun updateAnimeLists(sectionOrder: List<String>) = viewModelScope.launch(Dispatchers.IO) {
+        userRepository.updateUser(animeSectionOrder = sectionOrder).collect {
+            preferencesRepository.setAnimeListOrder(it.getOrNull()?.mediaListOptions?.animeList?.sectionOrder?.filterNotNull())
+        }
+        refreshAnimeLists()
+    }
+
+    fun updateMangaLists(sectionOrder: List<String>) = viewModelScope.launch(Dispatchers.IO) {
+        userRepository.updateUser(mangaSectionOrder = sectionOrder).collect {
+            preferencesRepository.setMangaListOrder(it.getOrNull()?.mediaListOptions?.mangaList?.sectionOrder?.filterNotNull())
+        }
+        refreshMangaLists()
+    }
+
+    private fun refreshAnimeLists() = viewModelScope.launch(Dispatchers.IO) {
+        useNetwork = true
+        animeListsRefreshTrigger.emit(Unit)
+        useNetwork = false
+    }
+
+    private fun refreshMangaLists() = viewModelScope.launch(Dispatchers.IO) {
+        useNetwork = true
+        mangaListsRefreshTrigger.emit(Unit)
+        useNetwork = false
+    }
+
+    fun refresh(setIsRefreshing: (Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
+        setIsRefreshing(true)
+        useNetwork = true
+        refreshTrigger.emit(Unit)
+        animeListsRefreshTrigger.emit(Unit)
+        mangaListsRefreshTrigger.emit(Unit)
+        delay(1500L)
+        useNetwork = false
+        setIsRefreshing(false)
+    }
+
     fun logOut() = viewModelScope.launch(Dispatchers.IO) {
         with(preferencesRepository) {
             setAccessToken(null)
             setViewerId(null)
             setViewerAvatar(null)
         }
-    }
-
-    fun refresh(setIsRefreshing: (Boolean) -> Unit) = viewModelScope.launch {
-        setIsRefreshing(true)
-        useNetwork = true
-        refreshTrigger.emit(Unit)
-        delay(1500L)
-        useNetwork = false
-        setIsRefreshing(false)
     }
 
     val viewerAvatar = preferencesRepository.viewerAvatar

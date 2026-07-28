@@ -64,7 +64,7 @@ class AnilistUserRepository(
         profileColor: String? = null,
         animeSectionOrder: List<String>? = null,
         mangaSectionOrder: List<String>? = null,
-    ): Flow<Result<String?>> {
+    ): Flow<Result<UpdateUserMutation.UpdateUser?>> {
         return apolloClient
             .mutation(
                 UpdateUserMutation(
@@ -83,6 +83,6 @@ class AnilistUserRepository(
             )
             .fetchPolicy(FetchPolicy.NetworkOnly)
             .toFlow()
-            .asResult { it.UpdateUser?.options?.profileColor }
+            .asResult { it.UpdateUser }
     }
 }
