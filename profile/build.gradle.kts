@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
 
+    implementation(libs.reorderable)
+
     testImplementation(libs.test.junit)
 
     androidTestImplementation(libs.androidx.test.junit)
