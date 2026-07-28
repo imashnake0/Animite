@@ -204,7 +204,10 @@ private fun ListOptions(
                 ListOption(
                     icon = Icons.Rounded.Check,
                     text = stringResource(R.string.done),
-                    onClick = { setIsReordering(false) },
+                    onClick = {
+                        // TODO: Call update user with list order.
+                        setIsReordering(false)
+                    },
                     background = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.padding(end = 10.dp)
