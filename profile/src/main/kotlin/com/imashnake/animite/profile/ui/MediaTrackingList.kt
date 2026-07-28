@@ -1,6 +1,7 @@
 package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -187,15 +188,18 @@ private fun ListOptions(
             .padding(vertical = LocalPaddings.current.small)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+            val alpha by animateFloatAsState(if (isReordering) 0.3f else 1f)
             ListOption(
                 icon = ImageVector.vectorResource(R.drawable.expand_all),
                 text = stringResource(R.string.expand_all),
-                onClick = { if (!isReordering) expandAll() }
+                onClick = { if (!isReordering) expandAll() },
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
             )
             ListOption(
-                icon = ImageVector.vectorResource(R.drawable.collapse_all),
                 text = stringResource(R.string.collapse_all),
-                onClick = collapseAll
+                onClick = { if (!isReordering) collapseAll() },
+                icon = ImageVector.vectorResource(R.drawable.collapse_all),
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha)
             )
         }
 
@@ -274,11 +278,9 @@ private fun HeaderPill(
             .fillMaxWidth()
             .clip(CircleShape)
             .clickable {
-                if (listVisibility[index] == true) {
-                    haptic.performHapticFeedback(ToggleOff)
-                } else {
-                    haptic.performHapticFeedback(ToggleOn)
-                }
+                haptic.performHapticFeedback(
+                    if (listVisibility[index] == true) ToggleOff else ToggleOn
+                )
                 if (!isReordering) {
                     listVisibility[index]?.let { visibility ->
                         listVisibility[index] = !visibility
