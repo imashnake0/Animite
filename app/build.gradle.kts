@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.imashnake.animite"
         versionCode = 50
-        versionName = "0.7.7-alpha01"
+        versionName = "0.7.7-alpha02"
     }
 
     signingConfigs {
