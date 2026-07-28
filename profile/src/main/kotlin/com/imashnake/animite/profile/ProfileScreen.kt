@@ -260,11 +260,11 @@ fun ProfileScreen(
                                             user = this@run,
                                             animeCollection = viewerAnimeLists.data,
                                             mangaCollection = viewerMangaLists.data,
+                                            updateAnimeListsOrder = viewModel::updateAnimeLists,
+                                            updateMangaListsOrder = viewModel::updateMangaLists,
                                             onNavigateToMediaItem = onNavigateToMediaItem,
                                             showUserDescription = showUserDescription,
-                                            onUserDescriptionClick = {
-                                                showUserDescriptionSheet = true
-                                            },
+                                            onUserDescriptionClick = { showUserDescriptionSheet = true },
                                             sharedTransitionScope = sharedTransitionScope,
                                             animatedVisibilityScope = animatedVisibilityScope,
                                             contentPadding = navigationComponentPaddingValues + insetPaddingValues,
@@ -482,6 +482,8 @@ private fun UserTabs(
     user: User,
     animeCollection: User.MediaCollection?,
     mangaCollection: User.MediaCollection?,
+    updateAnimeListsOrder: (List<String>) -> Unit,
+    updateMangaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     showUserDescription: Boolean,
     onUserDescriptionClick: () -> Unit,
@@ -612,12 +614,14 @@ private fun UserTabs(
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
                         listVisibility = animeListVisibility,
+                        updateMediaListsOrder = updateAnimeListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         contentPadding = mediaTabContentPadding,
                     )
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         listVisibility = mangaListVisibility,
+                        updateMediaListsOrder = updateMangaListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         contentPadding = mediaTabContentPadding,
                     )

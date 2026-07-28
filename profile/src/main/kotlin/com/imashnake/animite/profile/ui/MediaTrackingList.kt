@@ -1,5 +1,7 @@
 package com.imashnake.animite.profile.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,12 +13,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
@@ -24,7 +29,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.util.fastMapNotNull
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
@@ -54,20 +65,30 @@ import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
 import com.imashnake.animite.profile.dev.res
 import kotlinx.collections.immutable.ImmutableList
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
+import sh.calvin.reorderable.ReorderableCollectionItemScope
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun MediaTrackingLists(
     type: Media.Small.Type,
     namedLists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
+    val namedLists = remember { namedLists.toMutableStateList() }
+
+    val haptic = LocalHapticFeedback.current
+    var isReordering by remember { mutableStateOf(false) }
+    val reorderableLazyListState = rememberReorderableLazyListState(state) { from, to ->
+        namedLists.apply { add(to.index - 1, removeAt(from.index - 1)) }
+        haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+    }
+
     LazyColumn(
         state = state,
         modifier = modifier,
@@ -75,26 +96,38 @@ fun MediaTrackingLists(
     ) {
         item {
             ListOptions(
+                isReordering = isReordering,
                 expandAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = true } },
-                collapseAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = false } }
+                collapseAll = { listVisibility.forEach { (index, _) -> listVisibility[index] = false } },
+                setIsReordering = { isReordering = it },
+                onDone = { updateMediaListsOrder(namedLists.fastMapNotNull { it.name }.toList()) },
+                modifier = Modifier.fillMaxWidth()
             )
         }
         namedLists.fastForEachIndexed { index, namedList ->
             stickyHeader(key = namedList.name) {
                 namedList.name?.let {
-                    Column(Modifier.animateItem()) {
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .size(LocalPaddings.current.small)
-                                .background(MaterialTheme.colorScheme.background)
-                        )
-                        HeaderPill(
-                            name = it,
-                            size = namedList.list.size,
-                            index = index,
-                            listVisibility = listVisibility,
-                        )
+                    ReorderableItem(reorderableLazyListState, key = it) { _ ->
+                        Column(Modifier.animateItem()) {
+                            Spacer(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .size(LocalPaddings.current.small)
+                                    .background(
+                                        if (isReordering) {
+                                            Color.Transparent
+                                        } else MaterialTheme.colorScheme.background
+                                    )
+                            )
+                            HeaderPill(
+                                name = it,
+                                size = namedList.list.size,
+                                index = index,
+                                listVisibility = listVisibility,
+                                isReordering = isReordering,
+                                reorderScope = this@ReorderableItem
+                            )
+                        }
                     }
                 }
             }
@@ -144,28 +177,57 @@ fun MediaTrackingLists(
 
 @Composable
 private fun ListOptions(
+    isReordering: Boolean,
     expandAll: () -> Unit,
     collapseAll: () -> Unit,
+    setIsReordering: (Boolean) -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .padding(top = LocalPaddings.current.small)
             .padding(vertical = LocalPaddings.current.small)
-            .fillMaxWidth()
     ) {
-        ListOption(
-            icon = ImageVector.vectorResource(R.drawable.expand_all),
-            text = stringResource(R.string.expand_all),
-            onClick = expandAll
-        )
-        ListOption(
-            icon = ImageVector.vectorResource(R.drawable.collapse_all),
-            text = stringResource(R.string.collapse_all),
-            onClick = collapseAll
-        )
+        Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+            val alpha by animateFloatAsState(if (isReordering) 0.3f else 1f)
+            ListOption(
+                icon = ImageVector.vectorResource(R.drawable.expand_all),
+                text = stringResource(R.string.expand_all),
+                onClick = { if (!isReordering) expandAll() },
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
+            )
+            ListOption(
+                text = stringResource(R.string.collapse_all),
+                onClick = { if (!isReordering) collapseAll() },
+                icon = ImageVector.vectorResource(R.drawable.collapse_all),
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha)
+            )
+        }
+
+        AnimatedContent(isReordering) {
+            if (it) {
+                ListOption(
+                    icon = Icons.Rounded.Check,
+                    text = stringResource(R.string.done),
+                    onClick = {
+                        onDone()
+                        setIsReordering(false)
+                    },
+                    background = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.padding(end = 10.dp)
+                )
+            } else {
+                ListOption(
+                    icon = ImageVector.vectorResource(R.drawable.reorder),
+                    text = stringResource(R.string.reorder),
+                    onClick = { collapseAll(); setIsReordering(true) }
+                )
+            }
+        }
     }
 }
 
@@ -174,7 +236,9 @@ private fun ListOption(
     icon: ImageVector,
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    background: Color = Color.Transparent,
+    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     val haptic = LocalHapticFeedback.current
     Row(
@@ -182,6 +246,7 @@ private fun ListOption(
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
         modifier = modifier
             .clip(CircleShape)
+            .background(background)
             .clickable { haptic.performHapticFeedback(HapticFeedbackType.ContextClick); onClick() }
             .padding(LocalPaddings.current.tiny)
             .padding(end = LocalPaddings.current.tiny)
@@ -189,12 +254,12 @@ private fun ListOption(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = contentColor,
             modifier = Modifier.size(dimensionResource(R.dimen.list_options_icon_size))
         )
         Text(
             text = text,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = contentColor,
             style = MaterialTheme.typography.labelSmall.copy(baselineShift = null),
         )
     }
@@ -206,6 +271,8 @@ private fun HeaderPill(
     size: Int,
     index: Int,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    isReordering: Boolean,
+    reorderScope: ReorderableCollectionItemScope,
     modifier: Modifier = Modifier
 ) {
     val haptic = LocalHapticFeedback.current
@@ -215,13 +282,13 @@ private fun HeaderPill(
             .fillMaxWidth()
             .clip(CircleShape)
             .clickable {
-                if (listVisibility[index] == true) {
-                    haptic.performHapticFeedback(ToggleOff)
-                } else {
-                    haptic.performHapticFeedback(ToggleOn)
-                }
-                listVisibility[index]?.let { visibility ->
-                    listVisibility[index] = !visibility
+                haptic.performHapticFeedback(
+                    if (listVisibility[index] == true) ToggleOff else ToggleOn
+                )
+                if (!isReordering) {
+                    listVisibility[index]?.let { visibility ->
+                        listVisibility[index] = !visibility
+                    }
                 }
             }
             .background(
@@ -265,7 +332,19 @@ private fun HeaderPill(
                 style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
             )
 
-            DropDownIcon(isDroppedDown = listVisibility[index] ?: true)
+            AnimatedContent(isReordering) {
+                if (!it) {
+                    DropDownIcon(isDroppedDown = listVisibility[index] ?: true)
+                } else {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.drag_indicator),
+                        contentDescription = null,
+                        modifier = with(reorderScope) {
+                            modifier.requiredSize(16.dp).draggableHandle()
+                        }
+                    )
+                }
+            }
         }
     }
 }
