@@ -59,12 +59,12 @@ class ProfileViewModel @Inject constructor(
     }.asResource().onEach {
         it.data?.let { user ->
             preferencesRepository.setViewerId(user.id)
-            // Don't update with cached color
+            // Don't update with cache
             if (useNetwork) {
                 preferencesRepository.setProfileColor(user.color)
+                preferencesRepository.setAnimeListOrder(user.animeListOrder)
+                preferencesRepository.setMangaListOrder(user.mangaListOrder)
             }
-            preferencesRepository.setAnimeListOrder(user.animeListOrder)
-            preferencesRepository.setMangaListOrder(user.mangaListOrder)
         }
     }.stateIn(
         scope = viewModelScope,
