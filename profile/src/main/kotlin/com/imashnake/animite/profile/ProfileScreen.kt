@@ -114,7 +114,7 @@ import me.saket.cascade.rememberCascadeState
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import com.imashnake.animite.navigation.R as navigationR
 
-private const val DROP_DOWN_ITEMS_COUNT = 2
+private const val DROP_DOWN_ITEMS_COUNT = 1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod")
