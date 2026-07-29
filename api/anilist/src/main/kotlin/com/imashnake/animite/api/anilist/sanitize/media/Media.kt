@@ -746,7 +746,7 @@ data class Media(
             season = query.season?.sanitize(),
             seasonYear = query.seasonYear,
             format = query.format?.sanitize(),
-            episodes = query.episodes,
+            episodes = query.episodes ?: query.nextAiringEpisode?.episode,
             progress = progress,
             score = score?.let { Score(it) }
         )

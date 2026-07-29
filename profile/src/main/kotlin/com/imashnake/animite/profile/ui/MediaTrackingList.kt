@@ -450,7 +450,7 @@ private fun MediaTrackingItem(
                                 LinearWavyProgressIndicator(
                                     progress = { progress.toFloat() / episodes },
                                     amplitude = { progress ->
-                                        if (progress <= 0.1f || progress >= 0.95f) 0f else 0.6f
+                                        if (progress <= 0.1f || progress >= 0.95f) 0f else 0.5f
                                     },
                                     waveSpeed = 15.dp,
                                     modifier = Modifier
