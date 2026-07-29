@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
@@ -448,10 +449,14 @@ private fun MediaTrackingItem(
                                 progress = { progress.toFloat() / episodes },
                                 amplitude = { progress ->
                                     if (progress <= 0.1f || progress >= 0.95f) 0f else 0.6f
-                                }
+                                },
+                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.5f }
                             )
                         }
-                        else -> LinearProgressIndicator(progress = { progress.toFloat() / episodes })
+                        else -> LinearProgressIndicator(
+                            progress = { progress.toFloat() / episodes },
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.5f }
+                        )
                     }
 
                 }
