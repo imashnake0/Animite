@@ -452,6 +452,7 @@ private fun MediaTrackingItem(
                                     amplitude = { progress ->
                                         if (progress <= 0.1f || progress >= 0.95f) 0f else 0.6f
                                     },
+                                    waveSpeed = 15.dp,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .graphicsLayer { alpha = 0.5f }
