@@ -377,88 +377,93 @@ private fun MediaTrackingItem(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(
-                        horizontal = LocalPaddings.current.large / 2,
-                        vertical = LocalPaddings.current.small
+                        start = LocalPaddings.current.large / 2,
+                        end = LocalPaddings.current.large / 2,
+                        top = LocalPaddings.current.small
                     )
             ) {
-                Text(
-                    text = item.title.orEmpty(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                    Text(
+                        text = item.title.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1
+                    )
 
-                val episodes = item.episodes
-                val progress = item.progress
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    item.format?.let {
-                        Text(
-                            text = stringResource(it.res),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        item.format?.let {
+                            Text(
+                                text = stringResource(it.res),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
 
-                    if (item.season != null && item.format != null) {
-                        Divider(shape = MaterialShapes.Triangle.toShape())
-                    }
+                        if (item.season != null && item.format != null) {
+                            Divider(shape = MaterialShapes.Triangle.toShape())
+                        }
 
-                    item.season?.let {
-                        Text(
-                            text = stringResource(it.res) +
-                                    " ${item.seasonYear?.toString().orEmpty()}",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1
-                        )
-                    }
-
-                    if (episodes != null && item.season != null) {
-                        Divider(shape = MaterialShapes.Triangle.toShape())
-                    }
-
-                    episodes?.let {
-                        Text(
-                            text = progress
-                                ?.takeUnless { listName == User.ListNames.COMPLETED }
-                                ?.let { completed -> "$completed/" }
-                                .orEmpty()
-                                .plus(
-                                    pluralStringResource(
-                                        id = R.plurals.ep_count,
-                                        count = it,
-                                        formatArgs = arrayOf(it))
-                                ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        item.season?.let {
+                            Text(
+                                text = stringResource(it.res) +
+                                        " ${item.seasonYear?.toString().orEmpty()}",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
 
+                val episodes = item.episodes
+                val progress = item.progress
+
                 if (episodes != null && progress != null) {
-                    when(listName) {
-                        User.ListNames.WATCHING,
-                        User.ListNames.REWATCHING,
-                        User.ListNames.READING,
-                        User.ListNames.REREADING -> {
-                            LinearWavyProgressIndicator(
+                    val formattedProgress = progress
+                        .takeUnless { listName == User.ListNames.COMPLETED }
+                        ?.let { "$it/" }
+                        .orEmpty()
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = formattedProgress + pluralStringResource(
+                                id = R.plurals.ep_count,
+                                count = episodes,
+                                formatArgs = arrayOf(episodes)
+                            ),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        when (listName) {
+                            User.ListNames.WATCHING,
+                            User.ListNames.REWATCHING,
+                            User.ListNames.READING,
+                            User.ListNames.REREADING -> {
+                                LinearWavyProgressIndicator(
+                                    progress = { progress.toFloat() / episodes },
+                                    amplitude = { progress ->
+                                        if (progress <= 0.1f || progress >= 0.95f) 0f else 0.6f
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .graphicsLayer { alpha = 0.5f }
+                                )
+                            }
+
+                            else -> LinearProgressIndicator(
                                 progress = { progress.toFloat() / episodes },
-                                amplitude = { progress ->
-                                    if (progress <= 0.1f || progress >= 0.95f) 0f else 0.6f
-                                },
                                 modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.5f }
                             )
                         }
-                        else -> LinearProgressIndicator(
-                            progress = { progress.toFloat() / episodes },
-                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.5f }
-                        )
                     }
-
                 }
             }
         }
