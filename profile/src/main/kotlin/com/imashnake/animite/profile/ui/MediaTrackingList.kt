@@ -416,14 +416,14 @@ private fun MediaTrackingItem(
                     }
                 }
 
-                val episodes = item.segments
                 val progress = item.progress
+                val segments = item.segments ?: if (progress == 0) 1 else progress
 
-                if (episodes != null && progress != null) {
+                if (segments != null && progress != null) {
                     val formattedProgress = progress
                         .takeUnless { listName == User.ListNames.COMPLETED }
-                        ?.let { "$it/$episodes" }
-                        ?: "$episodes"
+                        ?.let { "$it/$segments" }
+                        ?: "$segments"
 
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
@@ -443,7 +443,7 @@ private fun MediaTrackingItem(
                             User.ListNames.READING,
                             User.ListNames.REREADING -> {
                                 LinearWavyProgressIndicator(
-                                    progress = { progress.toFloat() / episodes },
+                                    progress = { progress.toFloat() / segments },
                                     amplitude = { progress ->
                                         if (progress <= 0.1f || progress >= 0.95f) 0f else 0.5f
                                     },
@@ -455,7 +455,7 @@ private fun MediaTrackingItem(
                             }
 
                             else -> LinearProgressIndicator(
-                                progress = { progress.toFloat() / episodes },
+                                progress = { progress.toFloat() / segments },
                                 modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.5f }
                             )
                         }
