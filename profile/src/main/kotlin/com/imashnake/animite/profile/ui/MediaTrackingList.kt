@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -141,6 +144,7 @@ fun MediaTrackingLists(
                                 .background(MaterialTheme.colorScheme.background)
                         )
                         MediaTrackingItem(
+                            listName = namedList.name.sanitize(),
                             item = namedList.list[it],
                             onClick = { id, title ->
                                 onNavigateToMediaItem(
@@ -352,6 +356,7 @@ private fun HeaderPill(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaTrackingItem(
+    listName: User.ListNames,
     item: Media.Tracking,
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
@@ -367,10 +372,13 @@ private fun MediaTrackingItem(
             )
 
             Column(
-                Modifier.padding(
-                    horizontal = LocalPaddings.current.large / 2,
-                    vertical = LocalPaddings.current.small
-                )
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(
+                        horizontal = LocalPaddings.current.large / 2,
+                        vertical = LocalPaddings.current.small
+                    )
             ) {
                 Text(
                     text = item.title.orEmpty(),
@@ -379,8 +387,8 @@ private fun MediaTrackingItem(
                     maxLines = 1
                 )
 
-                Spacer(Modifier.size(LocalPaddings.current.medium))
-
+                val episodes = item.episodes
+                val progress = item.progress
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     item.format?.let {
                         Text(
@@ -406,23 +414,46 @@ private fun MediaTrackingItem(
                         )
                     }
 
-                    if (item.episodes != null && item.season != null) {
+                    if (episodes != null && item.season != null) {
                         Divider(shape = MaterialShapes.Triangle.toShape())
                     }
 
-                    item.episodes?.let {
+                    episodes?.let {
                         Text(
-                            text = pluralStringResource(
-                                id = R.plurals.ep_count,
-                                count = it,
-                                formatArgs = arrayOf(it)
-                            ),
+                            text = progress
+                                ?.takeUnless { listName == User.ListNames.COMPLETED }
+                                ?.let { completed -> "$completed/" }
+                                .orEmpty()
+                                .plus(
+                                    pluralStringResource(
+                                        id = R.plurals.ep_count,
+                                        count = it,
+                                        formatArgs = arrayOf(it))
+                                ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelSmall,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
+                }
+
+                if (episodes != null && progress != null) {
+                    when(listName) {
+                        User.ListNames.WATCHING,
+                        User.ListNames.REWATCHING,
+                        User.ListNames.READING,
+                        User.ListNames.REREADING -> {
+                            LinearWavyProgressIndicator(
+                                progress = { progress.toFloat() / episodes },
+                                amplitude = { progress ->
+                                    if (progress <= 0.1f || progress >= 0.95f) 0f else 0.6f
+                                }
+                            )
+                        }
+                        else -> LinearProgressIndicator(progress = { progress.toFloat() / episodes })
+                    }
+
                 }
             }
         }

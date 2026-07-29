@@ -101,6 +101,7 @@ data class User(
                 list = query.entries.orEmpty().mapNotNull {
                     Media.Tracking(
                         query = it?.media?.mediaTracking ?: return@mapNotNull null,
+                        progress = it.progress,
                         score = it.score?.toFloat(),
                         language = language
                     )
