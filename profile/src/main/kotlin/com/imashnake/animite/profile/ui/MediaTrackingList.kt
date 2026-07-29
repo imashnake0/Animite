@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,13 +42,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -141,6 +144,7 @@ fun MediaTrackingLists(
                                 .background(MaterialTheme.colorScheme.background)
                         )
                         MediaTrackingItem(
+                            listName = namedList.name.sanitize(),
                             item = namedList.list[it],
                             onClick = { id, title ->
                                 onNavigateToMediaItem(
@@ -352,6 +356,7 @@ private fun HeaderPill(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaTrackingItem(
+    listName: User.ListNames,
     item: Media.Tracking,
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
@@ -367,61 +372,93 @@ private fun MediaTrackingItem(
             )
 
             Column(
-                Modifier.padding(
-                    horizontal = LocalPaddings.current.large / 2,
-                    vertical = LocalPaddings.current.small
-                )
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(
+                        start = LocalPaddings.current.large / 2,
+                        end = LocalPaddings.current.large / 2,
+                        top = LocalPaddings.current.small
+                    )
             ) {
-                Text(
-                    text = item.title.orEmpty(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                    Text(
+                        text = item.title.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1
+                    )
 
-                Spacer(Modifier.size(LocalPaddings.current.medium))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        item.format?.let {
+                            Text(
+                                text = stringResource(it.res),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    item.format?.let {
+                        if (item.season != null && item.format != null) {
+                            Divider(shape = MaterialShapes.Triangle.toShape())
+                        }
+
+                        item.season?.let {
+                            Text(
+                                text = stringResource(it.res) +
+                                        " ${item.seasonYear?.toString().orEmpty()}",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1
+                            )
+                        }
+                    }
+                }
+
+                val progress = item.progress
+                val segments = item.segments ?: if (progress == 0) 1 else progress
+
+                if (segments != null && progress != null) {
+                    val formattedProgress = progress
+                        .takeUnless { listName == User.ListNames.COMPLETED }
+                        ?.let { "$it/$segments" }
+                        ?: "$segments"
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text = stringResource(it.res),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            text = formattedProgress,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                             style = MaterialTheme.typography.labelSmall,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                    }
 
-                    if (item.season != null && item.format != null) {
-                        Divider(shape = MaterialShapes.Triangle.toShape())
-                    }
+                        when (listName) {
+                            User.ListNames.WATCHING,
+                            User.ListNames.REWATCHING,
+                            User.ListNames.READING,
+                            User.ListNames.REREADING -> {
+                                LinearWavyProgressIndicator(
+                                    progress = { progress.toFloat() / segments },
+                                    amplitude = { progress ->
+                                        if (progress <= 0.1f || progress >= 0.95f) 0f else 0.5f
+                                    },
+                                    waveSpeed = 15.dp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .graphicsLayer { alpha = 0.5f }
+                                )
+                            }
 
-                    item.season?.let {
-                        Text(
-                            text = stringResource(it.res) +
-                                    " ${item.seasonYear?.toString().orEmpty()}",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1
-                        )
-                    }
-
-                    if (item.episodes != null && item.season != null) {
-                        Divider(shape = MaterialShapes.Triangle.toShape())
-                    }
-
-                    item.episodes?.let {
-                        Text(
-                            text = pluralStringResource(
-                                id = R.plurals.ep_count,
-                                count = it,
-                                formatArgs = arrayOf(it)
-                            ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                            else -> LinearProgressIndicator(
+                                progress = { progress.toFloat() / segments },
+                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.5f }
+                            )
+                        }
                     }
                 }
             }

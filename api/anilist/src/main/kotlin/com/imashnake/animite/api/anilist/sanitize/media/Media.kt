@@ -725,11 +725,13 @@ data class Media(
         val season: Season?,
         val seasonYear: Int?,
         val format: Format?,
-        val episodes: Int?,
+        val segments: Int?,
+        val progress: Int?,
         val score: Score?,
     ) {
         internal constructor(
             query: MediaTracking,
+            progress: Int?,
             score: Float?,
             language: Language
         ) : this(
@@ -744,7 +746,8 @@ data class Media(
             season = query.season?.sanitize(),
             seasonYear = query.seasonYear,
             format = query.format?.sanitize(),
-            episodes = query.episodes,
+            segments = query.episodes ?: query.nextAiringEpisode?.episode ?: query.chapters,
+            progress = progress,
             score = score?.let { Score(it) }
         )
     }
