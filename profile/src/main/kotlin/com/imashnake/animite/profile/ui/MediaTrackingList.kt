@@ -417,7 +417,7 @@ private fun MediaTrackingItem(
                     }
                 }
 
-                val episodes = item.episodes
+                val episodes = item.segments
                 val progress = item.progress
 
                 if (episodes != null && progress != null) {

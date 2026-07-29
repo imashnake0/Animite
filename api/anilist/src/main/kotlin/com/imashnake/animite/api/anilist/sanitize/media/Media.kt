@@ -725,7 +725,7 @@ data class Media(
         val season: Season?,
         val seasonYear: Int?,
         val format: Format?,
-        val episodes: Int?,
+        val segments: Int?,
         val progress: Int?,
         val score: Score?,
     ) {
@@ -746,7 +746,7 @@ data class Media(
             season = query.season?.sanitize(),
             seasonYear = query.seasonYear,
             format = query.format?.sanitize(),
-            episodes = query.episodes ?: query.nextAiringEpisode?.episode,
+            segments = query.episodes ?: query.nextAiringEpisode?.episode ?: query.chapters,
             progress = progress,
             score = score?.let { Score(it) }
         )

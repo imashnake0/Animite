@@ -13,6 +13,7 @@ fragment MediaTracking on Media {
     seasonYear
     format
     episodes
+    chapters
     nextAiringEpisode {
         episode
     }
