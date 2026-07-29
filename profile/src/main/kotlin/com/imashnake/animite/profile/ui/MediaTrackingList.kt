@@ -49,7 +49,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -423,19 +422,15 @@ private fun MediaTrackingItem(
                 if (episodes != null && progress != null) {
                     val formattedProgress = progress
                         .takeUnless { listName == User.ListNames.COMPLETED }
-                        ?.let { "$it/" }
-                        .orEmpty()
+                        ?.let { "$it/$episodes" }
+                        ?: "$episodes"
 
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = formattedProgress + pluralStringResource(
-                                id = R.plurals.ep_count,
-                                count = episodes,
-                                formatArgs = arrayOf(episodes)
-                            ),
+                            text = formattedProgress,
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                             style = MaterialTheme.typography.labelSmall,
                             maxLines = 1,
