@@ -639,7 +639,7 @@ fun SettingsPage(
                                         val amplitude by animateFloatAsState(
                                             if (useExpressiveProgressIndicator) 0.5f else 0f
                                         )
-                                        val progress = 67f
+                                        val progress = 67
 
                                         Row(
                                             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
@@ -654,7 +654,7 @@ fun SettingsPage(
                                             )
                                             key(amplitude) {
                                                 LinearWavyProgressIndicator(
-                                                    progress = { progress / 100 },
+                                                    progress = { progress.toFloat() / 100 },
                                                     amplitude = { amplitude },
                                                     waveSpeed = 15.dp,
                                                     modifier = Modifier
