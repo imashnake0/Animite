@@ -361,32 +361,37 @@ private fun MediaTrackingItem(
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.clickable { onClick(item.id, item.title) }) {
-        Row {
-            MediaTrackingCard(
-                image = item.coverImage,
-                tag = null,
-                label = null,
-                onClick = { onClick(item.id, item.title) },
-                tagMinLines = 1
-            )
+    Row(modifier = modifier.clickable { onClick(item.id, item.title) }) {
+        MediaTrackingCard(
+            image = item.coverImage,
+            tag = null,
+            label = null,
+            onClick = { onClick(item.id, item.title) },
+            tagMinLines = 1
+        )
 
-            Column(
-                verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(
-                        start = LocalPaddings.current.large / 2,
-                        end = LocalPaddings.current.large / 2,
-                        top = LocalPaddings.current.small
-                    )
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(
+                    start = LocalPaddings.current.large / 2,
+                    end = LocalPaddings.current.large / 2,
+                    top = LocalPaddings.current.small
+                )
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth().weight(1f)
             ) {
-                Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                    modifier = Modifier.weight(1f, fill = false)
+                ) {
                     Text(
                         text = item.title.orEmpty(),
                         color = MaterialTheme.colorScheme.onBackground,
                         style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1
+                        maxLines = 1,
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -416,63 +421,54 @@ private fun MediaTrackingItem(
                     }
                 }
 
-                val progress = item.progress
-                val segments = item.segments ?: if (progress == 0) 1 else progress
+                item.score?.let { score ->
+                    Text(
+                        text = score.value.toString(),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color(score.color).copy(alpha = 0.6f),
+                        modifier = Modifier.align(Alignment.CenterVertically).padding(top = 5.dp)
+                    )
+                }
+            }
 
-                if (segments != null && progress != null) {
-                    val formattedProgress = progress
-                        .takeUnless { listName == User.ListNames.COMPLETED }
-                        ?.let { "$it/$segments" }
-                        ?: "$segments"
+            val progress = item.progress
+            val segments = item.segments ?: if (progress == 0) 1 else progress
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = formattedProgress,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+            if (segments != null && progress != null) {
+                val formattedProgress = progress
+                    .takeUnless { listName == User.ListNames.COMPLETED }
+                    ?.let { "$it/$segments" }
+                    ?: "$segments"
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = formattedProgress,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    when (listName) {
+                        User.ListNames.WATCHING,
+                        User.ListNames.REWATCHING,
+                        User.ListNames.READING,
+                        User.ListNames.REREADING -> LinearWavyProgressIndicator(
+                            progress = { progress.toFloat() / segments },
+                            amplitude = { if (it <= 0.1f || it >= 0.95f) 0f else 0.5f },
+                            waveSpeed = 15.dp,
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
                         )
-
-                        when (listName) {
-                            User.ListNames.WATCHING,
-                            User.ListNames.REWATCHING,
-                            User.ListNames.READING,
-                            User.ListNames.REREADING -> {
-                                LinearWavyProgressIndicator(
-                                    progress = { progress.toFloat() / segments },
-                                    amplitude = { progress ->
-                                        if (progress <= 0.1f || progress >= 0.95f) 0f else 0.5f
-                                    },
-                                    waveSpeed = 15.dp,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .graphicsLayer { alpha = 0.5f }
-                                )
-                            }
-
-                            else -> LinearProgressIndicator(
-                                progress = { progress.toFloat() / segments },
-                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.5f }
-                            )
-                        }
+                        else -> LinearProgressIndicator(
+                            progress = { progress.toFloat() / segments },
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                        )
                     }
                 }
             }
-        }
-
-        item.score?.let { score ->
-            Text(
-                text = score.value.toString(),
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                color = Color(score.color).copy(alpha = 0.6f),
-                modifier = Modifier
-                    .padding(end = LocalPaddings.current.medium)
-                    .align(Alignment.CenterEnd)
-            )
         }
     }
 }
