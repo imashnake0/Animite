@@ -60,6 +60,7 @@ class SettingsViewModel @Inject constructor(
     val mangaListsIndices = preferencesRepository.mangaListsIndices.filterNotNull()
     val showUserDescription = preferencesRepository.showUserDescription.filterNotNull()
     val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
+    val useExpressiveProgressIndicator = preferencesRepository.useExpressiveProgressIndicator.filterNotNull()
     val profileColor = preferencesRepository.profileColor.filterNotNull()
 
     fun updateProfileColor(profileColor: String) = viewModelScope.launch(Dispatchers.IO) {
@@ -101,6 +102,10 @@ class SettingsViewModel @Inject constructor(
 
     fun setUseProfileColor(useProfileColor: Boolean) = viewModelScope.launch(Dispatchers.IO) {
         preferencesRepository.setUseProfileColor(useProfileColor)
+    }
+
+    fun setUseExpressiveProgressIndicator(useExpressiveProgressIndicator: Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        preferencesRepository.setUseExpressiveProgressIndicator(useExpressiveProgressIndicator)
     }
 
     fun setDevOptions(enabled: Boolean) = viewModelScope.launch(Dispatchers.IO) {

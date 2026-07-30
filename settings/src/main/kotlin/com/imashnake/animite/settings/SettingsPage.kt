@@ -7,6 +7,7 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -45,6 +46,7 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -59,6 +61,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,6 +72,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -143,6 +147,7 @@ fun SettingsPage(
 
     val showUserDescription by viewModel.showUserDescription.collectAsState(initial = true)
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
+    val useExpressiveProgressIndicator by viewModel.useExpressiveProgressIndicator.collectAsState(initial = true)
     val profileColor by viewModel.profileColor.collectAsState(initial = "blue")
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
@@ -556,6 +561,11 @@ fun SettingsPage(
                                     label = R.string.profile_color,
                                     orientation = Item.Orientation.HORIZONTAL
                                 ),
+                                Item(
+                                    icon = R.drawable.animation,
+                                    label = R.string.use_expressive_progress_indicator,
+                                    orientation = Item.Orientation.HORIZONTAL
+                                ),
                             ),
                             onItemClick = { index ->
                                 when (index) {
@@ -563,6 +573,14 @@ fun SettingsPage(
                                         viewModel.setShowUserDescription(!showUserDescription)
                                         haptic.performHapticFeedback(
                                             hapticFeedbackType = if (showUserDescription) {
+                                                HapticFeedbackType.ToggleOff
+                                            } else HapticFeedbackType.ToggleOn
+                                        )
+                                    }
+                                    2 -> {
+                                        viewModel.setUseExpressiveProgressIndicator(!useExpressiveProgressIndicator)
+                                        haptic.performHapticFeedback(
+                                            hapticFeedbackType = if (useExpressiveProgressIndicator) {
                                                 HapticFeedbackType.ToggleOff
                                             } else HapticFeedbackType.ToggleOn
                                         )
@@ -617,6 +635,35 @@ fun SettingsPage(
                                             }
                                         }
                                     }
+                                    2 -> {
+                                        val amplitude by animateFloatAsState(
+                                            if (useExpressiveProgressIndicator) 0.5f else 0f
+                                        )
+                                        val progress = 67f
+
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = "$progress/100",
+                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                                                style = MaterialTheme.typography.labelSmall,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                            key(amplitude) {
+                                                LinearWavyProgressIndicator(
+                                                    progress = { progress / 100 },
+                                                    amplitude = { amplitude },
+                                                    waveSpeed = 15.dp,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .graphicsLayer { alpha = 0.6f }
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             },
                             isDarkMode = isDarkMode,
@@ -660,6 +707,29 @@ fun SettingsPage(
                                             if (useProfileColor) {
                                                 Icon(
                                                     imageVector = ImageVector.vectorResource(R.drawable.fill_bucket),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        },
+                                    )
+                                }
+                                2 -> {
+                                    Switch(
+                                        checked = useExpressiveProgressIndicator,
+                                        onCheckedChange = {
+                                            viewModel.setUseExpressiveProgressIndicator(!useExpressiveProgressIndicator)
+                                            haptic.performHapticFeedback(
+                                                hapticFeedbackType = if (useExpressiveProgressIndicator) {
+                                                    HapticFeedbackType.ToggleOff
+                                                } else HapticFeedbackType.ToggleOn
+                                            )
+                                        },
+                                        thumbContent = {
+                                            if (useExpressiveProgressIndicator) {
+                                                Icon(
+                                                    imageVector = Icons.Rounded.Check,
                                                     contentDescription = null,
                                                     modifier = Modifier.size(SwitchDefaults.IconSize),
                                                     tint = MaterialTheme.colorScheme.primary

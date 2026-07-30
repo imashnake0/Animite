@@ -49,6 +49,7 @@ class ProfileViewModel @Inject constructor(
 
     val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
     val profileColor = preferencesRepository.profileColor.filterNotNull()
+    val useExpressiveProgressIndicator = preferencesRepository.useExpressiveProgressIndicator.filterNotNull()
 
     val viewer = combine(
         flow = refreshTrigger.onStart { emit(Unit) },

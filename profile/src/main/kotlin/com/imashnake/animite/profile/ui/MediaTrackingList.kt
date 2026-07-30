@@ -79,6 +79,7 @@ fun MediaTrackingLists(
     listVisibility: SnapshotStateMap<Int, Boolean>,
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
@@ -156,6 +157,7 @@ fun MediaTrackingLists(
                                     )
                                 )
                             },
+                            useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                             modifier = Modifier
                                 .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
                                 .height(dimensionResource(R.dimen.tracking_list_item_height))
@@ -358,6 +360,7 @@ private fun HeaderPill(
 private fun MediaTrackingItem(
     listName: User.ListNames,
     item: Media.Tracking,
+    useExpressiveProgressIndicator: Boolean,
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -456,12 +459,19 @@ private fun MediaTrackingItem(
                         User.ListNames.WATCHING,
                         User.ListNames.REWATCHING,
                         User.ListNames.READING,
-                        User.ListNames.REREADING -> LinearWavyProgressIndicator(
-                            progress = { progress.toFloat() / segments },
-                            amplitude = { if (it <= 0.1f || it >= 0.95f) 0f else 0.5f },
-                            waveSpeed = 15.dp,
-                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                        )
+                        User.ListNames.REREADING -> if (useExpressiveProgressIndicator) {
+                            LinearWavyProgressIndicator(
+                                progress = { progress.toFloat() / segments },
+                                amplitude = { if (it <= 0.1f || it >= 0.95f) 0f else 0.5f },
+                                waveSpeed = 15.dp,
+                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                            )
+                        } else {
+                            LinearProgressIndicator(
+                                progress = { progress.toFloat() / segments },
+                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                            )
+                        }
                         else -> LinearProgressIndicator(
                             progress = { progress.toFloat() / segments },
                             modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }

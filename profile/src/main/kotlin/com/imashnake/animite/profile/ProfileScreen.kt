@@ -145,6 +145,7 @@ fun ProfileScreen(
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
     val profileColor by viewModel.profileColor.collectAsState(initial = "blue")
+    val useExpressiveProgressIndicator by viewModel.useExpressiveProgressIndicator.collectAsState(initial = true)
     val viewerAvatar by viewModel.viewerAvatar.collectAsState(initial = "")
     val viewer by viewModel.viewer.collectAsState()
     val viewerAnimeLists by viewModel.viewerAnimeLists.collectAsState()
@@ -275,6 +276,7 @@ fun ProfileScreen(
                                             onNavigateToMediaItem = onNavigateToMediaItem,
                                             showUserDescription = showUserDescription,
                                             onUserDescriptionClick = { showUserDescriptionSheet = true },
+                                            useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                                             sharedTransitionScope = sharedTransitionScope,
                                             animatedVisibilityScope = animatedVisibilityScope,
                                             contentPadding = navigationComponentPaddingValues + insetPaddingValues,
@@ -530,6 +532,7 @@ private fun UserTabs(
     onNavigateToMediaItem: (MediaPage) -> Unit,
     showUserDescription: Boolean,
     onUserDescriptionClick: () -> Unit,
+    useExpressiveProgressIndicator: Boolean,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
@@ -659,6 +662,7 @@ private fun UserTabs(
                         listVisibility = animeListVisibility,
                         updateMediaListsOrder = updateAnimeListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
+                        useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                         contentPadding = mediaTabContentPadding,
                     )
                     ProfileTab.MANGA -> MediaTab(
@@ -666,6 +670,7 @@ private fun UserTabs(
                         listVisibility = mangaListVisibility,
                         updateMediaListsOrder = updateMangaListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
+                        useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                         contentPadding = mediaTabContentPadding,
                     )
                     ProfileTab.FAVOURITES -> FavouritesTab(
