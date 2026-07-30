@@ -107,7 +107,7 @@ import kotlinx.serialization.Serializable
 
 private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
-private const val PRIVACY_POLICY = "https://imashnake.deno.dev/animite.html"
+private const val PRIVACY_POLICY = "https://imashnake.imashnake0.deno.net/animite.html"
 private const val SYSTEM_DAY_PART = "SYSTEM"
 private const val ANIMITE = "Animite"
 
