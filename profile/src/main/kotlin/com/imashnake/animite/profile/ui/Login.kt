@@ -1,4 +1,4 @@
-package com.imashnake.animite.profile
+package com.imashnake.animite.profile.ui
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.profile.R
 import com.imashnake.animite.profile.dev.ANILIST_AUTH_URL
 
 @Composable
