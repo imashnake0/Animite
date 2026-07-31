@@ -23,6 +23,7 @@ private const val USE_PROFILE_COLOR = true
 private const val USE_EXPRESSIVE_PROGRESS_INDICATOR = true
 private const val PROFILE_COLOR = "blue"
 private const val IS_DEV_OPTIONS_ENABLED = false
+const val DEFAULT_MEDIA_LIST_ORDER = "[]"
 
 /**
  * Stores API-specific state in an on-disk cache, and exposes the values as a Flow.
@@ -92,13 +93,13 @@ class PreferencesRepository internal constructor(
     }
 
     private val animeListOrderKey = stringPreferencesKey("anime_list_order")
-    val animeListOrder = dataStore.getValue(animeListOrderKey, null)
+    val animeListOrder = dataStore.getValue(animeListOrderKey, DEFAULT_MEDIA_LIST_ORDER)
     suspend fun setAnimeListOrder(animeListOrder: List<String>?) {
         dataStore.setValue(animeListOrderKey, Json.encodeToString(animeListOrder))
     }
 
     private val mangaListOrderKey = stringPreferencesKey("manga_list_order")
-    val mangaListOrder = dataStore.getValue(mangaListOrderKey, null)
+    val mangaListOrder = dataStore.getValue(mangaListOrderKey, DEFAULT_MEDIA_LIST_ORDER)
     suspend fun setMangaListOrder(mangaListOrder: List<String>?) {
         dataStore.setValue(mangaListOrderKey, Json.encodeToString(mangaListOrder))
     }
