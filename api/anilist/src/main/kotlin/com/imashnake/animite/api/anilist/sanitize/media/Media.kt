@@ -721,6 +721,8 @@ data class Media(
     data class Tracking(
         val id: Int,
         val coverImage: String?,
+        val bannerImage: String?,
+        val color: String?,
         val title: String?,
         val season: Season?,
         val seasonYear: Int?,
@@ -737,6 +739,8 @@ data class Media(
         ) : this(
             id = query.id,
             coverImage = query.coverImage?.large,
+            bannerImage = query.bannerImage,
+            color = query.coverImage?.color,
             title = when (language) {
                 Language.DEFAULT -> query.title?.userPreferred
                 Language.ROMAJI -> query.title?.romaji

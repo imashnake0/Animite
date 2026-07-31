@@ -2,7 +2,9 @@ fragment MediaTracking on Media {
     id
     coverImage {
         large
+        color
     }
+    bannerImage
     title {
         userPreferred
         romaji

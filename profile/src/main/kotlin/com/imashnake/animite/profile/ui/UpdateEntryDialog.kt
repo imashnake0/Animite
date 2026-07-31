@@ -1,6 +1,5 @@
 package com.imashnake.animite.profile.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,23 +17,30 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.graphics.toColorInt
+import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Divider
 import com.imashnake.animite.core.ui.component.MediaMediumCard
+import com.imashnake.animite.core.ui.ext.crossfadeModel
+import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun UpdateEntryDialog(
     item: Media.Tracking,
-    bannerImage: String,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -46,7 +52,19 @@ fun UpdateEntryDialog(
             Box {
                 Column {
                     // Banner image
-                    Box(Modifier.background(Color.Green).fillMaxWidth().aspectRatio(19f / 4))
+                    AsyncImage(
+                        model = crossfadeModel(item.bannerImage),
+                        contentDescription = null,
+                        error = painterResource(R.drawable.background),
+                        fallback = painterResource(R.drawable.background),
+                        contentScale = ContentScale.Crop,
+                        alignment = Alignment.Center,
+                        colorFilter = ColorFilter.tint(
+                            color = item.color?.toColorInt()?.let { Color(it) }?.copy(alpha = 0.25f) ?: Color.Transparent,
+                            blendMode = BlendMode.SrcAtop
+                        ),
+                        modifier = Modifier.fillMaxWidth().aspectRatio(19f / 4)
+                    )
 
                     Column(
                         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
