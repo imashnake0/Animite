@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -364,7 +365,14 @@ private fun MediaTrackingItem(
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier = modifier.clickable { onClick(item.id, item.title) }) {
+    var isUpdateEntryDialogVisible by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = modifier.combinedClickable(
+            onClick = { onClick(item.id, item.title) },
+            onLongClick = { isUpdateEntryDialogVisible = true }
+        )
+    ) {
         MediaTrackingCard(
             image = item.coverImage,
             tag = null,
@@ -480,5 +488,12 @@ private fun MediaTrackingItem(
                 }
             }
         }
+    }
+
+    if (isUpdateEntryDialogVisible) {
+        UpdateEntryDialog(
+            title = item.title.orEmpty(),
+            onDismissRequest = { isUpdateEntryDialogVisible = false }
+        )
     }
 }
