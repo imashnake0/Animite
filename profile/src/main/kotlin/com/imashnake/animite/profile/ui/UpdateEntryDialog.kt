@@ -1,15 +1,21 @@
 package com.imashnake.animite.profile.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,12 +23,16 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -30,12 +40,16 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.toColorInt
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Divider
+import com.imashnake.animite.core.ui.component.DropDownIcon
 import com.imashnake.animite.core.ui.component.MediaMediumCard
 import com.imashnake.animite.core.ui.ext.crossfadeModel
-import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
+import com.imashnake.animite.profile.R
+import com.imashnake.animite.profile.dev.res
+import com.imashnake.animite.media.R as mediaR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -49,14 +63,15 @@ fun UpdateEntryDialog(
             shape = RoundedCornerShape(18.dp + LocalPaddings.current.large),
             modifier = modifier.fillMaxWidth()
         ) {
+            // region header
             Box {
                 Column {
-                    // Banner image
+                    // TODO: Reuse.
                     AsyncImage(
                         model = crossfadeModel(item.bannerImage),
                         contentDescription = null,
-                        error = painterResource(R.drawable.background),
-                        fallback = painterResource(R.drawable.background),
+                        error = painterResource(mediaR.drawable.background),
+                        fallback = painterResource(mediaR.drawable.background),
                         contentScale = ContentScale.Crop,
                         alignment = Alignment.Center,
                         colorFilter = ColorFilter.tint(
@@ -108,6 +123,7 @@ fun UpdateEntryDialog(
                         }
                     }
                 }
+
                 MediaMediumCard(
                     image = item.coverImage,
                     tag = null,
@@ -122,6 +138,47 @@ fun UpdateEntryDialog(
                         )
                 )
             }
+            // endregion
+
+            // region entry options
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = LocalPaddings.current.large,
+                    vertical = LocalPaddings.current.medium)
+            ) {
+                // TODO: Reuse.
+                val iconPadding =
+                    (dimensionResource(R.dimen.tracking_list_header_height)
+                            - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    modifier = Modifier
+                        .height(dimensionResource(R.dimen.tracking_list_header_height))
+                        .clip(CircleShape)
+                        .clickable {}
+                        .background(
+                            MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                                alpha = 0.95f
+                            )
+                        )
+                        .padding(iconPadding)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(ListNames.COMPLETED.res),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
+                    )
+                    Text(
+                        text = "Completed",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                    )
+                    DropDownIcon(isDroppedDown = false)
+                }
+            }
+            // endregion
         }
     }
 }
