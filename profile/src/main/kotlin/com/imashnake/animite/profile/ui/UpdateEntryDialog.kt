@@ -146,36 +146,47 @@ fun UpdateEntryDialog(
                     horizontal = LocalPaddings.current.large,
                     vertical = LocalPaddings.current.medium)
             ) {
-                // TODO: Reuse.
-                val iconPadding =
-                    (dimensionResource(R.dimen.tracking_list_header_height)
-                            - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    modifier = Modifier
-                        .height(dimensionResource(R.dimen.tracking_list_header_height))
-                        .clip(CircleShape)
-                        .clickable {}
-                        .background(
-                            MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-                                alpha = 0.95f
+                Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)) {
+                    // TODO: Reuse.
+                    val iconPadding =
+                        (dimensionResource(R.dimen.tracking_list_header_height)
+                                - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                        modifier = Modifier
+                            .height(dimensionResource(R.dimen.tracking_list_header_height))
+                            .clip(CircleShape)
+                            .clickable {}
+                            .background(
+                                MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                                    alpha = 0.95f
+                                )
                             )
+                            .padding(iconPadding)
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(ListNames.COMPLETED.res),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
                         )
-                        .padding(iconPadding)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(ListNames.COMPLETED.res),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
-                    )
-                    Text(
-                        text = "Completed",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                    )
-                    DropDownIcon(isDroppedDown = false)
+                        Text(
+                            text = "Completed",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                        )
+                        DropDownIcon(isDroppedDown = false)
+                    }
+
+                    item.score?.let { score ->
+                        Text(
+                            text = score.value.toString(),
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = Color(score.color).copy(alpha = 0.8f),
+                            modifier = Modifier.align(Alignment.CenterVertically).padding(top = 5.dp)
+                        )
+                    }
                 }
             }
             // endregion
