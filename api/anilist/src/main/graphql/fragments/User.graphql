@@ -21,17 +21,17 @@ fragment User on User {
         }
     }
     favourites {
-        anime(page: 0, perPage: 10) {
+        anime(page: 0, perPage: 25) {
             nodes {
                 ...MediaSmall
             }
         }
-        manga(page: 0, perPage: 10) {
+        manga(page: 0, perPage: 25) {
             nodes {
                 ...MediaSmall
             }
         }
-        characters(page: 0, perPage: 10) {
+        characters(page: 0, perPage: 25) {
             nodes {
                 ...CharacterSmall
             }
