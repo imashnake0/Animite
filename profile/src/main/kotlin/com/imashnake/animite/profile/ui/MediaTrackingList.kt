@@ -492,7 +492,8 @@ private fun MediaTrackingItem(
 
     if (isUpdateEntryDialogVisible) {
         UpdateEntryDialog(
-            title = item.title.orEmpty(),
+            item = item,
+            bannerImage = "",
             onDismissRequest = { isUpdateEntryDialogVisible = false }
         )
     }
