@@ -1,5 +1,6 @@
 fragment MediaTracking on Media {
     id
+    type
     coverImage {
         large
         color

@@ -7,7 +7,9 @@ import com.imashnake.animite.api.anilist.fragment.User
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Language
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
-import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.toTrackingStatus
+import com.imashnake.animite.api.anilist.type.MediaListStatus
 import com.imashnake.animite.api.anilist.type.MediaType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -89,7 +91,7 @@ data class User(
         @Immutable
         data class NamedTrackingList(
             val name: String?,
-            val existingListName: ListNames?,
+            val existingListName: TrackingStatus?,
             val list: ImmutableList<Media.Tracking>,
         ) {
             internal constructor(
@@ -103,7 +105,12 @@ data class User(
                         query = it?.media?.mediaTracking ?: return@mapNotNull null,
                         progress = it.progress,
                         score = it.score?.toFloat(),
-                        language = language
+                        language = language,
+                        status = it.status.toTrackingStatus(
+                            type = it.media.mediaTracking.type?.name?.let { type ->
+                                Type.valueOf(type)
+                            } ?: Type.UNKNOWN
+                        )
                     )
                 }.toImmutableList()
             )
@@ -212,14 +219,14 @@ data class User(
         Characters,
     }
 
-    enum class ListNames {
+    enum class TrackingStatus {
         // Anime lists
         WATCHING,
         COMPLETED,
         PAUSED,
         DROPPED,
         REWATCHING,
-        PLANNING,
+        PLAN_TO_WATCH,
 
         // Manga lists
         READING,
@@ -229,14 +236,24 @@ data class User(
         CUSTOM_OR_UNKNOWN;
 
         companion object {
-            fun safeValueOf(rawValue: String?): ListNames = try {
-                ListNames.valueOf(rawValue?.uppercase().toString())
+            fun safeValueOf(rawValue: String?): TrackingStatus = try {
+                TrackingStatus.valueOf(rawValue?.uppercase().toString())
             } catch (e: IllegalArgumentException) {
                 Log.e(EXCEPTION_TAG, "safeValueOf: $e; Format $rawValue not found.")
                 CUSTOM_OR_UNKNOWN
             }
 
             fun String?.sanitize() = safeValueOf(this)
+
+            fun MediaListStatus?.toTrackingStatus(type: Type): TrackingStatus = when (this) {
+                MediaListStatus.CURRENT -> if (type == Type.ANIME) WATCHING else READING
+                MediaListStatus.PLANNING -> if (type == Type.ANIME) PLAN_TO_WATCH else PLAN_TO_READ
+                MediaListStatus.COMPLETED -> COMPLETED
+                MediaListStatus.DROPPED -> DROPPED
+                MediaListStatus.PAUSED -> PAUSED
+                MediaListStatus.REPEATING -> if (type == Type.ANIME) REWATCHING else REREADING
+                else -> CUSTOM_OR_UNKNOWN
+            }
         }
     }
 

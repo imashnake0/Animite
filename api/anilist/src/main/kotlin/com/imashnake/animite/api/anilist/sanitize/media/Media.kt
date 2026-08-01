@@ -15,6 +15,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Status.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus
 import com.imashnake.animite.api.anilist.type.CharacterRole
 import com.imashnake.animite.api.anilist.type.MediaFormat
 import com.imashnake.animite.api.anilist.type.MediaRankType
@@ -730,11 +731,13 @@ data class Media(
         val segments: Int?,
         val progress: Int?,
         val score: Score?,
+        val status: TrackingStatus,
     ) {
         internal constructor(
             query: MediaTracking,
             progress: Int?,
             score: Float?,
+            status: TrackingStatus,
             language: Language
         ) : this(
             id = query.id,
@@ -752,7 +755,8 @@ data class Media(
             format = query.format?.sanitize(),
             segments = query.episodes ?: query.nextAiringEpisode?.episode ?: query.chapters,
             progress = progress,
-            score = score?.let { Score(it) }
+            score = score?.let { Score(it) },
+            status = status
         )
     }
 

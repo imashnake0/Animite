@@ -59,7 +59,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMapNotNull
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.sanitize
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Divider
 import com.imashnake.animite.core.ui.component.DropDownIcon
@@ -359,7 +359,7 @@ private fun HeaderPill(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MediaTrackingItem(
-    listName: User.ListNames,
+    listName: User.TrackingStatus,
     item: Media.Tracking,
     useExpressiveProgressIndicator: Boolean,
     onClick: (Int, String?) -> Unit,
@@ -447,7 +447,7 @@ private fun MediaTrackingItem(
 
             if (segments != null && progress != null) {
                 val formattedProgress = progress
-                    .takeUnless { listName == User.ListNames.COMPLETED }
+                    .takeUnless { listName == User.TrackingStatus.COMPLETED }
                     ?.let { "$it/$segments" }
                     ?: "$segments"
 
@@ -464,10 +464,10 @@ private fun MediaTrackingItem(
                     )
 
                     when (listName) {
-                        User.ListNames.WATCHING,
-                        User.ListNames.REWATCHING,
-                        User.ListNames.READING,
-                        User.ListNames.REREADING -> if (useExpressiveProgressIndicator) {
+                        User.TrackingStatus.WATCHING,
+                        User.TrackingStatus.REWATCHING,
+                        User.TrackingStatus.READING,
+                        User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
                             LinearWavyProgressIndicator(
                                 progress = { progress.toFloat() / segments },
                                 amplitude = { if (it <= 0.1f || it >= 0.95f) 0f else 0.5f },

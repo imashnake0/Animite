@@ -40,7 +40,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.toColorInt
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.sanitize.media.Media
-import com.imashnake.animite.api.anilist.sanitize.profile.User.ListNames
+import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Divider
 import com.imashnake.animite.core.ui.component.DropDownIcon
@@ -49,6 +49,7 @@ import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
 import com.imashnake.animite.profile.dev.res
+import com.imashnake.animite.profile.dev.title
 import com.imashnake.animite.media.R as mediaR
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -147,37 +148,7 @@ fun UpdateEntryDialog(
                     vertical = LocalPaddings.current.medium)
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)) {
-                    // TODO: Reuse.
-                    val iconPadding =
-                        (dimensionResource(R.dimen.tracking_list_header_height)
-                                - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                        modifier = Modifier
-                            .height(dimensionResource(R.dimen.tracking_list_header_height))
-                            .clip(CircleShape)
-                            .clickable {}
-                            .background(
-                                MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-                                    alpha = 0.95f
-                                )
-                            )
-                            .padding(iconPadding)
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(ListNames.COMPLETED.res),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
-                        )
-                        Text(
-                            text = "Completed",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                        )
-                        DropDownIcon(isDroppedDown = false)
-                    }
+                    StatusDropDown(status = item.status)
 
                     item.score?.let { score ->
                         Text(
@@ -193,3 +164,41 @@ fun UpdateEntryDialog(
         }
     }
 }
+
+@Composable
+fun StatusDropDown(
+    status: User.TrackingStatus,
+    modifier: Modifier = Modifier
+) {
+    val iconPadding =
+        (dimensionResource(R.dimen.tracking_list_header_height)
+                - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier
+            .height(dimensionResource(R.dimen.tracking_list_header_height))
+            .clip(CircleShape)
+            .clickable {}
+            .background(
+                MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                    alpha = 0.95f
+                )
+            )
+            .padding(iconPadding)
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(status.res),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
+        )
+        Text(
+            text = stringResource(status.title),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+        )
+        DropDownIcon(isDroppedDown = false)
+    }
+}
+
