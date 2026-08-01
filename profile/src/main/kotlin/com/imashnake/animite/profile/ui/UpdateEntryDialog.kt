@@ -165,6 +165,7 @@ fun UpdateEntryDialog(
     }
 }
 
+// TODO: This should be an actual dropdown.
 @Composable
 fun StatusDropDown(
     status: User.TrackingStatus,
