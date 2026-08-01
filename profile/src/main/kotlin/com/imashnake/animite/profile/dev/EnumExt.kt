@@ -17,6 +17,8 @@ val TrackingStatus.res get() = when(this) {
     TrackingStatus.REREADING -> R.drawable.rewatch_list
     TrackingStatus.PLAN_TO_READ -> mediaR.drawable.not_yet_released
 
+    TrackingStatus.PLANNING -> mediaR.drawable.not_yet_released
+
     TrackingStatus.CUSTOM_OR_UNKNOWN -> R.drawable.custom_list
 }
 

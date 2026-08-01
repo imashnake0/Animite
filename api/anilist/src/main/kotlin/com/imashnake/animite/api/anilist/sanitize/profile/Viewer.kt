@@ -233,6 +233,8 @@ data class User(
         REREADING,
         PLAN_TO_READ,
 
+        PLANNING,
+
         CUSTOM_OR_UNKNOWN;
 
         companion object {
