@@ -34,5 +34,6 @@ val TrackingStatus.title get() = when(this) {
     TrackingStatus.REREADING -> R.string.rereading
     TrackingStatus.PLAN_TO_READ -> R.string.plan_to_read
 
-    else -> R.string.unknown
+    TrackingStatus.PLANNING,
+    TrackingStatus.CUSTOM_OR_UNKNOWN -> R.string.unknown
 }
