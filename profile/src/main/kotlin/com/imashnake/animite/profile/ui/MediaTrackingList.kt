@@ -370,7 +370,7 @@ private fun MediaTrackingItem(
     Row(
         modifier = modifier.combinedClickable(
             onClick = { onClick(item.id, item.title) },
-            onLongClick = { isUpdateEntryDialogVisible = true }
+//            onLongClick = { isUpdateEntryDialogVisible = true }
         )
     ) {
         MediaTrackingCard(
