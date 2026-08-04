@@ -85,7 +85,7 @@ fun MediaTrackingLists(
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val namedLists = remember { namedLists.toMutableStateList() }
+    val namedLists = remember(namedLists) { namedLists.toMutableStateList() }
 
     val haptic = LocalHapticFeedback.current
     var isReordering by remember { mutableStateOf(false) }
