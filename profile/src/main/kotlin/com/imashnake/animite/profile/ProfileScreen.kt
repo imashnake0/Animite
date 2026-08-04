@@ -101,6 +101,7 @@ import com.imashnake.animite.profile.tabs.AboutTab
 import com.imashnake.animite.profile.tabs.FavouritesTab
 import com.imashnake.animite.profile.tabs.MediaTab
 import com.imashnake.animite.profile.tabs.ProfileTab
+import com.imashnake.animite.profile.ui.Login
 import com.imashnake.animite.settings.SettingsPage
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown

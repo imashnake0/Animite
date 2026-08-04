@@ -21,6 +21,17 @@
 
     <string name="genres">Genres</string>
 
+    <string name="watching">Watching</string>
+    <string name="completed">Completed</string>
+    <string name="paused">Paused</string>
+    <string name="dropped">Dropped</string>
+    <string name="rewatching">Rewatching</string>
+    <string name="plan_to_watch">Plan to watch</string>
+    <string name="reading">Reading</string>
+    <string name="rereading">Rereading</string>
+    <string name="plan_to_read">Plan to read</string>
+    <string name="unknown">Unknown</string>
+
     <string name="expand_all">Expand All</string>
     <string name="collapse_all">Collapse All</string>
     <string name="reorder">Reorder</string>

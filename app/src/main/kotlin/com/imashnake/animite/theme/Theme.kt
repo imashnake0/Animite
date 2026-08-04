@@ -2,9 +2,6 @@ package com.imashnake.animite.theme
 
 import android.os.Build
 import androidx.compose.animation.core.tween
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
@@ -32,12 +29,7 @@ import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.rememberDynamicColorScheme
 import kotlinx.datetime.LocalTime
 import kotlin.math.floor
-import kotlin.time.ExperimentalTime
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class, ExperimentalTime::class,
-)
 @Composable
 fun AnimiteTheme(
     paddings: Paddings = rememberDefaultPaddings(),
@@ -92,15 +84,7 @@ fun AnimiteTheme(
         }.modify(useDarkTheme, isAmoled)
     }
 
-    val animiteRippleTheme = RippleConfiguration(
-        color = MaterialTheme.colorScheme.primary,
-        rippleAlpha = RippleAlpha(
-            draggedAlpha = 0.16f,
-            focusedAlpha = 0.12f,
-            hoveredAlpha = 0.08f,
-            pressedAlpha = 0.12f,
-        )
-    )
+    val animiteRippleTheme = RippleConfiguration(color = MaterialTheme.colorScheme.primary)
 
     MaterialExpressiveTheme(
         colorScheme = animateColorScheme(animiteColorScheme, animationSpec = { tween(500) }),

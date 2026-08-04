@@ -23,6 +23,11 @@ class SettingsViewModel @Inject constructor(
     private val userRepository: AnilistUserRepository,
     private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
+
+    val isLoggedIn = preferencesRepository
+        .accessToken
+        .map { !it.isNullOrEmpty() }
+
     val theme = preferencesRepository.theme.filterNotNull()
     val useSystemColorScheme = preferencesRepository.useSystemColorScheme.filterNotNull()
     val isAmoled = preferencesRepository.isAmoled.filterNotNull()

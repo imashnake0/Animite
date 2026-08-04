@@ -131,6 +131,8 @@ fun SettingsPage(
     val scrollState = rememberScrollState()
     val haptic = LocalHapticFeedback.current
 
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
+
     val selectedTheme by viewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
     val useSystemColorScheme by viewModel.useSystemColorScheme.collectAsState(initial = true)
     val isAmoled by viewModel.isAmoled.collectAsState(initial = false)
@@ -541,202 +543,225 @@ fun SettingsPage(
                         }
                     }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
-                        Text(
-                            text = stringResource(R.string.profile_settings),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleLarge,
-                            overflow = TextOverflow.Ellipsis,
-                        )
+                    if (isLoggedIn) {
+                        Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                            Text(
+                                text = stringResource(R.string.profile_settings),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleLarge,
+                                overflow = TextOverflow.Ellipsis,
+                            )
 
-                        Items(
-                            items = persistentListOf(
-                                Item(
-                                    icon = R.drawable.user_description,
-                                    label = R.string.show_description,
-                                    orientation = Item.Orientation.HORIZONTAL
+                            Items(
+                                items = persistentListOf(
+                                    Item(
+                                        icon = R.drawable.user_description,
+                                        label = R.string.show_description,
+                                        orientation = Item.Orientation.HORIZONTAL
+                                    ),
+                                    Item(
+                                        icon = R.drawable.palette,
+                                        label = R.string.profile_color,
+                                        orientation = Item.Orientation.HORIZONTAL
+                                    ),
+                                    Item(
+                                        icon = R.drawable.animation,
+                                        label = R.string.use_expressive_progress_indicator,
+                                        orientation = Item.Orientation.HORIZONTAL
+                                    ),
                                 ),
-                                Item(
-                                    icon = R.drawable.palette,
-                                    label = R.string.profile_color,
-                                    orientation = Item.Orientation.HORIZONTAL
-                                ),
-                                Item(
-                                    icon = R.drawable.animation,
-                                    label = R.string.use_expressive_progress_indicator,
-                                    orientation = Item.Orientation.HORIZONTAL
-                                ),
-                            ),
-                            onItemClick = { index ->
-                                when (index) {
-                                    0 -> {
-                                        viewModel.setShowUserDescription(!showUserDescription)
-                                        haptic.performHapticFeedback(
-                                            hapticFeedbackType = if (showUserDescription) {
-                                                HapticFeedbackType.ToggleOff
-                                            } else HapticFeedbackType.ToggleOn
-                                        )
-                                    }
-                                    2 -> {
-                                        viewModel.setUseExpressiveProgressIndicator(!useExpressiveProgressIndicator)
-                                        haptic.performHapticFeedback(
-                                            hapticFeedbackType = if (useExpressiveProgressIndicator) {
-                                                HapticFeedbackType.ToggleOff
-                                            } else HapticFeedbackType.ToggleOn
-                                        )
-                                    }
-                                }
-                            },
-                            onItemLongClick = {},
-                            itemSubContent = {
-                                when (it) {
-                                    1 -> {
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(
-                                                ButtonGroupDefaults.ConnectedSpaceBetween
-                                            ),
-                                            modifier = Modifier.fillMaxWidth()
-                                        ) {
-                                            ProfileColor.entries.fastForEachIndexed { index, entry ->
-                                                ToggleButton(
-                                                    checked = profileColor.equals(entry.name, ignoreCase = true) && useProfileColor,
-                                                    onCheckedChange = {
-                                                        viewModel.updateProfileColor(entry.name.lowercase())
-                                                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                                                    },
-                                                    shapes = when (index) {
-                                                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                                        ProfileColor.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                                                    },
-                                                    enabled = useProfileColor,
-                                                    colors = ToggleButtonDefaults.toggleButtonColors(
-                                                        containerColor = entry.color,
-                                                        contentColor = entry.color.darken(4f),
-                                                        checkedContainerColor = entry.color,
-                                                        checkedContentColor = entry.color.darken(4f),
-                                                    ),
-                                                    modifier = Modifier.weight(1f)
-                                                ) {
-                                                    if (profileColor.equals(entry.name, ignoreCase = true) && useProfileColor) {
-                                                        entry.label?.let { id ->
-                                                            Text(
-                                                                text = stringResource(id),
-                                                                fontSize = 7.sp,
-                                                                maxLines = 1
-                                                            )
-                                                        } ?: Icon(
-                                                            imageVector = Icons.Rounded.Check,
-                                                            contentDescription = null,
-                                                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    2 -> {
-                                        val amplitude by animateFloatAsState(
-                                            if (useExpressiveProgressIndicator) 0.5f else 0f
-                                        )
-                                        val progress = 67
-
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = "$progress/100",
-                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                                                style = MaterialTheme.typography.labelSmall,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                            key(amplitude) {
-                                                LinearWavyProgressIndicator(
-                                                    progress = { progress.toFloat() / 100 },
-                                                    amplitude = { amplitude },
-                                                    waveSpeed = 15.dp,
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .graphicsLayer { alpha = 0.6f }
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            isDarkMode = isDarkMode,
-                        ) { index ->
-                            when (index) {
-                                0 -> {
-                                    Switch(
-                                        checked = showUserDescription,
-                                        onCheckedChange = {
-                                            viewModel.setShowUserDescription(it)
+                                onItemClick = { index ->
+                                    when (index) {
+                                        0 -> {
+                                            viewModel.setShowUserDescription(!showUserDescription)
                                             haptic.performHapticFeedback(
-                                                hapticFeedbackType = if (!it) {
+                                                hapticFeedbackType = if (showUserDescription) {
                                                     HapticFeedbackType.ToggleOff
                                                 } else HapticFeedbackType.ToggleOn
                                             )
-                                        },
-                                        thumbContent = {
-                                            if (showUserDescription) {
-                                                Icon(
-                                                    imageVector = ImageVector.vectorResource(R.drawable.eye),
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        },
-                                    )
-                                }
-                                1 -> {
-                                    Switch(
-                                        checked = useProfileColor,
-                                        onCheckedChange = {
-                                            viewModel.setUseProfileColor(it)
-                                            haptic.performHapticFeedback(
-                                                hapticFeedbackType = if (!it) {
-                                                    HapticFeedbackType.ToggleOff
-                                                } else HapticFeedbackType.ToggleOn
-                                            )
-                                        },
-                                        thumbContent = {
-                                            if (useProfileColor) {
-                                                Icon(
-                                                    imageVector = ImageVector.vectorResource(R.drawable.fill_bucket),
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        },
-                                    )
-                                }
-                                2 -> {
-                                    Switch(
-                                        checked = useExpressiveProgressIndicator,
-                                        onCheckedChange = {
+                                        }
+
+                                        2 -> {
                                             viewModel.setUseExpressiveProgressIndicator(!useExpressiveProgressIndicator)
                                             haptic.performHapticFeedback(
                                                 hapticFeedbackType = if (useExpressiveProgressIndicator) {
                                                     HapticFeedbackType.ToggleOff
                                                 } else HapticFeedbackType.ToggleOn
                                             )
-                                        },
-                                        thumbContent = {
-                                            if (useExpressiveProgressIndicator) {
-                                                Icon(
-                                                    imageVector = Icons.Rounded.Check,
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(SwitchDefaults.IconSize),
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
+                                        }
+                                    }
+                                },
+                                onItemLongClick = {},
+                                itemSubContent = {
+                                    when (it) {
+                                        1 -> {
+                                            Row(
+                                                horizontalArrangement = Arrangement.spacedBy(
+                                                    ButtonGroupDefaults.ConnectedSpaceBetween
+                                                ),
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                ProfileColor.entries.fastForEachIndexed { index, entry ->
+                                                    ToggleButton(
+                                                        checked = profileColor.equals(
+                                                            entry.name,
+                                                            ignoreCase = true
+                                                        ) && useProfileColor,
+                                                        onCheckedChange = {
+                                                            viewModel.updateProfileColor(entry.name.lowercase())
+                                                            haptic.performHapticFeedback(
+                                                                HapticFeedbackType.SegmentTick
+                                                            )
+                                                        },
+                                                        shapes = when (index) {
+                                                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                            ProfileColor.entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                                        },
+                                                        enabled = useProfileColor,
+                                                        colors = ToggleButtonDefaults.toggleButtonColors(
+                                                            containerColor = entry.color,
+                                                            contentColor = entry.color.darken(4f),
+                                                            checkedContainerColor = entry.color,
+                                                            checkedContentColor = entry.color.darken(
+                                                                4f
+                                                            ),
+                                                        ),
+                                                        modifier = Modifier.weight(1f)
+                                                    ) {
+                                                        if (profileColor.equals(
+                                                                entry.name,
+                                                                ignoreCase = true
+                                                            ) && useProfileColor
+                                                        ) {
+                                                            entry.label?.let { id ->
+                                                                Text(
+                                                                    text = stringResource(id),
+                                                                    fontSize = 7.sp,
+                                                                    maxLines = 1
+                                                                )
+                                                            } ?: Icon(
+                                                                imageVector = Icons.Rounded.Check,
+                                                                contentDescription = null,
+                                                                modifier = Modifier.size(
+                                                                    SwitchDefaults.IconSize
+                                                                ),
+                                                            )
+                                                        }
+                                                    }
+                                                }
                                             }
-                                        },
-                                    )
+                                        }
+
+                                        2 -> {
+                                            val amplitude by animateFloatAsState(
+                                                if (useExpressiveProgressIndicator) 0.5f else 0f
+                                            )
+                                            val progress = 67
+
+                                            Row(
+                                                horizontalArrangement = Arrangement.spacedBy(
+                                                    LocalPaddings.current.small
+                                                ),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(
+                                                    text = "$progress/100",
+                                                    color = MaterialTheme.colorScheme.primary.copy(
+                                                        alpha = 0.7f
+                                                    ),
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                                key(amplitude) {
+                                                    LinearWavyProgressIndicator(
+                                                        progress = { progress.toFloat() / 100 },
+                                                        amplitude = { amplitude },
+                                                        waveSpeed = 15.dp,
+                                                        modifier = Modifier
+                                                            .fillMaxWidth()
+                                                            .graphicsLayer { alpha = 0.6f }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                isDarkMode = isDarkMode,
+                            ) { index ->
+                                when (index) {
+                                    0 -> {
+                                        Switch(
+                                            checked = showUserDescription,
+                                            onCheckedChange = {
+                                                viewModel.setShowUserDescription(it)
+                                                haptic.performHapticFeedback(
+                                                    hapticFeedbackType = if (!it) {
+                                                        HapticFeedbackType.ToggleOff
+                                                    } else HapticFeedbackType.ToggleOn
+                                                )
+                                            },
+                                            thumbContent = {
+                                                if (showUserDescription) {
+                                                    Icon(
+                                                        imageVector = ImageVector.vectorResource(R.drawable.eye),
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            },
+                                        )
+                                    }
+
+                                    1 -> {
+                                        Switch(
+                                            checked = useProfileColor,
+                                            onCheckedChange = {
+                                                viewModel.setUseProfileColor(it)
+                                                haptic.performHapticFeedback(
+                                                    hapticFeedbackType = if (!it) {
+                                                        HapticFeedbackType.ToggleOff
+                                                    } else HapticFeedbackType.ToggleOn
+                                                )
+                                            },
+                                            thumbContent = {
+                                                if (useProfileColor) {
+                                                    Icon(
+                                                        imageVector = ImageVector.vectorResource(R.drawable.fill_bucket),
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            },
+                                        )
+                                    }
+
+                                    2 -> {
+                                        Switch(
+                                            checked = useExpressiveProgressIndicator,
+                                            onCheckedChange = {
+                                                viewModel.setUseExpressiveProgressIndicator(!useExpressiveProgressIndicator)
+                                                haptic.performHapticFeedback(
+                                                    hapticFeedbackType = if (useExpressiveProgressIndicator) {
+                                                        HapticFeedbackType.ToggleOff
+                                                    } else HapticFeedbackType.ToggleOn
+                                                )
+                                            },
+                                            thumbContent = {
+                                                if (useExpressiveProgressIndicator) {
+                                                    Icon(
+                                                        imageVector = Icons.Rounded.Check,
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(SwitchDefaults.IconSize),
+                                                        tint = MaterialTheme.colorScheme.primary
+                                                    )
+                                                }
+                                            },
+                                        )
+                                    }
                                 }
                             }
                         }
