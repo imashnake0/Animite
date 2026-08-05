@@ -33,6 +33,7 @@ import kotlinx.datetime.format.MonthNames
 import java.util.Locale
 import kotlin.collections.mapNotNull
 import kotlin.collections.orEmpty
+import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -789,14 +790,14 @@ data class Media(
                 ScoreFormat.POINT_10_DECIMAL,
                 ScoreFormat.POINT_10 -> getColor(score)
                 ScoreFormat.POINT_5 -> getColor(score * 2f)
-                ScoreFormat.POINT_3 -> when (score) {
-                    0f -> RED
-                    1f -> ORANGE
-                    2f -> LIME
-                    3f -> GREEN
+                ScoreFormat.POINT_3 -> when (score.roundToInt()) {
+                    0 -> RED
+                    1 -> ORANGE
+                    2 -> LIME
+                    3 -> GREEN
                     else -> GREEN
                 }
-                ScoreFormat.UNKNOWN__ -> GREEN
+                else -> GREEN
             }
         )
     }
