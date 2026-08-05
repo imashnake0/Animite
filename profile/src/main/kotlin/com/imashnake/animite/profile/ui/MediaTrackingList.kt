@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,6 +58,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMapNotNull
+import androidx.compose.ui.util.fastRoundToInt
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.sanitize
@@ -73,13 +75,13 @@ import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import kotlin.math.roundToInt
 
 @Composable
 fun MediaTrackingLists(
     type: Media.Small.Type,
     namedLists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     listVisibility: SnapshotStateMap<Int, Boolean>,
-    scoreFormat: ScoreFormat,
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     useExpressiveProgressIndicator: Boolean,
@@ -436,12 +438,7 @@ private fun MediaTrackingItem(
                 }
 
                 item.score?.let { score ->
-                    Text(
-                        text = score.value.toString(),
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color(score.color).copy(alpha = 0.6f),
-                        modifier = Modifier.align(Alignment.CenterVertically).padding(top = 5.dp)
-                    )
+                    Score(score)
                 }
             }
 
@@ -498,5 +495,50 @@ private fun MediaTrackingItem(
             item = item,
             onDismissRequest = { isUpdateEntryDialogVisible = false }
         )
+    }
+}
+
+@Composable
+fun RowScope.Score(
+    score: Media.Score,
+    modifier: Modifier = Modifier
+) {
+    when(score.format) {
+        ScoreFormat.POINT_100,
+        ScoreFormat.POINT_10_DECIMAL,
+        ScoreFormat.POINT_10 -> {
+            Text(
+                text = when (score.format) {
+                    ScoreFormat.POINT_100,
+                    ScoreFormat.POINT_10 -> score.value.roundToInt()
+                    ScoreFormat.POINT_10_DECIMAL -> score.value
+                    else -> ""
+                }.toString(),
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                color = Color(score.color).copy(alpha = 0.6f),
+                modifier = modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(top = 5.dp)
+            )
+        }
+        ScoreFormat.POINT_5 -> {}
+        ScoreFormat.POINT_3 -> {
+            Icon(
+                imageVector = ImageVector.vectorResource(
+                    when(score.value.fastRoundToInt()) {
+                        0 -> R.drawable.dead
+                        1 -> R.drawable.weary
+                        2 -> R.drawable.neutral
+                        else -> R.drawable.smile
+                    }
+                ),
+                contentDescription = null,
+                tint = Color(score.color).copy(alpha = 0.6f),
+                modifier = modifier
+                    .align(Alignment.CenterVertically)
+                    .size(dimensionResource(R.dimen.smiley_icon_size))
+            )
+        }
+        else -> {}
     }
 }

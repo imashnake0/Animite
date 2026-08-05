@@ -763,9 +763,10 @@ data class Media(
         )
     }
 
+    @Immutable
     data class Score(
         val value: Float,
-        val scoreFormat: ScoreFormat,
+        val format: ScoreFormat,
         val color: Long
     ) {
         companion object {
@@ -784,7 +785,7 @@ data class Media(
 
         internal constructor(score: Float, scoreFormat: ScoreFormat) : this(
             value = score,
-            scoreFormat = scoreFormat,
+            format = scoreFormat,
             color = when(scoreFormat) {
                 ScoreFormat.POINT_100 -> getColor(score / 10f)
                 ScoreFormat.POINT_10_DECIMAL,
