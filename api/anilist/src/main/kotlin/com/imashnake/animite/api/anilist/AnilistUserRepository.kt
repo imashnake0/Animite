@@ -43,7 +43,7 @@ class AnilistUserRepository(
         type: MediaType?,
         useNetwork: Boolean,
         language: Media.Language = Media.Language.DEFAULT,
-        scoreFormat: ScoreFormat?,
+        scoreFormat: ScoreFormat,
         mediaListOrder: List<String>
     ): Flow<Result<User.MediaCollection>> {
         return apolloClient.query(
@@ -60,7 +60,7 @@ class AnilistUserRepository(
         )
         .toFlow()
         .filter { it.exception == null }
-        .asResult { User.MediaCollection(it, type, language, mediaListOrder) }
+        .asResult { User.MediaCollection(it, type, language, scoreFormat, mediaListOrder) }
     }
 
     fun updateUser(

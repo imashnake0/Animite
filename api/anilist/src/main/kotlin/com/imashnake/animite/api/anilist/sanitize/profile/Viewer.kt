@@ -99,6 +99,7 @@ data class User(
         ) {
             internal constructor(
                 query: UserMediaListQuery.List,
+                scoreFormat: ScoreFormat,
                 language: Language
             ) : this(
                 name = query.name,
@@ -108,6 +109,7 @@ data class User(
                         query = it?.media?.mediaTracking ?: return@mapNotNull null,
                         progress = it.progress,
                         score = it.score?.toFloat(),
+                        scoreFormat = scoreFormat,
                         language = language,
                         status = it.status.toTrackingStatus(
                             type = it.media.mediaTracking.type?.name?.let { type ->
@@ -123,14 +125,15 @@ data class User(
             query: UserMediaListQuery.Data,
             type: MediaType?,
             language: Language,
+            scoreFormat: ScoreFormat,
             mediaListOrder: List<String>
         ) : this(
             type = type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             namedLists = query.mediaListCollection?.lists.orEmpty().sortedBy {
                 mediaListOrder.indexOf(it?.name)
             }.mapNotNull {
-                NamedTrackingList(it ?: return@mapNotNull null, language)
-            }.toImmutableList()
+                NamedTrackingList(it ?: return@mapNotNull null, scoreFormat, language)
+            }.toImmutableList(),
         )
     }
 
