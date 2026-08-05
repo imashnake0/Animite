@@ -785,10 +785,10 @@ data class Media(
             value = score,
             scoreFormat = scoreFormat,
             color = when(scoreFormat) {
-                ScoreFormat.POINT_100 -> getColor(score / 100f)
+                ScoreFormat.POINT_100 -> getColor(score / 10f)
                 ScoreFormat.POINT_10_DECIMAL,
                 ScoreFormat.POINT_10 -> getColor(score)
-                ScoreFormat.POINT_5 -> getColor(score / 5f)
+                ScoreFormat.POINT_5 -> getColor(score * 2f)
                 ScoreFormat.POINT_3 -> when (score) {
                     0f -> RED
                     1f -> ORANGE
