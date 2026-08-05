@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
-import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.core.ui.screen.FallbackScreen
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.R

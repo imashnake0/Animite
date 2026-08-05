@@ -78,6 +78,8 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
 import com.imashnake.animite.settings.R as settingsR
 
+private const val TOTAL_STARS = 5
+
 @Composable
 fun MediaTrackingLists(
     type: Media.Small.Type,
@@ -447,7 +449,7 @@ private fun MediaTrackingItem(
                                 val filledStars = score.value.fastRoundToInt()
                                 Row {
                                     repeat(filledStars) { Star(filled = true) }
-                                    repeat(5 - filledStars) { Star(filled = false) }
+                                    repeat(TOTAL_STARS - filledStars) { Star(filled = false) }
                                 }
                             }
                         }
