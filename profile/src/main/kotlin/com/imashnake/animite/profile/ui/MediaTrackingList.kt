@@ -76,6 +76,7 @@ import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
+import com.imashnake.animite.settings.R as settingsR
 
 @Composable
 fun MediaTrackingLists(
@@ -410,29 +411,45 @@ private fun MediaTrackingItem(
                         maxLines = 1,
                     )
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        item.format?.let {
-                            Text(
-                                text = stringResource(it.res),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelSmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            item.format?.let {
+                                Text(
+                                    text = stringResource(it.res),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            if (item.season != null && item.format != null) {
+                                Divider(shape = MaterialShapes.Triangle.toShape())
+                            }
+
+                            item.season?.let {
+                                Text(
+                                    text = stringResource(it.res) +
+                                            " ${item.seasonYear?.toString().orEmpty()}",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1
+                                )
+                            }
                         }
 
-                        if (item.season != null && item.format != null) {
-                            Divider(shape = MaterialShapes.Triangle.toShape())
-                        }
-
-                        item.season?.let {
-                            Text(
-                                text = stringResource(it.res) +
-                                        " ${item.seasonYear?.toString().orEmpty()}",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelSmall,
-                                maxLines = 1
-                            )
+                        item.score?.let { score ->
+                            if (score.format == ScoreFormat.POINT_5) {
+                                val filledStars = score.value.fastRoundToInt()
+                                Row {
+                                    repeat(filledStars) { Star(filled = true) }
+                                    repeat(5 - filledStars) { Star(filled = false) }
+                                }
+                            }
                         }
                     }
                 }
@@ -533,7 +550,7 @@ fun RowScope.Score(
                             0 -> R.drawable.dead
                             1 -> R.drawable.weary
                             2 -> R.drawable.neutral
-                            else -> R.drawable.smile
+                            else -> settingsR.drawable.smile
                         }
                     ),
                     contentDescription = null,
@@ -545,4 +562,17 @@ fun RowScope.Score(
             else -> {}
         }
     }
+}
+
+@Composable
+private fun Star(
+    filled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        imageVector = ImageVector.vectorResource(settingsR.drawable.star),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary.copy(alpha = if (!filled) 0.2f else 1f),
+        modifier = modifier.size(dimensionResource(R.dimen.star_icon_size))
+    )
 }

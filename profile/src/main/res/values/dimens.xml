@@ -12,4 +12,5 @@
 
     <dimen name="list_options_icon_size">12dp</dimen>
     <dimen name="smiley_icon_size">24dp</dimen>
+    <dimen name="star_icon_size">14dp</dimen>
 </resources>
