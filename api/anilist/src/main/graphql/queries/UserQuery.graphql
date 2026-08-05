@@ -22,14 +22,14 @@ query Viewer {
     }
 }
 
-query UserMediaListQuery($userId: Int, $type: MediaType) {
+query UserMediaListQuery($userId: Int, $type: MediaType, $scoreFormat: ScoreFormat) {
     mediaListCollection: MediaListCollection(userId: $userId, type: $type) {
         lists {
             name
             entries {
                 status
                 progress
-                score(format: POINT_10_DECIMAL)
+                score(format: $scoreFormat)
                 media {
                     ...MediaTracking
                 }

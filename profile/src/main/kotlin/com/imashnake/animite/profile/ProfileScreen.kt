@@ -86,6 +86,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.Companion.profileColorToHex
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.banner.NestedScrollBannerLayout
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -146,6 +147,7 @@ fun ProfileScreen(
     val isLoggedIn by viewModel.isLoggedIn.collectAsState(initial = false)
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
     val profileColor by viewModel.profileColor.collectAsState(initial = "blue")
+    val scoreFormat by viewModel.scoreFormat.collectAsState(initial = ScoreFormat.POINT_10_DECIMAL)
     val useExpressiveProgressIndicator by viewModel.useExpressiveProgressIndicator.collectAsState(initial = true)
     val viewerAvatar by viewModel.viewerAvatar.collectAsState(initial = "")
     val viewer by viewModel.viewer.collectAsState()
@@ -272,6 +274,7 @@ fun ProfileScreen(
                                             user = this@run,
                                             animeCollection = viewerAnimeLists.data,
                                             mangaCollection = viewerMangaLists.data,
+                                            scoreFormat = scoreFormat,
                                             updateAnimeListsOrder = viewModel::updateAnimeLists,
                                             updateMangaListsOrder = viewModel::updateMangaLists,
                                             onNavigateToMediaItem = onNavigateToMediaItem,
@@ -528,6 +531,7 @@ private fun UserTabs(
     user: User,
     animeCollection: User.MediaCollection?,
     mangaCollection: User.MediaCollection?,
+    scoreFormat: ScoreFormat,
     updateAnimeListsOrder: (List<String>) -> Unit,
     updateMangaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
@@ -661,6 +665,7 @@ private fun UserTabs(
                     ProfileTab.ANIME -> MediaTab(
                         mediaCollection = animeCollection,
                         listVisibility = animeListVisibility,
+                        scoreFormat = scoreFormat,
                         updateMediaListsOrder = updateAnimeListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
@@ -669,6 +674,7 @@ private fun UserTabs(
                     ProfileTab.MANGA -> MediaTab(
                         mediaCollection = mangaCollection,
                         listVisibility = mangaListVisibility,
+                        scoreFormat = scoreFormat,
                         updateMediaListsOrder = updateMangaListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,

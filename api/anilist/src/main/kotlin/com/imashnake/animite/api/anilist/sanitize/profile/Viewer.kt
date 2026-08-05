@@ -11,6 +11,7 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Co
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.toTrackingStatus
 import com.imashnake.animite.api.anilist.type.MediaListStatus
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Duration.Companion.minutes
@@ -44,6 +45,8 @@ data class User(
     val banner: String?,
     /** @see User.Options.profileColor */
     val color: String?,
+    /** @see User.MediaListOptions.scoreFormat */
+    val scoreFormat: ScoreFormat?,
 
     // region About
     /** User Stats */
@@ -180,6 +183,7 @@ data class User(
         avatar = query.avatar?.large,
         banner = query.bannerImage,
         color = query.options?.profileColor,
+        scoreFormat = query.mediaListOptions?.scoreFormat,
         // TODO: Replace with string resources.
         stats = listOfNotNull(
             query.statistics?.anime?.count?.toString()?.let {

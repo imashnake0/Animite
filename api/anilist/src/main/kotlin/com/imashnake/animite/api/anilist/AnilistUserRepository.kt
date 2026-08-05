@@ -43,12 +43,14 @@ class AnilistUserRepository(
         type: MediaType?,
         useNetwork: Boolean,
         language: Media.Language = Media.Language.DEFAULT,
+        scoreFormat: ScoreFormat?,
         mediaListOrder: List<String>
     ): Flow<Result<User.MediaCollection>> {
         return apolloClient.query(
             UserMediaListQuery(
                 userId = Optional.presentIfNotNull(id),
-                type = Optional.presentIfNotNull(type)
+                type = Optional.presentIfNotNull(type),
+                scoreFormat = Optional.presentIfNotNull(scoreFormat)
             )
         )
         .fetchPolicy(

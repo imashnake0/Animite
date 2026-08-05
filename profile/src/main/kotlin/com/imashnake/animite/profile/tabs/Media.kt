@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.core.ui.screen.FallbackScreen
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.profile.R
@@ -25,9 +26,10 @@ import kotlinx.collections.immutable.ImmutableList
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    scoreFormat: ScoreFormat,
+    useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -50,6 +52,7 @@ fun MediaTab(
                 type = mediaCollection.type,
                 lists = mediaCollection.namedLists,
                 listVisibility = listVisibility,
+                scoreFormat = scoreFormat,
                 updateMediaListsOrder = updateMediaListsOrder,
                 onNavigateToMediaItem = onNavigateToMediaItem,
                 useExpressiveProgressIndicator = useExpressiveProgressIndicator,
@@ -65,9 +68,10 @@ private fun UserMediaLists(
     type: Media.Small.Type,
     lists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    scoreFormat: ScoreFormat,
+    useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -75,6 +79,7 @@ private fun UserMediaLists(
         type = type,
         namedLists = lists,
         listVisibility = listVisibility,
+        scoreFormat = scoreFormat,
         updateMediaListsOrder = updateMediaListsOrder,
         onNavigateToMediaItem = onNavigateToMediaItem,
         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
