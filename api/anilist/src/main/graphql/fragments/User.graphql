@@ -38,6 +38,7 @@ fragment User on User {
         }
     }
     mediaListOptions {
+        scoreFormat
         animeList {
             sectionOrder
         }

@@ -22,6 +22,7 @@ private const val SHOW_USER_DESCRIPTION = true
 private const val USE_PROFILE_COLOR = true
 private const val USE_EXPRESSIVE_PROGRESS_INDICATOR = true
 private const val PROFILE_COLOR = "blue"
+private const val SCORE_FORMAT = "POINT_10_DECIMAL"
 private const val IS_DEV_OPTIONS_ENABLED = false
 const val DEFAULT_MEDIA_LIST_ORDER = "[]"
 
@@ -112,6 +113,8 @@ class PreferencesRepository internal constructor(
     // endregion
 
     // region settings
+
+    // TODO: Expose and set enum value.
     private val themeKey = stringPreferencesKey("theme")
     val theme = dataStore.getValue(themeKey, DEFAULT_THEME_KEY)
     suspend fun setTheme(theme: String) {
@@ -130,6 +133,7 @@ class PreferencesRepository internal constructor(
         dataStore.setValue(isAmoledKey, isAmoled)
     }
 
+    // TODO: Expose and set enum value.
     private val densityKey = stringPreferencesKey("density")
     val density = dataStore.getValue(densityKey, DEFAULT_DENSITY_KEY)
     suspend fun setDensity(density: String) {
@@ -142,6 +146,7 @@ class PreferencesRepository internal constructor(
         dataStore.setValue(isNsfwEnabledKey, isNsfwEnabled)
     }
 
+    // TODO: Expose and set enum value.
     private val languageKey = stringPreferencesKey("language")
     val language = dataStore.getValue(languageKey, DEFAULT_LANGUAGE_KEY)
     suspend fun setLanguage(language: String) {
@@ -176,6 +181,13 @@ class PreferencesRepository internal constructor(
     val profileColor = dataStore.getValue(profileColorKey, PROFILE_COLOR)
     suspend fun setProfileColor(profileColor: String?) {
         dataStore.setValue(profileColorKey, profileColor)
+    }
+
+    // TODO: Expose and set enum value.
+    private val scoreFormatKey = stringPreferencesKey("score_format")
+    val scoreFormat = dataStore.getValue(scoreFormatKey, SCORE_FORMAT)
+    suspend fun setScoreFormat(scoreFormat: String?) {
+        dataStore.setValue(scoreFormatKey, scoreFormat)
     }
 
     // region developer options

@@ -1,10 +1,12 @@
 mutation UpdateUser(
     $profileColor: String,
+    $scoreFormat: ScoreFormat,
     $animeListOptions: MediaListOptionsInput,
     $mangaListOptions: MediaListOptionsInput,
 ) {
     UpdateUser(
         profileColor: $profileColor,
+        scoreFormat: $scoreFormat,
         animeListOptions: $animeListOptions
         mangaListOptions: $mangaListOptions
     ) {
@@ -12,6 +14,7 @@ mutation UpdateUser(
             profileColor
         }
         mediaListOptions {
+            scoreFormat
             animeList {
                 sectionOrder
             }

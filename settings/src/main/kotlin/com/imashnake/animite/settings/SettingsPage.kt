@@ -92,6 +92,7 @@ import androidx.compose.ui.util.fastRoundToInt
 import androidx.core.graphics.drawable.toBitmap
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.banner.BannerLayout
 import com.imashnake.animite.banner.MountFuji
 import com.imashnake.animite.core.ui.DayPart
@@ -104,6 +105,7 @@ import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.core.ui.layout.TranslucentStatusBarLayout
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.media.ext.res
+import com.imashnake.animite.settings.ext.title
 import com.materialkolor.ktx.darken
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -151,6 +153,7 @@ fun SettingsPage(
     val useProfileColor by viewModel.useProfileColor.collectAsState(initial = true)
     val useExpressiveProgressIndicator by viewModel.useExpressiveProgressIndicator.collectAsState(initial = true)
     val profileColor by viewModel.profileColor.collectAsState(initial = "blue")
+    val scoreFormat by viewModel.scoreFormat.collectAsState(initial = ScoreFormat.POINT_10_DECIMAL.name)
 
     val isDevOptionsEnabled by viewModel.isDevOptionsEnabled.collectAsState(initial = false)
 
@@ -569,6 +572,11 @@ fun SettingsPage(
                                         label = R.string.use_expressive_progress_indicator,
                                         orientation = Item.Orientation.HORIZONTAL
                                     ),
+                                    Item(
+                                        icon = R.drawable.review,
+                                        label = R.string.score_format,
+                                        orientation = Item.Orientation.VERTICAL
+                                    ),
                                 ),
                                 onItemClick = { index ->
                                     when (index) {
@@ -761,6 +769,36 @@ fun SettingsPage(
                                                 }
                                             },
                                         )
+                                    }
+
+                                    3 -> {
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                ButtonGroupDefaults.ConnectedSpaceBetween
+                                            )
+                                        ) {
+                                            // TODO: Maybe sanitize.
+                                            ScoreFormat.entries.minus(ScoreFormat.UNKNOWN__).fastForEach { format ->
+                                                ToggleButton(
+                                                    checked = scoreFormat == format.name,
+                                                    onCheckedChange = {
+                                                        viewModel.updateScoreFormat(format)
+                                                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                                                    },
+                                                    shapes = when (format) {
+                                                        ScoreFormat.POINT_100 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                        ScoreFormat.POINT_3 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                                    },
+                                                    colors = ToggleButtonDefaults.toggleButtonColors(
+                                                        containerColor = MaterialTheme.colorScheme.background
+                                                    ),
+                                                    modifier = Modifier.weight(1f)
+                                                ) {
+                                                    Text(format.title)
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

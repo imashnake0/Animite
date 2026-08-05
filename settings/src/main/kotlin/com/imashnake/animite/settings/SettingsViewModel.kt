@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.model.AnimeList
 import com.imashnake.animite.core.model.MangaList
@@ -67,10 +68,17 @@ class SettingsViewModel @Inject constructor(
     val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
     val useExpressiveProgressIndicator = preferencesRepository.useExpressiveProgressIndicator.filterNotNull()
     val profileColor = preferencesRepository.profileColor.filterNotNull()
+    val scoreFormat = preferencesRepository.scoreFormat.filterNotNull()
 
     fun updateProfileColor(profileColor: String) = viewModelScope.launch(Dispatchers.IO) {
         userRepository.updateUser(profileColor = profileColor).collect {
             preferencesRepository.setProfileColor(it.getOrNull()?.options?.profileColor)
+        }
+    }
+
+    fun updateScoreFormat(scoreFormat: ScoreFormat) = viewModelScope.launch(Dispatchers.IO) {
+        userRepository.updateUser(scoreFormat = scoreFormat).collect {
+            preferencesRepository.setScoreFormat(it.getOrNull()?.mediaListOptions?.scoreFormat?.name)
         }
     }
 

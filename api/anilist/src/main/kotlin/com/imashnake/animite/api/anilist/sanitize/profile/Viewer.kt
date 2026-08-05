@@ -247,7 +247,7 @@ data class User(
 
             fun String?.sanitize() = safeValueOf(this)
 
-            fun MediaListStatus?.toTrackingStatus(type: Type): TrackingStatus = when (this) {
+            fun MediaListStatus?.toTrackingStatus(type: Type) = when (this) {
                 MediaListStatus.CURRENT -> if (type == Type.ANIME) WATCHING else READING
                 MediaListStatus.PLANNING -> if (type == Type.ANIME) PLAN_TO_WATCH else PLAN_TO_READ
                 MediaListStatus.COMPLETED -> COMPLETED
