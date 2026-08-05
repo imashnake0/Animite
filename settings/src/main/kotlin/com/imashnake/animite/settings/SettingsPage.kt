@@ -795,7 +795,29 @@ fun SettingsPage(
                                                     ),
                                                     modifier = Modifier.weight(1f)
                                                 ) {
-                                                    Text(format.title)
+                                                    Row(
+                                                        verticalAlignment = Alignment.CenterVertically,
+                                                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                                                    ) {
+                                                        Text(format.title, maxLines = 1)
+                                                        when(format) {
+                                                            ScoreFormat.POINT_5 -> {
+                                                                Icon(
+                                                                    imageVector = ImageVector.vectorResource(R.drawable.star),
+                                                                    contentDescription = null,
+                                                                    modifier = Modifier.size(16.dp).padding(bottom = 1.dp),
+                                                                )
+                                                            }
+                                                            ScoreFormat.POINT_3 -> {
+                                                                Icon(
+                                                                    imageVector = ImageVector.vectorResource(R.drawable.smile),
+                                                                    contentDescription = null,
+                                                                    modifier = Modifier.size(16.dp).padding(bottom = 1.dp),
+                                                                )
+                                                            }
+                                                            else -> {}
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
