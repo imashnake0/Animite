@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,9 +58,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMapNotNull
+import androidx.compose.ui.util.fastRoundToInt
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.sanitize
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Divider
 import com.imashnake.animite.core.ui.component.DropDownIcon
@@ -72,6 +75,10 @@ import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import kotlin.math.roundToInt
+import com.imashnake.animite.settings.R as settingsR
+
+private const val TOTAL_STARS = 5
 
 @Composable
 fun MediaTrackingLists(
@@ -406,40 +413,51 @@ private fun MediaTrackingItem(
                         maxLines = 1,
                     )
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        item.format?.let {
-                            Text(
-                                text = stringResource(it.res),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelSmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            item.format?.let {
+                                Text(
+                                    text = stringResource(it.res),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            if (item.season != null && item.format != null) {
+                                Divider(shape = MaterialShapes.Triangle.toShape())
+                            }
+
+                            item.season?.let {
+                                Text(
+                                    text = stringResource(it.res) +
+                                            " ${item.seasonYear?.toString().orEmpty()}",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1
+                                )
+                            }
                         }
 
-                        if (item.season != null && item.format != null) {
-                            Divider(shape = MaterialShapes.Triangle.toShape())
-                        }
-
-                        item.season?.let {
-                            Text(
-                                text = stringResource(it.res) +
-                                        " ${item.seasonYear?.toString().orEmpty()}",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                style = MaterialTheme.typography.labelSmall,
-                                maxLines = 1
-                            )
+                        item.score?.let { score ->
+                            if (score.format == ScoreFormat.POINT_5) {
+                                val filledStars = score.value.fastRoundToInt()
+                                Row {
+                                    repeat(filledStars) { Star(filled = true) }
+                                    repeat(TOTAL_STARS - filledStars) { Star(filled = false) }
+                                }
+                            }
                         }
                     }
                 }
 
                 item.score?.let { score ->
-                    Text(
-                        text = score.value.toString(),
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color(score.color).copy(alpha = 0.6f),
-                        modifier = Modifier.align(Alignment.CenterVertically).padding(top = 5.dp)
-                    )
+                    Score(score)
                 }
             }
 
@@ -497,4 +515,66 @@ private fun MediaTrackingItem(
             onDismissRequest = { isUpdateEntryDialogVisible = false }
         )
     }
+}
+
+@Composable
+fun RowScope.Score(
+    score: Media.Score,
+    modifier: Modifier = Modifier
+) {
+    AnimatedContent(
+        targetState = score,
+        modifier = modifier.align(Alignment.CenterVertically)
+    ) { score ->
+        when (score.format) {
+            ScoreFormat.POINT_100,
+            ScoreFormat.POINT_10_DECIMAL,
+            ScoreFormat.POINT_10 -> {
+                Text(
+                    text = when (score.format) {
+                        ScoreFormat.POINT_100,
+                        ScoreFormat.POINT_10 -> score.value.roundToInt()
+
+                        ScoreFormat.POINT_10_DECIMAL -> score.value
+                        else -> ""
+                    }.toString(),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color(score.color).copy(alpha = 0.6f),
+                    modifier = modifier.padding(top = 5.dp)
+                )
+            }
+
+            ScoreFormat.POINT_5 -> {}
+            ScoreFormat.POINT_3 -> {
+                Icon(
+                    imageVector = ImageVector.vectorResource(
+                        when (score.value.fastRoundToInt()) {
+                            0 -> R.drawable.dead
+                            1 -> R.drawable.weary
+                            2 -> R.drawable.neutral
+                            else -> settingsR.drawable.smile
+                        }
+                    ),
+                    contentDescription = null,
+                    tint = Color(score.color).copy(alpha = 0.6f),
+                    modifier = modifier.size(dimensionResource(R.dimen.smiley_icon_size))
+                )
+            }
+
+            else -> {}
+        }
+    }
+}
+
+@Composable
+private fun Star(
+    filled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        imageVector = ImageVector.vectorResource(settingsR.drawable.star),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary.copy(alpha = if (!filled) 0.2f else 1f),
+        modifier = modifier.size(dimensionResource(R.dimen.star_icon_size))
+    )
 }

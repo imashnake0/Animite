@@ -8,6 +8,7 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.MediaListOptionsInput
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 
@@ -42,12 +43,14 @@ class AnilistUserRepository(
         type: MediaType?,
         useNetwork: Boolean,
         language: Media.Language = Media.Language.DEFAULT,
+        scoreFormat: ScoreFormat,
         mediaListOrder: List<String>
     ): Flow<Result<User.MediaCollection>> {
         return apolloClient.query(
             UserMediaListQuery(
                 userId = Optional.presentIfNotNull(id),
-                type = Optional.presentIfNotNull(type)
+                type = Optional.presentIfNotNull(type),
+                scoreFormat = Optional.presentIfNotNull(scoreFormat)
             )
         )
         .fetchPolicy(
@@ -57,11 +60,12 @@ class AnilistUserRepository(
         )
         .toFlow()
         .filter { it.exception == null }
-        .asResult { User.MediaCollection(it, type, language, mediaListOrder) }
+        .asResult { User.MediaCollection(it, type, language, scoreFormat, mediaListOrder) }
     }
 
     fun updateUser(
         profileColor: String? = null,
+        scoreFormat: ScoreFormat? = null,
         animeSectionOrder: List<String>? = null,
         mangaSectionOrder: List<String>? = null,
     ): Flow<Result<UpdateUserMutation.UpdateUser?>> {
@@ -69,6 +73,7 @@ class AnilistUserRepository(
             .mutation(
                 UpdateUserMutation(
                     profileColor = Optional.presentIfNotNull(profileColor),
+                    scoreFormat = Optional.presentIfNotNull(scoreFormat),
                     animeListOptions = Optional.presentIfNotNull(
                         MediaListOptionsInput(
                             sectionOrder = Optional.presentIfNotNull(animeSectionOrder)

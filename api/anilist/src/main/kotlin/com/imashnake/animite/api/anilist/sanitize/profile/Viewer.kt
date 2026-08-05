@@ -11,6 +11,7 @@ import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Co
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.toTrackingStatus
 import com.imashnake.animite.api.anilist.type.MediaListStatus
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Duration.Companion.minutes
@@ -44,6 +45,8 @@ data class User(
     val banner: String?,
     /** @see User.Options.profileColor */
     val color: String?,
+    /** @see User.MediaListOptions.scoreFormat */
+    val scoreFormat: ScoreFormat?,
 
     // region About
     /** User Stats */
@@ -96,6 +99,7 @@ data class User(
         ) {
             internal constructor(
                 query: UserMediaListQuery.List,
+                scoreFormat: ScoreFormat,
                 language: Language
             ) : this(
                 name = query.name,
@@ -105,6 +109,7 @@ data class User(
                         query = it?.media?.mediaTracking ?: return@mapNotNull null,
                         progress = it.progress,
                         score = it.score?.toFloat(),
+                        scoreFormat = scoreFormat,
                         language = language,
                         status = it.status.toTrackingStatus(
                             type = it.media.mediaTracking.type?.name?.let { type ->
@@ -120,14 +125,15 @@ data class User(
             query: UserMediaListQuery.Data,
             type: MediaType?,
             language: Language,
+            scoreFormat: ScoreFormat,
             mediaListOrder: List<String>
         ) : this(
             type = type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             namedLists = query.mediaListCollection?.lists.orEmpty().sortedBy {
                 mediaListOrder.indexOf(it?.name)
             }.mapNotNull {
-                NamedTrackingList(it ?: return@mapNotNull null, language)
-            }.toImmutableList()
+                NamedTrackingList(it ?: return@mapNotNull null, scoreFormat, language)
+            }.toImmutableList(),
         )
     }
 
@@ -180,6 +186,7 @@ data class User(
         avatar = query.avatar?.large,
         banner = query.bannerImage,
         color = query.options?.profileColor,
+        scoreFormat = query.mediaListOptions?.scoreFormat,
         // TODO: Replace with string resources.
         stats = listOfNotNull(
             query.statistics?.anime?.count?.toString()?.let {
@@ -247,7 +254,7 @@ data class User(
 
             fun String?.sanitize() = safeValueOf(this)
 
-            fun MediaListStatus?.toTrackingStatus(type: Type): TrackingStatus = when (this) {
+            fun MediaListStatus?.toTrackingStatus(type: Type) = when (this) {
                 MediaListStatus.CURRENT -> if (type == Type.ANIME) WATCHING else READING
                 MediaListStatus.PLANNING -> if (type == Type.ANIME) PLAN_TO_WATCH else PLAN_TO_READ
                 MediaListStatus.COMPLETED -> COMPLETED

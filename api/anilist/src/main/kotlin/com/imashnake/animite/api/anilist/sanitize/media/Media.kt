@@ -24,6 +24,7 @@ import com.imashnake.animite.api.anilist.type.MediaSeason
 import com.imashnake.animite.api.anilist.type.MediaSort
 import com.imashnake.animite.api.anilist.type.MediaSource
 import com.imashnake.animite.api.anilist.type.MediaStatus
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -32,6 +33,7 @@ import kotlinx.datetime.format.MonthNames
 import java.util.Locale
 import kotlin.collections.mapNotNull
 import kotlin.collections.orEmpty
+import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -737,6 +739,7 @@ data class Media(
             query: MediaTracking,
             progress: Int?,
             score: Float?,
+            scoreFormat: ScoreFormat,
             status: TrackingStatus,
             language: Language
         ) : this(
@@ -755,28 +758,46 @@ data class Media(
             format = query.format?.sanitize(),
             segments = query.episodes ?: query.nextAiringEpisode?.episode ?: query.chapters,
             progress = progress,
-            score = score?.let { Score(it) },
+            score = score?.let { Score(it, scoreFormat) },
             status = status
         )
     }
 
+    @Immutable
     data class Score(
         val value: Float,
-        val color: Long,
+        val format: ScoreFormat,
+        val color: Long
     ) {
         companion object {
             private const val RED = 0xffff7770
             private const val ORANGE = 0xffffc863
             private const val LIME = 0xffb8ff70
             private const val GREEN = 0xff63ff88
+
+            fun getColor(normalizedScore: Float) = when {
+                normalizedScore < 5f -> RED
+                normalizedScore < 7f -> ORANGE
+                normalizedScore < 9f -> LIME
+                else -> GREEN
+            }
         }
 
-        internal constructor(score: Float) : this(
+        internal constructor(score: Float, scoreFormat: ScoreFormat) : this(
             value = score,
-            color = when {
-                score < 5f -> RED
-                score < 7f -> ORANGE
-                score < 9f -> LIME
+            format = scoreFormat,
+            color = when(scoreFormat) {
+                ScoreFormat.POINT_100 -> getColor(score / 10f)
+                ScoreFormat.POINT_10_DECIMAL,
+                ScoreFormat.POINT_10 -> getColor(score)
+                ScoreFormat.POINT_5 -> getColor(score * 2f)
+                ScoreFormat.POINT_3 -> when (score.roundToInt()) {
+                    0 -> RED
+                    1 -> ORANGE
+                    2 -> LIME
+                    3 -> GREEN
+                    else -> GREEN
+                }
                 else -> GREEN
             }
         )

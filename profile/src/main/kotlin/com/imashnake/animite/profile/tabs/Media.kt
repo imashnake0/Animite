@@ -25,9 +25,9 @@ import kotlinx.collections.immutable.ImmutableList
 fun MediaTab(
     mediaCollection: User.MediaCollection?,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -65,9 +65,9 @@ private fun UserMediaLists(
     type: Media.Small.Type,
     lists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     listVisibility: SnapshotStateMap<Int, Boolean>,
+    useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
-    useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {

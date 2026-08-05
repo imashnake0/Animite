@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.api.preferences.PreferencesRepository
 import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.resource.Resource.Companion.asResource
@@ -49,6 +50,11 @@ class ProfileViewModel @Inject constructor(
 
     val useProfileColor = preferencesRepository.useProfileColor.filterNotNull()
     val profileColor = preferencesRepository.profileColor.filterNotNull()
+    val scoreFormat = preferencesRepository
+        .scoreFormat
+        .filterNotNull()
+        .map { ScoreFormat.safeValueOf(it) }
+
     val useExpressiveProgressIndicator = preferencesRepository.useExpressiveProgressIndicator.filterNotNull()
 
     val viewer = combine(
@@ -63,6 +69,7 @@ class ProfileViewModel @Inject constructor(
             // Don't update with cache
             if (useNetwork) {
                 preferencesRepository.setProfileColor(user.color)
+                preferencesRepository.setScoreFormat(user.scoreFormat?.name)
                 preferencesRepository.setAnimeListOrder(user.animeListOrder)
                 preferencesRepository.setMangaListOrder(user.mangaListOrder)
             }
@@ -78,7 +85,8 @@ class ProfileViewModel @Inject constructor(
         flow2 = combine(
             preferencesRepository.viewerId.filterNotNull(),
             preferencesRepository.language.filterNotNull(),
-            ::Pair
+            scoreFormat,
+            ::Triple
         ),
         flow3 = preferencesRepository.animeListOrder.filterNotNull().map {
             Json.decodeFromString<List<String>>(it)
@@ -90,7 +98,8 @@ class ProfileViewModel @Inject constructor(
             type = MediaType.ANIME,
             useNetwork = useNetwork,
             language = Media.Language.valueOf(it.second.second),
-            mediaListOrder = it.third
+            scoreFormat = it.second.third,
+            mediaListOrder = it.third,
         )
     }.asResource().stateIn(
         scope = viewModelScope,
@@ -103,7 +112,8 @@ class ProfileViewModel @Inject constructor(
         flow2 = combine(
             preferencesRepository.viewerId.filterNotNull(),
             preferencesRepository.language.filterNotNull(),
-            ::Pair
+            scoreFormat,
+            ::Triple
         ),
         flow3 = preferencesRepository.mangaListOrder.filterNotNull().map {
             Json.decodeFromString<List<String>>(it)
@@ -115,6 +125,7 @@ class ProfileViewModel @Inject constructor(
             type = MediaType.MANGA,
             useNetwork = useNetwork,
             language = Media.Language.valueOf(it.second.second),
+            scoreFormat = it.second.third,
             mediaListOrder = it.third
         )
     }.asResource().stateIn(

@@ -31,6 +31,7 @@ tasks.withType<KotlinCompile>().configureEach {
     )
 }
 
+// TODO: Remove unused deps,
 dependencies {
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
