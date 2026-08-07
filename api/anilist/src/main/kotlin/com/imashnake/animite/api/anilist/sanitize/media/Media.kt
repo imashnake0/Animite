@@ -13,6 +13,7 @@ import com.imashnake.animite.api.anilist.fragment.StaffSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Status.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus
@@ -723,6 +724,7 @@ data class Media(
     @Immutable
     data class Tracking(
         val id: Int,
+        val type: Small.Type,
         val coverImage: String?,
         val bannerImage: String?,
         val color: String?,
@@ -744,6 +746,7 @@ data class Media(
             language: Language
         ) : this(
             id = query.id,
+            type = query.type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             coverImage = query.coverImage?.large,
             bannerImage = query.bannerImage,
             color = query.coverImage?.color,

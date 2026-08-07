@@ -252,6 +252,9 @@ data class User(
                 CUSTOM_OR_UNKNOWN
             }
 
+            fun animeStatuses() = TrackingStatus.entries - setOf(READING, REREADING, PLAN_TO_READ, PLANNING, CUSTOM_OR_UNKNOWN)
+            fun mangaStatuses() = TrackingStatus.entries - setOf(WATCHING, REWATCHING, PLAN_TO_WATCH, PLANNING, CUSTOM_OR_UNKNOWN)
+
             fun String?.sanitize() = safeValueOf(this)
 
             fun MediaListStatus?.toTrackingStatus(type: Type) = when (this) {

@@ -494,7 +494,7 @@ fun BannerHeightToggle(
 }
 
 @Composable
-fun LogOutDialog(
+private fun LogOutDialog(
     logOut: () -> Unit,
     dismiss: () -> Unit,
 ) {
