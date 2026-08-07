@@ -67,20 +67,33 @@ fun UpdateEntryDialog(
             // region header
             Box {
                 Column {
-                    // TODO: Reuse.
-                    AsyncImage(
-                        model = crossfadeModel(item.bannerImage),
-                        contentDescription = null,
-                        error = painterResource(mediaR.drawable.background),
-                        fallback = painterResource(mediaR.drawable.background),
-                        contentScale = ContentScale.Crop,
-                        alignment = Alignment.Center,
-                        colorFilter = ColorFilter.tint(
-                            color = item.color?.toColorInt()?.let { Color(it) }?.copy(alpha = 0.25f) ?: Color.Transparent,
-                            blendMode = BlendMode.SrcAtop
-                        ),
-                        modifier = Modifier.fillMaxWidth().aspectRatio(19f / 4)
-                    )
+                    Box {
+                        val tint = item.color?.toColorInt()
+                            ?.let { int -> Color(int) }
+                            ?.copy(alpha = 0.25f)
+                            ?: Color.Transparent
+
+                        Box(
+                            modifier = Modifier
+                                .background(tint)
+                                .fillMaxWidth()
+                                .aspectRatio(19f / 4)
+                        )
+
+                        AsyncImage(
+                            model = crossfadeModel(item.bannerImage),
+                            contentDescription = null,
+                            error = painterResource(mediaR.drawable.background),
+                            fallback = painterResource(mediaR.drawable.background),
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center,
+                            colorFilter = ColorFilter.tint(
+                                color = tint,
+                                blendMode = BlendMode.SrcAtop
+                            ),
+                            modifier = Modifier.fillMaxWidth().aspectRatio(19f / 4)
+                        )
+                    }
 
                     Column(
                         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
@@ -171,9 +184,7 @@ fun StatusDropDown(
     status: User.TrackingStatus,
     modifier: Modifier = Modifier
 ) {
-    val iconPadding =
-        (dimensionResource(R.dimen.tracking_list_header_height)
-                - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
+    val iconPadding = (dimensionResource(R.dimen.tracking_list_header_height) - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
