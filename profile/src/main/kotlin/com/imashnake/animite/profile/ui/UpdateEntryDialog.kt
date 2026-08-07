@@ -282,11 +282,10 @@ fun StatusDropDown(
         shape = RoundedCornerShape(dimensionResource(R.dimen.tracking_list_header_height) / 2),
         offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
     ) {
-
         statuses.fastForEach {
             val backgroundColor by animateColorAsState(
                 targetValue = if (it == selectedStatus)
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
+                    MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f)
                 else Color.Transparent
             )
             DropdownMenuItem(
@@ -312,7 +311,13 @@ fun StatusDropDown(
                 },
                 contentPadding = PaddingValues(horizontal = iconPadding),
                 modifier = Modifier
-                    .clip(RoundedCornerShape(dimensionResource(R.dimen.tracking_list_header_height) - LocalPaddings.current.tiny))
+                    .padding(all = LocalPaddings.current.tiny)
+                    .clip(
+                        shape = RoundedCornerShape(
+                            size = dimensionResource(R.dimen.tracking_list_header_height)
+                                    - LocalPaddings.current.tiny
+                        )
+                    )
                     .background(color = backgroundColor)
                     .height(dimensionResource(R.dimen.tracking_list_header_height))
             )
