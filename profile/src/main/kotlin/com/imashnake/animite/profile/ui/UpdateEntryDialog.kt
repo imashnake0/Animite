@@ -2,6 +2,7 @@ package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -282,14 +283,14 @@ fun StatusDropDown(
         expanded = isStatusDropDownExpanded,
         onDismissRequest = { isStatusDropDownExpanded = false },
         state = cascadeState,
-        shape = RoundedCornerShape(dimensionResource(R.dimen.tracking_list_header_height) / 2),
+        shape = RoundedCornerShape(
+            (dimensionResource(R.dimen.tracking_list_header_height) + LocalPaddings.current.tiny) / 2
+        ),
         offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
     ) {
         statuses.fastForEach {
-            val backgroundColor by animateColorAsState(
-                targetValue = if (it == selectedStatus)
-                    MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f)
-                else Color.Transparent
+            val selectedAlpha by animateFloatAsState(
+                targetValue = if (it == selectedStatus) 0.95f else 0f
             )
             DropdownMenuItem(
                 text = {
@@ -312,16 +313,19 @@ fun StatusDropDown(
                     onSelectStatus(it)
                     isStatusDropDownExpanded = false
                 },
-                contentPadding = PaddingValues(horizontal = iconPadding),
+                contentPadding = PaddingValues(
+                    horizontal = iconPadding,
+                    vertical = LocalPaddings.current.tiny
+                ),
                 modifier = Modifier
-                    .padding(all = LocalPaddings.current.tiny)
+                    .padding(horizontal = LocalPaddings.current.tiny)
                     .clip(
                         shape = RoundedCornerShape(
                             size = dimensionResource(R.dimen.tracking_list_header_height)
                                     - LocalPaddings.current.tiny
                         )
                     )
-                    .background(color = backgroundColor)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = selectedAlpha))
                     .height(dimensionResource(R.dimen.tracking_list_header_height))
             )
         }
