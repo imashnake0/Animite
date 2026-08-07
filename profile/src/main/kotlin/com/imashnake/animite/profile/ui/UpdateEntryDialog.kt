@@ -64,97 +64,19 @@ fun UpdateEntryDialog(
             shape = RoundedCornerShape(18.dp + LocalPaddings.current.large),
             modifier = modifier.fillMaxWidth()
         ) {
-            // region header
-            Box {
-                Column {
-                    Box {
-                        val tint = item.color?.toColorInt()
-                            ?.let { int -> Color(int) }
-                            ?.copy(alpha = 0.25f)
-                            ?: Color.Transparent
+            Header(
+                title = item.title,
+                coverImage = item.coverImage,
+                bannerImage = item.bannerImage,
+                format = item.format,
+                season = item.season,
+                seasonYear = item.seasonYear,
+                tintColor = item.color?.toColorInt()
+                    ?.let { int -> Color(int) }
+                    ?.copy(alpha = 0.25f)
+                    ?: Color.Transparent
+            )
 
-                        Box(
-                            modifier = Modifier
-                                .background(tint)
-                                .fillMaxWidth()
-                                .aspectRatio(19f / 4)
-                        )
-
-                        AsyncImage(
-                            model = crossfadeModel(item.bannerImage),
-                            contentDescription = null,
-                            error = painterResource(mediaR.drawable.background),
-                            fallback = painterResource(mediaR.drawable.background),
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.Center,
-                            colorFilter = ColorFilter.tint(
-                                color = tint,
-                                blendMode = BlendMode.SrcAtop
-                            ),
-                            modifier = Modifier.fillMaxWidth().aspectRatio(19f / 4)
-                        )
-                    }
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                        modifier = Modifier.padding(
-                            start = LocalPaddings.current.large + 96.dp + LocalPaddings.current.medium,
-                            top = LocalPaddings.current.medium,
-                            end = LocalPaddings.current.medium
-                        )
-                    ) {
-                        Text(
-                            text = item.title.orEmpty(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                            maxLines = 2
-                        )
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            item.format?.let {
-                                Text(
-                                    text = stringResource(it.res),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-
-                            if (item.season != null && item.format != null) {
-                                Divider(shape = MaterialShapes.Triangle.toShape())
-                            }
-
-                            item.season?.let {
-                                Text(
-                                    text = stringResource(it.res) +
-                                            " ${item.seasonYear?.toString().orEmpty()}",
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    maxLines = 1
-                                )
-                            }
-                        }
-                    }
-                }
-
-                MediaMediumCard(
-                    image = item.coverImage,
-                    tag = null,
-                    label = null,
-                    onClick = {},
-                    tagMinLines = 1,
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(
-                            top = LocalPaddings.current.large,
-                            start = LocalPaddings.current.large
-                        )
-                )
-            }
-            // endregion
-
-            // region entry options
             Column(
                 modifier = Modifier.padding(
                     horizontal = LocalPaddings.current.large,
@@ -173,8 +95,103 @@ fun UpdateEntryDialog(
                     }
                 }
             }
-            // endregion
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun Header(
+    coverImage: String?,
+    title: String?,
+    bannerImage: String?,
+    format: Media.Format?,
+    season: Media.Season?,
+    seasonYear: Int?,
+    tintColor: Color,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier) {
+        Column {
+            Box {
+                Box(
+                    modifier = Modifier
+                        .background(tintColor)
+                        .fillMaxWidth()
+                        .aspectRatio(19f / 4)
+                )
+
+                AsyncImage(
+                    model = crossfadeModel(bannerImage),
+                    contentDescription = null,
+                    error = painterResource(mediaR.drawable.background),
+                    fallback = painterResource(mediaR.drawable.background),
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    colorFilter = ColorFilter.tint(
+                        color = tintColor,
+                        blendMode = BlendMode.SrcAtop
+                    ),
+                    modifier = Modifier.fillMaxWidth().aspectRatio(19f / 4)
+                )
+            }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                modifier = Modifier.padding(
+                    start = LocalPaddings.current.large + 96.dp + LocalPaddings.current.medium,
+                    top = LocalPaddings.current.medium,
+                    end = LocalPaddings.current.medium
+                )
+            ) {
+                Text(
+                    text = title.orEmpty(),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 2
+                )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    format?.let {
+                        Text(
+                            text = stringResource(it.res),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+                    if (season != null && format != null) {
+                        Divider(shape = MaterialShapes.Triangle.toShape())
+                    }
+
+                    season?.let {
+                        Text(
+                            text = stringResource(it.res) +
+                                    " ${seasonYear?.toString().orEmpty()}",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+        }
+
+        MediaMediumCard(
+            image = coverImage,
+            tag = null,
+            label = null,
+            onClick = {},
+            tagMinLines = 1,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(
+                    top = LocalPaddings.current.large,
+                    start = LocalPaddings.current.large
+                )
+        )
     }
 }
 
