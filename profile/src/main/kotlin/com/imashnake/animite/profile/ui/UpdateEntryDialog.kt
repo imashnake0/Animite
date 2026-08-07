@@ -36,7 +36,10 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Confirm
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -236,6 +239,7 @@ fun StatusDropDown(
     } else User.TrackingStatus.mangaStatuses()
     val cascadeState = rememberCascadeState()
     var isStatusDropDownExpanded by remember { mutableStateOf(false) }
+    val haptic = LocalHapticFeedback.current
 
     val iconPadding = (dimensionResource(R.dimen.tracking_list_header_height) - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
     Row(
@@ -244,7 +248,10 @@ fun StatusDropDown(
         modifier = modifier
             .height(dimensionResource(R.dimen.tracking_list_header_height))
             .clip(CircleShape)
-            .clickable { isStatusDropDownExpanded = true }
+            .clickable {
+                isStatusDropDownExpanded = true
+                haptic.performHapticFeedback(ToggleOn)
+            }
             .background(
                 MaterialTheme.colorScheme.surfaceContainerHigh.copy(
                     alpha = 0.95f
@@ -311,6 +318,7 @@ fun StatusDropDown(
                 },
                 onClick = {
                     onSelectStatus(it)
+                    haptic.performHapticFeedback(Confirm)
                     isStatusDropDownExpanded = false
                 },
                 contentPadding = PaddingValues(horizontal = iconPadding),
