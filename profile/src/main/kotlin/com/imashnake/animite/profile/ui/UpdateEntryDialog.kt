@@ -1,7 +1,6 @@
 package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -123,8 +122,6 @@ fun UpdateEntryDialog(
                         )
                     }
                 }
-
-                Box(Modifier.background(Color.Green).height(500.dp))
             }
         }
     }
@@ -255,17 +252,19 @@ fun StatusDropDown(
             )
             .padding(iconPadding)
     ) {
-        AnimatedContent(selectedStatus) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(DropdownMenuItemHorizontalPadding + 4.dp),
-            ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(DropdownMenuItemHorizontalPadding + 4.dp),
+        ) {
+            AnimatedContent(selectedStatus) {
                 Icon(
                     imageVector = ImageVector.vectorResource(it.res),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
                 )
+            }
+            AnimatedContent(selectedStatus) {
                 Text(
                     text = stringResource(it.title),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -287,6 +286,7 @@ fun StatusDropDown(
             (dimensionResource(R.dimen.tracking_list_header_height) + LocalPaddings.current.tiny) / 2
         ),
         offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+        modifier = Modifier.padding(vertical = LocalPaddings.current.tiny)
     ) {
         statuses.fastForEach {
             val selectedAlpha by animateFloatAsState(
@@ -313,10 +313,7 @@ fun StatusDropDown(
                     onSelectStatus(it)
                     isStatusDropDownExpanded = false
                 },
-                contentPadding = PaddingValues(
-                    horizontal = iconPadding,
-                    vertical = LocalPaddings.current.tiny
-                ),
+                contentPadding = PaddingValues(horizontal = iconPadding),
                 modifier = Modifier
                     .padding(horizontal = LocalPaddings.current.tiny)
                     .clip(
