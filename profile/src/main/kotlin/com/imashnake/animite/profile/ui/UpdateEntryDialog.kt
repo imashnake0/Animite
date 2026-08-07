@@ -1,5 +1,6 @@
 package com.imashnake.animite.profile.ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -253,24 +254,26 @@ fun StatusDropDown(
             )
             .padding(iconPadding)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(DropdownMenuItemHorizontalPadding + 4.dp),
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(selectedStatus.res),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
-            )
-            Text(
-                text = stringResource(selectedStatus.title),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                overflow = TextOverflow.Ellipsis,
-                // DropDownIcon padding
-                modifier = Modifier.padding(end = 16.dp)
-            )
+        AnimatedContent(selectedStatus) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(DropdownMenuItemHorizontalPadding + 4.dp),
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(it.res),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
+                )
+                Text(
+                    text = stringResource(it.title),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                    overflow = TextOverflow.Ellipsis,
+                    // DropDownIcon padding
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+            }
         }
         DropDownIcon(isDroppedDown = isStatusDropDownExpanded)
     }
