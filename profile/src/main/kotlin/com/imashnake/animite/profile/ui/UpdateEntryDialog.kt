@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -50,11 +53,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.toColorInt
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Divider
 import com.imashnake.animite.core.ui.component.DropDownIcon
@@ -79,6 +84,7 @@ fun UpdateEntryDialog(
     modifier: Modifier = Modifier
 ) {
     var selectedStatus by remember { mutableStateOf(item.status) }
+    var currentScore by remember { mutableStateOf(item.score) }
 
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -109,19 +115,21 @@ fun UpdateEntryDialog(
                         type = item.type,
                         selectedStatus = selectedStatus,
                         onSelectStatus = { selectedStatus = it },
-                        modifier = Modifier.fillMaxWidth(0.5f)
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .padding(end = LocalPaddings.current.medium)
                     )
 
-                    item.score?.let { score ->
-                        Text(
-                            text = score.value.toString(),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                            color = Color(score.color).copy(alpha = 0.8f),
+                    currentScore?.let {
+                        SetScore(
+                            score = it,
+                            onScoreSet = { value ->
+                                currentScore = currentScore?.copy(value = value)
+                            },
                             modifier = Modifier
-                                .padding(top = 5.dp)
                                 .fillMaxWidth(0.5f)
                                 .align(Alignment.CenterEnd)
+                                .padding(start = LocalPaddings.current.medium)
                         )
                     }
                 }
@@ -337,3 +345,59 @@ fun StatusDropDown(
     }
 }
 
+@Composable
+private fun SetScore(
+    score: Media.Score,
+    onScoreSet: (value: Float) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        // TODO: Add buttons to increment/decrement.
+        Text(
+            text = score.value.run {
+                when(score.format) {
+                    ScoreFormat.POINT_100,
+                    ScoreFormat.POINT_10 -> fastRoundToInt()
+                    ScoreFormat.POINT_10_DECIMAL -> times(10).fastRoundToInt().div(10f)
+                    else -> fastRoundToInt()
+                }
+            }.toString(),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+            color = Color(score.color).copy(alpha = 0.8f),
+            modifier = Modifier
+                .padding(top = 5.dp)
+                .fillMaxWidth(0.5f)
+        )
+
+        Slider(
+            value = score.value,
+            onValueChange = onScoreSet,
+            valueRange = when(score.format) {
+                ScoreFormat.POINT_100 -> 0f..100f
+                ScoreFormat.POINT_10_DECIMAL -> 0f..10f
+                ScoreFormat.POINT_10 -> 0f..10f
+                ScoreFormat.POINT_5 -> 0f..5f
+                ScoreFormat.POINT_3 -> 0f..3f
+                else -> 0f..0f
+            },
+            steps = when(score.format) {
+                ScoreFormat.POINT_100 -> 99
+                ScoreFormat.POINT_10_DECIMAL -> 99
+                ScoreFormat.POINT_10 -> 9
+                ScoreFormat.POINT_5 -> 4
+                ScoreFormat.POINT_3 -> 2
+                else -> 0
+            },
+            thumb = {
+                SliderDefaults.Thumb(
+                    interactionSource = remember { MutableInteractionSource() },
+                    modifier = Modifier.height(16.dp)
+                )
+            }
+        )
+    }
+}
