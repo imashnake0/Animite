@@ -21,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -29,6 +30,7 @@ import androidx.compose.material3.SliderDefaults.colors
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Confirm
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.SegmentTick
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -92,6 +95,8 @@ fun UpdateEntryDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val haptic = LocalHapticFeedback.current
+
     var selectedStatus by remember { mutableStateOf(item.status) }
     var currentScore by remember { mutableStateOf(item.score) }
 
@@ -126,7 +131,7 @@ fun UpdateEntryDialog(
                         onSelectStatus = { selectedStatus = it },
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
-                            .padding(end = LocalPaddings.current.medium)
+                            .padding(end = LocalPaddings.current.small)
                     )
 
                     currentScore?.let {
@@ -137,11 +142,13 @@ fun UpdateEntryDialog(
                                     value = value,
                                     normalizedValue = Media.Score.normalizeValue(value, format)
                                 )
+                                haptic.performHapticFeedback(SegmentTick)
                             },
                             modifier = Modifier
                                 .fillMaxWidth(0.5f)
                                 .align(Alignment.CenterEnd)
-                                .padding(start = LocalPaddings.current.medium)
+                                .padding(start = LocalPaddings.current.small)
+                                .height(dimensionResource(R.dimen.tracking_list_header_height))
                         )
                     }
                 }
@@ -364,7 +371,7 @@ private fun SetScore(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
@@ -395,60 +402,68 @@ private fun SetScore(
                 .fillMaxWidth(0.5f)
         )
 
-        Slider(
-            value = score.value,
-            onValueChange = { onScoreSet(it, score.format) },
-            valueRange = when(score.format) {
-                ScoreFormat.POINT_100 -> 0f..100f
-                ScoreFormat.POINT_10_DECIMAL -> 0f..10f
-                ScoreFormat.POINT_10 -> 0f..10f
-                ScoreFormat.POINT_5 -> 0f..5f
-                ScoreFormat.POINT_3 -> 0f..3f
-                else -> 0f..0f
-            },
-            steps = when(score.format) {
-                ScoreFormat.POINT_100 -> 99
-                ScoreFormat.POINT_10_DECIMAL -> 99
-                ScoreFormat.POINT_10 -> 9
-                ScoreFormat.POINT_5 -> 4
-                ScoreFormat.POINT_3 -> 2
-                else -> 0
-            },
-            track = { state ->
-                SliderDefaults.Track(
-                    sliderState = state,
-                    colors = colors(
-                        activeTrackColor = Color.Transparent,
-                        inactiveTrackColor = Color.Transparent,
-                        activeTickColor = Color.Transparent,
-                        inactiveTickColor = Color.Transparent
-                    ),
-                    modifier = Modifier.drawBehind {
-                        drawRoundRect(
-                            brush = Brush.linearGradient(
-                                0.3f to Color(RED),
-                                0.6f to Color(ORANGE),
-                                0.8f to Color(LIME),
-                                1f to Color(GREEN),
-                            ),
-                            cornerRadius = CornerRadius(x = 50f, y = 50f)
+        CompositionLocalProvider(
+            // Remove default M3 padding
+            LocalMinimumInteractiveComponentSize provides 0.dp,
+        ) {
+            Slider(
+                value = score.value,
+                onValueChange = { onScoreSet(it, score.format) },
+                valueRange = when (score.format) {
+                    ScoreFormat.POINT_100 -> 0f..100f
+                    ScoreFormat.POINT_10_DECIMAL -> 0f..10f
+                    ScoreFormat.POINT_10 -> 0f..10f
+                    ScoreFormat.POINT_5 -> 0f..5f
+                    ScoreFormat.POINT_3 -> 0f..3f
+                    else -> 0f..0f
+                },
+                steps = when (score.format) {
+                    ScoreFormat.POINT_100 -> 99
+                    ScoreFormat.POINT_10_DECIMAL -> 99
+                    ScoreFormat.POINT_10 -> 9
+                    ScoreFormat.POINT_5 -> 4
+                    ScoreFormat.POINT_3 -> 2
+                    else -> 0
+                },
+                track = { state ->
+                    SliderDefaults.Track(
+                        sliderState = state,
+                        colors = colors(
+                            activeTrackColor = Color.Transparent,
+                            inactiveTrackColor = Color.Transparent,
+                            activeTickColor = Color.Transparent,
+                            inactiveTickColor = Color.Transparent
+                        ),
+                        modifier = Modifier.drawBehind {
+                            drawRoundRect(
+                                brush = Brush.linearGradient(
+                                    0.3f to Color(RED),
+                                    0.6f to Color(ORANGE),
+                                    0.8f to Color(LIME),
+                                    1f to Color(GREEN),
+                                ),
+                                cornerRadius = CornerRadius(x = 50f, y = 50f)
+                            )
+                        }
+                    )
+                },
+                thumb = { state ->
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.padding(
+                            start = (1f - (state.value / state.valueRange.endInclusive)) * 16.dp,
+                            end = (state.value / state.valueRange.endInclusive) * 16.dp
+                        ).size(16.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                .size(10.dp)
                         )
                     }
-                )
-            },
-            thumb = { state ->
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.padding(start = (1f - (state.value / state.valueRange.endInclusive)) * 16.dp, end = (state.value / state.valueRange.endInclusive) * 16.dp).size(16.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                            .size(10.dp)
-                    )
                 }
-            }
-        )
+            )
+        }
     }
 }
