@@ -547,8 +547,7 @@ fun RowScope.Score(
                     text = when (score.format) {
                         ScoreFormat.POINT_100,
                         ScoreFormat.POINT_10 -> score.value.toInt()
-
-                        ScoreFormat.POINT_10_DECIMAL -> score.value.toFloat()
+                        ScoreFormat.POINT_10_DECIMAL -> score.value
                         else -> ""
                     }.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
