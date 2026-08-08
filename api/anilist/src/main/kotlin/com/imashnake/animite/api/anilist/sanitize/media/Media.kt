@@ -768,41 +768,28 @@ data class Media(
 
     @Immutable
     data class Score(
-        val value: Float,
+        val value: Number,
+        val normalizedValue: Float,
         val format: ScoreFormat,
-        val color: Long
     ) {
-        companion object {
-            private const val RED = 0xffff7770
-            private const val ORANGE = 0xffffc863
-            private const val LIME = 0xffb8ff70
-            private const val GREEN = 0xff63ff88
-
-            fun getColor(normalizedScore: Float) = when {
-                normalizedScore < 5f -> RED
-                normalizedScore < 7f -> ORANGE
-                normalizedScore < 9f -> LIME
-                else -> GREEN
-            }
-        }
-
         internal constructor(score: Float, scoreFormat: ScoreFormat) : this(
-            value = score,
-            format = scoreFormat,
-            color = when(scoreFormat) {
-                ScoreFormat.POINT_100 -> getColor(score / 10f)
+            value = when(scoreFormat) {
+                ScoreFormat.POINT_100,
+                ScoreFormat.POINT_10,
+                ScoreFormat.POINT_5,
+                ScoreFormat.POINT_3 -> score.roundToInt()
+                ScoreFormat.POINT_10_DECIMAL -> score
+                else -> score
+            },
+            normalizedValue = when(scoreFormat) {
+                ScoreFormat.POINT_100 -> score / 100f
                 ScoreFormat.POINT_10_DECIMAL,
-                ScoreFormat.POINT_10 -> getColor(score)
-                ScoreFormat.POINT_5 -> getColor(score * 2f)
-                ScoreFormat.POINT_3 -> when (score.roundToInt()) {
-                    0 -> RED
-                    1 -> ORANGE
-                    2 -> LIME
-                    3 -> GREEN
-                    else -> GREEN
-                }
-                else -> GREEN
-            }
+                ScoreFormat.POINT_10 -> score / 10f
+                ScoreFormat.POINT_5 -> score / 5f
+                ScoreFormat.POINT_3 -> score / 3f
+                else -> score
+            }.coerceIn(0f, 1f),
+            format = scoreFormat,
         )
     }
 }

@@ -445,7 +445,7 @@ private fun MediaTrackingItem(
 
                         item.score?.let { score ->
                             if (score.format == ScoreFormat.POINT_5) {
-                                val filledStars = score.value.fastRoundToInt()
+                                val filledStars = score.value.toInt()
                                 Row {
                                     repeat(filledStars) { Star(filled = true) }
                                     repeat(TOTAL_STARS - filledStars) { Star(filled = false) }
@@ -532,13 +532,14 @@ fun RowScope.Score(
                 Text(
                     text = when (score.format) {
                         ScoreFormat.POINT_100,
-                        ScoreFormat.POINT_10 -> score.value.roundToInt()
+                        ScoreFormat.POINT_10 -> score.value.toInt()
 
-                        ScoreFormat.POINT_10_DECIMAL -> score.value
+                        ScoreFormat.POINT_10_DECIMAL -> score.value.toFloat()
                         else -> ""
                     }.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color(score.color).copy(alpha = 0.6f),
+                    // TODO: Fix color.
+//                    color = Color(score.color).copy(alpha = 0.6f),
                     modifier = modifier.padding(top = 5.dp)
                 )
             }
@@ -547,7 +548,7 @@ fun RowScope.Score(
             ScoreFormat.POINT_3 -> {
                 Icon(
                     imageVector = ImageVector.vectorResource(
-                        when (score.value.fastRoundToInt()) {
+                        when (score.value.toInt()) {
                             0 -> R.drawable.dead
                             1 -> R.drawable.weary
                             2 -> R.drawable.neutral
@@ -555,7 +556,8 @@ fun RowScope.Score(
                         }
                     ),
                     contentDescription = null,
-                    tint = Color(score.color).copy(alpha = 0.6f),
+                    // TODO: Fix color.
+//                    tint = Color(score.color).copy(alpha = 0.6f),
                     modifier = modifier.size(dimensionResource(R.dimen.smiley_icon_size))
                 )
             }

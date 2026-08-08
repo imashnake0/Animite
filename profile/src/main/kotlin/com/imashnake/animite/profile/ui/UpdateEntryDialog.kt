@@ -357,24 +357,24 @@ private fun SetScore(
     ) {
         // TODO: Add buttons to increment/decrement.
         Text(
-            text = score.value.run {
-                when(score.format) {
-                    ScoreFormat.POINT_100,
-                    ScoreFormat.POINT_10 -> fastRoundToInt()
-                    ScoreFormat.POINT_10_DECIMAL -> times(10).fastRoundToInt().div(10f)
-                    else -> fastRoundToInt()
-                }
+            text = when (score.format) {
+                ScoreFormat.POINT_100,
+                ScoreFormat.POINT_10 -> score.value.toInt()
+
+                ScoreFormat.POINT_10_DECIMAL -> score.value.toFloat()
+                else -> ""
             }.toString(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-            color = Color(score.color).copy(alpha = 0.8f),
+            // TODO: Fix color.
+//            color = Color(score.color).copy(alpha = 0.8f),
             modifier = Modifier
                 .padding(top = 5.dp)
                 .fillMaxWidth(0.5f)
         )
 
         Slider(
-            value = score.value,
+            value = score.value.toFloat(),
             onValueChange = onScoreSet,
             valueRange = when(score.format) {
                 ScoreFormat.POINT_100 -> 0f..100f
