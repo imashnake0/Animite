@@ -724,7 +724,7 @@ data class Media(
     @Immutable
     data class Tracking(
         val id: Int,
-        val type: Small.Type,
+        val type: Type,
         val coverImage: String?,
         val bannerImage: String?,
         val color: String?,
@@ -772,6 +772,17 @@ data class Media(
         val normalizedValue: Float,
         val format: ScoreFormat,
     ) {
+        companion object {
+            fun normalizeValue(value: Float, format: ScoreFormat) = when(format) {
+                ScoreFormat.POINT_100 -> value / 100f
+                ScoreFormat.POINT_10_DECIMAL,
+                ScoreFormat.POINT_10 -> value / 10f
+                ScoreFormat.POINT_5 -> value / 5f
+                ScoreFormat.POINT_3 -> value / 3f
+                else -> value
+            }.coerceIn(0f, 1f)
+        }
+
         internal constructor(score: Float, scoreFormat: ScoreFormat) : this(
             value = when(scoreFormat) {
                 ScoreFormat.POINT_100,
@@ -781,14 +792,7 @@ data class Media(
                 ScoreFormat.POINT_10_DECIMAL -> score
                 else -> score
             },
-            normalizedValue = when(scoreFormat) {
-                ScoreFormat.POINT_100 -> score / 100f
-                ScoreFormat.POINT_10_DECIMAL,
-                ScoreFormat.POINT_10 -> score / 10f
-                ScoreFormat.POINT_5 -> score / 5f
-                ScoreFormat.POINT_3 -> score / 3f
-                else -> score
-            }.coerceIn(0f, 1f),
+            normalizedValue = normalizeValue(score, scoreFormat),
             format = scoreFormat,
         )
     }

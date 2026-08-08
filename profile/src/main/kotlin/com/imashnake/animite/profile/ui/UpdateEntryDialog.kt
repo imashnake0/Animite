@@ -2,10 +2,10 @@ package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.SliderDefaults.colors
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -36,7 +37,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -128,8 +132,11 @@ fun UpdateEntryDialog(
                     currentScore?.let {
                         SetScore(
                             score = it,
-                            onScoreSet = { value ->
-                                currentScore = currentScore?.copy(value = value)
+                            onScoreSet = { value, format ->
+                                currentScore = currentScore?.copy(
+                                    value = value,
+                                    normalizedValue = Media.Score.normalizeValue(value, format)
+                                )
                             },
                             modifier = Modifier
                                 .fillMaxWidth(0.5f)
@@ -353,7 +360,7 @@ fun StatusDropDown(
 @Composable
 private fun SetScore(
     score: Media.Score,
-    onScoreSet: (value: Float) -> Unit,
+    onScoreSet: (value: Float, format: ScoreFormat) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -389,7 +396,7 @@ private fun SetScore(
 
         Slider(
             value = score.value.toFloat(),
-            onValueChange = onScoreSet,
+            onValueChange = { onScoreSet(it, score.format) },
             valueRange = when(score.format) {
                 ScoreFormat.POINT_100 -> 0f..100f
                 ScoreFormat.POINT_10_DECIMAL -> 0f..10f
@@ -406,11 +413,44 @@ private fun SetScore(
                 ScoreFormat.POINT_3 -> 2
                 else -> 0
             },
-            thumb = {
-                SliderDefaults.Thumb(
-                    interactionSource = remember { MutableInteractionSource() },
-                    modifier = Modifier.height(16.dp)
+            track = { state ->
+                SliderDefaults.Track(
+                    sliderState = state,
+                    colors = colors(
+                        activeTrackColor = Color.Transparent,
+                        inactiveTrackColor = Color.Transparent,
+                        activeTickColor = Color.Transparent,
+                        inactiveTickColor = Color.Transparent
+                    ),
+                    modifier = Modifier.drawBehind {
+                        drawRoundRect(
+                            brush = Brush.linearGradient(
+                                0.3f to Color(RED),
+                                0.6f to Color(ORANGE),
+                                0.8f to Color(LIME),
+                                1f to Color(GREEN),
+                            ),
+                            cornerRadius = CornerRadius(x = 50f, y = 50f)
+                        )
+                    }
                 )
+            },
+            thumb = { state ->
+                // TODO: Properly animate this.
+                val padding by animateDpAsState(
+                    if (state.value / state.valueRange.endInclusive == 1f) 8.dp + 5.dp else 0.dp
+                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.padding(start = 8.dp - padding, end = padding).size(16.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                            .size(10.dp)
+                    )
+                }
             }
         )
     }
