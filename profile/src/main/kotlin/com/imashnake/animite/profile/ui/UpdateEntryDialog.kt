@@ -383,8 +383,8 @@ private fun SetScore(
         Text(
             text = when (score.format) {
                 ScoreFormat.POINT_100,
-                ScoreFormat.POINT_10 -> score.value.toInt()
-                ScoreFormat.POINT_10_DECIMAL -> (score.value.toFloat() * 10f).fastRoundToInt() / 10f
+                ScoreFormat.POINT_10 -> score.value.fastRoundToInt()
+                ScoreFormat.POINT_10_DECIMAL -> (score.value * 10f).fastRoundToInt() / 10f
                 else -> ""
             }.toString(),
             textAlign = TextAlign.Center,
@@ -396,7 +396,7 @@ private fun SetScore(
         )
 
         Slider(
-            value = score.value.toFloat(),
+            value = score.value,
             onValueChange = { onScoreSet(it, score.format) },
             valueRange = when(score.format) {
                 ScoreFormat.POINT_100 -> 0f..100f

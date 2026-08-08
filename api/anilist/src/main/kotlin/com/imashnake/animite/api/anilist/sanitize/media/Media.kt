@@ -34,7 +34,6 @@ import kotlinx.datetime.format.MonthNames
 import java.util.Locale
 import kotlin.collections.mapNotNull
 import kotlin.collections.orEmpty
-import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -768,7 +767,7 @@ data class Media(
 
     @Immutable
     data class Score(
-        val value: Number,
+        val value: Float,
         val normalizedValue: Float,
         val format: ScoreFormat,
     ) {
@@ -784,14 +783,7 @@ data class Media(
         }
 
         internal constructor(score: Float, scoreFormat: ScoreFormat) : this(
-            value = when(scoreFormat) {
-                ScoreFormat.POINT_100,
-                ScoreFormat.POINT_10,
-                ScoreFormat.POINT_5,
-                ScoreFormat.POINT_3 -> score.roundToInt()
-                ScoreFormat.POINT_10_DECIMAL -> score
-                else -> score
-            },
+            value = score,
             normalizedValue = normalizeValue(score, scoreFormat),
             format = scoreFormat,
         )
