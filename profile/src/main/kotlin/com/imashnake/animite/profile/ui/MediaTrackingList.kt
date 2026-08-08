@@ -1,6 +1,7 @@
 package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,7 +59,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMapNotNull
-import androidx.compose.ui.util.fastRoundToInt
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.sanitize
@@ -70,12 +70,15 @@ import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
+import com.imashnake.animite.profile.dev.GREEN
+import com.imashnake.animite.profile.dev.LIME
+import com.imashnake.animite.profile.dev.ORANGE
+import com.imashnake.animite.profile.dev.RED
 import com.imashnake.animite.profile.dev.res
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
-import kotlin.math.roundToInt
 import com.imashnake.animite.settings.R as settingsR
 
 private const val TOTAL_STARS = 5
@@ -521,6 +524,17 @@ fun RowScope.Score(
     score: Media.Score,
     modifier: Modifier = Modifier
 ) {
+    val scoreColor by animateColorAsState(
+        targetValue = Color(
+            when {
+                score.normalizedValue < 0.3f -> RED
+                score.normalizedValue < 0.6f -> ORANGE
+                score.normalizedValue < 0.8f -> LIME
+                else -> GREEN
+            }
+        )
+    )
+
     AnimatedContent(
         targetState = score,
         modifier = modifier.align(Alignment.CenterVertically)
@@ -538,8 +552,7 @@ fun RowScope.Score(
                         else -> ""
                     }.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    // TODO: Fix color.
-//                    color = Color(score.color).copy(alpha = 0.6f),
+                    color = scoreColor.copy(alpha = 0.6f),
                     modifier = modifier.padding(top = 5.dp)
                 )
             }
@@ -556,8 +569,7 @@ fun RowScope.Score(
                         }
                     ),
                     contentDescription = null,
-                    // TODO: Fix color.
-//                    tint = Color(score.color).copy(alpha = 0.6f),
+                    tint = scoreColor.copy(alpha = 0.6f),
                     modifier = modifier.size(dimensionResource(R.dimen.smiley_icon_size))
                 )
             }

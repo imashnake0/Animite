@@ -1,6 +1,7 @@
 package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -67,6 +68,10 @@ import com.imashnake.animite.core.ui.component.MediaMediumCard
 import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
+import com.imashnake.animite.profile.dev.GREEN
+import com.imashnake.animite.profile.dev.LIME
+import com.imashnake.animite.profile.dev.ORANGE
+import com.imashnake.animite.profile.dev.RED
 import com.imashnake.animite.profile.dev.res
 import com.imashnake.animite.profile.dev.title
 import me.saket.cascade.CascadeDropdownMenu
@@ -355,6 +360,17 @@ private fun SetScore(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
+        val scoreColor by animateColorAsState(
+            targetValue = Color(
+                when {
+                    score.normalizedValue < 0.3f -> RED
+                    score.normalizedValue < 0.6f -> ORANGE
+                    score.normalizedValue < 0.8f -> LIME
+                    else -> GREEN
+                }
+            )
+        )
+
         // TODO: Add buttons to increment/decrement.
         Text(
             text = when (score.format) {
@@ -365,8 +381,7 @@ private fun SetScore(
             }.toString(),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-            // TODO: Fix color.
-//            color = Color(score.color).copy(alpha = 0.8f),
+            color = scoreColor.copy(alpha = 0.8f),
             modifier = Modifier
                 .padding(top = 5.dp)
                 .fillMaxWidth(0.5f)
