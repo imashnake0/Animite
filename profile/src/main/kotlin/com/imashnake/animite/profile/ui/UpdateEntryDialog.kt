@@ -360,8 +360,7 @@ private fun SetScore(
             text = when (score.format) {
                 ScoreFormat.POINT_100,
                 ScoreFormat.POINT_10 -> score.value.toInt()
-
-                ScoreFormat.POINT_10_DECIMAL -> score.value.toFloat()
+                ScoreFormat.POINT_10_DECIMAL -> (score.value.toFloat() * 10f).fastRoundToInt() / 10f
                 else -> ""
             }.toString(),
             textAlign = TextAlign.Center,
