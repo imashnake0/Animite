@@ -2,7 +2,6 @@ package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,6 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.window.Dialog
@@ -364,6 +364,7 @@ private fun SetScore(
     modifier: Modifier = Modifier,
 ) {
     Column(
+        verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
@@ -436,13 +437,9 @@ private fun SetScore(
                 )
             },
             thumb = { state ->
-                // TODO: Properly animate this.
-                val padding by animateDpAsState(
-                    if (state.value / state.valueRange.endInclusive == 1f) 8.dp + 5.dp else 0.dp
-                )
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.padding(start = 8.dp - padding, end = padding).size(16.dp)
+                    modifier = Modifier.padding(start = (1f - (state.value / state.valueRange.endInclusive)) * 16.dp, end = (state.value / state.valueRange.endInclusive) * 16.dp).size(16.dp)
                 ) {
                     Box(
                         modifier = Modifier
