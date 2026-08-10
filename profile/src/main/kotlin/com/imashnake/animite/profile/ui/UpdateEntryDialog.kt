@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -88,6 +89,7 @@ import com.imashnake.animite.profile.dev.title
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
 import com.imashnake.animite.media.R as mediaR
+import com.imashnake.animite.settings.R as settingsR
 
 // TODO: This padding cannot be removed.
 private val DropdownMenuItemHorizontalPadding = 12.dp
@@ -139,29 +141,60 @@ fun UpdateEntryDialog(
                             .padding(end = LocalPaddings.current.small)
                     )
 
-                    currentScore?.let {
-                        SetScore(
-                            score = it,
-                            onScoreSet = { value, format ->
-                                currentScore = currentScore?.copy(
-                                    value = when (format) {
-                                        ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
-                                        ScoreFormat.POINT_10,
-                                        ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
-                                        ScoreFormat.POINT_5 -> value.fastCoerceIn(0f, 5f)
-                                        ScoreFormat.POINT_3 -> value.fastCoerceIn(0f, 3f)
-                                        else -> value
-                                    },
-                                    normalizedValue = Media.Score.normalizeValue(value, format)
-                                )
-                                haptic.performHapticFeedback(SegmentTick)
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth(0.5f)
-                                .align(Alignment.CenterEnd)
-                                .padding(start = LocalPaddings.current.small)
-                                .height(dimensionResource(R.dimen.tracking_list_header_height))
-                        )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .align(Alignment.CenterEnd)
+                            .padding(start = LocalPaddings.current.small)
+                            .height(dimensionResource(R.dimen.tracking_list_header_height))
+                    ) {
+                        currentScore?.let {
+                            when (it.format) {
+                                ScoreFormat.POINT_100,
+                                ScoreFormat.POINT_10_DECIMAL,
+                                ScoreFormat.POINT_10 -> {
+                                    SetScore(
+                                        score = it,
+                                        onScoreSet = { value, format ->
+                                            currentScore = currentScore?.copy(
+                                                value = when (format) {
+                                                    ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
+                                                    ScoreFormat.POINT_10,
+                                                    ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
+                                                    else -> value
+                                                },
+                                                normalizedValue = Media.Score.normalizeValue(value, format)
+                                            )
+                                            haptic.performHapticFeedback(SegmentTick)
+                                        },
+                                        modifier = Modifier.fillMaxHeight()
+                                    )
+                                }
+
+                                ScoreFormat.POINT_5 -> {
+                                    SetStars(
+                                        score = it,
+                                        onScoreSet = { value, format ->
+                                            currentScore = currentScore?.copy(
+                                                value = value.fastCoerceIn(0f, 5f),
+                                                normalizedValue = Media.Score.normalizeValue(
+                                                    value,
+                                                    format
+                                                )
+                                            )
+                                            haptic.performHapticFeedback(SegmentTick)
+                                        }
+                                    )
+                                }
+
+                                ScoreFormat.POINT_3 -> {
+
+                                }
+
+                                else -> {}
+                            }
+                        }
                     }
                 }
             }
@@ -525,4 +558,30 @@ private fun ScoreButton(
                 )
             )
     )
+}
+
+@Composable
+private fun SetStars(
+    score: Media.Score,
+    onScoreSet: (value: Float, format: ScoreFormat) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row {
+        repeat(5) {
+            val alpha by animateFloatAsState(if (!(it + 1f <= score.value)) 0.2f else 1f)
+            Icon(
+                imageVector = ImageVector.vectorResource(settingsR.drawable.star),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
+                modifier = modifier
+                    .size(dimensionResource(R.dimen.dialog_star_icon_size))
+                    .clickable(interactionSource = null, indication = null) {
+                        onScoreSet(
+                            if (score.value == it + 1f) { score.value - 1f } else it + 1f,
+                            ScoreFormat.POINT_5
+                        )
+                    }
+            )
+        }
+    }
 }
