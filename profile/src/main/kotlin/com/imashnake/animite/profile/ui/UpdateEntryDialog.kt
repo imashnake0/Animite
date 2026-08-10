@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -39,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -273,7 +277,7 @@ fun StatusDropDown(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
-            .height(dimensionResource(R.dimen.tracking_list_header_height))
+            .defaultMinSize(minHeight = dimensionResource(R.dimen.tracking_list_header_height))
             .clip(CircleShape)
             .clickable {
                 isStatusDropDownExpanded = true
@@ -304,6 +308,7 @@ fun StatusDropDown(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
                     overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
                     // DropDownIcon padding
                     modifier = Modifier.padding(end = 16.dp)
                 )
@@ -386,21 +391,40 @@ private fun SetScore(
             )
         )
 
-        // TODO: Add buttons to increment/decrement.
-        Text(
-            text = when (score.format) {
-                ScoreFormat.POINT_100,
-                ScoreFormat.POINT_10 -> score.value.fastRoundToInt()
-                ScoreFormat.POINT_10_DECIMAL -> (score.value * 10f).fastRoundToInt() / 10f
-                else -> ""
-            }.toString(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-            color = scoreColor.copy(alpha = 0.8f),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceAround,
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(top = 5.dp)
-                .fillMaxWidth(0.5f)
-        )
+        ) {
+            ScoreButton(ImageVector.vectorResource(R.drawable.minus), onClick = {})
+            ScoreButton(ImageVector.vectorResource(R.drawable.minus), onClick = {}, modifier = Modifier.scale(0.5f))
+
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = "10.0",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Transparent
+                )
+                Text(
+                    text = when (score.format) {
+                        ScoreFormat.POINT_100,
+                        ScoreFormat.POINT_10 -> score.value.fastRoundToInt()
+
+                        ScoreFormat.POINT_10_DECIMAL -> (score.value * 10f).fastRoundToInt() / 10f
+                        else -> ""
+                    }.toString(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    color = scoreColor.copy(alpha = 0.8f),
+                )
+            }
+
+            ScoreButton(Icons.Rounded.Add, onClick = {}, modifier = Modifier.scale(0.5f))
+            ScoreButton(Icons.Rounded.Add, onClick = {})
+        }
 
         CompositionLocalProvider(
             // Remove default M3 padding
@@ -466,4 +490,24 @@ private fun SetScore(
             )
         }
     }
+}
+
+@Composable
+private fun ScoreButton(
+    imageVector: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        imageVector = imageVector,
+        contentDescription = null,
+        modifier = modifier
+            .clip(CircleShape)
+            .clickable { onClick() }
+            .background(
+                MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                    alpha = 0.95f
+                )
+            )
+    )
 }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -295,7 +296,7 @@ private fun HeaderPill(
     val haptic = LocalHapticFeedback.current
     Box(
         modifier = modifier
-            .height(dimensionResource(R.dimen.tracking_list_header_height))
+            .defaultMinSize(minHeight = dimensionResource(R.dimen.tracking_list_header_height))
             .fillMaxWidth()
             .clip(CircleShape)
             .clickable {
@@ -333,6 +334,7 @@ private fun HeaderPill(
             Text(
                 text = name,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
                 style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
             )
         }
