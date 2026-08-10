@@ -102,6 +102,7 @@ fun UpdateEntryDialog(
 ) {
     val haptic = LocalHapticFeedback.current
 
+    // TODO: Please move these along with logic to the VM.
     var selectedStatus by remember { mutableStateOf(item.status) }
     var currentScore by remember { mutableStateOf(item.score) }
 
@@ -435,6 +436,7 @@ private fun SetScore(
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                     color = Color.Transparent
                 )
+                // TODO: This should be a text field.
                 Text(
                     text = when (score.format) {
                         ScoreFormat.POINT_100,
