@@ -3,6 +3,7 @@ package com.imashnake.animite.profile.ui
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Confirm
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.SegmentTick
@@ -178,18 +180,24 @@ fun UpdateEntryDialog(
                                         onScoreSet = { value, format ->
                                             currentScore = currentScore?.copy(
                                                 value = value.fastCoerceIn(0f, 5f),
-                                                normalizedValue = Media.Score.normalizeValue(
-                                                    value,
-                                                    format
-                                                )
+                                                normalizedValue = Media.Score.normalizeValue(value, format)
                                             )
-                                            haptic.performHapticFeedback(SegmentTick)
+                                            haptic.performHapticFeedback(ToggleOn)
                                         }
                                     )
                                 }
 
                                 ScoreFormat.POINT_3 -> {
-
+                                    SetSmileys(
+                                        score = it,
+                                        onScoreSet = { value, format ->
+                                            currentScore = currentScore?.copy(
+                                                value = value.fastCoerceIn(0f, 3f),
+                                                normalizedValue = Media.Score.normalizeValue(value, format)
+                                            )
+                                            haptic.performHapticFeedback(ToggleOn)
+                                        }
+                                    )
                                 }
 
                                 else -> {}
@@ -581,6 +589,50 @@ private fun SetStars(
                             ScoreFormat.POINT_5
                         )
                     }
+            )
+        }
+    }
+}
+
+@Composable
+private fun SetSmileys(
+    score: Media.Score,
+    onScoreSet: (value: Float, format: ScoreFormat) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+        repeat(4) {
+            val color by animateColorAsState(
+                targetValue = Color(
+                    when(it) {
+                        0 -> RED
+                        1 -> ORANGE
+                        2 -> LIME
+                        else -> GREEN
+                    }
+                )
+            )
+            val alpha by animateFloatAsState(
+                targetValue = if (score.value != it.toFloat()) 0.4f else 1f,
+                animationSpec = tween(300)
+            )
+
+            Icon(
+                imageVector = ImageVector.vectorResource(
+                    when (it) {
+                        0 -> R.drawable.dead
+                        1 -> R.drawable.weary
+                        2 -> R.drawable.neutral
+                        else -> settingsR.drawable.smile
+                    }
+                ),
+                contentDescription = null,
+                tint = color.copy(alpha = 0.6f),
+                modifier = modifier
+                    .size(dimensionResource(R.dimen.smiley_icon_size))
+                    .clip(CircleShape)
+                    .clickable { onScoreSet(it.toFloat(), ScoreFormat.POINT_3) }
+                    .graphicsLayer { this.alpha = alpha }
             )
         }
     }
