@@ -70,6 +70,7 @@ class AnilistUserRepository(
         mangaSectionOrder: List<String>? = null,
     ): Flow<Result<UpdateUserMutation.UpdateUser?>> {
         return apolloClient
+            // TODO: Enable optimistic updates.
             .mutation(
                 UpdateUserMutation(
                     profileColor = Optional.presentIfNotNull(profileColor),
