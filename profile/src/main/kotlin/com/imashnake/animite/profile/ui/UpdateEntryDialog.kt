@@ -42,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -398,36 +397,22 @@ private fun SetScore(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround,
+            horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 5.dp)
         ) {
-            val bigStep = when(score.format) {
-                ScoreFormat.POINT_100 -> 10f
-                ScoreFormat.POINT_10,
-                ScoreFormat.POINT_10_DECIMAL -> 1f
-                else -> 0f
-            }
-
-            val smallStep = when(score.format) {
-                ScoreFormat.POINT_100 -> 1f
-                ScoreFormat.POINT_10,
+            val step = when(score.format) {
+                ScoreFormat.POINT_100,
+                ScoreFormat.POINT_10 -> 1f
                 ScoreFormat.POINT_10_DECIMAL -> 0.1f
                 else -> 0f
             }
 
             ScoreButton(
                 imageVector = ImageVector.vectorResource(R.drawable.minus),
-                onClick = { onScoreSet(score.value - bigStep, score.format) }
+                onClick = { onScoreSet(score.value - step, score.format) }
             )
-            if (score.format == ScoreFormat.POINT_10_DECIMAL || score.format == ScoreFormat.POINT_100) {
-                ScoreButton(
-                    imageVector = ImageVector.vectorResource(R.drawable.minus),
-                    onClick = { onScoreSet(score.value - smallStep, score.format) },
-                    modifier = Modifier.scale(0.5f)
-                )
-            }
 
             Box(contentAlignment = Alignment.Center) {
                 Text(
@@ -450,16 +435,9 @@ private fun SetScore(
                 )
             }
 
-            if (score.format == ScoreFormat.POINT_10_DECIMAL || score.format == ScoreFormat.POINT_100) {
-                ScoreButton(
-                    imageVector = Icons.Rounded.Add,
-                    onClick = { onScoreSet(score.value + smallStep, score.format) },
-                    modifier = Modifier.scale(0.5f)
-                )
-            }
             ScoreButton(
                 imageVector = Icons.Rounded.Add,
-                onClick = { onScoreSet(score.value + bigStep, score.format) }
+                onClick = { onScoreSet(score.value + step, score.format) }
             )
         }
 

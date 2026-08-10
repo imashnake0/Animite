@@ -9,6 +9,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -209,7 +210,7 @@ private fun ListOptions(
             .padding(top = LocalPaddings.current.small)
             .padding(vertical = LocalPaddings.current.small)
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
             val alpha by animateFloatAsState(if (isReordering) 0.3f else 1f)
             ListOption(
                 icon = ImageVector.vectorResource(R.drawable.expand_all),
