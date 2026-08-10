@@ -64,6 +64,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.window.Dialog
@@ -143,7 +144,14 @@ fun UpdateEntryDialog(
                             score = it,
                             onScoreSet = { value, format ->
                                 currentScore = currentScore?.copy(
-                                    value = value,
+                                    value = when (format) {
+                                        ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
+                                        ScoreFormat.POINT_10,
+                                        ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
+                                        ScoreFormat.POINT_5 -> value.fastCoerceIn(0f, 5f)
+                                        ScoreFormat.POINT_3 -> value.fastCoerceIn(0f, 3f)
+                                        else -> value
+                                    },
                                     normalizedValue = Media.Score.normalizeValue(value, format)
                                 )
                                 haptic.performHapticFeedback(SegmentTick)
@@ -394,8 +402,31 @@ private fun SetScore(
                 .fillMaxWidth()
                 .padding(top = 5.dp)
         ) {
-            ScoreButton(ImageVector.vectorResource(R.drawable.minus), onClick = {})
-            ScoreButton(ImageVector.vectorResource(R.drawable.minus), onClick = {}, modifier = Modifier.scale(0.5f))
+            val bigStep = when(score.format) {
+                ScoreFormat.POINT_100 -> 10f
+                ScoreFormat.POINT_10,
+                ScoreFormat.POINT_10_DECIMAL -> 1f
+                else -> 0f
+            }
+
+            val smallStep = when(score.format) {
+                ScoreFormat.POINT_100 -> 1f
+                ScoreFormat.POINT_10,
+                ScoreFormat.POINT_10_DECIMAL -> 0.1f
+                else -> 0f
+            }
+
+            ScoreButton(
+                imageVector = ImageVector.vectorResource(R.drawable.minus),
+                onClick = { onScoreSet(score.value - bigStep, score.format) }
+            )
+            if (score.format == ScoreFormat.POINT_10_DECIMAL || score.format == ScoreFormat.POINT_100) {
+                ScoreButton(
+                    imageVector = ImageVector.vectorResource(R.drawable.minus),
+                    onClick = { onScoreSet(score.value - smallStep, score.format) },
+                    modifier = Modifier.scale(0.5f)
+                )
+            }
 
             Box(contentAlignment = Alignment.Center) {
                 Text(
@@ -408,7 +439,6 @@ private fun SetScore(
                     text = when (score.format) {
                         ScoreFormat.POINT_100,
                         ScoreFormat.POINT_10 -> score.value.fastRoundToInt()
-
                         ScoreFormat.POINT_10_DECIMAL -> (score.value * 10f).fastRoundToInt() / 10f
                         else -> ""
                     }.toString(),
@@ -418,8 +448,17 @@ private fun SetScore(
                 )
             }
 
-            ScoreButton(Icons.Rounded.Add, onClick = {}, modifier = Modifier.scale(0.5f))
-            ScoreButton(Icons.Rounded.Add, onClick = {})
+            if (score.format == ScoreFormat.POINT_10_DECIMAL || score.format == ScoreFormat.POINT_100) {
+                ScoreButton(
+                    imageVector = Icons.Rounded.Add,
+                    onClick = { onScoreSet(score.value + smallStep, score.format) },
+                    modifier = Modifier.scale(0.5f)
+                )
+            }
+            ScoreButton(
+                imageVector = Icons.Rounded.Add,
+                onClick = { onScoreSet(score.value + bigStep, score.format) }
+            )
         }
 
         CompositionLocalProvider(
