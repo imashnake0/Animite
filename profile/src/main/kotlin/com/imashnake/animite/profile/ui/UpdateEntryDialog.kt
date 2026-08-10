@@ -257,7 +257,7 @@ private fun Header(
     }
 }
 
-// TODO: This should be an actual dropdown.
+// TODO: Improve layout for regular screen sizes, text is often truncated.
 @Composable
 fun StatusDropDown(
     type: Media.Small.Type,
@@ -283,11 +283,7 @@ fun StatusDropDown(
                 isStatusDropDownExpanded = true
                 haptic.performHapticFeedback(ToggleOn)
             }
-            .background(
-                MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-                    alpha = 0.95f
-                )
-            )
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
             .padding(iconPadding)
     ) {
         Row(
@@ -329,7 +325,7 @@ fun StatusDropDown(
     ) {
         statuses.fastForEach {
             val selectedAlpha by animateFloatAsState(
-                targetValue = if (it == selectedStatus) 0.95f else 0f
+                targetValue = if (it == selectedStatus) 1f else 0f
             )
             DropdownMenuItem(
                 text = {
