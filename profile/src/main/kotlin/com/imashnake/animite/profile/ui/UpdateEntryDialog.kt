@@ -109,6 +109,7 @@ fun UpdateEntryDialog(
     // TODO: Please move these along with logic to the VM.
     var selectedStatus by remember { mutableStateOf(item.status) }
     var currentScore by remember { mutableStateOf(item.score) }
+    var currentProgress by remember { mutableStateOf(item.progress) }
 
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -208,15 +209,20 @@ fun UpdateEntryDialog(
                     }
                 }
 
-                if (item.segments != null && item.progress != null) {
-                    val progress = item.progress!!
+                if (item.segments != null && currentProgress != null) {
+                    val progress = currentProgress!!
                     val segments = item.segments ?: if (progress == 0) 1 else progress
 
                     ProgressBar(
-                        segments = segments,
                         progress = progress,
+                        segments = segments,
                         listName = selectedStatus,
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                        enabled = true,
+                        onProgressChanged = {
+                            currentProgress = it.fastRoundToInt()
+                            haptic.performHapticFeedback(SegmentTick)
+                        }
                     )
                 }
             }

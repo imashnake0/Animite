@@ -32,11 +32,14 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LinearWavyProgressIndicator
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -475,6 +478,7 @@ private fun MediaTrackingItem(
                     progress = progress,
                     listName = listName,
                     useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                    enabled = false,
                 )
             }
         }
@@ -568,45 +572,81 @@ fun ProgressBar(
     listName: User.TrackingStatus,
     useExpressiveProgressIndicator: Boolean,
     modifier: Modifier= Modifier,
+    enabled: Boolean,
+    onProgressChanged: ((Float) -> Unit)? = null,
 ) {
     val formattedProgress = progress
         .takeUnless { listName == User.TrackingStatus.COMPLETED }
         ?.let { "$it/$segments" }
         ?: "$segments"
 
+    val normalizedProgress = progress.toFloat() / segments
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
     ) {
-        Text(
-            text = formattedProgress,
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-            style = MaterialTheme.typography.labelSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        when (listName) {
-            User.TrackingStatus.WATCHING,
-            User.TrackingStatus.REWATCHING,
-            User.TrackingStatus.READING,
-            User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
-                LinearWavyProgressIndicator(
-                    progress = { progress.toFloat() / segments },
-                    amplitude = { if (it <= 0.1f || it >= 0.95f) 0f else 0.5f },
-                    waveSpeed = 15.dp,
-                    modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = formattedProgress,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (enabled) {
+                Text(
+                    text = "0000/0000",
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.graphicsLayer { alpha = 0f }
                 )
-            } else {
-                LinearProgressIndicator(
-                    progress = { progress.toFloat() / segments },
+            }
+        }
+
+        Box(contentAlignment = Alignment.Center) {
+            when (listName) {
+                User.TrackingStatus.WATCHING,
+                User.TrackingStatus.REWATCHING,
+                User.TrackingStatus.READING,
+                User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
+                    LinearWavyProgressIndicator(
+                        progress = { normalizedProgress },
+                        amplitude = {
+                            if (it <= 0.1f || it >= 0.95f) 0f else 0.5f
+                        },
+                        waveSpeed = 15.dp,
+                        modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                    )
+                } else {
+                    LinearProgressIndicator(
+                        progress = { normalizedProgress },
+                        modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                    )
+                }
+
+                else -> LinearProgressIndicator(
+                    progress = { normalizedProgress },
                     modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
                 )
             }
-            else -> LinearProgressIndicator(
-                progress = { progress.toFloat() / segments },
-                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-            )
+            if (enabled) {
+                CompositionLocalProvider(
+                    // Remove default M3 padding
+                    LocalMinimumInteractiveComponentSize provides 0.dp,
+                ) {
+                    Slider(
+                        value = progress.toFloat(),
+                        valueRange = 0f..segments.toFloat(),
+                        onValueChange = { onProgressChanged?.invoke(it) },
+                        steps = segments,
+                        modifier = Modifier.graphicsLayer { alpha = 0f }
+                    )
+                }
+            }
         }
     }
 }
