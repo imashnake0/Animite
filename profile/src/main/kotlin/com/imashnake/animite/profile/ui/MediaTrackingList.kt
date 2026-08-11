@@ -466,50 +466,16 @@ private fun MediaTrackingItem(
                 }
             }
 
-            val progress = item.progress
-            val segments = item.segments ?: if (progress == 0) 1 else progress
+            if (item.segments != null && item.progress != null) {
+                val progress = item.progress!!
+                val segments = item.segments ?: if (progress == 0) 1 else progress
 
-            if (segments != null && progress != null) {
-                val formattedProgress = progress
-                    .takeUnless { listName == User.TrackingStatus.COMPLETED }
-                    ?.let { "$it/$segments" }
-                    ?: "$segments"
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = formattedProgress,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                        style = MaterialTheme.typography.labelSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    when (listName) {
-                        User.TrackingStatus.WATCHING,
-                        User.TrackingStatus.REWATCHING,
-                        User.TrackingStatus.READING,
-                        User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
-                            LinearWavyProgressIndicator(
-                                progress = { progress.toFloat() / segments },
-                                amplitude = { if (it <= 0.1f || it >= 0.95f) 0f else 0.5f },
-                                waveSpeed = 15.dp,
-                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                            )
-                        } else {
-                            LinearProgressIndicator(
-                                progress = { progress.toFloat() / segments },
-                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                            )
-                        }
-                        else -> LinearProgressIndicator(
-                            progress = { progress.toFloat() / segments },
-                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                        )
-                    }
-                }
+                ProgressBar(
+                    segments = segments,
+                    progress = progress,
+                    listName = listName,
+                    useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                )
             }
         }
     }
@@ -517,7 +483,8 @@ private fun MediaTrackingItem(
     if (isUpdateEntryDialogVisible) {
         UpdateEntryDialog(
             item = item,
-            onDismissRequest = { isUpdateEntryDialogVisible = false }
+            onDismissRequest = { isUpdateEntryDialogVisible = false },
+            useExpressiveProgressIndicator = useExpressiveProgressIndicator,
         )
     }
 }
@@ -592,4 +559,54 @@ private fun Star(
         tint = MaterialTheme.colorScheme.primary.copy(alpha = if (!filled) 0.2f else 1f),
         modifier = modifier.size(dimensionResource(R.dimen.star_icon_size))
     )
+}
+
+@Composable
+fun ProgressBar(
+    progress: Int,
+    segments: Int,
+    listName: User.TrackingStatus,
+    useExpressiveProgressIndicator: Boolean,
+    modifier: Modifier= Modifier,
+) {
+    val formattedProgress = progress
+        .takeUnless { listName == User.TrackingStatus.COMPLETED }
+        ?.let { "$it/$segments" }
+        ?: "$segments"
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = formattedProgress,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        when (listName) {
+            User.TrackingStatus.WATCHING,
+            User.TrackingStatus.REWATCHING,
+            User.TrackingStatus.READING,
+            User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
+                LinearWavyProgressIndicator(
+                    progress = { progress.toFloat() / segments },
+                    amplitude = { if (it <= 0.1f || it >= 0.95f) 0f else 0.5f },
+                    waveSpeed = 15.dp,
+                    modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                )
+            } else {
+                LinearProgressIndicator(
+                    progress = { progress.toFloat() / segments },
+                    modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                )
+            }
+            else -> LinearProgressIndicator(
+                progress = { progress.toFloat() / segments },
+                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+            )
+        }
+    }
 }

@@ -101,6 +101,7 @@ private val DropdownMenuItemHorizontalPadding = 12.dp
 fun UpdateEntryDialog(
     item: Media.Tracking,
     onDismissRequest: () -> Unit,
+    useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier
 ) {
     val haptic = LocalHapticFeedback.current
@@ -128,6 +129,7 @@ fun UpdateEntryDialog(
             )
 
             Column(
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                 modifier = Modifier.padding(
                     horizontal = LocalPaddings.current.large,
                     vertical = LocalPaddings.current.medium
@@ -204,6 +206,18 @@ fun UpdateEntryDialog(
                             }
                         }
                     }
+                }
+
+                if (item.segments != null && item.progress != null) {
+                    val progress = item.progress!!
+                    val segments = item.segments ?: if (progress == 0) 1 else progress
+
+                    ProgressBar(
+                        segments = segments,
+                        progress = progress,
+                        listName = selectedStatus,
+                        useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                    )
                 }
             }
         }
