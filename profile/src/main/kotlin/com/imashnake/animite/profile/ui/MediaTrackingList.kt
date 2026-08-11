@@ -386,6 +386,7 @@ private fun MediaTrackingItem(
     Row(
         modifier = modifier.combinedClickable(
             onClick = { onClick(item.id, item.title) },
+            // TODO: Make a button for this too.
             onLongClick = { isUpdateEntryDialogVisible = true }
         )
     ) {
