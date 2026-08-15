@@ -2,6 +2,7 @@ package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -588,25 +589,14 @@ fun ProgressBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = formattedProgress,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                style = MaterialTheme.typography.labelSmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            if (enabled) {
-                Text(
-                    text = "0000/0000",
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.graphicsLayer { alpha = 0f }
-                )
-            }
-        }
+        Text(
+            text = formattedProgress,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.animateContentSize()
+        )
 
         Box(contentAlignment = Alignment.Center) {
             when (listName) {
