@@ -48,6 +48,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -63,6 +64,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -213,17 +215,45 @@ fun UpdateEntryDialog(
                     val progress = currentProgress!!
                     val segments = item.segments ?: if (progress == 0) 1 else progress
 
-                    ProgressBar(
-                        progress = progress,
-                        segments = segments,
-                        listName = selectedStatus,
-                        useExpressiveProgressIndicator = useExpressiveProgressIndicator,
-                        enabled = true,
-                        onProgressChanged = {
-                            currentProgress = it.fastRoundToInt()
-                            haptic.performHapticFeedback(SegmentTick)
+                    Box {
+                        ProgressBar(
+                            progress = progress,
+                            segments = segments,
+                            listName = selectedStatus,
+                            useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                            enabled = true,
+                            onProgressChanged = {
+                                currentProgress = it.fastRoundToInt()
+                                haptic.performHapticFeedback(SegmentTick)
+                            },
+                            // TODO: Figure out why this layout doesn't work. This makes space for ScoreButtons:
+                            modifier = Modifier.padding(
+                                end = 40.dp + LocalPaddings.current.small + LocalPaddings.current.medium
+                            )
+                        )
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            ScoreButton(
+                                imageVector = ImageVector.vectorResource(R.drawable.minus),
+                                onClick = {
+                                    currentProgress = (currentProgress!! - 1).fastCoerceIn(0, segments)
+                                    haptic.performHapticFeedback(SegmentTick)
+                                },
+                                size = 20.dp
+                            )
+                            ScoreButton(
+                                imageVector = Icons.Rounded.Add,
+                                onClick = {
+                                    currentProgress = (currentProgress!! + 1).fastCoerceIn(0, segments)
+                                    haptic.performHapticFeedback(SegmentTick)
+                                },
+                                size = 20.dp
+                            )
                         }
-                    )
+                    }
                 }
             }
         }
@@ -568,13 +598,16 @@ private fun SetScore(
 private fun ScoreButton(
     imageVector: ImageVector,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shape: Shape = CircleShape,
+    size: Dp = 24.dp
 ) {
     Icon(
         imageVector = imageVector,
         contentDescription = null,
         modifier = modifier
-            .clip(CircleShape)
+            .size(size)
+            .clip(shape)
             .clickable { onClick() }
             .background(
                 MaterialTheme.colorScheme.surfaceContainerHigh.copy(

@@ -578,7 +578,7 @@ fun ProgressBar(
     onProgressChanged: ((Float) -> Unit)? = null,
 ) {
     val formattedProgress = progress
-        .takeUnless { listName == User.TrackingStatus.COMPLETED }
+        .takeUnless { progress == segments }
         ?.let { "$it/$segments" }
         ?: "$segments"
 
