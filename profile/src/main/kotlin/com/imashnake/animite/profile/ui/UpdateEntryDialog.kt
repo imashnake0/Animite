@@ -46,9 +46,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Confirm
@@ -526,6 +526,7 @@ private fun SetScore(
                     else -> 0
                 },
                 track = { state ->
+                    val trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
                     SliderDefaults.Track(
                         sliderState = state,
                         colors = colors(
@@ -536,12 +537,7 @@ private fun SetScore(
                         ),
                         modifier = Modifier.drawBehind {
                             drawRoundRect(
-                                brush = Brush.linearGradient(
-                                    0.3f to Color(RED),
-                                    0.6f to Color(ORANGE),
-                                    0.8f to Color(LIME),
-                                    1f to Color(GREEN),
-                                ),
+                                brush = SolidColor(trackColor),
                                 cornerRadius = CornerRadius(x = 50f, y = 50f)
                             )
                         }
