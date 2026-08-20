@@ -10,8 +10,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -56,6 +59,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Confirm
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Reject
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.SegmentTick
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.layout.ContentScale
@@ -82,9 +86,11 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.core.ui.LocalPaddings
+import com.imashnake.animite.core.ui.component.ConfirmButton
 import com.imashnake.animite.core.ui.component.Divider
 import com.imashnake.animite.core.ui.component.DropDownIcon
 import com.imashnake.animite.core.ui.component.MediaMediumCard
+import com.imashnake.animite.core.ui.component.RejectButton
 import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
@@ -136,10 +142,10 @@ fun UpdateEntryDialog(
             )
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
                 modifier = Modifier.padding(
                     horizontal = LocalPaddings.current.large,
-                    vertical = LocalPaddings.current.medium
+                    vertical = LocalPaddings.current.large
                 )
             ) {
                 StatusDropDown(
@@ -248,6 +254,30 @@ fun UpdateEntryDialog(
                             )
                         }
                     }
+                }
+
+                FlowRow(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    RejectButton(
+                        imageVector = Icons.Rounded.Close,
+                        text = stringResource(R.string.close),
+                        onClick = {
+                            haptic.performHapticFeedback(Reject)
+                            onDismissRequest()
+                        },
+                    )
+                    Spacer(Modifier.size(LocalPaddings.current.medium))
+                    ConfirmButton(
+                        imageVector = ImageVector.vectorResource(R.drawable.save),
+                        text = stringResource(R.string.save),
+                        onClick = {
+                            haptic.performHapticFeedback(Confirm)
+                            // TODO: Mutate entry.
+                        },
+                    )
                 }
             }
         }
