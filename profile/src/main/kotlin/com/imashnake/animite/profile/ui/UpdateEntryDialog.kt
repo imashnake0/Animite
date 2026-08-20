@@ -36,6 +36,7 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,6 +56,8 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Confirm
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.SegmentTick
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -357,10 +360,15 @@ private fun StatusDropDown(
     val haptic = LocalHapticFeedback.current
 
     val iconPadding = (dimensionResource(R.dimen.tracking_list_header_height) - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
+
+    var dropDownWidthDp by remember { mutableFloatStateOf(196f) }
+    val density = LocalDensity.current
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
+            .onSizeChanged { with(density) { dropDownWidthDp = it.width.toDp().value } }
             .defaultMinSize(minHeight = dimensionResource(R.dimen.tracking_list_header_height))
             .clip(CircleShape)
             .clickable {
@@ -405,7 +413,8 @@ private fun StatusDropDown(
         shape = RoundedCornerShape(
             (dimensionResource(R.dimen.tracking_list_header_height) + LocalPaddings.current.tiny) / 2
         ),
-        offset = DpOffset(x = 0.dp, y = LocalPaddings.current.tiny),
+        fixedWidth = dropDownWidthDp.dp,
+        offset = DpOffset(x = 0.dp, y = 300.dp),
         modifier = Modifier.padding(vertical = LocalPaddings.current.tiny)
     ) {
         statuses.fastForEach {
@@ -437,12 +446,7 @@ private fun StatusDropDown(
                 contentPadding = PaddingValues(horizontal = iconPadding),
                 modifier = Modifier
                     .padding(horizontal = LocalPaddings.current.tiny)
-                    .clip(
-                        shape = RoundedCornerShape(
-                            size = dimensionResource(R.dimen.tracking_list_header_height)
-                                    - LocalPaddings.current.tiny
-                        )
-                    )
+                    .clip(shape = RoundedCornerShape(size = dimensionResource(R.dimen.tracking_list_header_height) - LocalPaddings.current.tiny))
                     .background(color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = selectedAlpha))
                     .height(dimensionResource(R.dimen.tracking_list_header_height))
             )
