@@ -67,7 +67,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastCoerceIn
@@ -143,8 +142,7 @@ fun UpdateEntryDialog(
                 StatusDropDown(
                     type = item.type,
                     selectedStatus = selectedStatus,
-                    onSelectStatus = { selectedStatus = it },
-                    modifier = Modifier.fillMaxWidth()
+                    onSelectStatus = { selectedStatus = it }
                 )
 
                 currentScore?.let {
@@ -364,92 +362,97 @@ private fun StatusDropDown(
     var dropDownWidthDp by remember { mutableFloatStateOf(196f) }
     val density = LocalDensity.current
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier
-            .onSizeChanged { with(density) { dropDownWidthDp = it.width.toDp().value } }
-            .defaultMinSize(minHeight = dimensionResource(R.dimen.tracking_list_header_height))
-            .clip(CircleShape)
-            .clickable {
-                isStatusDropDownExpanded = true
-                haptic.performHapticFeedback(ToggleOn)
-            }
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
-            .padding(iconPadding)
-    ) {
+    Box(modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(DropdownMenuItemHorizontalPadding + 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onSizeChanged { with(density) { dropDownWidthDp = it.width.toDp().value } }
+                .defaultMinSize(minHeight = dimensionResource(R.dimen.tracking_list_header_height))
+                .clip(CircleShape)
+                .clickable {
+                    isStatusDropDownExpanded = true
+                    haptic.performHapticFeedback(ToggleOn)
+                }
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
+                .padding(iconPadding)
         ) {
-            AnimatedContent(selectedStatus) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(it.res),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
-                )
-            }
-            AnimatedContent(selectedStatus) {
-                Text(
-                    text = stringResource(it.title),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    // DropDownIcon padding
-                    modifier = Modifier.padding(end = 16.dp)
-                )
-            }
-        }
-        DropDownIcon(isDroppedDown = isStatusDropDownExpanded)
-    }
-
-    CascadeDropdownMenu(
-        expanded = isStatusDropDownExpanded,
-        onDismissRequest = { isStatusDropDownExpanded = false },
-        state = cascadeState,
-        shape = RoundedCornerShape(
-            (dimensionResource(R.dimen.tracking_list_header_height) + LocalPaddings.current.tiny) / 2
-        ),
-        fixedWidth = dropDownWidthDp.dp,
-        // TODO: Figure out y-offset.
-        offset = DpOffset(x = 0.dp, y = 300.dp),
-        modifier = Modifier.padding(vertical = LocalPaddings.current.tiny)
-    ) {
-        statuses.fastForEach {
-            val selectedAlpha by animateFloatAsState(
-                targetValue = if (it == selectedStatus) 1f else 0f
-            )
-            DropdownMenuItem(
-                text = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(DropdownMenuItemHorizontalPadding + 4.dp),
+            ) {
+                AnimatedContent(selectedStatus) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(it.res),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
+                    )
+                }
+                AnimatedContent(selectedStatus) {
                     Text(
                         text = stringResource(it.title),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        // DropDownIcon padding
+                        modifier = Modifier.padding(end = 16.dp)
                     )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(it.res),
-                        contentDescription = stringResource(it.title),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
-                    )
-                },
-                onClick = {
-                    onSelectStatus(it)
-                    haptic.performHapticFeedback(Confirm)
-                    isStatusDropDownExpanded = false
-                },
-                contentPadding = PaddingValues(horizontal = iconPadding),
-                modifier = Modifier
-                    .padding(horizontal = LocalPaddings.current.tiny)
-                    .clip(shape = RoundedCornerShape(size = dimensionResource(R.dimen.tracking_list_header_height) - LocalPaddings.current.tiny))
-                    .background(color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = selectedAlpha))
-                    .height(dimensionResource(R.dimen.tracking_list_header_height))
-            )
+                }
+            }
+            DropDownIcon(isDroppedDown = isStatusDropDownExpanded)
+        }
+
+        CascadeDropdownMenu(
+            expanded = isStatusDropDownExpanded,
+            onDismissRequest = { isStatusDropDownExpanded = false },
+            state = cascadeState,
+            shape = RoundedCornerShape(
+                (dimensionResource(R.dimen.tracking_list_header_height) + LocalPaddings.current.tiny) / 2
+            ),
+            fixedWidth = dropDownWidthDp.dp,
+            modifier = Modifier.padding(vertical = LocalPaddings.current.tiny)
+        ) {
+            statuses.fastForEach {
+                val selectedAlpha by animateFloatAsState(
+                    targetValue = if (it == selectedStatus) 1f else 0f
+                )
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = stringResource(it.title),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(it.res),
+                            contentDescription = stringResource(it.title),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
+                        )
+                    },
+                    onClick = {
+                        onSelectStatus(it)
+                        haptic.performHapticFeedback(Confirm)
+                        isStatusDropDownExpanded = false
+                    },
+                    contentPadding = PaddingValues(horizontal = iconPadding),
+                    modifier = Modifier
+                        .padding(horizontal = LocalPaddings.current.tiny)
+                        .clip(shape = RoundedCornerShape(size = dimensionResource(R.dimen.tracking_list_header_height) - LocalPaddings.current.tiny))
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(
+                                alpha = selectedAlpha
+                            )
+                        )
+                        .height(dimensionResource(R.dimen.tracking_list_header_height))
+                )
+            }
         }
     }
 }
