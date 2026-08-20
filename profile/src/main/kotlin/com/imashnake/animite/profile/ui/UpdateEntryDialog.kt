@@ -145,55 +145,60 @@ fun UpdateEntryDialog(
                     onSelectStatus = { selectedStatus = it }
                 )
 
-                currentScore?.let {
-                    when (it.format) {
-                        ScoreFormat.POINT_100,
-                        ScoreFormat.POINT_10_DECIMAL,
-                        ScoreFormat.POINT_10 -> {
-                            SetScore(
-                                score = it,
-                                onScoreSet = { value, format ->
-                                    currentScore = currentScore?.copy(
-                                        value = when (format) {
-                                            ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
-                                            ScoreFormat.POINT_10,
-                                            ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
-                                            else -> value
-                                        },
-                                        normalizedValue = Media.Score.normalizeValue(value, format)
-                                    )
-                                    haptic.performHapticFeedback(SegmentTick)
-                                },
-                            )
-                        }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    currentScore?.let {
+                        when (it.format) {
+                            ScoreFormat.POINT_100,
+                            ScoreFormat.POINT_10_DECIMAL,
+                            ScoreFormat.POINT_10 -> {
+                                SetScore(
+                                    score = it,
+                                    onScoreSet = { value, format ->
+                                        currentScore = currentScore?.copy(
+                                            value = when (format) {
+                                                ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
+                                                ScoreFormat.POINT_10,
+                                                ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
+                                                else -> value
+                                            },
+                                            normalizedValue = Media.Score.normalizeValue(value, format)
+                                        )
+                                        haptic.performHapticFeedback(SegmentTick)
+                                    },
+                                )
+                            }
 
-                        ScoreFormat.POINT_5 -> {
-                            SetStars(
-                                score = it,
-                                onScoreSet = { value, format ->
-                                    currentScore = currentScore?.copy(
-                                        value = value.fastCoerceIn(0f, 5f),
-                                        normalizedValue = Media.Score.normalizeValue(value, format)
-                                    )
-                                    haptic.performHapticFeedback(ToggleOn)
-                                }
-                            )
-                        }
+                            ScoreFormat.POINT_5 -> {
+                                SetStars(
+                                    score = it,
+                                    onScoreSet = { value, format ->
+                                        currentScore = currentScore?.copy(
+                                            value = value.fastCoerceIn(0f, 5f),
+                                            normalizedValue = Media.Score.normalizeValue(value, format)
+                                        )
+                                        haptic.performHapticFeedback(ToggleOn)
+                                    }
+                                )
+                            }
 
-                        ScoreFormat.POINT_3 -> {
-                            SetSmileys(
-                                score = it,
-                                onScoreSet = { value, format ->
-                                    currentScore = currentScore?.copy(
-                                        value = value.fastCoerceIn(0f, 3f),
-                                        normalizedValue = Media.Score.normalizeValue(value, format)
-                                    )
-                                    haptic.performHapticFeedback(ToggleOn)
-                                }
-                            )
-                        }
+                            ScoreFormat.POINT_3 -> {
+                                SetSmileys(
+                                    score = it,
+                                    onScoreSet = { value, format ->
+                                        currentScore = currentScore?.copy(
+                                            value = value.fastCoerceIn(0f, 3f),
+                                            normalizedValue = Media.Score.normalizeValue(value, format)
+                                        )
+                                        haptic.performHapticFeedback(ToggleOn)
+                                    }
+                                )
+                            }
 
-                        else -> {}
+                            else -> {}
+                        }
                     }
                 }
 
