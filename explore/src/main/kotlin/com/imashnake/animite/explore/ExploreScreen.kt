@@ -753,14 +753,18 @@ private fun FilterBottomSheet(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 val scope = rememberCoroutineScope()
-                ResetAllButton(
+                RejectButton(
+                    imageVector = ImageVector.vectorResource(R.drawable.reset),
+                    text = stringResource(R.string.reset_all),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Reject)
                         reset()
                     },
                 )
                 Spacer(Modifier.size(LocalPaddings.current.medium))
-                DoneButton(
+                ConfirmButton(
+                    imageVector = ImageVector.vectorResource(R.drawable.done),
+                    text = stringResource(R.string.done),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                         scope.launch {
@@ -1054,7 +1058,9 @@ fun FlowFilterGroupHeaders(
 
 // TODO: Maybe move this to core:ui.
 @Composable
-private fun DoneButton(
+private fun ConfirmButton(
+    imageVector: ImageVector,
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -1067,18 +1073,20 @@ private fun DoneButton(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.done),
-                contentDescription = stringResource(R.string.done),
+                imageVector = imageVector,
+                contentDescription = text,
                 modifier = Modifier.size(24.dp)
             )
-            Text(stringResource(R.string.done))
+            Text(text)
         }
     }
 }
 
 // TODO: Maybe move this to core:ui.
 @Composable
-private fun ResetAllButton(
+private fun RejectButton(
+    imageVector: ImageVector,
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -1095,11 +1103,11 @@ private fun ResetAllButton(
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.reset),
-                contentDescription = stringResource(R.string.reset_all),
+                imageVector = imageVector,
+                contentDescription = text,
                 modifier = Modifier.size(24.dp)
             )
-            Text(stringResource(R.string.reset_all))
+            Text(text)
         }
     }
 }
