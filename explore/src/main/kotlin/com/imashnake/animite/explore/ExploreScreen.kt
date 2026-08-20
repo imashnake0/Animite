@@ -51,8 +51,6 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
@@ -126,8 +124,10 @@ import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.ChipFlowRow
+import com.imashnake.animite.core.ui.component.ConfirmButton
 import com.imashnake.animite.core.ui.component.DropDownIcon
 import com.imashnake.animite.core.ui.component.Paginator
+import com.imashnake.animite.core.ui.component.RejectButton
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.media.ext.icon
@@ -1052,62 +1052,6 @@ fun FlowFilterGroupHeaders(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium,
             )
-        }
-    }
-}
-
-// TODO: Maybe move this to core:ui.
-@Composable
-private fun ConfirmButton(
-    imageVector: ImageVector,
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-        ) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = text,
-                modifier = Modifier.size(24.dp)
-            )
-            Text(text)
-        }
-    }
-}
-
-// TODO: Maybe move this to core:ui.
-@Composable
-private fun RejectButton(
-    imageVector: ImageVector,
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-        ),
-        modifier = modifier,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-        ) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = text,
-                modifier = Modifier.size(24.dp)
-            )
-            Text(text)
         }
     }
 }
