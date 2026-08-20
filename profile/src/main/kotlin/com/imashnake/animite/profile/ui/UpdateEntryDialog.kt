@@ -405,7 +405,6 @@ private fun StatusDropDown(
         DropDownIcon(isDroppedDown = isStatusDropDownExpanded)
     }
 
-    // TODO: Fill width.
     CascadeDropdownMenu(
         expanded = isStatusDropDownExpanded,
         onDismissRequest = { isStatusDropDownExpanded = false },
@@ -414,6 +413,7 @@ private fun StatusDropDown(
             (dimensionResource(R.dimen.tracking_list_header_height) + LocalPaddings.current.tiny) / 2
         ),
         fixedWidth = dropDownWidthDp.dp,
+        // TODO: Figure out y-offset.
         offset = DpOffset(x = 0.dp, y = 300.dp),
         modifier = Modifier.padding(vertical = LocalPaddings.current.tiny)
     ) {
