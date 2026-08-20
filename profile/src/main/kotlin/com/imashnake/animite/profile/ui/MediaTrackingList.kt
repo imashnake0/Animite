@@ -586,6 +586,7 @@ fun ProgressBar(
         ?: "$segments"
 
     val normalizedProgress = progress.toFloat() / segments
+    val animatedNormalizedProgress by animateFloatAsState(normalizedProgress)
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
@@ -612,7 +613,7 @@ fun ProgressBar(
                     User.TrackingStatus.READING,
                     User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
                         LinearWavyProgressIndicator(
-                            progress = { normalizedProgress },
+                            progress = { animatedNormalizedProgress },
                             amplitude = {
                                 if (it <= 0.1f || it >= 0.95f) 0f else 0.5f
                             },
@@ -621,13 +622,13 @@ fun ProgressBar(
                         )
                     } else {
                         LinearProgressIndicator(
-                            progress = { normalizedProgress },
+                            progress = { animatedNormalizedProgress },
                             modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
                         )
                     }
 
                     else -> LinearProgressIndicator(
-                        progress = { normalizedProgress },
+                        progress = { animatedNormalizedProgress },
                         modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
                     )
                 }
