@@ -46,6 +46,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.runtime.toMutableStateList
@@ -385,7 +386,7 @@ private fun MediaTrackingItem(
     onClick: (Int, String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isUpdateEntryDialogVisible by remember { mutableStateOf(false) }
+    var isUpdateEntryDialogVisible by rememberSaveable { mutableStateOf(false) }
 
     Row(
         modifier = modifier.combinedClickable(

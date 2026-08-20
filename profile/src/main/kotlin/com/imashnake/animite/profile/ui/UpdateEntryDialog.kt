@@ -1,5 +1,6 @@
 package com.imashnake.animite.profile.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -39,6 +40,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -110,9 +113,9 @@ fun UpdateEntryDialog(
     val haptic = LocalHapticFeedback.current
 
     // TODO: Please move these along with logic to the VM.
-    var selectedStatus by remember { mutableStateOf(item.status) }
-    var currentScore by remember { mutableStateOf(item.score) }
-    var currentProgress by remember { mutableStateOf(item.progress) }
+    var selectedStatus by rememberSaveable { mutableStateOf(item.status) }
+    var currentScore by rememberMediaScore(item.score)
+    var currentProgress by rememberSaveable { mutableStateOf(item.progress) }
 
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -672,3 +675,24 @@ private fun SetSmileys(
         }
     }
 }
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun rememberMediaScore(score: Media.Score?) = rememberSaveable(
+    saver = Saver(
+        save = {
+            it.value?.let { score ->
+                arrayListOf(score.value, score.normalizedValue, score.format)
+            }
+        },
+        restore = {
+            mutableStateOf(
+                Media.Score(
+                    value = it[0] as Float,
+                    normalizedValue = it[1] as Float,
+                    format = it[2] as ScoreFormat
+                )
+            )
+        },
+    )
+) { mutableStateOf(score) }
