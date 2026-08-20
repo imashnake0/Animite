@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
@@ -62,6 +64,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMapNotNull
@@ -207,8 +210,8 @@ private fun ListOptions(
     onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    FlowRow(
+        verticalArrangement = Arrangement.Center,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .padding(top = LocalPaddings.current.small)
@@ -598,41 +601,47 @@ fun ProgressBar(
             modifier = Modifier.animateContentSize()
         )
 
-        Box(contentAlignment = Alignment.Center) {
-            when (listName) {
-                User.TrackingStatus.WATCHING,
-                User.TrackingStatus.REWATCHING,
-                User.TrackingStatus.READING,
-                User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
-                    LinearWavyProgressIndicator(
-                        progress = { normalizedProgress },
-                        amplitude = {
-                            if (it <= 0.1f || it >= 0.95f) 0f else 0.5f
-                        },
-                        waveSpeed = 15.dp,
-                        modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                    )
-                } else {
-                    LinearProgressIndicator(
+        CompositionLocalProvider(
+            // Remove default M3 padding
+            LocalMinimumInteractiveComponentSize provides 0.dp,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                when (listName) {
+                    User.TrackingStatus.WATCHING,
+                    User.TrackingStatus.REWATCHING,
+                    User.TrackingStatus.READING,
+                    User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
+                        LinearWavyProgressIndicator(
+                            progress = { normalizedProgress },
+                            amplitude = {
+                                if (it <= 0.1f || it >= 0.95f) 0f else 0.5f
+                            },
+                            waveSpeed = 15.dp,
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                        )
+                    } else {
+                        LinearProgressIndicator(
+                            progress = { normalizedProgress },
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                        )
+                    }
+
+                    else -> LinearProgressIndicator(
                         progress = { normalizedProgress },
                         modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
                     )
                 }
-
-                else -> LinearProgressIndicator(
-                    progress = { normalizedProgress },
-                    modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                )
-            }
-            if (enabled) {
-                CompositionLocalProvider(
-                    // Remove default M3 padding
-                    LocalMinimumInteractiveComponentSize provides 0.dp,
-                ) {
+                if (enabled) {
                     Slider(
                         value = progress.toFloat(),
                         valueRange = 0f..segments.toFloat(),
                         onValueChange = { onProgressChanged?.invoke(it) },
+                        thumb = {
+                            SliderDefaults.Thumb(
+                                interactionSource = remember { MutableInteractionSource() },
+                                thumbSize = DpSize(4.dp, 20.dp)
+                            )
+                        },
                         modifier = Modifier.graphicsLayer { alpha = 0f }
                     )
                 }

@@ -599,11 +599,7 @@ private fun ScoreButton(
             .size(size)
             .clip(shape)
             .clickable { onClick() }
-            .background(
-                MaterialTheme.colorScheme.surfaceContainerHigh.copy(
-                    alpha = 0.95f
-                )
-            )
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
     )
 }
 
