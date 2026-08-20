@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -138,76 +137,62 @@ fun UpdateEntryDialog(
                     vertical = LocalPaddings.current.medium
                 )
             ) {
-                Box(Modifier.fillMaxWidth()) {
-                    StatusDropDown(
-                        type = item.type,
-                        selectedStatus = selectedStatus,
-                        onSelectStatus = { selectedStatus = it },
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .padding(end = LocalPaddings.current.small)
-                    )
+                StatusDropDown(
+                    type = item.type,
+                    selectedStatus = selectedStatus,
+                    onSelectStatus = { selectedStatus = it },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .align(Alignment.CenterEnd)
-                            .padding(start = LocalPaddings.current.small)
-                            .height(dimensionResource(R.dimen.tracking_list_header_height))
-                    ) {
-                        currentScore?.let {
-                            when (it.format) {
-                                ScoreFormat.POINT_100,
-                                ScoreFormat.POINT_10_DECIMAL,
-                                ScoreFormat.POINT_10 -> {
-                                    SetScore(
-                                        score = it,
-                                        onScoreSet = { value, format ->
-                                            currentScore = currentScore?.copy(
-                                                value = when (format) {
-                                                    ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
-                                                    ScoreFormat.POINT_10,
-                                                    ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
-                                                    else -> value
-                                                },
-                                                normalizedValue = Media.Score.normalizeValue(value, format)
-                                            )
-                                            haptic.performHapticFeedback(SegmentTick)
+                currentScore?.let {
+                    when (it.format) {
+                        ScoreFormat.POINT_100,
+                        ScoreFormat.POINT_10_DECIMAL,
+                        ScoreFormat.POINT_10 -> {
+                            SetScore(
+                                score = it,
+                                onScoreSet = { value, format ->
+                                    currentScore = currentScore?.copy(
+                                        value = when (format) {
+                                            ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
+                                            ScoreFormat.POINT_10,
+                                            ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
+                                            else -> value
                                         },
-                                        modifier = Modifier.fillMaxHeight()
+                                        normalizedValue = Media.Score.normalizeValue(value, format)
                                     )
-                                }
-
-                                ScoreFormat.POINT_5 -> {
-                                    SetStars(
-                                        score = it,
-                                        onScoreSet = { value, format ->
-                                            currentScore = currentScore?.copy(
-                                                value = value.fastCoerceIn(0f, 5f),
-                                                normalizedValue = Media.Score.normalizeValue(value, format)
-                                            )
-                                            haptic.performHapticFeedback(ToggleOn)
-                                        }
-                                    )
-                                }
-
-                                ScoreFormat.POINT_3 -> {
-                                    SetSmileys(
-                                        score = it,
-                                        onScoreSet = { value, format ->
-                                            currentScore = currentScore?.copy(
-                                                value = value.fastCoerceIn(0f, 3f),
-                                                normalizedValue = Media.Score.normalizeValue(value, format)
-                                            )
-                                            haptic.performHapticFeedback(ToggleOn)
-                                        }
-                                    )
-                                }
-
-                                else -> {}
-                            }
+                                    haptic.performHapticFeedback(SegmentTick)
+                                },
+                            )
                         }
+
+                        ScoreFormat.POINT_5 -> {
+                            SetStars(
+                                score = it,
+                                onScoreSet = { value, format ->
+                                    currentScore = currentScore?.copy(
+                                        value = value.fastCoerceIn(0f, 5f),
+                                        normalizedValue = Media.Score.normalizeValue(value, format)
+                                    )
+                                    haptic.performHapticFeedback(ToggleOn)
+                                }
+                            )
+                        }
+
+                        ScoreFormat.POINT_3 -> {
+                            SetSmileys(
+                                score = it,
+                                onScoreSet = { value, format ->
+                                    currentScore = currentScore?.copy(
+                                        value = value.fastCoerceIn(0f, 3f),
+                                        normalizedValue = Media.Score.normalizeValue(value, format)
+                                    )
+                                    haptic.performHapticFeedback(ToggleOn)
+                                }
+                            )
+                        }
+
+                        else -> {}
                     }
                 }
 
@@ -356,9 +341,9 @@ private fun Header(
     }
 }
 
-// TODO: Improve layout for regular screen sizes, text is often truncated.
+// TODO: Reuse dropdown from the tabs.
 @Composable
-fun StatusDropDown(
+private fun StatusDropDown(
     type: Media.Small.Type,
     selectedStatus: User.TrackingStatus,
     onSelectStatus: (User.TrackingStatus) -> Unit,
@@ -412,6 +397,7 @@ fun StatusDropDown(
         DropDownIcon(isDroppedDown = isStatusDropDownExpanded)
     }
 
+    // TODO: Fill width.
     CascadeDropdownMenu(
         expanded = isStatusDropDownExpanded,
         onDismissRequest = { isStatusDropDownExpanded = false },
@@ -471,7 +457,7 @@ private fun SetScore(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
@@ -546,14 +532,6 @@ private fun SetScore(
                     ScoreFormat.POINT_5 -> 0f..5f
                     ScoreFormat.POINT_3 -> 0f..3f
                     else -> 0f..0f
-                },
-                steps = when (score.format) {
-                    ScoreFormat.POINT_100 -> 99
-                    ScoreFormat.POINT_10_DECIMAL -> 99
-                    ScoreFormat.POINT_10 -> 9
-                    ScoreFormat.POINT_5 -> 4
-                    ScoreFormat.POINT_3 -> 2
-                    else -> 0
                 },
                 track = { state ->
                     val trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)

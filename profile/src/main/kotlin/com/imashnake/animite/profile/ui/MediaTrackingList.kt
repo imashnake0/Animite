@@ -633,7 +633,6 @@ fun ProgressBar(
                         value = progress.toFloat(),
                         valueRange = 0f..segments.toFloat(),
                         onValueChange = { onProgressChanged?.invoke(it) },
-                        steps = segments,
                         modifier = Modifier.graphicsLayer { alpha = 0f }
                     )
                 }
