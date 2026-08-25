@@ -314,7 +314,8 @@ fun UpdateEntryDialog(
                                 EntryUpdateParams(
                                     id = item.id,
                                     status = selectedStatus,
-                                    score = currentScore
+                                    score = currentScore,
+                                    progress = currentProgress
                                 )
                             )
                             onDismissRequest()

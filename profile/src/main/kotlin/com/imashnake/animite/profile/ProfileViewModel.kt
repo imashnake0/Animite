@@ -154,7 +154,7 @@ class ProfileViewModel @Inject constructor(
         userRepository.updateMediaListEntry(params = params).collect {
             Log.d("UpdatedMediaListEntry", "updateMediaListEntry: id: ${it.getOrNull()?.mediaId}")
         }
-         refreshAnimeLists()
+        refreshAnimeLists()
     }
 
     private fun refreshAnimeLists() = viewModelScope.launch(Dispatchers.IO) {

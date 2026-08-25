@@ -70,7 +70,8 @@ class AnilistUserRepository(
             SaveMediaListEntryMutation(
                 mediaId = params.id,
                 status = Optional.presentIfNotNull(params.status.pollute()),
-                score = Optional.presentIfNotNull(params.score?.value?.toDouble())
+                score = Optional.presentIfNotNull(params.score?.value?.toDouble()),
+                progress = Optional.presentIfNotNull(params.progress)
             )
         )
         .fetchPolicy(FetchPolicy.NetworkOnly)
@@ -110,5 +111,6 @@ class AnilistUserRepository(
 data class EntryUpdateParams(
     val id: Int,
     val status: User.TrackingStatus,
-    val score: Media.Score?
+    val score: Media.Score?,
+    val progress: Int?
 )
