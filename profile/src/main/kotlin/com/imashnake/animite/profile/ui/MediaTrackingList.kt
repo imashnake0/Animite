@@ -69,6 +69,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMapNotNull
+import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.sanitize
@@ -99,7 +100,7 @@ fun MediaTrackingLists(
     namedLists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     listVisibility: SnapshotStateMap<Int, Boolean>,
     updateMediaListsOrder: (List<String>) -> Unit,
-    updateEntry: (id: Int, status: User.TrackingStatus) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier,
@@ -386,7 +387,7 @@ private fun MediaTrackingItem(
     item: Media.Tracking,
     useExpressiveProgressIndicator: Boolean,
     onClick: (Int, String?) -> Unit,
-    updateEntry: (id: Int, status: User.TrackingStatus) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isUpdateEntryDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -464,9 +465,11 @@ private fun MediaTrackingItem(
                         item.score?.let { score ->
                             if (score.format == ScoreFormat.POINT_5) {
                                 val filledStars = score.value.toInt()
-                                Row {
-                                    repeat(filledStars) { Star(filled = true) }
-                                    repeat(TOTAL_STARS - filledStars) { Star(filled = false) }
+                                AnimatedContent(filledStars) {
+                                    Row {
+                                        repeat(it) { Star(filled = true) }
+                                        repeat(TOTAL_STARS - it) { Star(filled = false) }
+                                    }
                                 }
                             }
                         }

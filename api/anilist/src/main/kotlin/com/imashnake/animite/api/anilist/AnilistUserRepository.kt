@@ -64,22 +64,18 @@ class AnilistUserRepository(
         .asResult { User.MediaCollection(it, type, language, scoreFormat, mediaListOrder) }
     }
 
-    fun updateMediaListEntry(
-        id: Int,
-        status: User.TrackingStatus
-    ): Flow<Result<SaveMediaListEntryMutation.SaveMediaListEntry?>> {
-        return apolloClient
-            // TODO: Enable optimistic updates.
-            .mutation(
-                SaveMediaListEntryMutation(
-                    status = Optional.presentIfNotNull(status.pollute()),
-                    mediaId = id
-                )
+    fun updateMediaListEntry(params: EntryUpdateParams) = apolloClient
+        // TODO: Enable optimistic updates.
+        .mutation(
+            SaveMediaListEntryMutation(
+                mediaId = params.id,
+                status = Optional.presentIfNotNull(params.status.pollute()),
+                score = Optional.presentIfNotNull(params.score?.value?.toDouble())
             )
-            .fetchPolicy(FetchPolicy.NetworkOnly)
-            .toFlow()
-            .asResult { it.SaveMediaListEntry }
-    }
+        )
+        .fetchPolicy(FetchPolicy.NetworkOnly)
+        .toFlow()
+        .asResult { it.SaveMediaListEntry }
 
     fun updateUser(
         profileColor: String? = null,
@@ -110,3 +106,9 @@ class AnilistUserRepository(
             .asResult { it.UpdateUser }
     }
 }
+
+data class EntryUpdateParams(
+    val id: Int,
+    val status: User.TrackingStatus,
+    val score: Media.Score?
+)

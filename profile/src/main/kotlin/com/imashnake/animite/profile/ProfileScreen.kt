@@ -84,6 +84,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.Companion.profileColorToHex
 import com.imashnake.animite.banner.NestedScrollBannerLayout
@@ -531,7 +532,7 @@ private fun UserTabs(
     mangaCollection: User.MediaCollection?,
     updateAnimeListsOrder: (List<String>) -> Unit,
     updateMangaListsOrder: (List<String>) -> Unit,
-    updateEntry: (id: Int, status: User.TrackingStatus) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     showUserDescription: Boolean,
     onUserDescriptionClick: () -> Unit,

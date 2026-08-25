@@ -87,6 +87,7 @@ import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.toColorInt
 import coil3.compose.AsyncImage
+import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.ScoreFormat
@@ -117,7 +118,7 @@ private val DropdownMenuItemHorizontalPadding = 12.dp
 @Composable
 fun UpdateEntryDialog(
     item: Media.Tracking,
-    updateEntry: (id: Int, status: User.TrackingStatus) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     onDismissRequest: () -> Unit,
     useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier
@@ -309,7 +310,13 @@ fun UpdateEntryDialog(
                         text = stringResource(R.string.save),
                         onClick = {
                             haptic.performHapticFeedback(Confirm)
-                            updateEntry(item.id, selectedStatus)
+                            updateEntry(
+                                EntryUpdateParams(
+                                    id = item.id,
+                                    status = selectedStatus,
+                                    score = currentScore
+                                )
+                            )
                             onDismissRequest()
                         },
                     )
