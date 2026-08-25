@@ -26,6 +26,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -36,6 +39,8 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SliderDefaults.colors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -123,6 +128,9 @@ fun UpdateEntryDialog(
     var currentScore by rememberMediaScore(item.score)
     var currentProgress by rememberSaveable { mutableStateOf(item.progress) }
 
+    val datePickerState = rememberDatePickerState()
+    var isDatePickerVisible by remember { mutableStateOf(false) }
+
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
             shape = RoundedCornerShape(18.dp + LocalPaddings.current.large),
@@ -148,65 +156,86 @@ fun UpdateEntryDialog(
                     vertical = LocalPaddings.current.large
                 )
             ) {
-                StatusDropDown(
-                    type = item.type,
-                    selectedStatus = selectedStatus,
-                    onSelectStatus = { selectedStatus = it }
-                )
+                Section(title = "Status") {
+                    StatusDropDown(
+                        type = item.type,
+                        selectedStatus = selectedStatus,
+                        onSelectStatus = { selectedStatus = it }
+                    )
+                }
 
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    currentScore?.let {
-                        when (it.format) {
-                            ScoreFormat.POINT_100,
-                            ScoreFormat.POINT_10_DECIMAL,
-                            ScoreFormat.POINT_10 -> {
-                                SetScore(
-                                    score = it,
-                                    onScoreSet = { value, format ->
-                                        currentScore = currentScore?.copy(
-                                            value = when (format) {
-                                                ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
-                                                ScoreFormat.POINT_10,
-                                                ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
-                                                else -> value
-                                            },
-                                            normalizedValue = Media.Score.normalizeValue(value, format)
-                                        )
-                                        haptic.performHapticFeedback(SegmentTick)
-                                    },
-                                )
+                Section(title = "Score") {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        currentScore?.let {
+                            when (it.format) {
+                                ScoreFormat.POINT_100,
+                                ScoreFormat.POINT_10_DECIMAL,
+                                ScoreFormat.POINT_10 -> {
+                                    SetScore(
+                                        score = it,
+                                        onScoreSet = { value, format ->
+                                            currentScore = currentScore?.copy(
+                                                value = when (format) {
+                                                    ScoreFormat.POINT_100 -> value.fastCoerceIn(
+                                                        0f,
+                                                        100f
+                                                    )
+
+                                                    ScoreFormat.POINT_10,
+                                                    ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(
+                                                        0f,
+                                                        10f
+                                                    )
+
+                                                    else -> value
+                                                },
+                                                normalizedValue = Media.Score.normalizeValue(
+                                                    value,
+                                                    format
+                                                )
+                                            )
+                                            haptic.performHapticFeedback(SegmentTick)
+                                        },
+                                    )
+                                }
+
+                                ScoreFormat.POINT_5 -> {
+                                    SetStars(
+                                        score = it,
+                                        onScoreSet = { value, format ->
+                                            currentScore = currentScore?.copy(
+                                                value = value.fastCoerceIn(0f, 5f),
+                                                normalizedValue = Media.Score.normalizeValue(
+                                                    value,
+                                                    format
+                                                )
+                                            )
+                                            haptic.performHapticFeedback(ToggleOn)
+                                        }
+                                    )
+                                }
+
+                                ScoreFormat.POINT_3 -> {
+                                    SetSmileys(
+                                        score = it,
+                                        onScoreSet = { value, format ->
+                                            currentScore = currentScore?.copy(
+                                                value = value.fastCoerceIn(0f, 3f),
+                                                normalizedValue = Media.Score.normalizeValue(
+                                                    value,
+                                                    format
+                                                )
+                                            )
+                                            haptic.performHapticFeedback(ToggleOn)
+                                        }
+                                    )
+                                }
+
+                                else -> {}
                             }
-
-                            ScoreFormat.POINT_5 -> {
-                                SetStars(
-                                    score = it,
-                                    onScoreSet = { value, format ->
-                                        currentScore = currentScore?.copy(
-                                            value = value.fastCoerceIn(0f, 5f),
-                                            normalizedValue = Media.Score.normalizeValue(value, format)
-                                        )
-                                        haptic.performHapticFeedback(ToggleOn)
-                                    }
-                                )
-                            }
-
-                            ScoreFormat.POINT_3 -> {
-                                SetSmileys(
-                                    score = it,
-                                    onScoreSet = { value, format ->
-                                        currentScore = currentScore?.copy(
-                                            value = value.fastCoerceIn(0f, 3f),
-                                            normalizedValue = Media.Score.normalizeValue(value, format)
-                                        )
-                                        haptic.performHapticFeedback(ToggleOn)
-                                    }
-                                )
-                            }
-
-                            else -> {}
                         }
                     }
                 }
@@ -215,43 +244,47 @@ fun UpdateEntryDialog(
                     val progress = currentProgress!!
                     val segments = item.segments ?: if (progress == 0) 1 else progress
 
-                    Box {
-                        ProgressBar(
-                            progress = progress,
-                            segments = segments,
-                            listName = selectedStatus,
-                            useExpressiveProgressIndicator = useExpressiveProgressIndicator,
-                            enabled = true,
-                            onProgressChanged = {
-                                currentProgress = it.fastRoundToInt()
-                                haptic.performHapticFeedback(SegmentTick)
-                            },
-                            // TODO: Figure out why this layout doesn't work. This makes space for ScoreButtons:
-                            modifier = Modifier.padding(
-                                end = 40.dp + LocalPaddings.current.small + LocalPaddings.current.medium
+                    Section(title = "Progress") {
+                        Box(Modifier.padding(vertical = LocalPaddings.current.small)) {
+                            ProgressBar(
+                                progress = progress,
+                                segments = segments,
+                                listName = selectedStatus,
+                                useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                                enabled = true,
+                                onProgressChanged = {
+                                    currentProgress = it.fastRoundToInt()
+                                    haptic.performHapticFeedback(SegmentTick)
+                                },
+                                // TODO: Figure out why this layout doesn't work. This makes space for ScoreButtons:
+                                modifier = Modifier.padding(
+                                    end = 40.dp + LocalPaddings.current.small + LocalPaddings.current.medium
+                                )
                             )
-                        )
 
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        ) {
-                            ScoreButton(
-                                imageVector = ImageVector.vectorResource(R.drawable.minus),
-                                onClick = {
-                                    currentProgress = (currentProgress!! - 1).fastCoerceIn(0, segments)
-                                    haptic.performHapticFeedback(SegmentTick)
-                                },
-                                size = 20.dp
-                            )
-                            ScoreButton(
-                                imageVector = Icons.Rounded.Add,
-                                onClick = {
-                                    currentProgress = (currentProgress!! + 1).fastCoerceIn(0, segments)
-                                    haptic.performHapticFeedback(SegmentTick)
-                                },
-                                size = 20.dp
-                            )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                modifier = Modifier.align(Alignment.CenterEnd)
+                            ) {
+                                ScoreButton(
+                                    imageVector = ImageVector.vectorResource(R.drawable.minus),
+                                    onClick = {
+                                        currentProgress =
+                                            (currentProgress!! - 1).fastCoerceIn(0, segments)
+                                        haptic.performHapticFeedback(SegmentTick)
+                                    },
+                                    size = 20.dp
+                                )
+                                ScoreButton(
+                                    imageVector = Icons.Rounded.Add,
+                                    onClick = {
+                                        currentProgress =
+                                            (currentProgress!! + 1).fastCoerceIn(0, segments)
+                                        haptic.performHapticFeedback(SegmentTick)
+                                    },
+                                    size = 20.dp
+                                )
+                            }
                         }
                     }
                 }
@@ -281,6 +314,14 @@ fun UpdateEntryDialog(
                 }
             }
         }
+    }
+
+    if (isDatePickerVisible) {
+        DatePickerModal(
+            state = datePickerState,
+            onDismiss = { isDatePickerVisible = false },
+            onDateSelected = {}
+        )
     }
 }
 
@@ -703,6 +744,57 @@ private fun SetSmileys(
                     .graphicsLayer { this.alpha = alpha }
             )
         }
+    }
+}
+
+@Composable
+fun DatePickerModal(
+    state: DatePickerState,
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDateSelected(state.selectedDateMillis)
+                    onDismiss()
+                }
+            ) {
+                Text(stringResource(R.string.ok))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    ) {
+        DatePicker(
+            state = state,
+            showModeToggle = false
+        )
+    }
+}
+
+@Composable
+private fun Section(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier
+    ) {
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelSmallEmphasized,
+            fontWeight = FontWeight.Bold
+        )
+        content()
     }
 }
 

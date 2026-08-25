@@ -45,6 +45,9 @@
     <string name="save">Save</string>
     <string name="close">Close</string>
 
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
     <string name="no_anime">No Anime</string>
     <string name="no_manga">No Manga</string>
     <string name="no_media">No Media</string>
