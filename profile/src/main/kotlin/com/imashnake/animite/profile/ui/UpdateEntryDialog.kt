@@ -62,6 +62,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
@@ -156,206 +157,237 @@ fun UpdateEntryDialog(
                     ?: Color.Transparent
             )
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
-                modifier = Modifier
-                    .padding(
-                        horizontal = LocalPaddings.current.large,
-                        vertical = LocalPaddings.current.large
-                    )
-                    // TODO: Make this more graceful.
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Section(title = "Status") {
-                    StatusDropDown(
-                        type = item.type,
-                        selectedStatus = selectedStatus,
-                        onSelectStatus = { selectedStatus = it }
-                    )
-                }
+            Box {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(
+                            horizontal = LocalPaddings.current.large,
+                            vertical = LocalPaddings.current.large
+                        )
+                ) {
+                    Section(title = "Status") {
+                        StatusDropDown(
+                            type = item.type,
+                            selectedStatus = selectedStatus,
+                            onSelectStatus = { selectedStatus = it }
+                        )
+                    }
 
-                Section(title = "Score") {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        currentScore?.let {
-                            when (it.format) {
-                                ScoreFormat.POINT_100,
-                                ScoreFormat.POINT_10_DECIMAL,
-                                ScoreFormat.POINT_10 -> {
-                                    SetScore(
-                                        score = it,
-                                        onScoreSet = { value, format ->
-                                            currentScore = currentScore?.copy(
-                                                value = when (format) {
-                                                    ScoreFormat.POINT_100 -> value.fastCoerceIn(
-                                                        0f,
-                                                        100f
+                    Section(title = "Score") {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            currentScore?.let {
+                                when (it.format) {
+                                    ScoreFormat.POINT_100,
+                                    ScoreFormat.POINT_10_DECIMAL,
+                                    ScoreFormat.POINT_10 -> {
+                                        SetScore(
+                                            score = it,
+                                            onScoreSet = { value, format ->
+                                                currentScore = currentScore?.copy(
+                                                    value = when (format) {
+                                                        ScoreFormat.POINT_100 -> value.fastCoerceIn(
+                                                            0f,
+                                                            100f
+                                                        )
+
+                                                        ScoreFormat.POINT_10,
+                                                        ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(
+                                                            0f,
+                                                            10f
+                                                        )
+
+                                                        else -> value
+                                                    },
+                                                    normalizedValue = Media.Score.normalizeValue(
+                                                        value,
+                                                        format
                                                     )
-
-                                                    ScoreFormat.POINT_10,
-                                                    ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(
-                                                        0f,
-                                                        10f
-                                                    )
-
-                                                    else -> value
-                                                },
-                                                normalizedValue = Media.Score.normalizeValue(
-                                                    value,
-                                                    format
                                                 )
-                                            )
+                                                haptic.performHapticFeedback(SegmentTick)
+                                            },
+                                        )
+                                    }
+
+                                    ScoreFormat.POINT_5 -> {
+                                        SetStars(
+                                            score = it,
+                                            onScoreSet = { value, format ->
+                                                currentScore = currentScore?.copy(
+                                                    value = value.fastCoerceIn(0f, 5f),
+                                                    normalizedValue = Media.Score.normalizeValue(
+                                                        value,
+                                                        format
+                                                    )
+                                                )
+                                                haptic.performHapticFeedback(ToggleOn)
+                                            }
+                                        )
+                                    }
+
+                                    ScoreFormat.POINT_3 -> {
+                                        SetSmileys(
+                                            score = it,
+                                            onScoreSet = { value, format ->
+                                                currentScore = currentScore?.copy(
+                                                    value = value.fastCoerceIn(0f, 3f),
+                                                    normalizedValue = Media.Score.normalizeValue(
+                                                        value,
+                                                        format
+                                                    )
+                                                )
+                                                haptic.performHapticFeedback(ToggleOn)
+                                            }
+                                        )
+                                    }
+
+                                    else -> {}
+                                }
+                            }
+                        }
+                    }
+
+                    if (item.segments != null && currentProgress != null) {
+                        val progress = currentProgress!!
+                        val segments = item.segments ?: if (progress == 0) 1 else progress
+
+                        Section(title = "Progress") {
+                            Box(Modifier.padding(vertical = LocalPaddings.current.small)) {
+                                ProgressBar(
+                                    progress = progress,
+                                    segments = segments,
+                                    listName = selectedStatus,
+                                    useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                                    enabled = true,
+                                    onProgressChanged = {
+                                        currentProgress = it.fastRoundToInt()
+                                        haptic.performHapticFeedback(SegmentTick)
+                                    },
+                                    // TODO: Figure out why this layout doesn't work. This makes space for ScoreButtons:
+                                    modifier = Modifier.padding(
+                                        end = 40.dp + LocalPaddings.current.small + LocalPaddings.current.medium
+                                    )
+                                )
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                    modifier = Modifier.align(Alignment.CenterEnd)
+                                ) {
+                                    ScoreButton(
+                                        imageVector = ImageVector.vectorResource(R.drawable.minus),
+                                        onClick = {
+                                            currentProgress =
+                                                (currentProgress!! - 1).fastCoerceIn(0, segments)
                                             haptic.performHapticFeedback(SegmentTick)
                                         },
+                                        size = 20.dp
+                                    )
+                                    ScoreButton(
+                                        imageVector = Icons.Rounded.Add,
+                                        onClick = {
+                                            currentProgress =
+                                                (currentProgress!! + 1).fastCoerceIn(0, segments)
+                                            haptic.performHapticFeedback(SegmentTick)
+                                        },
+                                        size = 20.dp
                                     )
                                 }
-
-                                ScoreFormat.POINT_5 -> {
-                                    SetStars(
-                                        score = it,
-                                        onScoreSet = { value, format ->
-                                            currentScore = currentScore?.copy(
-                                                value = value.fastCoerceIn(0f, 5f),
-                                                normalizedValue = Media.Score.normalizeValue(
-                                                    value,
-                                                    format
-                                                )
-                                            )
-                                            haptic.performHapticFeedback(ToggleOn)
-                                        }
-                                    )
-                                }
-
-                                ScoreFormat.POINT_3 -> {
-                                    SetSmileys(
-                                        score = it,
-                                        onScoreSet = { value, format ->
-                                            currentScore = currentScore?.copy(
-                                                value = value.fastCoerceIn(0f, 3f),
-                                                normalizedValue = Media.Score.normalizeValue(
-                                                    value,
-                                                    format
-                                                )
-                                            )
-                                            haptic.performHapticFeedback(ToggleOn)
-                                        }
-                                    )
-                                }
-
-                                else -> {}
                             }
                         }
                     }
-                }
 
-                if (item.segments != null && currentProgress != null) {
-                    val progress = currentProgress!!
-                    val segments = item.segments ?: if (progress == 0) 1 else progress
-
-                    Section(title = "Progress") {
-                        Box(Modifier.padding(vertical = LocalPaddings.current.small)) {
-                            ProgressBar(
-                                progress = progress,
-                                segments = segments,
-                                listName = selectedStatus,
-                                useExpressiveProgressIndicator = useExpressiveProgressIndicator,
-                                enabled = true,
-                                onProgressChanged = {
-                                    currentProgress = it.fastRoundToInt()
-                                    haptic.performHapticFeedback(SegmentTick)
-                                },
-                                // TODO: Figure out why this layout doesn't work. This makes space for ScoreButtons:
-                                modifier = Modifier.padding(
-                                    end = 40.dp + LocalPaddings.current.small + LocalPaddings.current.medium
-                                )
-                            )
-
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                modifier = Modifier.align(Alignment.CenterEnd)
-                            ) {
-                                ScoreButton(
-                                    imageVector = ImageVector.vectorResource(R.drawable.minus),
-                                    onClick = {
-                                        currentProgress =
-                                            (currentProgress!! - 1).fastCoerceIn(0, segments)
-                                        haptic.performHapticFeedback(SegmentTick)
-                                    },
-                                    size = 20.dp
-                                )
-                                ScoreButton(
-                                    imageVector = Icons.Rounded.Add,
-                                    onClick = {
-                                        currentProgress =
-                                            (currentProgress!! + 1).fastCoerceIn(0, segments)
-                                        haptic.performHapticFeedback(SegmentTick)
-                                    },
-                                    size = 20.dp
-                                )
-                            }
-                        }
-                    }
-                }
-
-                FlowRow(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Crossfade(
-                        selectedStatus != item.status ||
-                            currentScore != item.score ||
-                            currentProgress != item.progress
+                    FlowRow(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
-                        IconButton(
-                            enabled = it,
-                            colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.errorContainer,
-                                contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                            ),
+                        Crossfade(
+                            selectedStatus != item.status ||
+                                    currentScore != item.score ||
+                                    currentProgress != item.progress
+                        ) {
+                            IconButton(
+                                enabled = it,
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                                ),
+                                onClick = {
+                                    haptic.performHapticFeedback(Reject)
+                                    selectedStatus = item.status
+                                    currentScore = item.score
+                                    currentProgress = item.progress
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.reset_settings),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                        Spacer(Modifier.size(LocalPaddings.current.small))
+                        RejectButton(
+                            imageVector = Icons.Rounded.Close,
+                            text = stringResource(R.string.close),
                             onClick = {
                                 haptic.performHapticFeedback(Reject)
-                                selectedStatus = item.status
-                                currentScore = item.score
-                                currentProgress = item.progress
-                            }
-                        ) {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(R.drawable.reset_settings),
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
+                                onDismissRequest()
+                            },
+                        )
+                        Spacer(Modifier.size(LocalPaddings.current.medium))
+                        ConfirmButton(
+                            imageVector = ImageVector.vectorResource(R.drawable.save),
+                            text = stringResource(R.string.save),
+                            onClick = {
+                                haptic.performHapticFeedback(Confirm)
+                                updateEntry(
+                                    EntryUpdateParams(
+                                        id = item.id,
+                                        status = selectedStatus,
+                                        score = currentScore,
+                                        progress = currentProgress
+                                    )
+                                )
+                                onDismissRequest()
+                            },
+                        )
                     }
-                    Spacer(Modifier.size(LocalPaddings.current.small))
-                    RejectButton(
-                        imageVector = Icons.Rounded.Close,
-                        text = stringResource(R.string.close),
-                        onClick = {
-                            haptic.performHapticFeedback(Reject)
-                            onDismissRequest()
-                        },
-                    )
-                    Spacer(Modifier.size(LocalPaddings.current.medium))
-                    ConfirmButton(
-                        imageVector = ImageVector.vectorResource(R.drawable.save),
-                        text = stringResource(R.string.save),
-                        onClick = {
-                            haptic.performHapticFeedback(Confirm)
-                            updateEntry(
-                                EntryUpdateParams(
-                                    id = item.id,
-                                    status = selectedStatus,
-                                    score = currentScore,
-                                    progress = currentProgress
+                }
+
+                // TODO: Make a reusable gradient scroll layout in core:ui.
+                Box(
+                    modifier = Modifier
+                        .height(LocalPaddings.current.large)
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    Color.Transparent
                                 )
                             )
-                            onDismissRequest()
-                        },
-                    )
-                }
+                        )
+                )
+                Box(
+                    modifier = Modifier
+                        .height(LocalPaddings.current.large)
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.Transparent,
+                                    MaterialTheme.colorScheme.surfaceContainerHighest
+                                )
+                            )
+                        )
+                )
             }
         }
     }
