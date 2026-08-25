@@ -6,6 +6,7 @@ import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.pollute
 import com.imashnake.animite.api.anilist.type.MediaListOptionsInput
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.anilist.type.ScoreFormat
@@ -63,6 +64,20 @@ class AnilistUserRepository(
         .asResult { User.MediaCollection(it, type, language, scoreFormat, mediaListOrder) }
     }
 
+    fun updateMediaListEntry(params: EntryUpdateParams) = apolloClient
+        // TODO: Enable optimistic updates.
+        .mutation(
+            SaveMediaListEntryMutation(
+                mediaId = params.id,
+                status = Optional.presentIfNotNull(params.status.pollute()),
+                score = Optional.presentIfNotNull(params.score?.value?.toDouble()),
+                progress = Optional.presentIfNotNull(params.progress)
+            )
+        )
+        .fetchPolicy(FetchPolicy.NetworkOnly)
+        .toFlow()
+        .asResult { it.SaveMediaListEntry }
+
     fun updateUser(
         profileColor: String? = null,
         scoreFormat: ScoreFormat? = null,
@@ -70,6 +85,7 @@ class AnilistUserRepository(
         mangaSectionOrder: List<String>? = null,
     ): Flow<Result<UpdateUserMutation.UpdateUser?>> {
         return apolloClient
+            // TODO: Enable optimistic updates.
             .mutation(
                 UpdateUserMutation(
                     profileColor = Optional.presentIfNotNull(profileColor),
@@ -91,3 +107,10 @@ class AnilistUserRepository(
             .asResult { it.UpdateUser }
     }
 }
+
+data class EntryUpdateParams(
+    val id: Int,
+    val status: User.TrackingStatus,
+    val score: Media.Score?,
+    val progress: Int?
+)

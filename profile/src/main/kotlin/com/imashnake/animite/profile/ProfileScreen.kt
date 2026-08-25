@@ -84,6 +84,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.Companion.profileColorToHex
 import com.imashnake.animite.banner.NestedScrollBannerLayout
@@ -274,6 +275,7 @@ fun ProfileScreen(
                                             mangaCollection = viewerMangaLists.data,
                                             updateAnimeListsOrder = viewModel::updateAnimeLists,
                                             updateMangaListsOrder = viewModel::updateMangaLists,
+                                            updateEntry = viewModel::updateMediaListEntry,
                                             onNavigateToMediaItem = onNavigateToMediaItem,
                                             showUserDescription = showUserDescription,
                                             onUserDescriptionClick = { showUserDescriptionSheet = true },
@@ -494,7 +496,7 @@ fun BannerHeightToggle(
 }
 
 @Composable
-fun LogOutDialog(
+private fun LogOutDialog(
     logOut: () -> Unit,
     dismiss: () -> Unit,
 ) {
@@ -530,6 +532,7 @@ private fun UserTabs(
     mangaCollection: User.MediaCollection?,
     updateAnimeListsOrder: (List<String>) -> Unit,
     updateMangaListsOrder: (List<String>) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     showUserDescription: Boolean,
     onUserDescriptionClick: () -> Unit,
@@ -663,6 +666,7 @@ private fun UserTabs(
                         listVisibility = animeListVisibility,
                         updateMediaListsOrder = updateAnimeListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
+                        updateEntry = updateEntry,
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                         contentPadding = mediaTabContentPadding,
                     )
@@ -671,6 +675,7 @@ private fun UserTabs(
                         listVisibility = mangaListVisibility,
                         updateMediaListsOrder = updateMangaListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
+                        updateEntry = updateEntry,
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                         contentPadding = mediaTabContentPadding,
                     )

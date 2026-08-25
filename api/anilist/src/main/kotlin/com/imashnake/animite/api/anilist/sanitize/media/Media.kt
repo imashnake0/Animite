@@ -13,6 +13,7 @@ import com.imashnake.animite.api.anilist.fragment.StaffSmall
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Format.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Relation.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Season.Companion.sanitize
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Small.Type
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Source.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Status.Companion.sanitize
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus
@@ -33,7 +34,6 @@ import kotlinx.datetime.format.MonthNames
 import java.util.Locale
 import kotlin.collections.mapNotNull
 import kotlin.collections.orEmpty
-import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -723,6 +723,7 @@ data class Media(
     @Immutable
     data class Tracking(
         val id: Int,
+        val type: Type,
         val coverImage: String?,
         val bannerImage: String?,
         val color: String?,
@@ -744,6 +745,7 @@ data class Media(
             language: Language
         ) : this(
             id = query.id,
+            type = query.type?.name?.let { Type.valueOf(it) } ?: Type.UNKNOWN,
             coverImage = query.coverImage?.large,
             bannerImage = query.bannerImage,
             color = query.coverImage?.color,
@@ -766,40 +768,24 @@ data class Media(
     @Immutable
     data class Score(
         val value: Float,
+        val normalizedValue: Float,
         val format: ScoreFormat,
-        val color: Long
     ) {
         companion object {
-            private const val RED = 0xffff7770
-            private const val ORANGE = 0xffffc863
-            private const val LIME = 0xffb8ff70
-            private const val GREEN = 0xff63ff88
-
-            fun getColor(normalizedScore: Float) = when {
-                normalizedScore < 5f -> RED
-                normalizedScore < 7f -> ORANGE
-                normalizedScore < 9f -> LIME
-                else -> GREEN
-            }
+            fun normalizeValue(value: Float, format: ScoreFormat) = when(format) {
+                ScoreFormat.POINT_100 -> value / 100f
+                ScoreFormat.POINT_10_DECIMAL,
+                ScoreFormat.POINT_10 -> value / 10f
+                ScoreFormat.POINT_5 -> value / 5f
+                ScoreFormat.POINT_3 -> value / 3f
+                else -> value
+            }.coerceIn(0f, 1f)
         }
 
         internal constructor(score: Float, scoreFormat: ScoreFormat) : this(
             value = score,
+            normalizedValue = normalizeValue(score, scoreFormat),
             format = scoreFormat,
-            color = when(scoreFormat) {
-                ScoreFormat.POINT_100 -> getColor(score / 10f)
-                ScoreFormat.POINT_10_DECIMAL,
-                ScoreFormat.POINT_10 -> getColor(score)
-                ScoreFormat.POINT_5 -> getColor(score * 2f)
-                ScoreFormat.POINT_3 -> when (score.roundToInt()) {
-                    0 -> RED
-                    1 -> ORANGE
-                    2 -> LIME
-                    3 -> GREEN
-                    else -> GREEN
-                }
-                else -> GREEN
-            }
         )
     }
 }

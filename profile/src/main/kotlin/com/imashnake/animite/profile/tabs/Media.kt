@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.core.ui.screen.FallbackScreen
@@ -27,6 +28,7 @@ fun MediaTab(
     listVisibility: SnapshotStateMap<Int, Boolean>,
     useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -52,6 +54,7 @@ fun MediaTab(
                 listVisibility = listVisibility,
                 updateMediaListsOrder = updateMediaListsOrder,
                 onNavigateToMediaItem = onNavigateToMediaItem,
+                updateEntry = updateEntry,
                 useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                 modifier = modifier,
                 contentPadding = contentPadding,
@@ -68,6 +71,7 @@ private fun UserMediaLists(
     useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -77,6 +81,7 @@ private fun UserMediaLists(
         listVisibility = listVisibility,
         updateMediaListsOrder = updateMediaListsOrder,
         onNavigateToMediaItem = onNavigateToMediaItem,
+        updateEntry = updateEntry,
         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
         contentPadding = contentPadding,
         modifier = modifier.fillMaxSize()

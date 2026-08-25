@@ -1,17 +1,23 @@
 package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,14 +35,19 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.LinearWavyProgressIndicator
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.runtime.toMutableStateList
@@ -55,10 +66,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMapNotNull
-import androidx.compose.ui.util.fastRoundToInt
+import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.sanitize
@@ -70,12 +82,15 @@ import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
+import com.imashnake.animite.profile.dev.GREEN
+import com.imashnake.animite.profile.dev.LIME
+import com.imashnake.animite.profile.dev.ORANGE
+import com.imashnake.animite.profile.dev.RED
 import com.imashnake.animite.profile.dev.res
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
-import kotlin.math.roundToInt
 import com.imashnake.animite.settings.R as settingsR
 
 private const val TOTAL_STARS = 5
@@ -86,6 +101,7 @@ fun MediaTrackingLists(
     namedLists: ImmutableList<User.MediaCollection.NamedTrackingList>,
     listVisibility: SnapshotStateMap<Int, Boolean>,
     updateMediaListsOrder: (List<String>) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier,
@@ -165,6 +181,7 @@ fun MediaTrackingLists(
                                     )
                                 )
                             },
+                            updateEntry = updateEntry,
                             useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                             modifier = Modifier
                                 .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
@@ -198,14 +215,14 @@ private fun ListOptions(
     onDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    FlowRow(
+        verticalArrangement = Arrangement.Center,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
             .padding(top = LocalPaddings.current.small)
             .padding(vertical = LocalPaddings.current.small)
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)) {
             val alpha by animateFloatAsState(if (isReordering) 0.3f else 1f)
             ListOption(
                 icon = ImageVector.vectorResource(R.drawable.expand_all),
@@ -292,7 +309,7 @@ private fun HeaderPill(
     val haptic = LocalHapticFeedback.current
     Box(
         modifier = modifier
-            .height(dimensionResource(R.dimen.tracking_list_header_height))
+            .defaultMinSize(minHeight = dimensionResource(R.dimen.tracking_list_header_height))
             .fillMaxWidth()
             .clip(CircleShape)
             .clickable {
@@ -330,6 +347,7 @@ private fun HeaderPill(
             Text(
                 text = name,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
                 style = MaterialTheme.typography.bodyMedium.copy(baselineShift = null),
             )
         }
@@ -370,15 +388,16 @@ private fun MediaTrackingItem(
     item: Media.Tracking,
     useExpressiveProgressIndicator: Boolean,
     onClick: (Int, String?) -> Unit,
+    updateEntry: (params: EntryUpdateParams) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isUpdateEntryDialogVisible by remember { mutableStateOf(false) }
+    var isUpdateEntryDialogVisible by rememberSaveable { mutableStateOf(false) }
 
     Row(
         modifier = modifier.combinedClickable(
             onClick = { onClick(item.id, item.title) },
-            // TODO: Add this after the point system is corrected.
-//            onLongClick = { isUpdateEntryDialogVisible = true }
+            // TODO: Make a button for this too.
+            onLongClick = { isUpdateEntryDialogVisible = true }
         )
     ) {
         MediaTrackingCard(
@@ -446,10 +465,12 @@ private fun MediaTrackingItem(
 
                         item.score?.let { score ->
                             if (score.format == ScoreFormat.POINT_5) {
-                                val filledStars = score.value.fastRoundToInt()
-                                Row {
-                                    repeat(filledStars) { Star(filled = true) }
-                                    repeat(TOTAL_STARS - filledStars) { Star(filled = false) }
+                                val filledStars = score.value.toInt()
+                                Crossfade(filledStars) {
+                                    Row {
+                                        repeat(it) { Star(filled = true) }
+                                        repeat(TOTAL_STARS - it) { Star(filled = false) }
+                                    }
                                 }
                             }
                         }
@@ -461,50 +482,17 @@ private fun MediaTrackingItem(
                 }
             }
 
-            val progress = item.progress
-            val segments = item.segments ?: if (progress == 0) 1 else progress
+            if (item.segments != null && item.progress != null) {
+                val progress = item.progress!!
+                val segments = item.segments ?: if (progress == 0) 1 else progress
 
-            if (segments != null && progress != null) {
-                val formattedProgress = progress
-                    .takeUnless { listName == User.TrackingStatus.COMPLETED }
-                    ?.let { "$it/$segments" }
-                    ?: "$segments"
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = formattedProgress,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-                        style = MaterialTheme.typography.labelSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    when (listName) {
-                        User.TrackingStatus.WATCHING,
-                        User.TrackingStatus.REWATCHING,
-                        User.TrackingStatus.READING,
-                        User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
-                            LinearWavyProgressIndicator(
-                                progress = { progress.toFloat() / segments },
-                                amplitude = { if (it <= 0.1f || it >= 0.95f) 0f else 0.5f },
-                                waveSpeed = 15.dp,
-                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                            )
-                        } else {
-                            LinearProgressIndicator(
-                                progress = { progress.toFloat() / segments },
-                                modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                            )
-                        }
-                        else -> LinearProgressIndicator(
-                            progress = { progress.toFloat() / segments },
-                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                        )
-                    }
-                }
+                ProgressBar(
+                    segments = segments,
+                    progress = progress,
+                    listName = listName,
+                    useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                    enabled = false,
+                )
             }
         }
     }
@@ -512,7 +500,9 @@ private fun MediaTrackingItem(
     if (isUpdateEntryDialogVisible) {
         UpdateEntryDialog(
             item = item,
-            onDismissRequest = { isUpdateEntryDialogVisible = false }
+            updateEntry = updateEntry,
+            onDismissRequest = { isUpdateEntryDialogVisible = false },
+            useExpressiveProgressIndicator = useExpressiveProgressIndicator,
         )
     }
 }
@@ -522,6 +512,17 @@ fun RowScope.Score(
     score: Media.Score,
     modifier: Modifier = Modifier
 ) {
+    val scoreColor by animateColorAsState(
+        targetValue = Color(
+            when {
+                score.normalizedValue < 0.3f -> RED
+                score.normalizedValue < 0.6f -> ORANGE
+                score.normalizedValue < 0.8f -> LIME
+                else -> GREEN
+            }
+        )
+    )
+
     AnimatedContent(
         targetState = score,
         modifier = modifier.align(Alignment.CenterVertically)
@@ -533,13 +534,12 @@ fun RowScope.Score(
                 Text(
                     text = when (score.format) {
                         ScoreFormat.POINT_100,
-                        ScoreFormat.POINT_10 -> score.value.roundToInt()
-
+                        ScoreFormat.POINT_10 -> score.value.toInt()
                         ScoreFormat.POINT_10_DECIMAL -> score.value
                         else -> ""
                     }.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = Color(score.color).copy(alpha = 0.6f),
+                    color = scoreColor.copy(alpha = 0.6f),
                     modifier = modifier.padding(top = 5.dp)
                 )
             }
@@ -548,7 +548,7 @@ fun RowScope.Score(
             ScoreFormat.POINT_3 -> {
                 Icon(
                     imageVector = ImageVector.vectorResource(
-                        when (score.value.fastRoundToInt()) {
+                        when (score.value.toInt()) {
                             0 -> R.drawable.dead
                             1 -> R.drawable.weary
                             2 -> R.drawable.neutral
@@ -556,7 +556,7 @@ fun RowScope.Score(
                         }
                     ),
                     contentDescription = null,
-                    tint = Color(score.color).copy(alpha = 0.6f),
+                    tint = scoreColor.copy(alpha = 0.6f),
                     modifier = modifier.size(dimensionResource(R.dimen.smiley_icon_size))
                 )
             }
@@ -577,4 +577,85 @@ private fun Star(
         tint = MaterialTheme.colorScheme.primary.copy(alpha = if (!filled) 0.2f else 1f),
         modifier = modifier.size(dimensionResource(R.dimen.star_icon_size))
     )
+}
+
+@Composable
+fun ProgressBar(
+    progress: Int,
+    segments: Int,
+    listName: User.TrackingStatus,
+    useExpressiveProgressIndicator: Boolean,
+    modifier: Modifier= Modifier,
+    enabled: Boolean,
+    onProgressChanged: ((Float) -> Unit)? = null,
+) {
+    val formattedProgress = progress
+        .takeUnless { progress == segments }
+        ?.let { "$it/$segments" }
+        ?: "$segments"
+
+    val normalizedProgress = progress.toFloat() / segments
+    val animatedNormalizedProgress by animateFloatAsState(normalizedProgress)
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Text(
+            text = formattedProgress,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.animateContentSize()
+        )
+
+        CompositionLocalProvider(
+            // Remove default M3 padding
+            LocalMinimumInteractiveComponentSize provides 0.dp,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                when (listName) {
+                    User.TrackingStatus.WATCHING,
+                    User.TrackingStatus.REWATCHING,
+                    User.TrackingStatus.READING,
+                    User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
+                        LinearWavyProgressIndicator(
+                            progress = { animatedNormalizedProgress },
+                            amplitude = {
+                                if (it <= 0.1f || it >= 0.95f) 0f else 0.5f
+                            },
+                            waveSpeed = 15.dp,
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                        )
+                    } else {
+                        LinearProgressIndicator(
+                            progress = { animatedNormalizedProgress },
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                        )
+                    }
+
+                    else -> LinearProgressIndicator(
+                        progress = { animatedNormalizedProgress },
+                        modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                    )
+                }
+                if (enabled) {
+                    Slider(
+                        value = progress.toFloat(),
+                        valueRange = 0f..segments.toFloat(),
+                        onValueChange = { onProgressChanged?.invoke(it) },
+                        thumb = {
+                            SliderDefaults.Thumb(
+                                interactionSource = remember { MutableInteractionSource() },
+                                thumbSize = DpSize(4.dp, 20.dp)
+                            )
+                        },
+                        modifier = Modifier.graphicsLayer { alpha = 0f }
+                    )
+                }
+            }
+        }
+    }
 }

@@ -51,8 +51,6 @@ import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
@@ -126,8 +124,10 @@ import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.ChipFlowRow
+import com.imashnake.animite.core.ui.component.ConfirmButton
 import com.imashnake.animite.core.ui.component.DropDownIcon
 import com.imashnake.animite.core.ui.component.Paginator
+import com.imashnake.animite.core.ui.component.RejectButton
 import com.imashnake.animite.core.ui.ext.copy
 import com.imashnake.animite.core.ui.ext.horizontalOnly
 import com.imashnake.animite.media.ext.icon
@@ -753,14 +753,18 @@ private fun FilterBottomSheet(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 val scope = rememberCoroutineScope()
-                ResetAllButton(
+                RejectButton(
+                    imageVector = ImageVector.vectorResource(R.drawable.reset),
+                    text = stringResource(R.string.reset_all),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Reject)
                         reset()
                     },
                 )
                 Spacer(Modifier.size(LocalPaddings.current.medium))
-                DoneButton(
+                ConfirmButton(
+                    imageVector = ImageVector.vectorResource(R.drawable.done),
+                    text = stringResource(R.string.done),
                     onClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                         scope.launch {
@@ -1048,58 +1052,6 @@ fun FlowFilterGroupHeaders(
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium,
             )
-        }
-    }
-}
-
-// TODO: Maybe move this to core:ui.
-@Composable
-private fun DoneButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.done),
-                contentDescription = stringResource(R.string.done),
-                modifier = Modifier.size(24.dp)
-            )
-            Text(stringResource(R.string.done))
-        }
-    }
-}
-
-// TODO: Maybe move this to core:ui.
-@Composable
-private fun ResetAllButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-        ),
-        modifier = modifier,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small)
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.reset),
-                contentDescription = stringResource(R.string.reset_all),
-                modifier = Modifier.size(24.dp)
-            )
-            Text(stringResource(R.string.reset_all))
         }
     }
 }

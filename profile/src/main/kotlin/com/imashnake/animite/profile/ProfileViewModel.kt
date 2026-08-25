@@ -1,10 +1,12 @@
 package com.imashnake.animite.profile
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistUserRepository
+import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.anilist.type.ScoreFormat
@@ -148,15 +150,24 @@ class ProfileViewModel @Inject constructor(
         refreshMangaLists()
     }
 
+    fun updateMediaListEntry(params: EntryUpdateParams) = viewModelScope.launch(Dispatchers.IO) {
+        userRepository.updateMediaListEntry(params = params).collect {
+            Log.d("UpdatedMediaListEntry", "updateMediaListEntry: id: ${it.getOrNull()?.mediaId}")
+        }
+        refreshAnimeLists()
+    }
+
     private fun refreshAnimeLists() = viewModelScope.launch(Dispatchers.IO) {
         useNetwork = true
         animeListsRefreshTrigger.emit(Unit)
+        delay(250)
         useNetwork = false
     }
 
     private fun refreshMangaLists() = viewModelScope.launch(Dispatchers.IO) {
         useNetwork = true
         mangaListsRefreshTrigger.emit(Unit)
+        delay(250)
         useNetwork = false
     }
 
