@@ -32,6 +32,8 @@ import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -296,6 +298,28 @@ fun UpdateEntryDialog(
                     verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
+                    IconButton(
+                        enabled = selectedStatus != item.status ||
+                                currentScore != item.score ||
+                                currentProgress != item.progress,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                        ),
+                        onClick = {
+                            haptic.performHapticFeedback(Reject)
+                            selectedStatus = item.status
+                            currentScore = item.score
+                            currentProgress = item.progress
+                        }
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.reset_settings),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    Spacer(Modifier.size(LocalPaddings.current.small))
                     RejectButton(
                         imageVector = Icons.Rounded.Close,
                         text = stringResource(R.string.close),
