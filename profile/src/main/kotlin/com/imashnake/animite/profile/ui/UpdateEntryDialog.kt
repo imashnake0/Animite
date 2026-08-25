@@ -117,6 +117,7 @@ private val DropdownMenuItemHorizontalPadding = 12.dp
 @Composable
 fun UpdateEntryDialog(
     item: Media.Tracking,
+    updateEntry: (id: Int, status: User.TrackingStatus) -> Unit,
     onDismissRequest: () -> Unit,
     useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier
@@ -308,7 +309,8 @@ fun UpdateEntryDialog(
                         text = stringResource(R.string.save),
                         onClick = {
                             haptic.performHapticFeedback(Confirm)
-                            // TODO: Mutate entry.
+                            updateEntry(item.id, selectedStatus)
+                            onDismissRequest()
                         },
                     )
                 }
@@ -747,6 +749,7 @@ private fun SetSmileys(
     }
 }
 
+// TODO: This is never shown, make entry point.
 @Composable
 fun DatePickerModal(
     state: DatePickerState,

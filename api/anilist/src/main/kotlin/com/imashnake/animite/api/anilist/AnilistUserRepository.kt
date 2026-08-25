@@ -6,6 +6,7 @@ import com.apollographql.cache.normalized.FetchPolicy
 import com.apollographql.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
+import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.pollute
 import com.imashnake.animite.api.anilist.type.MediaListOptionsInput
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.anilist.type.ScoreFormat
@@ -61,6 +62,23 @@ class AnilistUserRepository(
         .toFlow()
         .filter { it.exception == null }
         .asResult { User.MediaCollection(it, type, language, scoreFormat, mediaListOrder) }
+    }
+
+    fun updateMediaListEntry(
+        id: Int,
+        status: User.TrackingStatus
+    ): Flow<Result<SaveMediaListEntryMutation.SaveMediaListEntry?>> {
+        return apolloClient
+            // TODO: Enable optimistic updates.
+            .mutation(
+                SaveMediaListEntryMutation(
+                    status = Optional.presentIfNotNull(status.pollute()),
+                    mediaId = id
+                )
+            )
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+            .toFlow()
+            .asResult { it.SaveMediaListEntry }
     }
 
     fun updateUser(

@@ -274,6 +274,7 @@ fun ProfileScreen(
                                             mangaCollection = viewerMangaLists.data,
                                             updateAnimeListsOrder = viewModel::updateAnimeLists,
                                             updateMangaListsOrder = viewModel::updateMangaLists,
+                                            updateEntry = viewModel::updateMediaListEntry,
                                             onNavigateToMediaItem = onNavigateToMediaItem,
                                             showUserDescription = showUserDescription,
                                             onUserDescriptionClick = { showUserDescriptionSheet = true },
@@ -530,6 +531,7 @@ private fun UserTabs(
     mangaCollection: User.MediaCollection?,
     updateAnimeListsOrder: (List<String>) -> Unit,
     updateMangaListsOrder: (List<String>) -> Unit,
+    updateEntry: (id: Int, status: User.TrackingStatus) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     showUserDescription: Boolean,
     onUserDescriptionClick: () -> Unit,
@@ -663,6 +665,7 @@ private fun UserTabs(
                         listVisibility = animeListVisibility,
                         updateMediaListsOrder = updateAnimeListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
+                        updateEntry = updateEntry,
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                         contentPadding = mediaTabContentPadding,
                     )
@@ -671,6 +674,7 @@ private fun UserTabs(
                         listVisibility = mangaListVisibility,
                         updateMediaListsOrder = updateMangaListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
+                        updateEntry = updateEntry,
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                         contentPadding = mediaTabContentPadding,
                     )

@@ -257,6 +257,20 @@ data class User(
 
             fun String?.sanitize() = safeValueOf(this)
 
+            fun TrackingStatus.pollute() = when (this) {
+                WATCHING,
+                READING -> MediaListStatus.CURRENT
+                PLANNING,
+                PLAN_TO_WATCH,
+                PLAN_TO_READ -> MediaListStatus.PLANNING
+                COMPLETED -> MediaListStatus.COMPLETED
+                PAUSED -> MediaListStatus.PAUSED
+                DROPPED -> MediaListStatus.DROPPED
+                REWATCHING,
+                REREADING -> MediaListStatus.REPEATING
+                CUSTOM_OR_UNKNOWN -> MediaListStatus.UNKNOWN__
+            }
+
             fun MediaListStatus?.toTrackingStatus(type: Type) = when (this) {
                 MediaListStatus.CURRENT -> if (type == Type.ANIME) WATCHING else READING
                 MediaListStatus.PLANNING -> if (type == Type.ANIME) PLAN_TO_WATCH else PLAN_TO_READ

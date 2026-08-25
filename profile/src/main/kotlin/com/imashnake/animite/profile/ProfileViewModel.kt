@@ -1,11 +1,13 @@
 package com.imashnake.animite.profile
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.imashnake.animite.api.anilist.AnilistUserRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.api.preferences.PreferencesRepository
@@ -146,6 +148,18 @@ class ProfileViewModel @Inject constructor(
             preferencesRepository.setMangaListOrder(it.getOrNull()?.mediaListOptions?.mangaList?.sectionOrder?.filterNotNull())
         }
         refreshMangaLists()
+    }
+
+    fun updateMediaListEntry(id: Int, status: User.TrackingStatus) = viewModelScope.launch(Dispatchers.IO) {
+        userRepository.updateMediaListEntry(
+            id = id,
+            status = status
+        ).collect {
+            Log.d("UpdatedMediaListEntry", "updateMediaListEntry: id: ${it.getOrNull()?.mediaId}")
+        }
+        refresh {}
+        // TODO: For some reason, this is flaky.
+        // refreshAnimeLists()
     }
 
     private fun refreshAnimeLists() = viewModelScope.launch(Dispatchers.IO) {

@@ -27,6 +27,7 @@ fun MediaTab(
     listVisibility: SnapshotStateMap<Int, Boolean>,
     useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
+    updateEntry: (id: Int, status: User.TrackingStatus) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -52,6 +53,7 @@ fun MediaTab(
                 listVisibility = listVisibility,
                 updateMediaListsOrder = updateMediaListsOrder,
                 onNavigateToMediaItem = onNavigateToMediaItem,
+                updateEntry = updateEntry,
                 useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                 modifier = modifier,
                 contentPadding = contentPadding,
@@ -68,6 +70,7 @@ private fun UserMediaLists(
     useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
+    updateEntry: (id: Int, status: User.TrackingStatus) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -77,6 +80,7 @@ private fun UserMediaLists(
         listVisibility = listVisibility,
         updateMediaListsOrder = updateMediaListsOrder,
         onNavigateToMediaItem = onNavigateToMediaItem,
+        updateEntry = updateEntry,
         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
         contentPadding = contentPadding,
         modifier = modifier.fillMaxSize()
