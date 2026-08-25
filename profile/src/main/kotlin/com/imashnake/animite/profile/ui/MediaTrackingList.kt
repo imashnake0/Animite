@@ -1,6 +1,7 @@
 package com.imashnake.animite.profile.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -465,7 +466,7 @@ private fun MediaTrackingItem(
                         item.score?.let { score ->
                             if (score.format == ScoreFormat.POINT_5) {
                                 val filledStars = score.value.toInt()
-                                AnimatedContent(filledStars) {
+                                Crossfade(filledStars) {
                                     Row {
                                         repeat(it) { Star(filled = true) }
                                         repeat(TOTAL_STARS - it) { Star(filled = false) }
