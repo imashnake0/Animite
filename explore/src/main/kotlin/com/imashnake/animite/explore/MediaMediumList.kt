@@ -53,6 +53,9 @@ import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 
+private val rankWidth = 30.dp
+private val buffer = 24.dp
+
 @Composable
 fun MediaMediumList(
     mediaMediumList: ImmutableList<Media.Medium>,
@@ -133,7 +136,7 @@ private fun MediaMediumItem(
                 Modifier
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                     .fillMaxHeight()
-                    .width(LocalPaddings.current.large * 3)
+                    .width(rankWidth + buffer)
             )
         }
 
@@ -146,7 +149,7 @@ private fun MediaMediumItem(
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier
                         .padding(horizontal = LocalPaddings.current.tiny)
-                        .requiredWidth(30.dp)
+                        .requiredWidth(rankWidth)
                         .align(Alignment.CenterVertically)
                 )
             }
@@ -237,7 +240,7 @@ fun LoadingMediaMediumItem(
                 Modifier
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                     .requiredHeight(137.dp)
-                    .width(LocalPaddings.current.large * 3)
+                    .width(rankWidth + buffer)
             )
         }
 
@@ -250,7 +253,7 @@ fun LoadingMediaMediumItem(
                     fontWeight = FontWeight.ExtraBold,
                     modifier = Modifier
                         .padding(horizontal = LocalPaddings.current.tiny)
-                        .requiredWidth(30.dp)
+                        .requiredWidth(rankWidth)
                         .align(Alignment.CenterVertically)
                 )
 

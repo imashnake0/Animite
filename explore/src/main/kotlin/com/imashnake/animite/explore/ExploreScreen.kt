@@ -80,6 +80,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -95,6 +96,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -109,9 +111,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastFilter
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
@@ -189,6 +191,10 @@ fun ExploreScreen(
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
 
+    var topPaddingPx by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+    val paddings = LocalPaddings.current
+
     Box(modifier.fillMaxSize()) {
         val isNotAtTop by remember {
             derivedStateOf {
@@ -196,18 +202,18 @@ fun ExploreScreen(
                         || listState.firstVisibleItemIndex != 0
             }
         }
-        val barBackgroundColor by animateColorAsState(
-            targetValue = if (!isNotAtTop) {
-                MaterialTheme.colorScheme.background
-            } else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.9f),
-            animationSpec = tween(500)
+        val barBackgroundAlpha by animateFloatAsState(
+            targetValue = if (!isNotAtTop) 0f else 0.9f,
+            animationSpec = tween(300)
         )
         Column(
             verticalArrangement = Arrangement.spacedBy(
                 LocalPaddings.current.small + LocalPaddings.current.tiny
             ),
             modifier = Modifier
-                .background(barBackgroundColor)
+                // TODO: Why is this small padding being applied :[
+                .onSizeChanged { topPaddingPx = it.height - with(density) { paddings.small.roundToPx() } }
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = barBackgroundAlpha))
                 .padding(insetAndNavigationPaddingValues.copy(bottom = 0.dp))
                 .fillMaxWidth()
                 .padding(vertical = LocalPaddings.current.small)
@@ -284,12 +290,6 @@ fun ExploreScreen(
                         .togetherWith(fadeOut(tween(1000)))
                 },
             ) {
-                val paddingOnTopOfList = insetAndNavigationPaddingValues.calculateTopPadding() +
-                        TextFieldDefaults.MinHeight +
-                        3 * LocalPaddings.current.small +
-                        LocalPaddings.current.tiny +
-                        with(LocalDensity.current) { 11.sp.toDp() }
-
                 if (it) {
                     PullToRefreshBox(
                         isRefreshing = isRefreshing,
@@ -301,7 +301,7 @@ fun ExploreScreen(
                                 state = pullToRefreshState,
                                 modifier = Modifier
                                     .align(Alignment.TopCenter)
-                                    .offset(y = paddingOnTopOfList),
+                                    .offset { IntOffset(x = 0, y = topPaddingPx) },
                             )
                         }
                     ) {
@@ -327,12 +327,11 @@ fun ExploreScreen(
                                 .imePadding(),
                             state = listState,
                             contentPadding = PaddingValues(
-                                top = LocalPaddings.current.medium,
                                 bottom = LocalPaddings.current.large,
                                 start = LocalPaddings.current.large,
                                 end = LocalPaddings.current.large,
                             ) + PaddingValues(
-                                top = paddingOnTopOfList,
+                                top = with(density) { topPaddingPx.toDp() },
                                 bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
                             )
                         )
@@ -341,12 +340,11 @@ fun ExploreScreen(
                     LoadingMediaMediumList(
                         count = 10,
                         contentPadding = PaddingValues(
-                            top = LocalPaddings.current.medium,
                             bottom = LocalPaddings.current.large,
                             start = LocalPaddings.current.large,
                             end = LocalPaddings.current.large,
                         ) + PaddingValues(
-                            top = paddingOnTopOfList,
+                            top = with(density) { topPaddingPx.toDp() },
                             bottom = insetAndNavigationPaddingValues.calculateBottomPadding()
                         ),
                         modifier = Modifier

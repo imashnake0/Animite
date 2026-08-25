@@ -2,6 +2,7 @@ package com.imashnake.animite.profile.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -20,8 +21,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
@@ -32,6 +35,8 @@ import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -153,10 +158,13 @@ fun UpdateEntryDialog(
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large),
-                modifier = Modifier.padding(
-                    horizontal = LocalPaddings.current.large,
-                    vertical = LocalPaddings.current.large
-                )
+                modifier = Modifier
+                    .padding(
+                        horizontal = LocalPaddings.current.large,
+                        vertical = LocalPaddings.current.large
+                    )
+                    // TODO: Make this more graceful.
+                    .verticalScroll(rememberScrollState())
             ) {
                 Section(title = "Status") {
                     StatusDropDown(
@@ -296,6 +304,32 @@ fun UpdateEntryDialog(
                     verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
+                    Crossfade(
+                        selectedStatus != item.status ||
+                            currentScore != item.score ||
+                            currentProgress != item.progress
+                    ) {
+                        IconButton(
+                            enabled = it,
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                            ),
+                            onClick = {
+                                haptic.performHapticFeedback(Reject)
+                                selectedStatus = item.status
+                                currentScore = item.score
+                                currentProgress = item.progress
+                            }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.reset_settings),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                    Spacer(Modifier.size(LocalPaddings.current.small))
                     RejectButton(
                         imageVector = Icons.Rounded.Close,
                         text = stringResource(R.string.close),
