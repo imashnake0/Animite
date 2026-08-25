@@ -2,6 +2,7 @@ package com.imashnake.animite.profile.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -298,26 +299,30 @@ fun UpdateEntryDialog(
                     verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    IconButton(
-                        enabled = selectedStatus != item.status ||
-                                currentScore != item.score ||
-                                currentProgress != item.progress,
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                        ),
-                        onClick = {
-                            haptic.performHapticFeedback(Reject)
-                            selectedStatus = item.status
-                            currentScore = item.score
-                            currentProgress = item.progress
-                        }
+                    Crossfade(
+                        selectedStatus != item.status ||
+                            currentScore != item.score ||
+                            currentProgress != item.progress
                     ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.reset_settings),
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        IconButton(
+                            enabled = it,
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                            ),
+                            onClick = {
+                                haptic.performHapticFeedback(Reject)
+                                selectedStatus = item.status
+                                currentScore = item.score
+                                currentProgress = item.progress
+                            }
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.reset_settings),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                     Spacer(Modifier.size(LocalPaddings.current.small))
                     RejectButton(
