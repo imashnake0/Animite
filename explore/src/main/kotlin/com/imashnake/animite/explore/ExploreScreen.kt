@@ -202,11 +202,9 @@ fun ExploreScreen(
                         || listState.firstVisibleItemIndex != 0
             }
         }
-        val barBackgroundColor by animateColorAsState(
-            targetValue = if (!isNotAtTop) {
-                Color.Transparent
-            } else MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.9f),
-            animationSpec = tween(500)
+        val barBackgroundAlpha by animateFloatAsState(
+            targetValue = if (!isNotAtTop) 0f else 0.9f,
+            animationSpec = tween(300)
         )
         Column(
             verticalArrangement = Arrangement.spacedBy(
@@ -215,7 +213,7 @@ fun ExploreScreen(
             modifier = Modifier
                 // TODO: Why is this small padding being applied :[
                 .onSizeChanged { topPaddingPx = it.height - with(density) { paddings.small.roundToPx() } }
-                .background(barBackgroundColor)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = barBackgroundAlpha))
                 .padding(insetAndNavigationPaddingValues.copy(bottom = 0.dp))
                 .fillMaxWidth()
                 .padding(vertical = LocalPaddings.current.small)

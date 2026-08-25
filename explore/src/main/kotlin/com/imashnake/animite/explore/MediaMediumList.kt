@@ -54,7 +54,7 @@ import com.imashnake.animite.media.ext.res
 import kotlinx.collections.immutable.ImmutableList
 
 private val rankWidth = 30.dp
-private val mediaCardCornerSize = 18.dp
+private val buffer = 24.dp
 
 @Composable
 fun MediaMediumList(
@@ -136,7 +136,7 @@ private fun MediaMediumItem(
                 Modifier
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                     .fillMaxHeight()
-                    .width(rankWidth + mediaCardCornerSize)
+                    .width(rankWidth + buffer)
             )
         }
 
@@ -240,7 +240,7 @@ fun LoadingMediaMediumItem(
                 Modifier
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                     .requiredHeight(137.dp)
-                    .width(rankWidth + mediaCardCornerSize)
+                    .width(rankWidth + buffer)
             )
         }
 
