@@ -919,23 +919,25 @@ private fun DateChip(
                 modifier = Modifier.size(dimensionResource(R.dimen.date_picker_chip_icon_size))
             )
 
-            if (date == null) {
-                Text(
-                    text = stringResource(R.string.add_date),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
-                    maxLines = 1,
-                    modifier = Modifier.graphicsLayer { alpha = 0.5f }
-                )
-            } else {
-                Text(
-                    // The space is to add some buffer so that it flows to the next line
-                    // before the text is clipped I think
-                    text = "$date  ",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
-                    maxLines = 1,
-                )
+            AnimatedContent(date) {
+                if (it == null) {
+                    Text(
+                        text = stringResource(R.string.add_date),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
+                        maxLines = 1,
+                        modifier = Modifier.graphicsLayer { alpha = 0.5f }
+                    )
+                } else {
+                    Text(
+                        // The space is to add some buffer so that it flows to the next line
+                        // before the text is clipped I think
+                        text = "$it  ",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
+                        maxLines = 1,
+                    )
+                }
             }
         }
     }
