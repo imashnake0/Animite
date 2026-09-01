@@ -731,8 +731,8 @@ data class Media(
         val status: TrackingStatus,
         val score: Score?,
         val progress: Int?,
-        val startDate: String?,
-        val endDate: String?,
+        val startedAt: String?,
+        val completedAt: String?,
     ) {
         internal constructor(
             query: MediaTracking,
@@ -760,10 +760,10 @@ data class Media(
             status = status,
             score = score?.let { Score(it, scoreFormat) },
             progress = progress,
-            startDate = query.mediaListEntry?.startedAt?.let {
+            startedAt = query.mediaListEntry?.startedAt?.let {
                 getFormattedDate(it.year, it.month, it.day)
             },
-            endDate = query.mediaListEntry?.completedAt?.let {
+            completedAt = query.mediaListEntry?.completedAt?.let {
                 getFormattedDate(it.year, it.month, it.day)
             }
         )

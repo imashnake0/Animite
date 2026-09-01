@@ -284,6 +284,26 @@ fun UpdateEntryDialog(
                         }
                     }
 
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                        Section("Started at", modifier = Modifier.weight(1f)) {
+                            DateChip(
+                                date = item.startedAt,
+                                icon = ImageVector.vectorResource(R.drawable.calendar_created),
+                                onClick = { isDatePickerVisible = true },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        Section("Completed at", modifier = Modifier.weight(1f)) {
+                            DateChip(
+                                date = item.completedAt,
+                                icon = ImageVector.vectorResource(R.drawable.calendar_completed),
+                                onClick = { isDatePickerVisible = true },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+
                     FlowRow(
                         horizontalArrangement = Arrangement.Center,
                         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
@@ -802,6 +822,48 @@ private fun SetSmileys(
                     .clip(CircleShape)
                     .clickable { onScoreSet(it.toFloat(), ScoreFormat.POINT_3) }
                     .graphicsLayer { this.alpha = alpha }
+            )
+        }
+    }
+}
+
+@Composable
+private fun DateChip(
+    date: String?,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val iconPadding = (dimensionResource(R.dimen.date_picker_chip_height) - dimensionResource(R.dimen.date_picker_chip_icon_size)) / 2
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+        modifier = modifier
+            .defaultMinSize(minHeight = dimensionResource(R.dimen.date_picker_chip_height))
+            .clip(CircleShape)
+            .clickable { onClick() }
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
+            .padding(iconPadding)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(dimensionResource(R.dimen.date_picker_chip_icon_size))
+        )
+
+        if (date == null) {
+            Text(
+                text = "Add date",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.graphicsLayer { alpha = 0.5f }
+            )
+        } else {
+            Text(
+                text = date,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
             )
         }
     }
