@@ -777,13 +777,15 @@ data class Media(
             startedAt = query.mediaListEntry?.startedAt?.let {
                 FuzzyDate(
                     formatted = getFormattedDate(it.year, it.month, it.day),
-                    epochMillis = getEpochMillis(it.year, it.month, it.day)
+                    epochMillis = getEpochMillis(it.year, it.month, it.day),
+                    yearMonthDay = Triple(it.year, it.month, it.day)
                 )
             },
             completedAt = query.mediaListEntry?.completedAt?.let {
                 FuzzyDate(
                     formatted = getFormattedDate(it.year, it.month, it.day),
-                    epochMillis = getEpochMillis(it.year, it.month, it.day)
+                    epochMillis = getEpochMillis(it.year, it.month, it.day),
+                    yearMonthDay = Triple(it.year, it.month, it.day)
                 )
             },
         )
@@ -792,7 +794,8 @@ data class Media(
     @Immutable
     data class FuzzyDate(
         val formatted: String?,
-        val epochMillis: Long?
+        val epochMillis: Long?,
+        val yearMonthDay: Triple<Int?, Int?, Int?>,
     )
 
     @Immutable

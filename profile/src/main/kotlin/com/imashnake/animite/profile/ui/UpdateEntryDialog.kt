@@ -332,7 +332,9 @@ fun UpdateEntryDialog(
                         Crossfade(
                             selectedStatus != item.status ||
                                     currentScore != item.score ||
-                                    currentProgress != item.progress
+                                    currentProgress != item.progress ||
+                                    currentStartedAtDate != item.startedAt ||
+                                    currentCompletedAtDate != item.completedAt
                         ) {
                             IconButton(
                                 enabled = it,
@@ -345,6 +347,8 @@ fun UpdateEntryDialog(
                                     selectedStatus = item.status
                                     currentScore = item.score
                                     currentProgress = item.progress
+                                    currentStartedAtDate = item.startedAt
+                                    currentCompletedAtDate = item.completedAt
                                 }
                             ) {
                                 Icon(
@@ -374,7 +378,9 @@ fun UpdateEntryDialog(
                                         id = item.id,
                                         status = selectedStatus,
                                         score = currentScore,
-                                        progress = currentProgress
+                                        progress = currentProgress,
+                                        startedAt = currentStartedAtDate?.yearMonthDay,
+                                        completedAt = currentCompletedAtDate?.yearMonthDay
                                     )
                                 )
                                 onDismissRequest()
@@ -421,16 +427,18 @@ fun UpdateEntryDialog(
             state = startedAtDatePickerState,
             onDismiss = { isStartedAtDatePickerVisible = false },
             onDateSelected = { epochMillis ->
+                val localDate = epochMillis?.let {
+                    Instant
+                        .fromEpochMilliseconds(it + HALF_DAY_MILLIS)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date
+                }
                 currentStartedAtDate = currentStartedAtDate?.copy(
-                    formatted = epochMillis?.let {
-                        with(
-                            Instant
-                                .fromEpochMilliseconds(it + HALF_DAY_MILLIS)
-                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                                .date
-                        ) { getFormattedDate(year, month.number, day) }
+                    formatted = localDate?.let {
+                        getFormattedDate(it.year, it.month.number, it.day)
                     },
-                    epochMillis = epochMillis
+                    epochMillis = epochMillis,
+                    yearMonthDay = localDate.let { Triple(it?.year, it?.month?.number, it?.day) }
                 )
                 startedAtDatePickerState.selectedDateMillis = epochMillis
             }
@@ -442,16 +450,18 @@ fun UpdateEntryDialog(
             state = completedAtDatePickerState,
             onDismiss = { isCompletedAtDatePickerVisible = false },
             onDateSelected = { epochMillis ->
+                val localDate = epochMillis?.let {
+                    Instant
+                        .fromEpochMilliseconds(it + HALF_DAY_MILLIS)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date
+                }
                 currentCompletedAtDate = currentCompletedAtDate?.copy(
-                    formatted = epochMillis?.let {
-                        with(
-                            Instant
-                                .fromEpochMilliseconds(it + HALF_DAY_MILLIS)
-                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                                .date
-                        ) { getFormattedDate(year, month.number, day) }
+                    formatted = localDate?.let {
+                        getFormattedDate(it.year, it.month.number, it.day)
                     },
-                    epochMillis = epochMillis
+                    epochMillis = epochMillis,
+                    yearMonthDay = localDate.let { Triple(it?.year, it?.month?.number, it?.day) }
                 )
                 completedAtDatePickerState.selectedDateMillis = epochMillis
             }
@@ -1010,7 +1020,13 @@ fun rememberFuzzyDate(fuzzyDate: Media.FuzzyDate?) = rememberSaveable(
     saver = Saver(
         save = {
             it.value?.let { fuzzyDate ->
-                arrayListOf(fuzzyDate.formatted, fuzzyDate.epochMillis)
+                arrayListOf(
+                    fuzzyDate.formatted,
+                    fuzzyDate.epochMillis,
+                    fuzzyDate.yearMonthDay.first,
+                    fuzzyDate.yearMonthDay.second,
+                    fuzzyDate.yearMonthDay.third,
+                )
             }
         },
         restore = {
@@ -1018,6 +1034,7 @@ fun rememberFuzzyDate(fuzzyDate: Media.FuzzyDate?) = rememberSaveable(
                 Media.FuzzyDate(
                     formatted = it[0] as String?,
                     epochMillis = it[1] as Long?,
+                    yearMonthDay = Triple(it[2] as Int?, it[3] as Int?, it[4] as Int?)
                 )
             )
         },
