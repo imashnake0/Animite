@@ -87,6 +87,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastForEach
@@ -837,6 +838,7 @@ private fun DateChip(
     val iconPadding = (dimensionResource(R.dimen.date_picker_chip_height) - dimensionResource(R.dimen.date_picker_chip_icon_size)) / 2
 
     Row(
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
         modifier = modifier
             .defaultMinSize(minHeight = dimensionResource(R.dimen.date_picker_chip_height))
@@ -856,20 +858,21 @@ private fun DateChip(
             Text(
                 text = "Add date",
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.graphicsLayer { alpha = 0.5f }
+                style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
+                modifier = Modifier.graphicsLayer { alpha = 0.5f },
+                maxLines = 1
             )
         } else {
             Text(
                 text = date,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
+                maxLines = 1
             )
         }
     }
 }
 
-// TODO: This is never shown, make entry point.
 @Composable
 fun DatePickerModal(
     state: DatePickerState,
@@ -915,7 +918,8 @@ private fun Section(
             text = title,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelSmallEmphasized,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            maxLines = 1
         )
         content()
     }
