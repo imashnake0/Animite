@@ -89,7 +89,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastForEach
@@ -99,6 +98,7 @@ import androidx.core.graphics.toColorInt
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Companion.getFormattedDate
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -116,10 +116,16 @@ import com.imashnake.animite.profile.dev.ORANGE
 import com.imashnake.animite.profile.dev.RED
 import com.imashnake.animite.profile.dev.res
 import com.imashnake.animite.profile.dev.title
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
+import kotlinx.datetime.toLocalDateTime
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
+import kotlin.time.Instant
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.settings.R as settingsR
+
+private const val HALF_DAY_MILLIS = 86400000L
 
 // TODO: This padding cannot be removed.
 private val DropdownMenuItemHorizontalPadding = 12.dp
@@ -139,9 +145,13 @@ fun UpdateEntryDialog(
     var selectedStatus by rememberSaveable { mutableStateOf(item.status) }
     var currentScore by rememberMediaScore(item.score)
     var currentProgress by rememberSaveable { mutableStateOf(item.progress) }
+    var currentStartedAtDate by rememberFuzzyDate(item.startedAt)
+    var currentCompletedAtDate by rememberFuzzyDate(item.completedAt)
 
-    val datePickerState = rememberDatePickerState()
-    var isDatePickerVisible by remember { mutableStateOf(false) }
+    val startedAtDatePickerState = rememberDatePickerState(initialSelectedDateMillis = item.startedAt?.epochMillis)
+    var isStartedAtDatePickerVisible by remember { mutableStateOf(false) }
+    val completedAtDatePickerState = rememberDatePickerState(initialSelectedDateMillis = item.completedAt?.epochMillis)
+    var isCompletedAtDatePickerVisible by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -296,9 +306,9 @@ fun UpdateEntryDialog(
                             modifier = Modifier.weight(1f)
                         ) {
                             DateChip(
-                                date = item.startedAt,
+                                date = currentStartedAtDate?.formatted,
                                 icon = ImageVector.vectorResource(R.drawable.calendar_created),
-                                onClick = { isDatePickerVisible = true },
+                                onClick = { isStartedAtDatePickerVisible = true },
                             )
                         }
 
@@ -307,9 +317,9 @@ fun UpdateEntryDialog(
                             modifier = Modifier.weight(1f)
                         ) {
                             DateChip(
-                                date = item.completedAt,
+                                date = currentCompletedAtDate?.formatted,
                                 icon = ImageVector.vectorResource(R.drawable.calendar_completed),
-                                onClick = { isDatePickerVisible = true },
+                                onClick = { isCompletedAtDatePickerVisible = true }
                             )
                         }
                     }
@@ -406,11 +416,45 @@ fun UpdateEntryDialog(
         }
     }
 
-    if (isDatePickerVisible) {
+    if (isStartedAtDatePickerVisible) {
         DatePickerModal(
-            state = datePickerState,
-            onDismiss = { isDatePickerVisible = false },
-            onDateSelected = {}
+            state = startedAtDatePickerState,
+            onDismiss = { isStartedAtDatePickerVisible = false },
+            onDateSelected = { epochMillis ->
+                currentStartedAtDate = currentStartedAtDate?.copy(
+                    formatted = epochMillis?.let {
+                        with(
+                            Instant
+                                .fromEpochMilliseconds(it + HALF_DAY_MILLIS)
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .date
+                        ) { getFormattedDate(year, month.number, day) }
+                    },
+                    epochMillis = epochMillis
+                )
+                startedAtDatePickerState.selectedDateMillis = epochMillis
+            }
+        )
+    }
+
+    if (isCompletedAtDatePickerVisible) {
+        DatePickerModal(
+            state = completedAtDatePickerState,
+            onDismiss = { isCompletedAtDatePickerVisible = false },
+            onDateSelected = { epochMillis ->
+                currentCompletedAtDate = currentCompletedAtDate?.copy(
+                    formatted = epochMillis?.let {
+                        with(
+                            Instant
+                                .fromEpochMilliseconds(it + HALF_DAY_MILLIS)
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .date
+                        ) { getFormattedDate(year, month.number, day) }
+                    },
+                    epochMillis = epochMillis
+                )
+                completedAtDatePickerState.selectedDateMillis = epochMillis
+            }
         )
     }
 }
@@ -959,3 +1003,23 @@ fun rememberMediaScore(score: Media.Score?) = rememberSaveable(
         },
     )
 ) { mutableStateOf(score) }
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun rememberFuzzyDate(fuzzyDate: Media.FuzzyDate?) = rememberSaveable(
+    saver = Saver(
+        save = {
+            it.value?.let { fuzzyDate ->
+                arrayListOf(fuzzyDate.formatted, fuzzyDate.epochMillis)
+            }
+        },
+        restore = {
+            mutableStateOf(
+                Media.FuzzyDate(
+                    formatted = it[0] as String?,
+                    epochMillis = it[1] as Long?,
+                )
+            )
+        },
+    )
+) { mutableStateOf(fuzzyDate) }
