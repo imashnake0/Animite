@@ -190,23 +190,12 @@ fun UpdateEntryDialog(
                                             onScoreSet = { value, format ->
                                                 currentScore = currentScore?.copy(
                                                     value = when (format) {
-                                                        ScoreFormat.POINT_100 -> value.fastCoerceIn(
-                                                            0f,
-                                                            100f
-                                                        )
-
+                                                        ScoreFormat.POINT_100 -> value.fastCoerceIn(0f, 100f)
                                                         ScoreFormat.POINT_10,
-                                                        ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(
-                                                            0f,
-                                                            10f
-                                                        )
-
+                                                        ScoreFormat.POINT_10_DECIMAL -> value.fastCoerceIn(0f, 10f)
                                                         else -> value
                                                     },
-                                                    normalizedValue = Media.Score.normalizeValue(
-                                                        value,
-                                                        format
-                                                    )
+                                                    normalizedValue = Media.Score.normalizeValue(value, format)
                                                 )
                                                 haptic.performHapticFeedback(SegmentTick)
                                             },
@@ -219,10 +208,7 @@ fun UpdateEntryDialog(
                                             onScoreSet = { value, format ->
                                                 currentScore = currentScore?.copy(
                                                     value = value.fastCoerceIn(0f, 5f),
-                                                    normalizedValue = Media.Score.normalizeValue(
-                                                        value,
-                                                        format
-                                                    )
+                                                    normalizedValue = Media.Score.normalizeValue(value, format)
                                                 )
                                                 haptic.performHapticFeedback(ToggleOn)
                                             }
