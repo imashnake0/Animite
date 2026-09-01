@@ -221,10 +221,7 @@ fun UpdateEntryDialog(
                                             onScoreSet = { value, format ->
                                                 currentScore = currentScore?.copy(
                                                     value = value.fastCoerceIn(0f, 3f),
-                                                    normalizedValue = Media.Score.normalizeValue(
-                                                        value,
-                                                        format
-                                                    )
+                                                    normalizedValue = Media.Score.normalizeValue(value, format)
                                                 )
                                                 haptic.performHapticFeedback(ToggleOn)
                                             }
