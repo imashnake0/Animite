@@ -277,8 +277,7 @@ fun UpdateEntryDialog(
                                     ScoreButton(
                                         imageVector = ImageVector.vectorResource(R.drawable.minus),
                                         onClick = {
-                                            currentProgress =
-                                                (currentProgress!! - 1).fastCoerceIn(0, segments)
+                                            currentProgress = (currentProgress!! - 1).fastCoerceIn(0, segments)
                                             haptic.performHapticFeedback(SegmentTick)
                                         },
                                         size = 20.dp
@@ -286,8 +285,7 @@ fun UpdateEntryDialog(
                                     ScoreButton(
                                         imageVector = Icons.Rounded.Add,
                                         onClick = {
-                                            currentProgress =
-                                                (currentProgress!! + 1).fastCoerceIn(0, segments)
+                                            currentProgress = (currentProgress!! + 1).fastCoerceIn(0, segments)
                                             haptic.performHapticFeedback(SegmentTick)
                                         },
                                         size = 20.dp
@@ -931,7 +929,9 @@ private fun DateChip(
                 )
             } else {
                 Text(
-                    text = date,
+                    // The space is to add some buffer so that it flows to the next line
+                    // before the text is clipped I think
+                    text = "$date  ",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
                     maxLines = 1,
