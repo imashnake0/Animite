@@ -147,7 +147,7 @@ fun UpdateEntryDialog(
     val haptic = LocalHapticFeedback.current
 
     // TODO: Please move these along with logic to the VM.
-    var isFavourite by rememberSaveable { mutableStateOf(true) }
+    var isFavourite by rememberSaveable { mutableStateOf(item.isFavourite) }
     var selectedStatus by rememberSaveable { mutableStateOf(item.status) }
     var currentScore by rememberMediaScore(item.score)
     var currentProgress by rememberSaveable { mutableStateOf(item.progress) }
