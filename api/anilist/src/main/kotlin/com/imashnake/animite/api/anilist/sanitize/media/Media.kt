@@ -514,11 +514,9 @@ data class Media(
             image = query.image?.large,
             name = query.name?.userPreferred ?: query.name?.full,
             role = role,
-            dob = getFormattedDate(
-                year = query.dateOfBirth?.year,
-                month = query.dateOfBirth?.month,
-                day = query.dateOfBirth?.day
-            ),
+            dob = query.dateOfBirth?.let {
+                getFormattedDate(it.year, it.month, it.day)
+            },
             favourites = getFormattedFavourites(query.favourites),
             alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
             description = getDescription(
@@ -533,11 +531,9 @@ data class Media(
             image = query.image?.large,
             name = query.name?.userPreferred ?: query.name?.full,
             role = role,
-            dob = getFormattedDate(
-                year = query.dateOfBirth?.year,
-                month = query.dateOfBirth?.month,
-                day = query.dateOfBirth?.day
-            ),
+            dob = query.dateOfBirth?.let {
+                getFormattedDate(it.year, it.month, it.day)
+            },
             favourites = getFormattedFavourites(query.favourites),
             alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
             description = getDescription(
@@ -732,9 +728,11 @@ data class Media(
         val seasonYear: Int?,
         val format: Format?,
         val segments: Int?,
-        val progress: Int?,
-        val score: Score?,
         val status: TrackingStatus,
+        val score: Score?,
+        val progress: Int?,
+        val startDate: String?,
+        val endDate: String?,
     ) {
         internal constructor(
             query: MediaTracking,
@@ -759,9 +757,15 @@ data class Media(
             seasonYear = query.seasonYear,
             format = query.format?.sanitize(),
             segments = query.episodes ?: query.nextAiringEpisode?.episode ?: query.chapters,
-            progress = progress,
+            status = status,
             score = score?.let { Score(it, scoreFormat) },
-            status = status
+            progress = progress,
+            startDate = query.mediaListEntry?.startedAt?.let {
+                getFormattedDate(it.year, it.month, it.day)
+            },
+            endDate = query.mediaListEntry?.completedAt?.let {
+                getFormattedDate(it.year, it.month, it.day)
+            }
         )
     }
 

@@ -72,6 +72,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Confirm
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Reject
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.SegmentTick
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -318,7 +319,7 @@ fun UpdateEntryDialog(
                             imageVector = Icons.Rounded.Close,
                             text = stringResource(R.string.close),
                             onClick = {
-                                haptic.performHapticFeedback(Reject)
+                                haptic.performHapticFeedback(ToggleOff)
                                 onDismissRequest()
                             },
                         )
