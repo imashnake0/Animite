@@ -897,13 +897,17 @@ private fun DateChip(
     modifier: Modifier = Modifier
 ) {
     val iconPadding = (dimensionResource(R.dimen.date_picker_chip_height) - dimensionResource(R.dimen.date_picker_chip_icon_size)) / 2
+    val haptic = LocalHapticFeedback.current
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = dimensionResource(R.dimen.date_picker_chip_height))
             .clip(CircleShape)
-            .clickable { onClick() }
+            .clickable {
+                haptic.performHapticFeedback(ToggleOn)
+                onClick()
+            }
             .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
             .padding(iconPadding)
     ) {
