@@ -150,11 +150,11 @@ class ProfileViewModel @Inject constructor(
         refreshMangaLists()
     }
 
-    fun updateMediaListEntry(params: EntryUpdateParams) = viewModelScope.launch(Dispatchers.IO) {
+    fun updateMediaListEntry(type: Media.Small.Type, params: EntryUpdateParams) = viewModelScope.launch(Dispatchers.IO) {
         userRepository.updateMediaListEntry(params = params).collect {
             Log.d("UpdatedMediaListEntry", "updateMediaListEntry: id: ${it.getOrNull()?.mediaId}")
         }
-        refreshAnimeLists()
+        if (type == Media.Small.Type.ANIME) refreshAnimeLists() else refreshMangaLists()
     }
 
     private fun refreshAnimeLists() = viewModelScope.launch(Dispatchers.IO) {

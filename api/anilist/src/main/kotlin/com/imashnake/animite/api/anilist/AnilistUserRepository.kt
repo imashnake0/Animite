@@ -7,6 +7,7 @@ import com.apollographql.cache.normalized.fetchPolicy
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.pollute
+import com.imashnake.animite.api.anilist.type.FuzzyDateInput
 import com.imashnake.animite.api.anilist.type.MediaListOptionsInput
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.anilist.type.ScoreFormat
@@ -71,7 +72,25 @@ class AnilistUserRepository(
                 mediaId = params.id,
                 status = Optional.presentIfNotNull(params.status.pollute()),
                 score = Optional.presentIfNotNull(params.score?.value?.toDouble()),
-                progress = Optional.presentIfNotNull(params.progress)
+                progress = Optional.presentIfNotNull(params.progress),
+                startedAt = Optional.presentIfNotNull(
+                    params.startedAt?.let {
+                        FuzzyDateInput(
+                            year = Optional.presentIfNotNull(it.first),
+                            month = Optional.presentIfNotNull(it.second),
+                            day = Optional.presentIfNotNull(it.third),
+                        )
+                    }
+                ),
+                completedAt = Optional.presentIfNotNull(
+                    params.completedAt?.let {
+                        FuzzyDateInput(
+                            year = Optional.presentIfNotNull(it.first),
+                            month = Optional.presentIfNotNull(it.second),
+                            day = Optional.presentIfNotNull(it.third),
+                        )
+                    }
+                )
             )
         )
         .fetchPolicy(FetchPolicy.NetworkOnly)
@@ -112,5 +131,7 @@ data class EntryUpdateParams(
     val id: Int,
     val status: User.TrackingStatus,
     val score: Media.Score?,
-    val progress: Int?
+    val progress: Int?,
+    val startedAt: Triple<Int?, Int?, Int?>?,
+    val completedAt: Triple<Int?, Int?, Int?>?,
 )

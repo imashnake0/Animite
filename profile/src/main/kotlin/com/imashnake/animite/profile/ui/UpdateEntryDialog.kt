@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -72,6 +74,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Confirm
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.Reject
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.SegmentTick
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -95,6 +98,7 @@ import androidx.core.graphics.toColorInt
 import coil3.compose.AsyncImage
 import com.imashnake.animite.api.anilist.EntryUpdateParams
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.media.Media.Companion.getFormattedDate
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.ScoreFormat
 import com.imashnake.animite.core.ui.LocalPaddings
@@ -112,10 +116,16 @@ import com.imashnake.animite.profile.dev.ORANGE
 import com.imashnake.animite.profile.dev.RED
 import com.imashnake.animite.profile.dev.res
 import com.imashnake.animite.profile.dev.title
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
+import kotlinx.datetime.toLocalDateTime
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
+import kotlin.time.Instant
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.settings.R as settingsR
+
+private const val HALF_DAY_MILLIS = 86400000L
 
 // TODO: This padding cannot be removed.
 private val DropdownMenuItemHorizontalPadding = 12.dp
@@ -135,9 +145,13 @@ fun UpdateEntryDialog(
     var selectedStatus by rememberSaveable { mutableStateOf(item.status) }
     var currentScore by rememberMediaScore(item.score)
     var currentProgress by rememberSaveable { mutableStateOf(item.progress) }
+    var currentStartedAtDate by rememberFuzzyDate(item.startedAt)
+    var currentCompletedAtDate by rememberFuzzyDate(item.completedAt)
 
-    val datePickerState = rememberDatePickerState()
-    var isDatePickerVisible by remember { mutableStateOf(false) }
+    val startedAtDatePickerState = rememberDatePickerState(initialSelectedDateMillis = item.startedAt?.epochMillis)
+    var isStartedAtDatePickerVisible by remember { mutableStateOf(false) }
+    val completedAtDatePickerState = rememberDatePickerState(initialSelectedDateMillis = item.completedAt?.epochMillis)
+    var isCompletedAtDatePickerVisible by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = onDismissRequest) {
         Card(
@@ -167,7 +181,7 @@ fun UpdateEntryDialog(
                             vertical = LocalPaddings.current.large
                         )
                 ) {
-                    Section(title = "Status") {
+                    Section(title = stringResource(R.string.status)) {
                         StatusDropDown(
                             type = item.type,
                             selectedStatus = selectedStatus,
@@ -175,7 +189,7 @@ fun UpdateEntryDialog(
                         )
                     }
 
-                    Section(title = "Score") {
+                    Section(title = stringResource(R.string.score)) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxWidth()
@@ -238,7 +252,7 @@ fun UpdateEntryDialog(
                         val progress = currentProgress!!
                         val segments = item.segments ?: if (progress == 0) 1 else progress
 
-                        Section(title = "Progress") {
+                        Section(title = stringResource(R.string.progress)) {
                             Box(Modifier.padding(vertical = LocalPaddings.current.small)) {
                                 ProgressBar(
                                     progress = progress,
@@ -263,8 +277,7 @@ fun UpdateEntryDialog(
                                     ScoreButton(
                                         imageVector = ImageVector.vectorResource(R.drawable.minus),
                                         onClick = {
-                                            currentProgress =
-                                                (currentProgress!! - 1).fastCoerceIn(0, segments)
+                                            currentProgress = (currentProgress!! - 1).fastCoerceIn(0, segments)
                                             haptic.performHapticFeedback(SegmentTick)
                                         },
                                         size = 20.dp
@@ -272,14 +285,40 @@ fun UpdateEntryDialog(
                                     ScoreButton(
                                         imageVector = Icons.Rounded.Add,
                                         onClick = {
-                                            currentProgress =
-                                                (currentProgress!! + 1).fastCoerceIn(0, segments)
+                                            currentProgress = (currentProgress!! + 1).fastCoerceIn(0, segments)
                                             haptic.performHapticFeedback(SegmentTick)
                                         },
                                         size = 20.dp
                                     )
                                 }
                             }
+                        }
+                    }
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
+                    ) {
+                        Section(
+                            title = stringResource(R.string.started_at),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            DateChip(
+                                date = currentStartedAtDate?.formatted,
+                                icon = ImageVector.vectorResource(R.drawable.calendar_created),
+                                onClick = { isStartedAtDatePickerVisible = true },
+                            )
+                        }
+
+                        Section(
+                            title = stringResource(R.string.completed_at),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            DateChip(
+                                date = currentCompletedAtDate?.formatted,
+                                icon = ImageVector.vectorResource(R.drawable.calendar_completed),
+                                onClick = { isCompletedAtDatePickerVisible = true }
+                            )
                         }
                     }
 
@@ -291,7 +330,9 @@ fun UpdateEntryDialog(
                         Crossfade(
                             selectedStatus != item.status ||
                                     currentScore != item.score ||
-                                    currentProgress != item.progress
+                                    currentProgress != item.progress ||
+                                    currentStartedAtDate != item.startedAt ||
+                                    currentCompletedAtDate != item.completedAt
                         ) {
                             IconButton(
                                 enabled = it,
@@ -304,6 +345,8 @@ fun UpdateEntryDialog(
                                     selectedStatus = item.status
                                     currentScore = item.score
                                     currentProgress = item.progress
+                                    currentStartedAtDate = item.startedAt
+                                    currentCompletedAtDate = item.completedAt
                                 }
                             ) {
                                 Icon(
@@ -318,7 +361,7 @@ fun UpdateEntryDialog(
                             imageVector = Icons.Rounded.Close,
                             text = stringResource(R.string.close),
                             onClick = {
-                                haptic.performHapticFeedback(Reject)
+                                haptic.performHapticFeedback(ToggleOff)
                                 onDismissRequest()
                             },
                         )
@@ -333,7 +376,9 @@ fun UpdateEntryDialog(
                                         id = item.id,
                                         status = selectedStatus,
                                         score = currentScore,
-                                        progress = currentProgress
+                                        progress = currentProgress,
+                                        startedAt = currentStartedAtDate?.yearMonthDay,
+                                        completedAt = currentCompletedAtDate?.yearMonthDay
                                     )
                                 )
                                 onDismissRequest()
@@ -375,11 +420,49 @@ fun UpdateEntryDialog(
         }
     }
 
-    if (isDatePickerVisible) {
+    if (isStartedAtDatePickerVisible) {
         DatePickerModal(
-            state = datePickerState,
-            onDismiss = { isDatePickerVisible = false },
-            onDateSelected = {}
+            state = startedAtDatePickerState,
+            onDismiss = { isStartedAtDatePickerVisible = false },
+            onDateSelected = { epochMillis ->
+                val localDate = epochMillis?.let {
+                    Instant
+                        .fromEpochMilliseconds(it + HALF_DAY_MILLIS)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date
+                }
+                currentStartedAtDate = currentStartedAtDate?.copy(
+                    formatted = localDate?.let {
+                        getFormattedDate(it.year, it.month.number, it.day)
+                    },
+                    epochMillis = epochMillis,
+                    yearMonthDay = localDate.let { Triple(it?.year, it?.month?.number, it?.day) }
+                )
+                startedAtDatePickerState.selectedDateMillis = epochMillis
+            }
+        )
+    }
+
+    if (isCompletedAtDatePickerVisible) {
+        DatePickerModal(
+            state = completedAtDatePickerState,
+            onDismiss = { isCompletedAtDatePickerVisible = false },
+            onDateSelected = { epochMillis ->
+                val localDate = epochMillis?.let {
+                    Instant
+                        .fromEpochMilliseconds(it + HALF_DAY_MILLIS)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .date
+                }
+                currentCompletedAtDate = currentCompletedAtDate?.copy(
+                    formatted = localDate?.let {
+                        getFormattedDate(it.year, it.month.number, it.day)
+                    },
+                    epochMillis = epochMillis,
+                    yearMonthDay = localDate.let { Triple(it?.year, it?.month?.number, it?.day) }
+                )
+                completedAtDatePickerState.selectedDateMillis = epochMillis
+            }
         )
     }
 }
@@ -806,7 +889,64 @@ private fun SetSmileys(
     }
 }
 
-// TODO: This is never shown, make entry point.
+@Composable
+private fun DateChip(
+    date: String?,
+    icon: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val iconPadding = (dimensionResource(R.dimen.date_picker_chip_height) - dimensionResource(R.dimen.date_picker_chip_icon_size)) / 2
+    val haptic = LocalHapticFeedback.current
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = dimensionResource(R.dimen.date_picker_chip_height))
+            .clip(CircleShape)
+            .clickable {
+                haptic.performHapticFeedback(ToggleOn)
+                onClick()
+            }
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
+            .padding(iconPadding)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+            modifier = modifier.width(IntrinsicSize.Max)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(dimensionResource(R.dimen.date_picker_chip_icon_size))
+            )
+
+            AnimatedContent(date) {
+                if (it == null) {
+                    Text(
+                        text = stringResource(R.string.add_date),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
+                        maxLines = 1,
+                        modifier = Modifier.graphicsLayer { alpha = 0.5f }
+                    )
+                } else {
+                    Text(
+                        // The space is to add some buffer so that it flows to the next line
+                        // before the text is clipped I think
+                        text = "$it  ",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Composable
 fun DatePickerModal(
     state: DatePickerState,
@@ -852,7 +992,8 @@ private fun Section(
             text = title,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelSmallEmphasized,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            maxLines = 1
         )
         content()
     }
@@ -878,3 +1019,30 @@ fun rememberMediaScore(score: Media.Score?) = rememberSaveable(
         },
     )
 ) { mutableStateOf(score) }
+
+@SuppressLint("ComposableNaming")
+@Composable
+fun rememberFuzzyDate(fuzzyDate: Media.FuzzyDate?) = rememberSaveable(
+    saver = Saver(
+        save = {
+            it.value?.let { fuzzyDate ->
+                arrayListOf(
+                    fuzzyDate.formatted,
+                    fuzzyDate.epochMillis,
+                    fuzzyDate.yearMonthDay.first,
+                    fuzzyDate.yearMonthDay.second,
+                    fuzzyDate.yearMonthDay.third,
+                )
+            }
+        },
+        restore = {
+            mutableStateOf(
+                Media.FuzzyDate(
+                    formatted = it[0] as String?,
+                    epochMillis = it[1] as Long?,
+                    yearMonthDay = Triple(it[2] as Int?, it[3] as Int?, it[4] as Int?)
+                )
+            )
+        },
+    )
+) { mutableStateOf(fuzzyDate) }

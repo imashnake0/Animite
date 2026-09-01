@@ -30,6 +30,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.format.MonthNames
 import java.util.Locale
 import kotlin.collections.mapNotNull
@@ -82,7 +84,7 @@ data class Media(
     val recommendations: ImmutableList<Small>,
 ) {
     companion object {
-        private fun getFormattedDate(
+        fun getFormattedDate(
             year: Int?,
             month: Int?,
             day: Int?,
@@ -93,6 +95,18 @@ data class Media(
             val format = LocalDate.Format { monthName(MonthNames.ENGLISH_ABBREVIATED) }
             val formattedMonth = month?.let { format.format(LocalDate(0, month, 1)) }
             return listOfNotNull(formattedMonth, formattedDayYear).joinToString(" ")
+        }
+
+        private fun getEpochMillis(
+            year: Int?,
+            month: Int?,
+            day: Int?,
+        ): Long? {
+            return LocalDate(
+                year = year ?: return null,
+                month = month ?: return null,
+                day = day ?: return null
+            ).atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         }
 
         private fun getNextAiring(nextAiringEpisode: AnimeInfo.NextAiringEpisode?): NextAiring? {
@@ -514,11 +528,9 @@ data class Media(
             image = query.image?.large,
             name = query.name?.userPreferred ?: query.name?.full,
             role = role,
-            dob = getFormattedDate(
-                year = query.dateOfBirth?.year,
-                month = query.dateOfBirth?.month,
-                day = query.dateOfBirth?.day
-            ),
+            dob = query.dateOfBirth?.let {
+                getFormattedDate(it.year, it.month, it.day)
+            },
             favourites = getFormattedFavourites(query.favourites),
             alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
             description = getDescription(
@@ -533,11 +545,9 @@ data class Media(
             image = query.image?.large,
             name = query.name?.userPreferred ?: query.name?.full,
             role = role,
-            dob = getFormattedDate(
-                year = query.dateOfBirth?.year,
-                month = query.dateOfBirth?.month,
-                day = query.dateOfBirth?.day
-            ),
+            dob = query.dateOfBirth?.let {
+                getFormattedDate(it.year, it.month, it.day)
+            },
             favourites = getFormattedFavourites(query.favourites),
             alternativeNames = query.name?.alternative.orEmpty().filterNotNull().joinToString(),
             description = getDescription(
@@ -732,9 +742,11 @@ data class Media(
         val seasonYear: Int?,
         val format: Format?,
         val segments: Int?,
-        val progress: Int?,
-        val score: Score?,
         val status: TrackingStatus,
+        val score: Score?,
+        val progress: Int?,
+        val startedAt: FuzzyDate?,
+        val completedAt: FuzzyDate?,
     ) {
         internal constructor(
             query: MediaTracking,
@@ -759,11 +771,32 @@ data class Media(
             seasonYear = query.seasonYear,
             format = query.format?.sanitize(),
             segments = query.episodes ?: query.nextAiringEpisode?.episode ?: query.chapters,
-            progress = progress,
+            status = status,
             score = score?.let { Score(it, scoreFormat) },
-            status = status
+            progress = progress,
+            startedAt = query.mediaListEntry?.startedAt?.let {
+                FuzzyDate(
+                    formatted = getFormattedDate(it.year, it.month, it.day),
+                    epochMillis = getEpochMillis(it.year, it.month, it.day),
+                    yearMonthDay = Triple(it.year, it.month, it.day)
+                )
+            },
+            completedAt = query.mediaListEntry?.completedAt?.let {
+                FuzzyDate(
+                    formatted = getFormattedDate(it.year, it.month, it.day),
+                    epochMillis = getEpochMillis(it.year, it.month, it.day),
+                    yearMonthDay = Triple(it.year, it.month, it.day)
+                )
+            },
         )
     }
+
+    @Immutable
+    data class FuzzyDate(
+        val formatted: String?,
+        val epochMillis: Long?,
+        val yearMonthDay: Triple<Int?, Int?, Int?>,
+    )
 
     @Immutable
     data class Score(
