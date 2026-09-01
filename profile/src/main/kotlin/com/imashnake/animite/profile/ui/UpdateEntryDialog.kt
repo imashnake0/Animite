@@ -171,7 +171,7 @@ fun UpdateEntryDialog(
                             vertical = LocalPaddings.current.large
                         )
                 ) {
-                    Section(title = "Status") {
+                    Section(title = stringResource(R.string.status)) {
                         StatusDropDown(
                             type = item.type,
                             selectedStatus = selectedStatus,
@@ -179,7 +179,7 @@ fun UpdateEntryDialog(
                         )
                     }
 
-                    Section(title = "Score") {
+                    Section(title = stringResource(R.string.score)) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier.fillMaxWidth()
@@ -242,7 +242,7 @@ fun UpdateEntryDialog(
                         val progress = currentProgress!!
                         val segments = item.segments ?: if (progress == 0) 1 else progress
 
-                        Section(title = "Progress") {
+                        Section(title = stringResource(R.string.progress)) {
                             Box(Modifier.padding(vertical = LocalPaddings.current.small)) {
                                 ProgressBar(
                                     progress = progress,
@@ -291,7 +291,10 @@ fun UpdateEntryDialog(
                         horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                         verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
                     ) {
-                        Section("Started at", modifier = Modifier.weight(1f)) {
+                        Section(
+                            title = stringResource(R.string.started_at),
+                            modifier = Modifier.weight(1f)
+                        ) {
                             DateChip(
                                 date = item.startedAt,
                                 icon = ImageVector.vectorResource(R.drawable.calendar_created),
@@ -299,7 +302,10 @@ fun UpdateEntryDialog(
                             )
                         }
 
-                        Section("Completed at", modifier = Modifier.weight(1f)) {
+                        Section(
+                            title = stringResource(R.string.completed_at),
+                            modifier = Modifier.weight(1f)
+                        ) {
                             DateChip(
                                 date = item.completedAt,
                                 icon = ImageVector.vectorResource(R.drawable.calendar_completed),
@@ -851,7 +857,7 @@ private fun DateChip(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
             modifier = modifier.width(IntrinsicSize.Max)
         ) {
             Icon(
@@ -863,7 +869,7 @@ private fun DateChip(
 
             if (date == null) {
                 Text(
-                    text = "Add date",
+                    text = stringResource(R.string.add_date),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
                     maxLines = 1,
@@ -873,9 +879,8 @@ private fun DateChip(
                 Text(
                     text = date,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
                     maxLines = 1,
-                    overflow = TextOverflow.Visible,
-                    style = MaterialTheme.typography.labelLarge.copy(baselineShift = null)
                 )
             }
         }

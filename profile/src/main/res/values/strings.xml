@@ -42,6 +42,14 @@
         <item quantity="other">%1$d eps</item>
     </plurals>
 
+    <string name="status">Status</string>
+    <string name="score">Score</string>
+    <string name="progress">Progress</string>
+    <string name="started_at">Started at</string>
+    <string name="completed_at">Completed at</string>
+
+    <string name="add_date">Add date</string>
+
     <string name="save">Save</string>
     <string name="close">Close</string>
 
