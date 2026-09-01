@@ -102,6 +102,7 @@ fun MediaTrackingLists(
     listVisibility: SnapshotStateMap<Int, Boolean>,
     updateMediaListsOrder: (List<String>) -> Unit,
     updateEntry: (params: EntryUpdateParams) -> Unit,
+    favouriteEntry: (id: Int) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier,
@@ -183,6 +184,7 @@ fun MediaTrackingLists(
                             },
                             updateEntry = updateEntry,
                             useExpressiveProgressIndicator = useExpressiveProgressIndicator,
+                            favouriteEntry = favouriteEntry,
                             modifier = Modifier
                                 .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
                                 .height(dimensionResource(R.dimen.tracking_list_item_height))
@@ -389,6 +391,7 @@ private fun MediaTrackingItem(
     useExpressiveProgressIndicator: Boolean,
     onClick: (Int, String?) -> Unit,
     updateEntry: (params: EntryUpdateParams) -> Unit,
+    favouriteEntry: (id: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isUpdateEntryDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -501,6 +504,7 @@ private fun MediaTrackingItem(
         UpdateEntryDialog(
             item = item,
             updateEntry = updateEntry,
+            favouriteEntry = favouriteEntry,
             onDismissRequest = { isUpdateEntryDialogVisible = false },
             useExpressiveProgressIndicator = useExpressiveProgressIndicator,
         )
