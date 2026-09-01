@@ -65,7 +65,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.BlendMode
@@ -130,6 +129,7 @@ import kotlin.time.Instant
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.settings.R as settingsR
 
+private const val FAVOURITE_COLOR = 0xFFF14F4F
 private const val HALF_DAY_MILLIS = 86400000L
 
 // TODO: This padding cannot be removed.
@@ -174,7 +174,7 @@ fun UpdateEntryDialog(
                 isFavourite = isFavourite,
                 onFavouriteClick = {
                     haptic.performHapticFeedback(
-                        if (isFavourite) ToggleOff else ToggleOn
+                        if (isFavourite) ToggleOff else Reject
                     )
                     isFavourite = !isFavourite
                 },
@@ -531,7 +531,7 @@ private fun Header(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
                     modifier = Modifier
-                        .padding(end = 24.dp + LocalPaddings.current.medium)
+                        .padding(end = dimensionResource(R.dimen.favourite_icon_size) + LocalPaddings.current.medium)
                         .align(Alignment.CenterStart)
                 ) {
                     Text(
@@ -574,12 +574,11 @@ private fun Header(
                 ) {
                     Icon(
                         imageVector = if (it) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                        tint = if (it) Color(0xFFF14F4F) else LocalContentColor.current,
+                        tint = if (it) Color(FAVOURITE_COLOR) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         contentDescription = null,
                         modifier = Modifier
-                            .requiredSize(24.dp)
-                            .clip(CircleShape)
-                            .clickable { onFavouriteClick() }
+                            .requiredSize(dimensionResource(R.dimen.favourite_icon_size))
+                            .clickable(interactionSource = null, indication = null) { onFavouriteClick() }
                     )
                 }
             }
