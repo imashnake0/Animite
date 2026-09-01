@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -285,13 +287,15 @@ fun UpdateEntryDialog(
                         }
                     }
 
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.large)
+                    ) {
                         Section("Started at", modifier = Modifier.weight(1f)) {
                             DateChip(
                                 date = item.startedAt,
                                 icon = ImageVector.vectorResource(R.drawable.calendar_created),
                                 onClick = { isDatePickerVisible = true },
-                                modifier = Modifier.fillMaxWidth()
                             )
                         }
 
@@ -300,7 +304,6 @@ fun UpdateEntryDialog(
                                 date = item.completedAt,
                                 icon = ImageVector.vectorResource(R.drawable.calendar_completed),
                                 onClick = { isDatePickerVisible = true },
-                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
@@ -837,38 +840,44 @@ private fun DateChip(
 ) {
     val iconPadding = (dimensionResource(R.dimen.date_picker_chip_height) - dimensionResource(R.dimen.date_picker_chip_icon_size)) / 2
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+    Box(
         modifier = modifier
+            .fillMaxWidth()
             .defaultMinSize(minHeight = dimensionResource(R.dimen.date_picker_chip_height))
             .clip(CircleShape)
             .clickable { onClick() }
             .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.95f))
             .padding(iconPadding)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(dimensionResource(R.dimen.date_picker_chip_icon_size))
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
+            modifier = modifier.width(IntrinsicSize.Max)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(dimensionResource(R.dimen.date_picker_chip_icon_size))
+            )
 
-        if (date == null) {
-            Text(
-                text = "Add date",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
-                modifier = Modifier.graphicsLayer { alpha = 0.5f },
-                maxLines = 1
-            )
-        } else {
-            Text(
-                text = date,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
-                maxLines = 1
-            )
+            if (date == null) {
+                Text(
+                    text = "Add date",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge.copy(baselineShift = null),
+                    maxLines = 1,
+                    modifier = Modifier.graphicsLayer { alpha = 0.5f }
+                )
+            } else {
+                Text(
+                    text = date,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Visible,
+                    style = MaterialTheme.typography.labelLarge.copy(baselineShift = null)
+                )
+            }
         }
     }
 }
