@@ -65,6 +65,17 @@ class AnilistUserRepository(
         .asResult { User.MediaCollection(it, type, language, scoreFormat, mediaListOrder) }
     }
 
+    fun toggleFavourite(type: Media.Small.Type, id: Int?) = apolloClient
+        .mutation(
+            ToggleFavouriteMutation(
+                animeId = Optional.presentIfNotNull(id.takeIf { type == Media.Small.Type.ANIME }),
+                mangaId = Optional.presentIfNotNull(id.takeIf { type == Media.Small.Type.MANGA })
+            )
+        )
+        .fetchPolicy(FetchPolicy.NetworkOnly)
+        .toFlow()
+        .asResult { it.ToggleFavourite }
+
     fun updateMediaListEntry(params: EntryUpdateParams) = apolloClient
         // TODO: Enable optimistic updates.
         .mutation(

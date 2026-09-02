@@ -29,6 +29,7 @@ fun MediaTab(
     useExpressiveProgressIndicator: Boolean,
     updateMediaListsOrder: (List<String>) -> Unit,
     updateEntry: (params: EntryUpdateParams) -> Unit,
+    favouriteEntry: (id: Int) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -55,6 +56,7 @@ fun MediaTab(
                 updateMediaListsOrder = updateMediaListsOrder,
                 onNavigateToMediaItem = onNavigateToMediaItem,
                 updateEntry = updateEntry,
+                favouriteEntry = favouriteEntry,
                 useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                 modifier = modifier,
                 contentPadding = contentPadding,
@@ -72,6 +74,7 @@ private fun UserMediaLists(
     updateMediaListsOrder: (List<String>) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     updateEntry: (params: EntryUpdateParams) -> Unit,
+    favouriteEntry: (id: Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -82,6 +85,7 @@ private fun UserMediaLists(
         updateMediaListsOrder = updateMediaListsOrder,
         onNavigateToMediaItem = onNavigateToMediaItem,
         updateEntry = updateEntry,
+        favouriteEntry = favouriteEntry,
         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
         contentPadding = contentPadding,
         modifier = modifier.fillMaxSize()

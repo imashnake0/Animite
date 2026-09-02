@@ -157,6 +157,13 @@ class ProfileViewModel @Inject constructor(
         if (type == Media.Small.Type.ANIME) refreshAnimeLists() else refreshMangaLists()
     }
 
+    fun toggleFavourite(type: Media.Small.Type, id: Int) = viewModelScope.launch(Dispatchers.IO) {
+        userRepository.toggleFavourite(type = type, id = id).collect {
+            Log.d("FavouritedMedia", "toggleFavourite: id: $id")
+        }
+        if (type == Media.Small.Type.ANIME) refreshAnimeLists() else refreshMangaLists()
+    }
+
     private fun refreshAnimeLists() = viewModelScope.launch(Dispatchers.IO) {
         useNetwork = true
         animeListsRefreshTrigger.emit(Unit)

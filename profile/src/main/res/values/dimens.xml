@@ -10,6 +10,8 @@
     <dimen name="tracking_list_header_icon_size">20dp</dimen>
     <dimen name="tracking_list_item_height">80dp</dimen>
 
+    <dimen name="favourite_icon_size">20dp</dimen>
+
     <dimen name="date_picker_chip_height">60dp</dimen>
     <dimen name="date_picker_chip_icon_size">20dp</dimen>
 

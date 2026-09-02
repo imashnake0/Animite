@@ -20,6 +20,7 @@ fragment MediaTracking on Media {
     nextAiringEpisode {
         episode
     }
+    isFavourite
     mediaListEntry {
         startedAt {
             year
