@@ -18,14 +18,10 @@ android {
 
     signingConfigs {
         register("release") {
-            val storeFilePath: String? by project
-            val storePass: String? by project
-            val key: String? by project
-            val keyPass: String? by project
-            this.storeFile = storeFilePath?.let { file(it) }
-            this.storePassword = storePass
-            this.keyAlias = key
-            this.keyPassword = keyPass
+            storeFile = project.findProperty("storeFilePath")?.let { file(it) }
+            storePassword = project.findProperty("storePass").toString()
+            keyAlias = project.findProperty("key").toString()
+            keyPassword = project.findProperty("keyPass").toString()
         }
     }
 
