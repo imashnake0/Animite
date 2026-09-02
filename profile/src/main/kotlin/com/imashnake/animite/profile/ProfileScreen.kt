@@ -277,6 +277,7 @@ fun ProfileScreen(
                                             updateAnimeListsOrder = viewModel::updateAnimeLists,
                                             updateMangaListsOrder = viewModel::updateMangaLists,
                                             updateEntry = viewModel::updateMediaListEntry,
+                                            favouriteEntry = viewModel::toggleFavourite,
                                             onNavigateToMediaItem = onNavigateToMediaItem,
                                             showUserDescription = showUserDescription,
                                             onUserDescriptionClick = { showUserDescriptionSheet = true },
@@ -534,6 +535,7 @@ private fun UserTabs(
     updateAnimeListsOrder: (List<String>) -> Unit,
     updateMangaListsOrder: (List<String>) -> Unit,
     updateEntry: (type: Media.Small.Type, params: EntryUpdateParams) -> Unit,
+    favouriteEntry: (type: Media.Small.Type, id: Int) -> Unit,
     onNavigateToMediaItem: (MediaPage) -> Unit,
     showUserDescription: Boolean,
     onUserDescriptionClick: () -> Unit,
@@ -668,6 +670,7 @@ private fun UserTabs(
                         updateMediaListsOrder = updateAnimeListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         updateEntry = { updateEntry(Media.Small.Type.ANIME, it) },
+                        favouriteEntry = { favouriteEntry(Media.Small.Type.ANIME, it) },
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                         contentPadding = mediaTabContentPadding,
                     )
@@ -677,6 +680,7 @@ private fun UserTabs(
                         updateMediaListsOrder = updateMangaListsOrder,
                         onNavigateToMediaItem = onNavigateToMediaItem,
                         updateEntry = { updateEntry(Media.Small.Type.MANGA, it) },
+                        favouriteEntry = { favouriteEntry(Media.Small.Type.MANGA, it) },
                         useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                         contentPadding = mediaTabContentPadding,
                     )

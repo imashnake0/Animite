@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -30,6 +31,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -125,6 +128,7 @@ import kotlin.time.Instant
 import com.imashnake.animite.media.R as mediaR
 import com.imashnake.animite.settings.R as settingsR
 
+private const val FAVOURITE_COLOR = 0xFFF14F4F
 private const val HALF_DAY_MILLIS = 86400000L
 
 // TODO: This padding cannot be removed.
@@ -135,6 +139,7 @@ private val DropdownMenuItemHorizontalPadding = 12.dp
 fun UpdateEntryDialog(
     item: Media.Tracking,
     updateEntry: (params: EntryUpdateParams) -> Unit,
+    favouriteEntry: (id: Int) -> Unit,
     onDismissRequest: () -> Unit,
     useExpressiveProgressIndicator: Boolean,
     modifier: Modifier = Modifier
@@ -142,6 +147,7 @@ fun UpdateEntryDialog(
     val haptic = LocalHapticFeedback.current
 
     // TODO: Please move these along with logic to the VM.
+    var isFavourite by rememberSaveable { mutableStateOf(item.isFavourite) }
     var selectedStatus by rememberSaveable { mutableStateOf(item.status) }
     var currentScore by rememberMediaScore(item.score)
     var currentProgress by rememberSaveable { mutableStateOf(item.progress) }
@@ -165,6 +171,13 @@ fun UpdateEntryDialog(
                 format = item.format,
                 season = item.season,
                 seasonYear = item.seasonYear,
+                isFavourite = isFavourite,
+                onFavouriteClick = {
+                    haptic.performHapticFeedback(
+                        if (isFavourite) ToggleOff else Reject
+                    )
+                    isFavourite = !isFavourite
+                },
                 tintColor = item.color?.toColorInt()
                     ?.let { int -> Color(int) }
                     ?.copy(alpha = 0.25f)
@@ -381,6 +394,9 @@ fun UpdateEntryDialog(
                                         completedAt = currentCompletedAtDate?.yearMonthDay
                                     )
                                 )
+                                if (isFavourite != item.isFavourite) {
+                                    favouriteEntry(item.id)
+                                }
                                 onDismissRequest()
                             },
                         )
@@ -477,6 +493,8 @@ private fun Header(
     season: Media.Season?,
     seasonYear: Int?,
     tintColor: Color,
+    isFavourite: Boolean,
+    onFavouriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier) {
@@ -504,45 +522,67 @@ private fun Header(
                 )
             }
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
-                modifier = Modifier.padding(
-                    start = LocalPaddings.current.large + 96.dp + LocalPaddings.current.medium,
-                    top = LocalPaddings.current.medium,
-                    end = LocalPaddings.current.medium
-                )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = LocalPaddings.current.large + 96.dp + LocalPaddings.current.medium,
+                        top = LocalPaddings.current.medium,
+                        end = LocalPaddings.current.large
+                    )
             ) {
-                Text(
-                    text = title.orEmpty(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    maxLines = 2
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny),
+                    modifier = Modifier
+                        .padding(end = dimensionResource(R.dimen.favourite_icon_size) + LocalPaddings.current.medium)
+                        .align(Alignment.CenterStart)
+                ) {
+                    Text(
+                        text = title.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        maxLines = 2
+                    )
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    format?.let {
-                        Text(
-                            text = stringResource(it.res),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        format?.let {
+                            Text(
+                                text = stringResource(it.res),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
 
-                    if (season != null && format != null) {
-                        Divider(shape = MaterialShapes.Triangle.toShape())
-                    }
+                        if (season != null && format != null) {
+                            Divider(shape = MaterialShapes.Triangle.toShape())
+                        }
 
-                    season?.let {
-                        Text(
-                            text = stringResource(it.res) +
-                                    " ${seasonYear?.toString().orEmpty()}",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1
-                        )
+                        season?.let {
+                            Text(
+                                text = stringResource(it.res) +
+                                        " ${seasonYear?.toString().orEmpty()}",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1
+                            )
+                        }
                     }
+                }
+
+                Crossfade(
+                    targetState = isFavourite,
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                ) {
+                    Icon(
+                        imageVector = if (it) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                        tint = if (it) Color(FAVOURITE_COLOR) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .requiredSize(dimensionResource(R.dimen.favourite_icon_size))
+                            .clickable(interactionSource = null, indication = null) { onFavouriteClick() }
+                    )
                 }
             }
         }
