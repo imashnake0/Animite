@@ -12,6 +12,7 @@ kotlin {
     android {
         namespace = "com.imashnake.animite.core.ui"
         androidResources.enable = true
+        withHostTest {  }
     }
 
     sourceSets {

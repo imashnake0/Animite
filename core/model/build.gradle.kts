@@ -10,9 +10,10 @@ kotlin {
     explicitApi()
     jvmToolchain(21)
 
-    androidLibrary {
+    android {
         namespace = "com.imashnake.animite.core.model"
         androidResources.enable = true
+        withHostTest {  }
     }
 
     sourceSets {

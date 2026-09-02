@@ -65,16 +65,7 @@ tasks.withType<KotlinCompile>().configureEach {
     )
 }
 
-// TODO: Remove when Dagger bumps Kotlin metadata dependency to 2.3.0
-//  (see also https://github.com/google/dagger/issues/5059)
-configurations.configureEach {
-    resolutionStrategy.force("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.10")
-}
-
 dependencies {
-    // Workaround conflicting androidx-concurrent-futures from compose & androidx-junit
-    implementation("androidx.concurrent:concurrent-futures:1.3.0")
-
     implementation(projects.api.anilist)
     implementation(projects.api.mal)
     implementation(projects.api.preferences)
