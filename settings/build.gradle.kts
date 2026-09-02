@@ -31,45 +31,30 @@ tasks.withType<KotlinCompile>().configureEach {
     )
 }
 
-// TODO: Remove unused modules.
 dependencies {
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
     implementation(projects.core.model)
-    implementation(projects.core.resource)
     implementation(projects.core.ui)
     implementation(projects.banner)
     implementation(projects.media)
-    implementation(projects.navigation)
 
     // AndroidX
-    implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycleRuntimeKtx)
-
-    // Navigation
-    implementation(libs.androidx.navigationCommon)
 
     // Compose
     implementation(libs.compose.animation)
     implementation(libs.compose.components.resources)
     implementation(libs.compose.foundation)
-    implementation(libs.compose.material)
     implementation(libs.compose.material.icons.core)
     implementation(libs.compose.material3)
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
-    implementation(libs.reorderable)
     debugImplementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.toolingPreview)
 
     implementation(libs.materialKolor)
-
-    // Cascade Compose
-    implementation(libs.saket.cascade)
-
-    // Coil
-    implementation(libs.bundles.coil)
 
     // Kotlin
     implementation(libs.kotlinx.collectionsImmutable)
@@ -81,12 +66,6 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigationCompose)
     ksp(libs.hilt.android.compiler)
-
-    testImplementation(libs.test.junit)
-
-    androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.androidx.test.espressoCore)
-    androidTestImplementation(libs.compose.test.ui.testJunit4)
 }
 
 detekt {
