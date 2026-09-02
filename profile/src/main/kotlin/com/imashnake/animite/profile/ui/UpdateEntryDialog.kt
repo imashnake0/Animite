@@ -341,7 +341,8 @@ fun UpdateEntryDialog(
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Crossfade(
-                            selectedStatus != item.status ||
+                            targetState = isFavourite != item.isFavourite ||
+                                    selectedStatus != item.status ||
                                     currentScore != item.score ||
                                     currentProgress != item.progress ||
                                     currentStartedAtDate != item.startedAt ||
@@ -355,6 +356,7 @@ fun UpdateEntryDialog(
                                 ),
                                 onClick = {
                                     haptic.performHapticFeedback(Reject)
+                                    isFavourite = item.isFavourite
                                     selectedStatus = item.status
                                     currentScore = item.score
                                     currentProgress = item.progress
