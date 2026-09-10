@@ -20,13 +20,38 @@ private val SqlCacheFactory
     get() = SqlNormalizedCacheFactory("apollo.db")
 
 /**
+ * Adds the Referer header to every AniList API request.
+ *
+ * AniList currently requires this header for requests from third-party
+ * clients. Without it, otherwise valid API requests may be rejected with
+ * an HTTP 403 response.
+ *
+ * This behavior is not part of the documented API contract and may change
+ * in the future. Keeping the header handling in a dedicated interceptor
+ * makes it easy to update or remove if AniList changes its requirements.
+ */
+private val aniListRefererInterceptor = object : HttpInterceptor {
+    override suspend fun intercept(
+        request: HttpRequest,
+        chain: HttpInterceptorChain
+    ): HttpResponse {
+        return chain.proceed(
+            request.newBuilder()
+                .addHeader("Referer", "https://anilist.co/")
+                .build()
+        )
+    }
+}
+
+/**
  * Creates an [ApolloClient] configured to access AniList APIs.
  */
- fun createApolloHttpClient(): ApolloClient {
+fun createApolloHttpClient(): ApolloClient {
     val cacheFactory = MemoryCacheFactory.chain(SqlCacheFactory)
     return ApolloClient.Builder()
         .dispatcher(Dispatchers.IO)
         .serverUrl(BaseUrl)
+        .addHttpInterceptor(aniListRefererInterceptor)
         .addHttpInterceptor(LoggingInterceptor(LoggingInterceptor.Level.BODY))
         .cache(cacheFactory)
         .build()
@@ -58,6 +83,7 @@ fun createAuthenticatedApolloHttpClient(
         .dispatcher(Dispatchers.IO)
         .serverUrl(BaseUrl)
         .addHttpInterceptor(httpInterceptor)
+        .addHttpInterceptor(aniListRefererInterceptor)
         .addHttpInterceptor(LoggingInterceptor(LoggingInterceptor.Level.BODY))
         .cache(cacheFactory)
         .build()
