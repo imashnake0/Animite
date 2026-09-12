@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.DefaultNavTransitions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -179,7 +180,16 @@ fun MainScreen(
             LocalContentColor provides MaterialTheme.colorScheme.onBackground
         ) {
             SharedTransitionLayout {
-                NavHost(navController = navController, startDestination = AnimeRoute) {
+                NavHost(
+                    navController = navController,
+                    startDestination = AnimeRoute,
+                    predictivePopEnterTransition = {
+                        DefaultNavTransitions.enterTransition.invoke(this)
+                    },
+                    predictivePopExitTransition = {
+                        DefaultNavTransitions.exitTransition.invoke(this)
+                    }
+                ) {
                     composable<AnimeRoute> {
                         AnimeScreen(
                             onNavigateToMediaItem = navController::navigate,
