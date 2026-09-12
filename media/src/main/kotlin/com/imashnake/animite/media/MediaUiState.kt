@@ -12,6 +12,7 @@ data class MediaUiState(
     val coverImage: String? = null,
     val color: Int? = null,
     val title: String? = null,
+    val otherTitles: ImmutableList<String>? = null,
     val description: String? = null,
     val nextAiring: Media.NextAiring? = null,
     val info: ImmutableList<Media.Info>? = null,

@@ -34,8 +34,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.format.MonthNames
 import java.util.Locale
-import kotlin.collections.mapNotNull
-import kotlin.collections.orEmpty
+import kotlin.collections.listOfNotNull
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -56,6 +55,7 @@ data class Media(
     val color: String,
     /** @see MediaQuery.Media.title */
     val title: String?,
+    val otherTitles: ImmutableList<String>,
     /** @see MediaQuery.Media.description */
     val description: String,
     /** @see AnimeInfo.NextAiringEpisode */
@@ -603,6 +603,11 @@ data class Media(
             Language.ENGLISH -> query.title?.english
             Language.NATIVE -> query.title?.native
         } ?: query.title?.userPreferred,
+        otherTitles = listOfNotNull(
+            query.title?.romaji,
+            query.title?.english,
+            query.title?.native,
+        ).toImmutableList(),
         description = query.description.orEmpty(),
         nextAiring = getNextAiring(query.animeInfo.nextAiringEpisode),
         info = getAnimeInfo(query.animeInfo),

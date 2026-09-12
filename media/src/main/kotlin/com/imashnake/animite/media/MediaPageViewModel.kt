@@ -15,7 +15,7 @@ import com.imashnake.animite.api.preferences.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -47,7 +47,7 @@ class MediaPageViewModel @Inject constructor(
                         mediaType = mediaType,
                         language = preferencesRepository.language
                             .filterNotNull()
-                            .mapNotNull { Media.Language.valueOf(it) }
+                            .map { Media.Language.valueOf(it) }
                             .firstOrNull() ?: Media.Language.DEFAULT,
                         perPage = preferencesRepository.listSize.firstOrNull() ?: 10
                     )
@@ -55,6 +55,7 @@ class MediaPageViewModel @Inject constructor(
                     ?.getOrNull()
 
                 uiState = uiState.copy(
+                    otherTitles = media?.otherTitles,
                     bannerImage = media?.bannerImage,
                     coverImage = media?.coverImage,
                     color = media?.color?.toColorInt(),
