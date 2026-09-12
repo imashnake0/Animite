@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -49,7 +50,7 @@ class SearchViewModel @Inject constructor(
         flow2 = query,
         flow3 = prefs,
         transform = ::Triple
-    ).debounce(300L).flatMapLatest { (mediaType, query, prefs) ->
+    ).debounce(300L.milliseconds).flatMapLatest { (mediaType, query, prefs) ->
         if (query.isNullOrEmpty()) {
             flowOf(Resource.success(persistentListOf()))
         } else {
