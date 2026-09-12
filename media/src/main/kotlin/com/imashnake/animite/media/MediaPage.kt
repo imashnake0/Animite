@@ -107,6 +107,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastDistinctBy
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
 import androidx.core.net.toUri
@@ -125,6 +126,7 @@ import com.imashnake.animite.core.ui.component.ChipFlowRow
 import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.core.ui.component.StatsRow
+import com.imashnake.animite.core.ui.component.ToggleText
 import com.imashnake.animite.core.ui.ext.bannerParallax
 import com.imashnake.animite.core.ui.ext.crossfadeModel
 import com.imashnake.animite.core.ui.ext.horizontalOnly
@@ -140,6 +142,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.materialkolor.ktx.blend
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -203,7 +206,8 @@ fun MediaPage(
     ) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            // TODO: This causes some weird behaviour for predictive back.
+//            modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
             with(sharedTransitionScope) {
                 Box(
@@ -237,6 +241,7 @@ fun MediaPage(
                         content = {
                             MediaDetails(
                                 title = media.title,
+                                otherTitles = media.otherTitles,
                                 nextAiring = media.nextAiring,
                                 description = media.description.orEmpty(),
                                 modifier = Modifier
@@ -650,6 +655,7 @@ private fun MediaBanner(
 @Composable
 private fun MediaDetails(
     title: String?,
+    otherTitles: ImmutableList<String>?,
     nextAiring: Media.NextAiring?,
     description: String,
     isSheetOpen: Boolean,
@@ -667,21 +673,26 @@ private fun MediaDetails(
                 .padding(top = LocalPaddings.current.medium / 2)
                 .fillMaxSize()
         ) {
-            AnimatedVisibility(
-                visible = title != null,
-                enter = fadeIn(),
-                exit = fadeOut(),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = title.orEmpty(),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = textModifier.padding(end = LocalPaddings.current.small)
-                )
-            }
+            val titles = (listOf(title) + otherTitles.orEmpty())
+                .fastDistinctBy { it }
+                .toImmutableList()
+
+            ToggleText(
+                texts = titles,
+                text = {
+                    Text(
+                        text = it.orEmpty(),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = textModifier.padding(end = LocalPaddings.current.small)
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp)
+            )
 
             if (countdownText != null) {
                 Box(contentAlignment = Alignment.Center) {
@@ -902,7 +913,9 @@ private fun MediaRankings(
                                 Text(
                                     text = it,
                                     fontSize = 10.sp,
-                                    modifier = Modifier.graphicsLayer { alpha = 0.5f }.alignByBaseline()
+                                    modifier = Modifier
+                                        .graphicsLayer { alpha = 0.5f }
+                                        .alignByBaseline()
                                 )
                             }
                             2 -> season?.let {
