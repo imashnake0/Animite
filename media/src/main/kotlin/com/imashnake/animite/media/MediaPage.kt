@@ -206,7 +206,8 @@ fun MediaPage(
     ) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+            // TODO: This causes some weird behaviour for predictive back.
+//            modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
             with(sharedTransitionScope) {
                 Box(
