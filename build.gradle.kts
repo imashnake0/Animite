@@ -1,3 +1,6 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.report.ReportMergeTask
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
@@ -12,20 +15,22 @@ plugins {
     alias(libs.plugins.detekt) apply false
 }
 
-tasks.register("clean", Delete::class) {
+tasks.register<Delete>("clean") {
+    description = "Clean"
     delete(rootProject.layout.buildDirectory)
 }
 
-val detektMerge by tasks.registering(io.gitlab.arturbosch.detekt.report.ReportMergeTask::class) {
+val detektMerge = tasks.register<ReportMergeTask>("detekt merge") {
+    description = "Detekt Merge"
     output.set(rootProject.layout.buildDirectory.file("reports/detekt/merge.sarif"))
 }
 
 subprojects {
-    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    tasks.withType<Detekt>().configureEach {
         finalizedBy(detektMerge)
     }
 
     detektMerge {
-        input.from(tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().map { it.sarifReportFile })
+        input.from(tasks.withType<Detekt>().map { it.sarifReportFile })
     }
 }
