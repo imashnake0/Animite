@@ -89,10 +89,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -147,6 +149,7 @@ import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
 import com.materialkolor.ktx.blend
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -268,7 +271,7 @@ fun MediaPage(
                             }
                         },
                         content = {
-                            Crossfade(media) {
+                            Crossfade(media, animationSpec = tween(durationMillis = 250)) {
                                 when (it) {
                                     is Resource.Success -> {
                                         media.data?.let { media ->
@@ -343,25 +346,86 @@ fun MediaPage(
                                     )
                                 }
 
-//                                if (!media.rankings.isEmpty()) {
-//                                    MediaRankings(
-//                                        selectedTimeSpanIndex = selectedTimeSpanIndex,
-//                                        onCheckedChange = {
-//                                            selectedTimeSpanIndex = it
-//                                            haptic.performHapticFeedback(
-//                                                HapticFeedbackType.SegmentTick
-//                                            )
-//                                        },
-//                                        rankings = media.rankings,
-//                                        year = media.year,
-//                                        season = media.season,
-//                                        modifier = Modifier
-//                                            .skipToLookaheadSize()
-//                                            .fillMaxWidth()
-//                                            .padding(horizontal = LocalPaddings.current.large)
-//                                            .padding(horizontalInsets)
-//                                    )
-//                                }
+                                Crossfade(media, animationSpec = tween(durationMillis = 500)) { resource ->
+                                    when (resource) {
+                                        is Resource.Success -> {
+                                            media.data?.let { media ->
+                                                if (media.rankings.isNotEmpty()) {
+                                                    MediaRankings(
+                                                        selectedTimeSpanIndex = selectedTimeSpanIndex,
+                                                        onCheckedChange = {
+                                                            selectedTimeSpanIndex = it
+                                                            haptic.performHapticFeedback(
+                                                                HapticFeedbackType.SegmentTick
+                                                            )
+                                                        },
+                                                        rankings = media.rankings,
+                                                        year = media.year,
+                                                        season = media.season,
+                                                        modifier = Modifier
+                                                            .skipToLookaheadSize()
+                                                            .fillMaxWidth()
+                                                            .padding(horizontal = LocalPaddings.current.large)
+                                                            .padding(horizontalInsets)
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        is Resource.Loading -> {
+                                            Column(
+                                                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = LocalPaddings.current.large)
+                                                    .padding(horizontalInsets)
+                                            ) {
+                                                Row(
+                                                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+                                                ) {
+                                                    repeat(3) {
+                                                        ToggleButton(
+                                                            checked = false,
+                                                            onCheckedChange = {},
+                                                            enabled = false,
+                                                            shapes = when (it) {
+                                                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                                                                2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                                                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                                                            },
+                                                            modifier = Modifier.weight(1f)
+                                                        ) {}
+                                                    }
+                                                }
+                                                StatsRow(
+                                                    stats = persistentListOf(0, 1, 2),
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Text(
+                                                        text = "POPULAR",
+                                                        color = Transparent,
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        modifier = Modifier
+                                                            .clip(CircleShape)
+                                                            .graphicsLayer { scaleY = 0.9f }
+                                                            .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+                                                    )
+
+                                                    Text(
+                                                        text = "#100",
+                                                        color = Transparent,
+                                                        style = MaterialTheme.typography.displaySmall,
+                                                        modifier = Modifier
+                                                            .clip(CircleShape)
+                                                            .graphicsLayer { scaleY = 0.9f }
+                                                            .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        is Resource.Error -> {}
+                                    }
+                                }
                             }
 
                             when(media) {

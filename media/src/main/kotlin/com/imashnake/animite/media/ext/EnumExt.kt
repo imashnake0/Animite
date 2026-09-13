@@ -117,7 +117,7 @@ val Media.Ranking.TimeSpan.res get() = when(this) {
 val Media.Ranking.Type.res get() = when(this) {
     Media.Ranking.Type.RATED -> R.string.rated
     Media.Ranking.Type.POPULAR -> R.string.popular
-    Media.Ranking.Type.SCORE -> R.string.score
+    Media.Ranking.Type.SCORE -> R.string.ranking_score
 }
 
 val Media.Sort.res get() = when (this) {
