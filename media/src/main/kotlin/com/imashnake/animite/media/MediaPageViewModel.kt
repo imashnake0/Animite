@@ -1,9 +1,5 @@
 package com.imashnake.animite.media
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.core.graphics.toColorInt
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,69 +8,48 @@ import com.imashnake.animite.api.anilist.AnilistMediaRepository
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.api.preferences.PreferencesRepository
+import com.imashnake.animite.core.resource.Resource
+import com.imashnake.animite.core.resource.Resource.Companion.asResource
+import com.imashnake.animite.core.ui.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import java.io.IOException
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalCoroutinesApi::class)
 class MediaPageViewModel @Inject constructor(
     private val mediaRepository: AnilistMediaRepository,
     preferencesRepository: PreferencesRepository,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val navArgs = savedStateHandle.toRoute<MediaPage>()
-    var uiState by mutableStateOf(MediaUiState(
-            source = navArgs.source,
+
+    private val refreshTrigger = MutableSharedFlow<Unit>()
+
+    val source = savedStateHandle.getStateFlow(Constants.SOURCE, navArgs.source)
+
+    val media = combine(
+        flow = refreshTrigger.onStart { emit(Unit) },
+        flow2 = preferencesRepository.language.filterNotNull(),
+        flow3 = preferencesRepository.listSize.filterNotNull(),
+        transform = ::Triple
+    ).flatMapLatest { (_, language, listSize) ->
+        mediaRepository.fetchMedia(
             id = navArgs.id,
-            type = navArgs.mediaType,
-            title = navArgs.title
-        ))
-        private set
-
-    init {
-        viewModelScope.launch {
-            try {
-                val mediaType = MediaType.safeValueOf(navArgs.mediaType)
-                // TODO: Switch to StateFlows.
-                val media = mediaRepository
-                    .fetchMedia(
-                        id = navArgs.id,
-                        mediaType = mediaType,
-                        language = preferencesRepository.language
-                            .filterNotNull()
-                            .map { Media.Language.valueOf(it) }
-                            .firstOrNull() ?: Media.Language.DEFAULT,
-                        perPage = preferencesRepository.listSize.firstOrNull() ?: 10
-                    )
-                    .firstOrNull()
-                    ?.getOrNull()
-
-                uiState = uiState.copy(
-                    otherTitles = media?.otherTitles,
-                    bannerImage = media?.bannerImage,
-                    coverImage = media?.coverImage,
-                    color = media?.color?.toColorInt(),
-                    description = media?.description,
-                    nextAiring = media?.nextAiring,
-                    info = media?.info,
-                    year = media?.year,
-                    season = media?.season,
-                    rankings = media?.rankings,
-                    genres = media?.genres,
-                    characters = media?.characters,
-                    staff = media?.staff,
-                    trailer = media?.trailer,
-                    streamingEpisodes = media?.streamingEpisodes,
-                    relations = media?.relations,
-                    recommendations = media?.recommendations
-                )
-            } catch(_: IOException) {
-                TODO()
-            }
-        }
-    }
+            mediaType = MediaType.safeValueOf(navArgs.mediaType),
+            perPage = listSize,
+            language = Media.Language.valueOf(language)
+        )
+    }.asResource().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(1000),
+        initialValue = Resource.loading()
+    )
 }

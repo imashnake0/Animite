@@ -6,7 +6,6 @@ import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.LinearEasing
@@ -72,6 +71,7 @@ import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -110,6 +110,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastDistinctBy
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
+import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
@@ -117,6 +118,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.banner.BannerLayout
+import com.imashnake.animite.core.resource.Resource
 import com.imashnake.animite.core.ui.Constants
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.BottomSheet
@@ -177,7 +179,8 @@ fun MediaPage(
 
     val scrollState = rememberScrollState()
 
-    val media = viewModel.uiState
+    val media by viewModel.media.collectAsState()
+    val source by viewModel.source.collectAsState()
 
     var showDetailsSheet by remember { mutableStateOf(false) }
     val detailsSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
@@ -185,448 +188,489 @@ fun MediaPage(
     var selectedTimeSpanIndex by remember { mutableIntStateOf(0) }
     val haptic = LocalHapticFeedback.current
 
-    var showCharacterSheet by remember { mutableStateOf(false) }
-    var showStaffSheet by remember { mutableStateOf(false) }
-    val creditSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
-    val creditPagerState = rememberPagerState(pageCount = { media.characters.orEmpty().size })
-    val coroutineScope = rememberCoroutineScope()
-
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
         deviceScreenCornerRadius.toDp()
     }
 
-    MaterialTheme(
-        colorScheme = rememberColorSchemeFor(
-            color = media.color,
-            useDarkTheme = useDarkTheme,
-            isAmoled = isAmoled
-        )
-    ) {
-        TranslucentStatusBarLayout(
-            scrollState = scrollState,
-            // TODO: This causes some weird behaviour for predictive back.
-//            modifier = Modifier.background(MaterialTheme.colorScheme.background)
-        ) {
-            with(sharedTransitionScope) {
-                Box(
-                    Modifier
-                        .sharedBounds(
-                            rememberSharedContentState(
-                                SharedContentKey(
-                                    id = media.id,
-                                    source = media.source,
-                                    sharedComponents = Card to Page,
-                                )
-                            ),
-                            animatedVisibilityScope,
-                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                            clipInOverlayDuringTransition = OverlayClip(
-                                RoundedCornerShape(deviceScreenCornerRadiusDp)
-                            ),
-                        )
-                        .clip(RoundedCornerShape(deviceScreenCornerRadiusDp))
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
+    when(media) {
+        is Resource.Success -> {
+            media.data?.let { media ->
+                var showCharacterSheet by remember { mutableStateOf(false) }
+                var showStaffSheet by remember { mutableStateOf(false) }
+                val creditSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
+                val creditPagerState = rememberPagerState(pageCount = { media.characters.size })
+                val coroutineScope = rememberCoroutineScope()
+
+                MaterialTheme(
+                    colorScheme = rememberColorSchemeFor(
+                        color = media.color.toColorInt(),
+                        useDarkTheme = useDarkTheme,
+                        isAmoled = isAmoled
+                    )
                 ) {
-                    BannerLayout(
-                        banner = { bannerModifier ->
-                            MediaBanner(
-                                imageUrl = media.bannerImage,
-                                color = Color(media.color ?: 0).copy(alpha = 0.5f),
-                                modifier = bannerModifier.bannerParallax(scrollState)
-                            )
-                        },
-                        content = {
-                            MediaDetails(
-                                title = media.title,
-                                otherTitles = media.otherTitles,
-                                nextAiring = media.nextAiring,
-                                description = media.description.orEmpty(),
-                                modifier = Modifier
-                                    .skipToLookaheadSize()
-                                    .padding(horizontal = LocalPaddings.current.large / 2)
-                                    .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
-                                    .padding(horizontalInsets)
-                                    .height(
-                                        dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
-                                    ),
-                                textModifier = Modifier.skipToLookaheadSize(),
-                                isSheetOpen = showDetailsSheet,
-                                onClick = { showDetailsSheet = true },
-                            )
-
-                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
-                                if (!media.info.isNullOrEmpty())
-                                    MediaInfo(
-                                        info = media.info,
-                                        contentPadding = PaddingValues(
-                                            horizontal = LocalPaddings.current.large
-                                        ) + horizontalInsets,
-                                    )
-
-                                if (!media.rankings.isNullOrEmpty()) {
-                                    MediaRankings(
-                                        selectedTimeSpanIndex = selectedTimeSpanIndex,
-                                        onCheckedChange = {
-                                            selectedTimeSpanIndex = it
-                                            haptic.performHapticFeedback(
-                                                HapticFeedbackType.SegmentTick
-                                            )
-                                        },
-                                        rankings = media.rankings,
-                                        year = media.year,
-                                        season = media.season,
-                                        modifier = Modifier
-                                            .skipToLookaheadSize()
-                                            .fillMaxWidth()
-                                            .padding(horizontal = LocalPaddings.current.large)
-                                            .padding(horizontalInsets)
-                                    )
-                                }
-                            }
-
-                            if (!media.genres.isNullOrEmpty()) {
-                                MediaGenres(
-                                    genres = media.genres,
-                                    onGenreClick = {
-                                        onNavigateToExplore(ExploreRoute(genre = it))
-                                    },
-                                    contentPadding = PaddingValues(
-                                        horizontal = LocalPaddings.current.large
-                                    ) + horizontalInsets,
-                                )
-                            }
-
-                            if (!media.characters.isNullOrEmpty()) {
-                                MediaCredits(
-                                    title = stringResource(R.string.characters),
-                                    credits = media.characters,
-                                    onCreditClick = { index, _ ->
-                                        coroutineScope.launch {
-                                            creditPagerState.scrollToPage(index)
-                                        }
-                                        showCharacterSheet = true
-                                    },
-                                    contentPadding = PaddingValues(
-                                        horizontal = LocalPaddings.current.large
-                                    ) + horizontalInsets,
-                                )
-                            }
-
-                            if (!media.staff.isNullOrEmpty()) {
-                                MediaCredits(
-                                    title = stringResource(R.string.staff),
-                                    credits = media.staff,
-                                    onCreditClick = { index, _ ->
-                                        coroutineScope.launch {
-                                            creditPagerState.scrollToPage(index)
-                                        }
-                                        showStaffSheet = true
-                                    },
-                                    tagMinLines = 2,
-                                    contentPadding = PaddingValues(
-                                        horizontal = LocalPaddings.current.large
-                                    ) + horizontalInsets,
-                                )
-                            }
-
-                            if (media.trailer != null || !media.streamingEpisodes.isNullOrEmpty()) {
-                                MediaWatch(
-                                    trailer = media.trailer,
-                                    streamingEpisodes = media.streamingEpisodes,
-                                    modifier = Modifier
-                                        .skipToLookaheadSize()
-                                        .padding(horizontal = LocalPaddings.current.large)
-                                        .padding(horizontalInsets)
-                                )
-                            }
-
-                            if (!media.relations.isNullOrEmpty()) {
-                                MediaRelations(
-                                    relations = media.relations,
-                                    onItemClicked = {
-                                        onNavigateToMediaItem(
-                                            MediaPage(
-                                                id = it.id,
-                                                source = RELATIONS,
-                                                mediaType = it.type.name,
-                                                title = it.title,
-                                            )
-                                        )
-                                    },
-                                    contentPadding = PaddingValues(
-                                        horizontal = LocalPaddings.current.large
-                                    ) + horizontalInsets,
-                                )
-                            }
-
-                            if (!media.recommendations.isNullOrEmpty()) {
-                                MediaRecommendations(
-                                    recommendations = media.recommendations,
-                                    onItemClicked = {
-                                        onNavigateToMediaItem(
-                                            MediaPage(
-                                                id = it.id,
-                                                source = RECOMMENDATIONS,
-                                                mediaType = it.type.name,
-                                                title = it.title,
-                                            )
-                                        )
-                                    },
-                                    contentPadding = PaddingValues(
-                                        horizontal = LocalPaddings.current.large
-                                    ) + horizontalInsets,
-                                )
-                            }
-                        },
-                        contentPadding = PaddingValues(
-                            top = LocalPaddings.current.medium / 2,
-                            bottom = LocalPaddings.current.large +
-                                    insetPaddingValues.calculateBottomPadding()
-                        )
-                    )
-
-                    val isAtTop by remember { derivedStateOf { scrollState.value == 0 } }
-                    val offset by animateDpAsState(
-                        targetValue = if (isAtTop)
-                            0.dp
-                        else
-                            dimensionResource(R.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height),
-                        animationSpec = tween(durationMillis = 750),
-                        label = "media_card_height"
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .statusBarsPadding()
-                            // TODO: Try using `AlignmentLine`s.
-                            .padding(
-                                top = dimensionResource(R.dimen.media_details_height)
-                                        + LocalPaddings.current.medium
-                                        + 168.dp
-                                        - dimensionResource(R.dimen.media_image_height)
-                                        - insetPaddingValues.calculateTopPadding()
-                                        + offset,
-                                start = LocalPaddings.current.large,
-                            )
-                            .padding(horizontalInsets)
-                            .height(dimensionResource(R.dimen.media_image_height) - offset)
+                    TranslucentStatusBarLayout(
+                        scrollState = scrollState,
+                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
                     ) {
-                        MediaCard(
-                            image = media.coverImage,
-                            tag = null,
-                            label = null,
-                            onClick = {},
-                            modifier = Modifier.sharedBounds(
-                                rememberSharedContentState(
-                                    SharedContentKey(
-                                        id = media.id,
-                                        source = media.source,
-                                        sharedComponents = Image to Image,
+                        with(sharedTransitionScope) {
+                            Box(
+                                Modifier
+                                    .sharedBounds(
+                                        rememberSharedContentState(
+                                            SharedContentKey(
+                                                id = media.id,
+                                                source = source,
+                                                sharedComponents = Card to Page,
+                                            )
+                                        ),
+                                        animatedVisibilityScope,
+                                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                                        clipInOverlayDuringTransition = OverlayClip(
+                                            RoundedCornerShape(deviceScreenCornerRadiusDp)
+                                        ),
                                     )
-                                ),
-                                animatedVisibilityScope,
-                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-                            )
-                        )
-                    }
-
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = stringResource(R.string.back),
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(insetPaddingValues)
-                            .padding(
-                                start = LocalPaddings.current.medium,
-                                top = LocalPaddings.current.small
-                            )
-                            .clip(CircleShape)
-                            .clickable(enabled = !isExpanded) { onBack() }
-                            .padding(LocalPaddings.current.small),
-                        tint = if (isSystemInDarkTheme()) Color.White else Color.Black
-                    )
-                }
-            }
-
-            if (showDetailsSheet) {
-                BottomSheet(
-                    sheetState = detailsSheetState,
-                    onDismissRequest = { showDetailsSheet = false },
-                    deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
-                ) { paddingValues, modifier ->
-                    Column(modifier) {
-                        Text(
-                            text = media.title.orEmpty(),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                                .padding(paddingValues)
-                                .padding(vertical = LocalPaddings.current.medium)
-                        )
-
-                        MediaDescription(
-                            html = media.description.orEmpty(),
-                            modifier = Modifier
-                                .padding(paddingValues)
-                                .padding(top = LocalPaddings.current.medium)
-                        )
-                    }
-                }
-            }
-
-            if (showCharacterSheet || showStaffSheet) {
-                BottomSheet(
-                    sheetState = creditSheetState,
-                    dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    onDismissRequest = {
-                        if (showCharacterSheet) {
-                            showCharacterSheet = false
-                        } else showStaffSheet = false
-                    },
-                    deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp
-                ) { paddingValues, modifier ->
-                    HorizontalPager(state = creditPagerState) { page ->
-                        Column(modifier = modifier) {
-                            val currentCredit = if (showCharacterSheet) {
-                                media.characters.orEmpty()[page]
-                            } else {
-                                media.staff.orEmpty()[page]
-                            }
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                                    .padding(paddingValues)
-                                    .padding(bottom = LocalPaddings.current.large)
-                                    .graphicsLayer {
-                                        val pageOffset = (
-                                            creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
-                                        ).absoluteValue
-
-                                        alpha = lerp(
-                                            start = 0f,
-                                            stop = 1f,
-                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                        )
-                                        scaleY = lerp(
-                                            start = 0.9f,
-                                            stop = 1f,
-                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                        )
-                                        scaleX = lerp(
-                                            start = 0.9f,
-                                            stop = 1f,
-                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                        )
-                                    }
+                                    .clip(RoundedCornerShape(deviceScreenCornerRadiusDp))
+                                    .fillMaxSize()
+                                    .verticalScroll(scrollState)
                             ) {
-                                CharacterCard(
-                                    image = currentCredit.image,
-                                    tag = null,
-                                    tagMinLines = 1,
-                                    label = null,
-                                    onClick = {},
-                                )
-
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                    modifier = Modifier.height(dimensionResource(R.dimen.character_image_height))
-                                ) {
-                                    Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)) {
-                                        Text(
-                                            text = currentCredit.name.orEmpty(),
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            style = MaterialTheme.typography.titleLarge,
+                                BannerLayout(
+                                    banner = { bannerModifier ->
+                                        MediaBanner(
+                                            imageUrl = media.bannerImage,
+                                            color = Color(media.color.toColorInt()).copy(alpha = 0.5f),
+                                            modifier = bannerModifier.bannerParallax(scrollState)
+                                        )
+                                    },
+                                    content = {
+                                        MediaDetails(
+                                            title = media.title,
+                                            otherTitles = media.otherTitles,
+                                            nextAiring = media.nextAiring,
+                                            description = media.description,
+                                            modifier = Modifier
+                                                .skipToLookaheadSize()
+                                                .padding(horizontal = LocalPaddings.current.large / 2)
+                                                .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
+                                                .padding(horizontalInsets)
+                                                .height(
+                                                    dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
+                                                ),
+                                            textModifier = Modifier.skipToLookaheadSize(),
+                                            isSheetOpen = showDetailsSheet,
+                                            onClick = { showDetailsSheet = true },
                                         )
 
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(
-                                                LocalPaddings.current.small
+                                        Column(
+                                            verticalArrangement = Arrangement.spacedBy(
+                                                LocalPaddings.current.medium
                                             )
                                         ) {
-                                            currentCredit.dob?.let { dob ->
-                                                Chip(
-                                                    color = Color(0xFF80DF87),
-                                                    text = dob,
-                                                    iconPadding = PaddingValues(bottom = 2.dp),
-                                                    icon = ImageVector.vectorResource(R.drawable.cake),
+                                            if (!media.info.isEmpty())
+                                                MediaInfo(
+                                                    info = media.info,
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = LocalPaddings.current.large
+                                                    ) + horizontalInsets,
                                                 )
-                                            }
 
-                                            currentCredit.favourites?.let { fav ->
-                                                Chip(
-                                                    color = Color(0xFFFF9999),
-                                                    text = fav,
-                                                    icon = Icons.Rounded.Favorite
+                                            if (!media.rankings.isEmpty()) {
+                                                MediaRankings(
+                                                    selectedTimeSpanIndex = selectedTimeSpanIndex,
+                                                    onCheckedChange = {
+                                                        selectedTimeSpanIndex = it
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.SegmentTick
+                                                        )
+                                                    },
+                                                    rankings = media.rankings,
+                                                    year = media.year,
+                                                    season = media.season,
+                                                    modifier = Modifier
+                                                        .skipToLookaheadSize()
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = LocalPaddings.current.large)
+                                                        .padding(horizontalInsets)
                                                 )
                                             }
                                         }
-                                    }
 
-                                    if (currentCredit.alternativeNames.isNotBlank()) {
-                                        MediaDescription(currentCredit.alternativeNames)
-                                    }
+                                        if (!media.genres.isEmpty()) {
+                                            MediaGenres(
+                                                genres = media.genres,
+                                                onGenreClick = {
+                                                    onNavigateToExplore(ExploreRoute(genre = it))
+                                                },
+                                                contentPadding = PaddingValues(
+                                                    horizontal = LocalPaddings.current.large
+                                                ) + horizontalInsets,
+                                            )
+                                        }
+
+                                        if (!media.characters.isEmpty()) {
+                                            MediaCredits(
+                                                title = stringResource(R.string.characters),
+                                                credits = media.characters,
+                                                onCreditClick = { index, _ ->
+                                                    coroutineScope.launch {
+                                                        creditPagerState.scrollToPage(index)
+                                                    }
+                                                    showCharacterSheet = true
+                                                },
+                                                contentPadding = PaddingValues(
+                                                    horizontal = LocalPaddings.current.large
+                                                ) + horizontalInsets,
+                                            )
+                                        }
+
+                                        if (!media.staff.isEmpty()) {
+                                            MediaCredits(
+                                                title = stringResource(R.string.staff),
+                                                credits = media.staff,
+                                                onCreditClick = { index, _ ->
+                                                    coroutineScope.launch {
+                                                        creditPagerState.scrollToPage(index)
+                                                    }
+                                                    showStaffSheet = true
+                                                },
+                                                tagMinLines = 2,
+                                                contentPadding = PaddingValues(
+                                                    horizontal = LocalPaddings.current.large
+                                                ) + horizontalInsets,
+                                            )
+                                        }
+
+                                        if (media.trailer != null || media.streamingEpisodes.isNotEmpty()) {
+                                            MediaWatch(
+                                                trailer = media.trailer,
+                                                streamingEpisodes = media.streamingEpisodes,
+                                                modifier = Modifier
+                                                    .skipToLookaheadSize()
+                                                    .padding(horizontal = LocalPaddings.current.large)
+                                                    .padding(horizontalInsets)
+                                            )
+                                        }
+
+                                        if (media.relations.isNotEmpty()) {
+                                            MediaRelations(
+                                                relations = media.relations,
+                                                onItemClicked = {
+                                                    onNavigateToMediaItem(
+                                                        MediaPage(
+                                                            id = it.id,
+                                                            source = RELATIONS,
+                                                            mediaType = it.type.name,
+                                                            title = it.title,
+                                                        )
+                                                    )
+                                                },
+                                                contentPadding = PaddingValues(
+                                                    horizontal = LocalPaddings.current.large
+                                                ) + horizontalInsets,
+                                            )
+                                        }
+
+                                        if (media.recommendations.isNotEmpty()) {
+                                            MediaRecommendations(
+                                                recommendations = media.recommendations,
+                                                onItemClicked = {
+                                                    onNavigateToMediaItem(
+                                                        MediaPage(
+                                                            id = it.id,
+                                                            source = RECOMMENDATIONS,
+                                                            mediaType = it.type.name,
+                                                            title = it.title,
+                                                        )
+                                                    )
+                                                },
+                                                contentPadding = PaddingValues(
+                                                    horizontal = LocalPaddings.current.large
+                                                ) + horizontalInsets,
+                                            )
+                                        }
+                                    },
+                                    contentPadding = PaddingValues(
+                                        top = LocalPaddings.current.medium / 2,
+                                        bottom = LocalPaddings.current.large +
+                                                insetPaddingValues.calculateBottomPadding()
+                                    )
+                                )
+
+                                val isAtTop by remember { derivedStateOf { scrollState.value == 0 } }
+                                val offset by animateDpAsState(
+                                    targetValue = if (isAtTop)
+                                        0.dp
+                                    else
+                                        dimensionResource(R.dimen.media_image_height) - dimensionResource(
+                                            R.dimen.media_details_height
+                                        ),
+                                    animationSpec = tween(durationMillis = 750),
+                                    label = "media_card_height"
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .statusBarsPadding()
+                                        .padding(
+                                            top = dimensionResource(R.dimen.media_details_height)
+                                                    + LocalPaddings.current.medium
+                                                    + 168.dp
+                                                    - dimensionResource(R.dimen.media_image_height)
+                                                    - insetPaddingValues.calculateTopPadding()
+                                                    + offset,
+                                            start = LocalPaddings.current.large,
+                                        )
+                                        .padding(horizontalInsets)
+                                        .height(dimensionResource(R.dimen.media_image_height) - offset)
+                                ) {
+                                    MediaCard(
+                                        image = media.coverImage,
+                                        tag = null,
+                                        label = null,
+                                        onClick = {},
+                                        modifier = Modifier.sharedBounds(
+                                            rememberSharedContentState(
+                                                SharedContentKey(
+                                                    id = media.id,
+                                                    source = source,
+                                                    sharedComponents = Image to Image,
+                                                )
+                                            ),
+                                            animatedVisibilityScope,
+                                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+                                        )
+                                    )
+                                }
+
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                    contentDescription = stringResource(R.string.back),
+                                    modifier = Modifier
+                                        .align(Alignment.TopStart)
+                                        .padding(insetPaddingValues)
+                                        .padding(
+                                            start = LocalPaddings.current.medium,
+                                            top = LocalPaddings.current.small
+                                        )
+                                        .clip(CircleShape)
+                                        .clickable(enabled = !isExpanded) { onBack() }
+                                        .padding(LocalPaddings.current.small),
+                                    tint = if (isSystemInDarkTheme()) Color.White else Color.Black
+                                )
+                            }
+                        }
+
+                        if (showDetailsSheet) {
+                            BottomSheet(
+                                sheetState = detailsSheetState,
+                                onDismissRequest = { showDetailsSheet = false },
+                                deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
+                            ) { paddingValues, modifier ->
+                                Column(modifier) {
+                                    Text(
+                                        text = media.title.orEmpty(),
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                            .padding(paddingValues)
+                                            .padding(vertical = LocalPaddings.current.medium)
+                                    )
+
+                                    MediaDescription(
+                                        html = media.description,
+                                        modifier = Modifier
+                                            .padding(paddingValues)
+                                            .padding(top = LocalPaddings.current.medium)
+                                    )
                                 }
                             }
+                        }
 
-                            // TODO: Remove spoilers.
-                            currentCredit.description?.let { description ->
-                                MediaDescription(
-                                    html = description,
-                                    onLinkClick = onLinkClick@{
-                                        val id = it?.split("/")?.getOrNull(4)?.toIntOrNull() ?: return@onLinkClick null
-                                        val character = media.characters?.find { character -> character.id == id } ?: return@onLinkClick null
-                                        val index = media.characters.indexOf(character)
-                                        if (index != -1) {
-                                            coroutineScope.launch {
-                                                creditPagerState.animateScrollToPage(index)
+                        if (showCharacterSheet || showStaffSheet) {
+                            BottomSheet(
+                                sheetState = creditSheetState,
+                                dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                onDismissRequest = {
+                                    if (showCharacterSheet) {
+                                        showCharacterSheet = false
+                                    } else showStaffSheet = false
+                                },
+                                deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp
+                            ) { paddingValues, modifier ->
+                                HorizontalPager(state = creditPagerState) { page ->
+                                    Column(modifier = modifier) {
+                                        val currentCredit = if (showCharacterSheet) {
+                                            media.characters[page]
+                                        } else {
+                                            media.staff[page]
+                                        }
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(
+                                                LocalPaddings.current.medium
+                                            ),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                                .padding(paddingValues)
+                                                .padding(bottom = LocalPaddings.current.large)
+                                                .graphicsLayer {
+                                                    val pageOffset = (
+                                                            creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
+                                                            ).absoluteValue
+
+                                                    alpha = lerp(
+                                                        start = 0f,
+                                                        stop = 1f,
+                                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                                    )
+                                                    scaleY = lerp(
+                                                        start = 0.9f,
+                                                        stop = 1f,
+                                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                                    )
+                                                    scaleX = lerp(
+                                                        start = 0.9f,
+                                                        stop = 1f,
+                                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                                    )
+                                                }
+                                        ) {
+                                            CharacterCard(
+                                                image = currentCredit.image,
+                                                tag = null,
+                                                tagMinLines = 1,
+                                                label = null,
+                                                onClick = {},
+                                            )
+
+                                            Column(
+                                                verticalArrangement = Arrangement.spacedBy(
+                                                    LocalPaddings.current.small
+                                                ),
+                                                modifier = Modifier.height(dimensionResource(R.dimen.character_image_height))
+                                            ) {
+                                                Column(
+                                                    verticalArrangement = Arrangement.spacedBy(
+                                                        LocalPaddings.current.tiny
+                                                    )
+                                                ) {
+                                                    Text(
+                                                        text = currentCredit.name.orEmpty(),
+                                                        color = MaterialTheme.colorScheme.onBackground,
+                                                        style = MaterialTheme.typography.titleLarge,
+                                                    )
+
+                                                    Row(
+                                                        horizontalArrangement = Arrangement.spacedBy(
+                                                            LocalPaddings.current.small
+                                                        )
+                                                    ) {
+                                                        currentCredit.dob?.let { dob ->
+                                                            Chip(
+                                                                color = Color(0xFF80DF87),
+                                                                text = dob,
+                                                                iconPadding = PaddingValues(bottom = 2.dp),
+                                                                icon = ImageVector.vectorResource(R.drawable.cake),
+                                                            )
+                                                        }
+
+                                                        currentCredit.favourites?.let { fav ->
+                                                            Chip(
+                                                                color = Color(0xFFFF9999),
+                                                                text = fav,
+                                                                icon = Icons.Rounded.Favorite
+                                                            )
+                                                        }
+                                                    }
+                                                }
+
+                                                if (currentCredit.alternativeNames.isNotBlank()) {
+                                                    MediaDescription(currentCredit.alternativeNames)
+                                                }
                                             }
-                                        } else return@onLinkClick null
-                                        return@onLinkClick Unit
-                                    },
-                                    modifier = Modifier
-                                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                        .padding(paddingValues)
-                                        .padding(top = LocalPaddings.current.medium)
-                                        .graphicsLayer {
-                                            val pageOffset = (
-                                                creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
-                                            ).absoluteValue
+                                        }
 
-                                            alpha = lerp(
-                                                start = 0f,
-                                                stop = 1f,
-                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                            )
-                                            scaleY = lerp(
-                                                start = 0.9f,
-                                                stop = 1f,
-                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                            )
-                                            scaleX = lerp(
-                                                start = 0.9f,
-                                                stop = 1f,
-                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                            )
-                                            translationY = lerp(
-                                                start = size.height * -0.025f,
-                                                stop = 0f,
-                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                        // TODO: Remove spoilers.
+                                        currentCredit.description?.let { description ->
+                                            MediaDescription(
+                                                html = description,
+                                                onLinkClick = onLinkClick@{
+                                                    val id =
+                                                        it?.split("/")?.getOrNull(4)?.toIntOrNull()
+                                                            ?: return@onLinkClick null
+                                                    val character =
+                                                        media.characters.find { character -> character.id == id }
+                                                            ?: return@onLinkClick null
+                                                    val index = media.characters.indexOf(character)
+                                                    if (index != -1) {
+                                                        coroutineScope.launch {
+                                                            creditPagerState.animateScrollToPage(
+                                                                index
+                                                            )
+                                                        }
+                                                    } else return@onLinkClick null
+                                                    return@onLinkClick Unit
+                                                },
+                                                modifier = Modifier
+                                                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                                    .padding(paddingValues)
+                                                    .padding(top = LocalPaddings.current.medium)
+                                                    .graphicsLayer {
+                                                        val pageOffset = (
+                                                                creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
+                                                                ).absoluteValue
+
+                                                        alpha = lerp(
+                                                            start = 0f,
+                                                            stop = 1f,
+                                                            fraction = 1f - pageOffset.coerceIn(
+                                                                0f,
+                                                                1f
+                                                            )
+                                                        )
+                                                        scaleY = lerp(
+                                                            start = 0.9f,
+                                                            stop = 1f,
+                                                            fraction = 1f - pageOffset.coerceIn(
+                                                                0f,
+                                                                1f
+                                                            )
+                                                        )
+                                                        scaleX = lerp(
+                                                            start = 0.9f,
+                                                            stop = 1f,
+                                                            fraction = 1f - pageOffset.coerceIn(
+                                                                0f,
+                                                                1f
+                                                            )
+                                                        )
+                                                        translationY = lerp(
+                                                            start = size.height * -0.025f,
+                                                            stop = 0f,
+                                                            fraction = 1f - pageOffset.coerceIn(
+                                                                0f,
+                                                                1f
+                                                            )
+                                                        )
+                                                    }
                                             )
                                         }
-                                )
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        // TODO: Move this into the layout so that shared element transitions complete.
+        is Resource.Loading -> {
+            Box(Modifier.background(Color.Green).fillMaxSize())
+        }
+        is Resource.Error -> {}
     }
 }
 
