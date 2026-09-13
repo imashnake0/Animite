@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -35,12 +36,14 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
@@ -181,6 +184,8 @@ fun MediaPage(
 
     val media by viewModel.media.collectAsState()
     val source by viewModel.source.collectAsState()
+    val listSize by viewModel.listSize.collectAsState()
+    val id by viewModel.id.collectAsState()
 
     var showDetailsSheet by remember { mutableStateOf(false) }
     val detailsSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
@@ -194,74 +199,137 @@ fun MediaPage(
         deviceScreenCornerRadius.toDp()
     }
 
-    when(media) {
-        is Resource.Success -> {
-            media.data?.let { media ->
-                var showCharacterSheet by remember { mutableStateOf(false) }
-                var showStaffSheet by remember { mutableStateOf(false) }
-                val creditSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
-                val creditPagerState = rememberPagerState(pageCount = { media.characters.size })
-                val coroutineScope = rememberCoroutineScope()
+    MaterialTheme(
+        colorScheme = rememberColorSchemeFor(
+            // TODO: See if this can be animated?
+            color = if (media is Resource.Success) media.data?.color?.toColorInt() else null,
+            useDarkTheme = useDarkTheme,
+            isAmoled = isAmoled
+        )
+    ) {
+        TranslucentStatusBarLayout(
+            scrollState = scrollState,
+            modifier = Modifier.background(MaterialTheme.colorScheme.background)
+        ) {
+            var showCharacterSheet by remember { mutableStateOf(false) }
+            var showStaffSheet by remember { mutableStateOf(false) }
 
-                MaterialTheme(
-                    colorScheme = rememberColorSchemeFor(
-                        color = media.color.toColorInt(),
-                        useDarkTheme = useDarkTheme,
-                        isAmoled = isAmoled
-                    )
+            val creditPagerState = rememberPagerState(pageCount = { listSize })
+            val creditSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
+            val coroutineScope = rememberCoroutineScope()
+
+            with(sharedTransitionScope) {
+                Box(
+                    Modifier
+                        .sharedBounds(
+                            rememberSharedContentState(
+                                SharedContentKey(
+                                    id = id,
+                                    source = source,
+                                    sharedComponents = Card to Page,
+                                )
+                            ),
+                            animatedVisibilityScope,
+                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+                            clipInOverlayDuringTransition = OverlayClip(
+                                RoundedCornerShape(deviceScreenCornerRadiusDp)
+                            ),
+                        )
+                        .clip(RoundedCornerShape(deviceScreenCornerRadiusDp))
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
                 ) {
-                    TranslucentStatusBarLayout(
-                        scrollState = scrollState,
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background)
-                    ) {
-                        with(sharedTransitionScope) {
-                            Box(
-                                Modifier
-                                    .sharedBounds(
-                                        rememberSharedContentState(
-                                            SharedContentKey(
-                                                id = media.id,
-                                                source = source,
-                                                sharedComponents = Card to Page,
+                    BannerLayout(
+                        banner = { bannerModifier ->
+                            Crossfade(media) {
+                                when (it) {
+                                    is Resource.Success -> {
+                                        media.data?.let { media ->
+                                            MediaBanner(
+                                                imageUrl = media.bannerImage,
+                                                color = Color(media.color.toColorInt()).copy(alpha = 0.5f),
+                                                modifier = bannerModifier.bannerParallax(scrollState)
                                             )
-                                        ),
-                                        animatedVisibilityScope,
-                                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                                        clipInOverlayDuringTransition = OverlayClip(
-                                            RoundedCornerShape(deviceScreenCornerRadiusDp)
-                                        ),
-                                    )
-                                    .clip(RoundedCornerShape(deviceScreenCornerRadiusDp))
-                                    .fillMaxSize()
-                                    .verticalScroll(scrollState)
-                            ) {
-                                BannerLayout(
-                                    banner = { bannerModifier ->
-                                        MediaBanner(
-                                            imageUrl = media.bannerImage,
-                                            color = Color(media.color.toColorInt()).copy(alpha = 0.5f),
-                                            modifier = bannerModifier.bannerParallax(scrollState)
+                                        }
+                                    }
+
+                                    is Resource.Loading -> {
+                                        Box(
+                                            bannerModifier.background(
+                                                MaterialTheme.colorScheme.onBackground.copy(
+                                                    alpha = 0.035f
+                                                )
+                                            )
                                         )
-                                    },
-                                    content = {
-                                        MediaDetails(
-                                            title = media.title,
-                                            otherTitles = media.otherTitles,
-                                            nextAiring = media.nextAiring,
-                                            description = media.description,
+                                    }
+                                    // TODO: Error state.
+                                    is Resource.Error -> {}
+                                }
+                            }
+                        },
+                        content = {
+                            Crossfade(media) {
+                                when (it) {
+                                    is Resource.Success -> {
+                                        media.data?.let { media ->
+                                            MediaDetails(
+                                                title = media.title,
+                                                otherTitles = media.otherTitles,
+                                                nextAiring = media.nextAiring,
+                                                description = media.description,
+                                                modifier = Modifier
+                                                    .skipToLookaheadSize()
+                                                    .padding(horizontal = LocalPaddings.current.large / 2)
+                                                    .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
+                                                    .padding(horizontalInsets)
+                                                    .height(
+                                                        dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
+                                                    ),
+                                                textModifier = Modifier.skipToLookaheadSize(),
+                                                isSheetOpen = showDetailsSheet,
+                                                onClick = { showDetailsSheet = true },
+                                            )
+                                        }
+                                    }
+
+                                    is Resource.Loading -> {
+                                        Column(
+                                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
                                             modifier = Modifier
-                                                .skipToLookaheadSize()
                                                 .padding(horizontal = LocalPaddings.current.large / 2)
                                                 .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
                                                 .padding(horizontalInsets)
-                                                .height(
-                                                    dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
-                                                ),
-                                            textModifier = Modifier.skipToLookaheadSize(),
-                                            isSheetOpen = showDetailsSheet,
-                                            onClick = { showDetailsSheet = true },
-                                        )
+                                                .fillMaxWidth()
+                                                .height(dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2)
+                                        ) {
+                                            // TODO: Reuse this from Anime/Manga screen's loading states.
+                                            Text(
+                                                text = " ",
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                style = MaterialTheme.typography.titleMedium,
+                                                modifier = Modifier
+                                                    .padding(top = LocalPaddings.current.small)
+                                                    .clip(CircleShape)
+                                                    .requiredWidth(140.dp)
+                                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                            )
 
+                                            Box(
+                                                Modifier
+                                                    .clip(RoundedCornerShape(LocalPaddings.current.small))
+                                                    .fillMaxSize()
+                                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+                                            )
+                                        }
+                                    }
+                                    // TODO: Handle error state.
+                                    is Resource.Error -> {}
+                                }
+                            }
+
+                            when(media) {
+                                is Resource.Success -> {
+                                    media.data?.let { media ->
                                         Column(
                                             verticalArrangement = Arrangement.spacedBy(
                                                 LocalPaddings.current.medium
@@ -387,276 +455,284 @@ fun MediaPage(
                                                 ) + horizontalInsets,
                                             )
                                         }
-                                    },
-                                    contentPadding = PaddingValues(
-                                        top = LocalPaddings.current.medium / 2,
-                                        bottom = LocalPaddings.current.large +
-                                                insetPaddingValues.calculateBottomPadding()
+                                    }
+                                }
+
+                                // TODO: Create loading and error states.
+                                is Resource.Loading -> {}
+                                is Resource.Error -> {}
+                            }
+                        },
+                        contentPadding = PaddingValues(
+                            top = LocalPaddings.current.medium / 2,
+                            bottom = LocalPaddings.current.large +
+                                    insetPaddingValues.calculateBottomPadding()
+                        )
+                    )
+
+                    val isAtTop by remember { derivedStateOf { scrollState.value == 0 } }
+                    val offset by animateDpAsState(
+                        targetValue = if (isAtTop)
+                            0.dp
+                        else
+                            dimensionResource(R.dimen.media_image_height) - dimensionResource(
+                                R.dimen.media_details_height
+                            ),
+                        animationSpec = tween(durationMillis = 750),
+                        label = "media_card_height"
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            .padding(
+                                top = dimensionResource(R.dimen.media_details_height)
+                                        + LocalPaddings.current.medium
+                                        + 168.dp
+                                        - dimensionResource(R.dimen.media_image_height)
+                                        - insetPaddingValues.calculateTopPadding()
+                                        + offset,
+                                start = LocalPaddings.current.large,
+                            )
+                            .padding(horizontalInsets)
+                            .height(dimensionResource(R.dimen.media_image_height) - offset)
+                    ) {
+                        MediaCard(
+                            image = if (media is Resource.Success) media.data?.coverImage else null,
+                            tag = null,
+                            label = null,
+                            onClick = {},
+                            modifier = Modifier.sharedBounds(
+                                rememberSharedContentState(
+                                    SharedContentKey(
+                                        id = id,
+                                        source = source,
+                                        sharedComponents = Image to Image,
                                     )
-                                )
+                                ),
+                                animatedVisibilityScope,
+                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+                            )
+                        )
+                    }
 
-                                val isAtTop by remember { derivedStateOf { scrollState.value == 0 } }
-                                val offset by animateDpAsState(
-                                    targetValue = if (isAtTop)
-                                        0.dp
-                                    else
-                                        dimensionResource(R.dimen.media_image_height) - dimensionResource(
-                                            R.dimen.media_details_height
-                                        ),
-                                    animationSpec = tween(durationMillis = 750),
-                                    label = "media_card_height"
-                                )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = stringResource(R.string.back),
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(insetPaddingValues)
+                            .padding(
+                                start = LocalPaddings.current.medium,
+                                top = LocalPaddings.current.small
+                            )
+                            .clip(CircleShape)
+                            .clickable(enabled = !isExpanded) { onBack() }
+                            .padding(LocalPaddings.current.small),
+                        tint = if (isSystemInDarkTheme()) Color.White else Color.Black
+                    )
+                }
+            }
 
-                                Box(
+            if (showDetailsSheet) {
+                media.data?.let { media ->
+                    BottomSheet(
+                        sheetState = detailsSheetState,
+                        onDismissRequest = { showDetailsSheet = false },
+                        deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
+                    ) { paddingValues, modifier ->
+                        Column(modifier) {
+                            Text(
+                                text = media.title.orEmpty(),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                    .padding(paddingValues)
+                                    .padding(vertical = LocalPaddings.current.medium)
+                            )
+
+                            MediaDescription(
+                                html = media.description,
+                                modifier = Modifier
+                                    .padding(paddingValues)
+                                    .padding(top = LocalPaddings.current.medium)
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (showCharacterSheet || showStaffSheet) {
+                media.data?.let { media ->
+                    BottomSheet(
+                        sheetState = creditSheetState,
+                        dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        onDismissRequest = {
+                            if (showCharacterSheet) {
+                                showCharacterSheet = false
+                            } else showStaffSheet = false
+                        },
+                        deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp
+                    ) { paddingValues, modifier ->
+                        HorizontalPager(state = creditPagerState) { page ->
+                            Column(modifier = modifier) {
+                                val currentCredit = if (showCharacterSheet) {
+                                    media.characters[page]
+                                } else {
+                                    media.staff[page]
+                                }
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(
+                                        LocalPaddings.current.medium
+                                    ),
                                     modifier = Modifier
-                                        .statusBarsPadding()
-                                        .padding(
-                                            top = dimensionResource(R.dimen.media_details_height)
-                                                    + LocalPaddings.current.medium
-                                                    + 168.dp
-                                                    - dimensionResource(R.dimen.media_image_height)
-                                                    - insetPaddingValues.calculateTopPadding()
-                                                    + offset,
-                                            start = LocalPaddings.current.large,
-                                        )
-                                        .padding(horizontalInsets)
-                                        .height(dimensionResource(R.dimen.media_image_height) - offset)
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                        .padding(paddingValues)
+                                        .padding(bottom = LocalPaddings.current.large)
+                                        .graphicsLayer {
+                                            val pageOffset = (
+                                                    creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
+                                                    ).absoluteValue
+
+                                            alpha = lerp(
+                                                start = 0f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                            scaleY = lerp(
+                                                start = 0.9f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                            scaleX = lerp(
+                                                start = 0.9f,
+                                                stop = 1f,
+                                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                                            )
+                                        }
                                 ) {
-                                    MediaCard(
-                                        image = media.coverImage,
+                                    CharacterCard(
+                                        image = currentCredit.image,
                                         tag = null,
+                                        tagMinLines = 1,
                                         label = null,
                                         onClick = {},
-                                        modifier = Modifier.sharedBounds(
-                                            rememberSharedContentState(
-                                                SharedContentKey(
-                                                    id = media.id,
-                                                    source = source,
-                                                    sharedComponents = Image to Image,
-                                                )
-                                            ),
-                                            animatedVisibilityScope,
-                                            resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-                                        )
-                                    )
-                                }
-
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                    contentDescription = stringResource(R.string.back),
-                                    modifier = Modifier
-                                        .align(Alignment.TopStart)
-                                        .padding(insetPaddingValues)
-                                        .padding(
-                                            start = LocalPaddings.current.medium,
-                                            top = LocalPaddings.current.small
-                                        )
-                                        .clip(CircleShape)
-                                        .clickable(enabled = !isExpanded) { onBack() }
-                                        .padding(LocalPaddings.current.small),
-                                    tint = if (isSystemInDarkTheme()) Color.White else Color.Black
-                                )
-                            }
-                        }
-
-                        if (showDetailsSheet) {
-                            BottomSheet(
-                                sheetState = detailsSheetState,
-                                onDismissRequest = { showDetailsSheet = false },
-                                deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp,
-                            ) { paddingValues, modifier ->
-                                Column(modifier) {
-                                    Text(
-                                        text = media.title.orEmpty(),
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        style = MaterialTheme.typography.titleLarge,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                                            .padding(paddingValues)
-                                            .padding(vertical = LocalPaddings.current.medium)
                                     )
 
-                                    MediaDescription(
-                                        html = media.description,
-                                        modifier = Modifier
-                                            .padding(paddingValues)
-                                            .padding(top = LocalPaddings.current.medium)
-                                    )
-                                }
-                            }
-                        }
-
-                        if (showCharacterSheet || showStaffSheet) {
-                            BottomSheet(
-                                sheetState = creditSheetState,
-                                dragHandleBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                onDismissRequest = {
-                                    if (showCharacterSheet) {
-                                        showCharacterSheet = false
-                                    } else showStaffSheet = false
-                                },
-                                deviceScreenCornerRadiusDp = deviceScreenCornerRadiusDp
-                            ) { paddingValues, modifier ->
-                                HorizontalPager(state = creditPagerState) { page ->
-                                    Column(modifier = modifier) {
-                                        val currentCredit = if (showCharacterSheet) {
-                                            media.characters[page]
-                                        } else {
-                                            media.staff[page]
-                                        }
-                                        Row(
-                                            horizontalArrangement = Arrangement.spacedBy(
-                                                LocalPaddings.current.medium
-                                            ),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                                                .padding(paddingValues)
-                                                .padding(bottom = LocalPaddings.current.large)
-                                                .graphicsLayer {
-                                                    val pageOffset = (
-                                                            creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
-                                                            ).absoluteValue
-
-                                                    alpha = lerp(
-                                                        start = 0f,
-                                                        stop = 1f,
-                                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                                    )
-                                                    scaleY = lerp(
-                                                        start = 0.9f,
-                                                        stop = 1f,
-                                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                                    )
-                                                    scaleX = lerp(
-                                                        start = 0.9f,
-                                                        stop = 1f,
-                                                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                                    )
-                                                }
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(
+                                            LocalPaddings.current.small
+                                        ),
+                                        modifier = Modifier.height(dimensionResource(R.dimen.character_image_height))
+                                    ) {
+                                        Column(
+                                            verticalArrangement = Arrangement.spacedBy(
+                                                LocalPaddings.current.tiny
+                                            )
                                         ) {
-                                            CharacterCard(
-                                                image = currentCredit.image,
-                                                tag = null,
-                                                tagMinLines = 1,
-                                                label = null,
-                                                onClick = {},
+                                            Text(
+                                                text = currentCredit.name.orEmpty(),
+                                                color = MaterialTheme.colorScheme.onBackground,
+                                                style = MaterialTheme.typography.titleLarge,
                                             )
 
-                                            Column(
-                                                verticalArrangement = Arrangement.spacedBy(
+                                            Row(
+                                                horizontalArrangement = Arrangement.spacedBy(
                                                     LocalPaddings.current.small
-                                                ),
-                                                modifier = Modifier.height(dimensionResource(R.dimen.character_image_height))
+                                                )
                                             ) {
-                                                Column(
-                                                    verticalArrangement = Arrangement.spacedBy(
-                                                        LocalPaddings.current.tiny
+                                                currentCredit.dob?.let { dob ->
+                                                    Chip(
+                                                        color = Color(0xFF80DF87),
+                                                        text = dob,
+                                                        iconPadding = PaddingValues(bottom = 2.dp),
+                                                        icon = ImageVector.vectorResource(R.drawable.cake),
                                                     )
-                                                ) {
-                                                    Text(
-                                                        text = currentCredit.name.orEmpty(),
-                                                        color = MaterialTheme.colorScheme.onBackground,
-                                                        style = MaterialTheme.typography.titleLarge,
-                                                    )
-
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.spacedBy(
-                                                            LocalPaddings.current.small
-                                                        )
-                                                    ) {
-                                                        currentCredit.dob?.let { dob ->
-                                                            Chip(
-                                                                color = Color(0xFF80DF87),
-                                                                text = dob,
-                                                                iconPadding = PaddingValues(bottom = 2.dp),
-                                                                icon = ImageVector.vectorResource(R.drawable.cake),
-                                                            )
-                                                        }
-
-                                                        currentCredit.favourites?.let { fav ->
-                                                            Chip(
-                                                                color = Color(0xFFFF9999),
-                                                                text = fav,
-                                                                icon = Icons.Rounded.Favorite
-                                                            )
-                                                        }
-                                                    }
                                                 }
 
-                                                if (currentCredit.alternativeNames.isNotBlank()) {
-                                                    MediaDescription(currentCredit.alternativeNames)
+                                                currentCredit.favourites?.let { fav ->
+                                                    Chip(
+                                                        color = Color(0xFFFF9999),
+                                                        text = fav,
+                                                        icon = Icons.Rounded.Favorite
+                                                    )
                                                 }
                                             }
                                         }
 
-                                        // TODO: Remove spoilers.
-                                        currentCredit.description?.let { description ->
-                                            MediaDescription(
-                                                html = description,
-                                                onLinkClick = onLinkClick@{
-                                                    val id =
-                                                        it?.split("/")?.getOrNull(4)?.toIntOrNull()
-                                                            ?: return@onLinkClick null
-                                                    val character =
-                                                        media.characters.find { character -> character.id == id }
-                                                            ?: return@onLinkClick null
-                                                    val index = media.characters.indexOf(character)
-                                                    if (index != -1) {
-                                                        coroutineScope.launch {
-                                                            creditPagerState.animateScrollToPage(
-                                                                index
-                                                            )
-                                                        }
-                                                    } else return@onLinkClick null
-                                                    return@onLinkClick Unit
-                                                },
-                                                modifier = Modifier
-                                                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                                                    .padding(paddingValues)
-                                                    .padding(top = LocalPaddings.current.medium)
-                                                    .graphicsLayer {
-                                                        val pageOffset = (
-                                                                creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
-                                                                ).absoluteValue
-
-                                                        alpha = lerp(
-                                                            start = 0f,
-                                                            stop = 1f,
-                                                            fraction = 1f - pageOffset.coerceIn(
-                                                                0f,
-                                                                1f
-                                                            )
-                                                        )
-                                                        scaleY = lerp(
-                                                            start = 0.9f,
-                                                            stop = 1f,
-                                                            fraction = 1f - pageOffset.coerceIn(
-                                                                0f,
-                                                                1f
-                                                            )
-                                                        )
-                                                        scaleX = lerp(
-                                                            start = 0.9f,
-                                                            stop = 1f,
-                                                            fraction = 1f - pageOffset.coerceIn(
-                                                                0f,
-                                                                1f
-                                                            )
-                                                        )
-                                                        translationY = lerp(
-                                                            start = size.height * -0.025f,
-                                                            stop = 0f,
-                                                            fraction = 1f - pageOffset.coerceIn(
-                                                                0f,
-                                                                1f
-                                                            )
-                                                        )
-                                                    }
-                                            )
+                                        if (currentCredit.alternativeNames.isNotBlank()) {
+                                            MediaDescription(currentCredit.alternativeNames)
                                         }
                                     }
+                                }
+
+                                // TODO: Remove spoilers.
+                                currentCredit.description?.let { description ->
+                                    MediaDescription(
+                                        html = description,
+                                        onLinkClick = onLinkClick@{
+                                            val id =
+                                                it?.split("/")?.getOrNull(4)?.toIntOrNull()
+                                                    ?: return@onLinkClick null
+                                            val character =
+                                                media.characters.find { character -> character.id == id }
+                                                    ?: return@onLinkClick null
+                                            val index = media.characters.indexOf(character)
+                                            if (index != -1) {
+                                                coroutineScope.launch {
+                                                    creditPagerState.animateScrollToPage(
+                                                        index
+                                                    )
+                                                }
+                                            } else return@onLinkClick null
+                                            return@onLinkClick Unit
+                                        },
+                                        modifier = Modifier
+                                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                                            .padding(paddingValues)
+                                            .padding(top = LocalPaddings.current.medium)
+                                            .graphicsLayer {
+                                                val pageOffset = (
+                                                        creditPagerState.currentPage - page + creditPagerState.currentPageOffsetFraction
+                                                        ).absoluteValue
+
+                                                alpha = lerp(
+                                                    start = 0f,
+                                                    stop = 1f,
+                                                    fraction = 1f - pageOffset.coerceIn(
+                                                        0f,
+                                                        1f
+                                                    )
+                                                )
+                                                scaleY = lerp(
+                                                    start = 0.9f,
+                                                    stop = 1f,
+                                                    fraction = 1f - pageOffset.coerceIn(
+                                                        0f,
+                                                        1f
+                                                    )
+                                                )
+                                                scaleX = lerp(
+                                                    start = 0.9f,
+                                                    stop = 1f,
+                                                    fraction = 1f - pageOffset.coerceIn(
+                                                        0f,
+                                                        1f
+                                                    )
+                                                )
+                                                translationY = lerp(
+                                                    start = size.height * -0.025f,
+                                                    stop = 0f,
+                                                    fraction = 1f - pageOffset.coerceIn(
+                                                        0f,
+                                                        1f
+                                                    )
+                                                )
+                                            }
+                                    )
                                 }
                             }
                         }
@@ -664,11 +740,6 @@ fun MediaPage(
                 }
             }
         }
-        // TODO: Move this into the layout so that shared element transitions complete.
-        is Resource.Loading -> {
-            Box(Modifier.background(Color.Green).fillMaxSize())
-        }
-        is Resource.Error -> {}
     }
 }
 
