@@ -14,7 +14,8 @@ val Media.InfoItem.title get() = when(this) {
     Media.InfoItem.SEASON -> R.string.season
     Media.InfoItem.STUDIO -> R.string.studios
     Media.InfoItem.SOURCE -> R.string.source
-    Media.InfoItem.DIVIDER -> null
+    Media.InfoItem.DIVIDER,
+    Media.InfoItem.LOADING -> null
 }
 
 val Media.Format.res get() = when(this) {

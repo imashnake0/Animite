@@ -6,9 +6,11 @@ import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -36,7 +38,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -92,7 +93,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -311,7 +311,7 @@ fun MediaPage(
                                                     .padding(top = LocalPaddings.current.small)
                                                     .clip(CircleShape)
                                                     .requiredWidth(140.dp)
-                                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
                                             )
 
                                             Box(
@@ -327,43 +327,46 @@ fun MediaPage(
                                 }
                             }
 
+                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
+                                AnimatedVisibility(visible = media is Resource.Loading || media.data?.info?.isNotEmpty() == true) {
+                                    MediaInfo(
+                                        info = (if (media is Resource.Success) {
+                                            media.data?.info.orEmpty()
+                                        } else {
+                                            List(10) { Media.Info.Loading }
+                                        }).toImmutableList(),
+                                        isScrollEnabled = media !is Resource.Loading,
+                                        contentPadding = PaddingValues(
+                                            horizontal = LocalPaddings.current.large
+                                        ) + horizontalInsets,
+                                        modifier = Modifier.animateContentSize()
+                                    )
+                                }
+
+//                                if (!media.rankings.isEmpty()) {
+//                                    MediaRankings(
+//                                        selectedTimeSpanIndex = selectedTimeSpanIndex,
+//                                        onCheckedChange = {
+//                                            selectedTimeSpanIndex = it
+//                                            haptic.performHapticFeedback(
+//                                                HapticFeedbackType.SegmentTick
+//                                            )
+//                                        },
+//                                        rankings = media.rankings,
+//                                        year = media.year,
+//                                        season = media.season,
+//                                        modifier = Modifier
+//                                            .skipToLookaheadSize()
+//                                            .fillMaxWidth()
+//                                            .padding(horizontal = LocalPaddings.current.large)
+//                                            .padding(horizontalInsets)
+//                                    )
+//                                }
+                            }
+
                             when(media) {
                                 is Resource.Success -> {
                                     media.data?.let { media ->
-                                        Column(
-                                            verticalArrangement = Arrangement.spacedBy(
-                                                LocalPaddings.current.medium
-                                            )
-                                        ) {
-                                            if (!media.info.isEmpty())
-                                                MediaInfo(
-                                                    info = media.info,
-                                                    contentPadding = PaddingValues(
-                                                        horizontal = LocalPaddings.current.large
-                                                    ) + horizontalInsets,
-                                                )
-
-                                            if (!media.rankings.isEmpty()) {
-                                                MediaRankings(
-                                                    selectedTimeSpanIndex = selectedTimeSpanIndex,
-                                                    onCheckedChange = {
-                                                        selectedTimeSpanIndex = it
-                                                        haptic.performHapticFeedback(
-                                                            HapticFeedbackType.SegmentTick
-                                                        )
-                                                    },
-                                                    rankings = media.rankings,
-                                                    year = media.year,
-                                                    season = media.season,
-                                                    modifier = Modifier
-                                                        .skipToLookaheadSize()
-                                                        .fillMaxWidth()
-                                                        .padding(horizontal = LocalPaddings.current.large)
-                                                        .padding(horizontalInsets)
-                                                )
-                                            }
-                                        }
-
                                         if (!media.genres.isEmpty()) {
                                             MediaGenres(
                                                 genres = media.genres,
@@ -908,6 +911,7 @@ private fun MediaDescription(
 @Composable
 private fun MediaInfo(
     info: ImmutableList<Media.Info>,
+    isScrollEnabled: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -921,64 +925,93 @@ private fun MediaInfo(
         ),
         label = "rotation"
     )
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .horizontalScroll(rememberScrollState())
-            .padding(contentPadding)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                shape = RoundedCornerShape(LocalPaddings.current.large),
-            )
-            .padding(horizontal = LocalPaddings.current.medium)
-    ) {
-        info.fastForEach {
-            when (it) {
-                is Media.Info.Divider -> {
-                    Box(
-                        modifier = Modifier
-                            .graphicsLayer { rotationZ = angle }
-                            .padding(LocalPaddings.current.small)
-                            .size(6.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                                shape = MaterialShapes.Cookie4Sided.toShape()
-                            )
-                    )
-                }
-                else -> {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(LocalPaddings.current.large))
-                            .clickable {}
-                            .padding(
-                                vertical = LocalPaddings.current.medium,
-                                horizontal = LocalPaddings.current.large / 2,
-                            )
-                    ) {
-                        Text(
-                            text = stringResource(it.item.title!!),
-                            style = MaterialTheme.typography.labelSmallEmphasized
-                        )
-                        Text(
-                            text = when(it) {
-                                is Media.Info.Item -> it.value
-                                is Media.Info.Season -> listOfNotNull(
-                                    stringResource(it.season.res), it.year
-                                ).joinToString(" ")
-                                else -> stringResource(
-                                    when(it) {
-                                        is Media.Info.Format -> it.format.res
-                                        is Media.Info.Status -> it.status.res
-                                        is Media.Info.Source -> it.source.res
-                                    }
+    if (info.isNotEmpty()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .horizontalScroll(
+                    state = rememberScrollState(),
+                    enabled = isScrollEnabled
+                )
+                .padding(contentPadding)
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    shape = RoundedCornerShape(LocalPaddings.current.large),
+                )
+                .padding(horizontal = LocalPaddings.current.medium)
+        ) {
+            info.fastForEach {
+                when (it) {
+                    is Media.Info.Divider -> {
+                        Box(
+                            modifier = Modifier
+                                .graphicsLayer { rotationZ = angle }
+                                .padding(LocalPaddings.current.small)
+                                .size(6.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                                    shape = MaterialShapes.Cookie4Sided.toShape()
                                 )
-                            },
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
-                            style = MaterialTheme.typography.labelSmallEmphasized
                         )
+                    }
+
+                    is Media.Info.Loading -> {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                            modifier = Modifier
+                                .padding(
+                                    vertical = LocalPaddings.current.medium,
+                                    horizontal = LocalPaddings.current.large / 2,
+                                )
+                                .graphicsLayer { alpha = 0f }
+                        ) {
+                            Text(
+                                text = "                   ",
+                                style = MaterialTheme.typography.labelSmallEmphasized
+                            )
+                            Text(
+                                text = "                   ",
+                                style = MaterialTheme.typography.labelSmallEmphasized
+                            )
+                        }
+                    }
+
+                    else -> {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(LocalPaddings.current.large))
+                                .clickable {}
+                                .padding(
+                                    vertical = LocalPaddings.current.medium,
+                                    horizontal = LocalPaddings.current.large / 2,
+                                )
+                        ) {
+                            Text(
+                                text = stringResource(it.item.title!!),
+                                style = MaterialTheme.typography.labelSmallEmphasized
+                            )
+                            Text(
+                                text = when (it) {
+                                    is Media.Info.Item -> it.value
+                                    is Media.Info.Season -> listOfNotNull(
+                                        stringResource(it.season.res), it.year
+                                    ).joinToString(" ")
+
+                                    else -> stringResource(
+                                        when (it) {
+                                            is Media.Info.Format -> it.format.res
+                                            is Media.Info.Status -> it.status.res
+                                            is Media.Info.Source -> it.source.res
+                                        }
+                                    )
+                                },
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f),
+                                style = MaterialTheme.typography.labelSmallEmphasized
+                            )
+                        }
                     }
                 }
             }
