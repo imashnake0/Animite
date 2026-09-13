@@ -59,7 +59,7 @@ private val buffer = 24.dp
 @Composable
 fun MediaMediumList(
     mediaMediumList: ImmutableList<Media.Medium>,
-    onItemClick: (Int, String?) -> Unit,
+    onItemClick: (Int) -> Unit,
     shouldShowRank: Boolean,
     modifier: Modifier = Modifier,
     pageInfo: Info? = null,
@@ -126,11 +126,11 @@ fun MediaMediumList(
 @Composable
 private fun MediaMediumItem(
     item: Media.Medium,
-    onClick: (Int, String?) -> Unit,
+    onClick: (Int) -> Unit,
     rank: Int?,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.clickable { onClick(item.id, item.title) }) {
+    Box(modifier = modifier.clickable { onClick(item.id) }) {
         if (rank != null) {
             Box(
                 Modifier
@@ -158,7 +158,7 @@ private fun MediaMediumItem(
                 image = item.coverImage,
                 tag = null,
                 label = null,
-                onClick = { onClick(item.id, item.title) },
+                onClick = { onClick(item.id) },
                 tagMinLines = 1
             )
 

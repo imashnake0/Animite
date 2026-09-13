@@ -127,7 +127,6 @@ fun MangaScreen(
                                                             id = media.id,
                                                             source = index.toString(),
                                                             mediaType = MediaType.MANGA.rawValue,
-                                                            title = media.title,
                                                         )
                                                     )
                                                 },

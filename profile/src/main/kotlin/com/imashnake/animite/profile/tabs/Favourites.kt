@@ -99,7 +99,6 @@ private fun UserFavouriteLists(
                                             id = item.id,
                                             source = namedList.name.orEmpty(),
                                             mediaType = item.type.name,
-                                            title = item.title,
                                         )
                                     )
                                 },

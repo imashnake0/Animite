@@ -172,13 +172,12 @@ fun MediaTrackingLists(
                         MediaTrackingItem(
                             listName = namedList.name.sanitize(),
                             item = namedList.list[it],
-                            onClick = { id, title ->
+                            onClick = { id ->
                                 onNavigateToMediaItem(
                                     MediaPage(
                                         id = id,
                                         source = "${namedList.name}" + type.type,
                                         mediaType = type.name,
-                                        title = title
                                     )
                                 )
                             },
@@ -389,7 +388,7 @@ private fun MediaTrackingItem(
     listName: User.TrackingStatus,
     item: Media.Tracking,
     useExpressiveProgressIndicator: Boolean,
-    onClick: (Int, String?) -> Unit,
+    onClick: (id: Int) -> Unit,
     updateEntry: (params: EntryUpdateParams) -> Unit,
     favouriteEntry: (id: Int) -> Unit,
     modifier: Modifier = Modifier
@@ -398,7 +397,7 @@ private fun MediaTrackingItem(
 
     Row(
         modifier = modifier.combinedClickable(
-            onClick = { onClick(item.id, item.title) },
+            onClick = { onClick(item.id) },
             // TODO: Make a button for this too.
             onLongClick = { isUpdateEntryDialogVisible = true }
         )
@@ -407,7 +406,7 @@ private fun MediaTrackingItem(
             image = item.coverImage,
             tag = null,
             label = null,
-            onClick = { onClick(item.id, item.title) },
+            onClick = { onClick(item.id) },
             tagMinLines = 1
         )
 

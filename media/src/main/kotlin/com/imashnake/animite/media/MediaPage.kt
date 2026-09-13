@@ -361,7 +361,6 @@ fun MediaPage(
                                                             id = it.id,
                                                             source = RELATIONS,
                                                             mediaType = it.type.name,
-                                                            title = it.title,
                                                         )
                                                     )
                                                 },
@@ -380,7 +379,6 @@ fun MediaPage(
                                                             id = it.id,
                                                             source = RECOMMENDATIONS,
                                                             mediaType = it.type.name,
-                                                            title = it.title,
                                                         )
                                                     )
                                                 },
@@ -1332,5 +1330,4 @@ data class MediaPage(
     val id: Int,
     val source: String,
     val mediaType: String,
-    val title: String?,
 )

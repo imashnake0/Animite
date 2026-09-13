@@ -137,7 +137,6 @@ fun AnimeScreen(
                                                             id = media.id,
                                                             source = index.toString(),
                                                             mediaType = MediaType.ANIME.rawValue,
-                                                            title = media.title,
                                                         )
                                                     )
                                                 },
