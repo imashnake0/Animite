@@ -21,7 +21,6 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-@Suppress("SwallowedException")
 class MediaPageViewModel @Inject constructor(
     private val mediaRepository: AnilistMediaRepository,
     preferencesRepository: PreferencesRepository,

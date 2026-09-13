@@ -43,6 +43,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -380,7 +381,7 @@ class ExploreViewModel @Inject constructor(
         setIsRefreshing(true)
         useNetwork = true
         refreshTrigger.emit(Unit)
-        delay(1500L)
+        delay(1500.milliseconds)
         useNetwork = false
         setIsRefreshing(false)
     }
