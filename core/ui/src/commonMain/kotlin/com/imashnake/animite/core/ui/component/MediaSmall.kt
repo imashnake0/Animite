@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -130,7 +131,10 @@ fun <T> MediaSmallRow(
 @Composable
 fun LoadingMediaSmallRow(
     count: Int,
+    imageHeight: Dp,
+    cardWidth: Dp,
     modifier: Modifier = Modifier,
+    titleStyle: TextStyle = MaterialTheme.typography.titleMedium,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     Column(
@@ -146,14 +150,14 @@ fun LoadingMediaSmallRow(
         Text(
             text = " ",
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium,
+            style = titleStyle,
             modifier = Modifier
                 .padding(
                     start = startPadding,
                     end = endPadding,
                 )
                 .clip(CircleShape)
-                .requiredWidth(140.dp)
+                .requiredWidth(cardWidth)
                 .background(MaterialTheme.colorScheme.surfaceContainerHighest)
         )
         LazyRow(
@@ -166,8 +170,8 @@ fun LoadingMediaSmallRow(
         ) {
             items(count) {
                 LoadingMediaSmall(
-                    imageHeight = 200.dp,
-                    cardWidth = 140.dp,
+                    imageHeight = imageHeight,
+                    cardWidth = cardWidth,
                 )
             }
         }
@@ -492,7 +496,7 @@ private fun PreviewLoadingMediaSmall() {
 @Composable
 private fun PreviewLoadingMediaSmallRow() {
     CompositionLocalProvider(LocalPaddings provides rememberDefaultPaddings()) {
-        LoadingMediaSmallRow(count = 10)
+        LoadingMediaSmallRow(count = 10, imageHeight = 200.dp, cardWidth = 140.dp)
     }
 }
 

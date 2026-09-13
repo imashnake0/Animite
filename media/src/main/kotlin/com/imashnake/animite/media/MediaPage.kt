@@ -130,6 +130,7 @@ import com.imashnake.animite.core.ui.component.BottomSheet
 import com.imashnake.animite.core.ui.component.CharacterCard
 import com.imashnake.animite.core.ui.component.Chip
 import com.imashnake.animite.core.ui.component.ChipFlowRow
+import com.imashnake.animite.core.ui.component.LoadingMediaSmallRow
 import com.imashnake.animite.core.ui.component.MediaCard
 import com.imashnake.animite.core.ui.component.MediaSmallRow
 import com.imashnake.animite.core.ui.component.StatsRow
@@ -423,59 +424,133 @@ fun MediaPage(
                                                 }
                                             }
                                         }
+                                        // TODO: Error state.
                                         is Resource.Error -> {}
                                     }
+                                }
+                            }
+
+                            AnimatedContent(media) { resource ->
+                                when (resource) {
+                                    is Resource.Success -> {
+                                        media.data?.let { media ->
+                                            if (media.genres.isNotEmpty()) {
+                                                MediaGenres(
+                                                    genres = media.genres,
+                                                    onGenreClick = {
+                                                        onNavigateToExplore(ExploreRoute(genre = it))
+                                                    },
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = LocalPaddings.current.large
+                                                    ) + horizontalInsets,
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    is Resource.Loading -> {
+                                        MediaGenres(
+                                            // sus way of making different size loading genre chips
+                                            genres = persistentListOf(
+                                                "               ",
+                                                "                    ",
+                                                "         ",
+                                                "             ",
+                                            ),
+                                            onGenreClick = {},
+                                            contentPadding = PaddingValues(
+                                                horizontal = LocalPaddings.current.large
+                                            ) + horizontalInsets,
+                                        )
+                                    }
+
+                                    // TODO: Error state.
+                                    is Resource.Error -> {}
+                                }
+                            }
+
+                            Crossfade(media) { resource ->
+                                when (resource) {
+                                    is Resource.Success -> {
+                                        media.data?.let { media ->
+                                            if (!media.characters.isEmpty()) {
+                                                MediaCredits(
+                                                    title = stringResource(R.string.characters),
+                                                    credits = media.characters,
+                                                    onCreditClick = { index, _ ->
+                                                        coroutineScope.launch {
+                                                            creditPagerState.scrollToPage(index)
+                                                        }
+                                                        showCharacterSheet = true
+                                                    },
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = LocalPaddings.current.large
+                                                    ) + horizontalInsets,
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    is Resource.Loading -> {
+                                        LoadingMediaSmallRow(
+                                            count = 10,
+                                            imageHeight = 137.dp,
+                                            cardWidth = 96.dp,
+                                            // TODO: Not removing baseline shift causes misalignment, figure out why.
+                                            titleStyle = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+                                            contentPadding = PaddingValues(
+                                                horizontal = LocalPaddings.current.large
+                                            ) + horizontalInsets,
+                                        )
+                                    }
+                                    // TODO: Error state.
+                                    is Resource.Error -> {}
+                                }
+                            }
+
+                            Crossfade(media) { resource ->
+                                when (resource) {
+                                    is Resource.Success -> {
+                                        media.data?.let { media ->
+                                            if (!media.characters.isEmpty()) {
+                                                MediaCredits(
+                                                    title = stringResource(R.string.staff),
+                                                    credits = media.staff,
+                                                    onCreditClick = { index, _ ->
+                                                        coroutineScope.launch {
+                                                            creditPagerState.scrollToPage(index)
+                                                        }
+                                                        showStaffSheet = true
+                                                    },
+                                                    tagMinLines = 2,
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = LocalPaddings.current.large
+                                                    ) + horizontalInsets,
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    is Resource.Loading -> {
+                                        LoadingMediaSmallRow(
+                                            count = 10,
+                                            imageHeight = 137.dp,
+                                            cardWidth = 96.dp,
+                                            // TODO: Not removing baseline shift causes misalignment, figure out why.
+                                            titleStyle = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+                                            contentPadding = PaddingValues(
+                                                horizontal = LocalPaddings.current.large
+                                            ) + horizontalInsets,
+                                        )
+                                    }
+                                    // TODO: Error state.
+                                    is Resource.Error -> {}
                                 }
                             }
 
                             when(media) {
                                 is Resource.Success -> {
                                     media.data?.let { media ->
-                                        if (!media.genres.isEmpty()) {
-                                            MediaGenres(
-                                                genres = media.genres,
-                                                onGenreClick = {
-                                                    onNavigateToExplore(ExploreRoute(genre = it))
-                                                },
-                                                contentPadding = PaddingValues(
-                                                    horizontal = LocalPaddings.current.large
-                                                ) + horizontalInsets,
-                                            )
-                                        }
-
-                                        if (!media.characters.isEmpty()) {
-                                            MediaCredits(
-                                                title = stringResource(R.string.characters),
-                                                credits = media.characters,
-                                                onCreditClick = { index, _ ->
-                                                    coroutineScope.launch {
-                                                        creditPagerState.scrollToPage(index)
-                                                    }
-                                                    showCharacterSheet = true
-                                                },
-                                                contentPadding = PaddingValues(
-                                                    horizontal = LocalPaddings.current.large
-                                                ) + horizontalInsets,
-                                            )
-                                        }
-
-                                        if (!media.staff.isEmpty()) {
-                                            MediaCredits(
-                                                title = stringResource(R.string.staff),
-                                                credits = media.staff,
-                                                onCreditClick = { index, _ ->
-                                                    coroutineScope.launch {
-                                                        creditPagerState.scrollToPage(index)
-                                                    }
-                                                    showStaffSheet = true
-                                                },
-                                                tagMinLines = 2,
-                                                contentPadding = PaddingValues(
-                                                    horizontal = LocalPaddings.current.large
-                                                ) + horizontalInsets,
-                                            )
-                                        }
-
                                         if (media.trailer != null || media.streamingEpisodes.isNotEmpty()) {
                                             MediaWatch(
                                                 trailer = media.trailer,
