@@ -71,11 +71,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberBottomSheetState
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -805,7 +805,6 @@ private fun ToggleFilter(
                         entries.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                         else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                     },
-                    colors = ToggleButtonDefaults.tonalToggleButtonColors(),
                     modifier = Modifier.weight(1f)
                 ) {
                     Column(
@@ -875,15 +874,17 @@ private fun YearFilter(
                     fontWeight = FontWeight.Medium,
                 )
                 Slider(
-                    value = year?.toFloat() ?: 0f,
+                    state = rememberSliderState(
+                        value = year?.toFloat() ?: 0f,
+                        steps = yearRange.count(),
+                        trackRange = firstYear.toFloat()..lastYear.toFloat()
+                    ),
                     onValueChange = { onYearChange(it.toInt()) },
                     colors = SliderDefaults.colors(
                         activeTrackColor = SliderDefaults.colors().inactiveTrackColor,
                         inactiveTickColor = Color.Transparent,
                         activeTickColor = Color.Transparent
                     ),
-                    steps = yearRange.count(),
-                    valueRange = firstYear.toFloat()..lastYear.toFloat(),
                     modifier = Modifier.weight(1f)
                 )
                 Text(

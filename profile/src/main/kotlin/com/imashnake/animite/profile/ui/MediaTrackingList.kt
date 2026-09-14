@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -647,8 +648,10 @@ fun ProgressBar(
                 }
                 if (enabled) {
                     Slider(
-                        value = progress.toFloat(),
-                        valueRange = 0f..segments.toFloat(),
+                        state = rememberSliderState(
+                            value = progress.toFloat(),
+                            trackRange = 0f..segments.toFloat(),
+                        ),
                         onValueChange = { onProgressChanged?.invoke(it) },
                         thumb = {
                             SliderDefaults.Thumb(
