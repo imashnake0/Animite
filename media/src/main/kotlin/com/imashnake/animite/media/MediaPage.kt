@@ -458,45 +458,23 @@ fun MediaPage(
                             .padding(horizontalInsets)
                             .height(dimensionResource(R.dimen.media_image_height) - offset)
                     ) {
-                        Crossfade(media is Resource.Success && media.data?.coverImage != null) {
-                            if (it) {
-                                MediaCard(
-                                    image = media.data?.coverImage,
-                                    tag = null,
-                                    label = null,
-                                    onClick = {},
-                                    modifier = Modifier.sharedBounds(
-                                        rememberSharedContentState(
-                                            SharedContentKey(
-                                                id = id,
-                                                source = source,
-                                                sharedComponents = Image to Image,
-                                            )
-                                        ),
-                                        animatedVisibilityScope,
-                                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+                        MediaCard(
+                            image = media.data?.coverImage,
+                            tag = null,
+                            label = null,
+                            onClick = {},
+                            modifier = Modifier.sharedBounds(
+                                rememberSharedContentState(
+                                    SharedContentKey(
+                                        id = id,
+                                        source = source,
+                                        sharedComponents = Image to Image,
                                     )
-                                )
-                            } else {
-                                MediaCard(
-                                    image = null,
-                                    tag = null,
-                                    label = null,
-                                    onClick = {},
-                                    modifier = Modifier.sharedBounds(
-                                        rememberSharedContentState(
-                                            SharedContentKey(
-                                                id = id,
-                                                source = source,
-                                                sharedComponents = Image to Image,
-                                            )
-                                        ),
-                                        animatedVisibilityScope,
-                                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-                                    )
-                                )
-                            }
-                        }
+                                ),
+                                animatedVisibilityScope,
+                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+                            )
+                        )
                     }
 
                     Icon(
