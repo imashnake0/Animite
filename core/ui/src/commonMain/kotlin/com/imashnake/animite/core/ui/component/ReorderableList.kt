@@ -65,7 +65,7 @@ fun <T> ReorderableList(
                     shapes = ButtonGroupDefaults.connectedMiddleButtonShapes(
                         checkedShape = RoundedCornerShape(10.dp)
                     ),
-                    colors = ToggleButtonDefaults.colors(
+                    colors = ToggleButtonDefaults.toggleButtonColors(
                         containerColor = MaterialTheme.colorScheme.background,
                         checkedContentColor = MaterialTheme.colorScheme.onBackground,
                         checkedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)

@@ -57,7 +57,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
-import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -250,7 +249,7 @@ fun SettingsPage(
                                                 Theme.DEVICE_THEME -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                                 else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                             },
-                                            colors = ToggleButtonDefaults.colors(
+                                            colors = ToggleButtonDefaults.toggleButtonColors(
                                                 containerColor = MaterialTheme.colorScheme.background
                                             ),
                                             modifier = Modifier.weight(1f)
@@ -336,20 +335,18 @@ fun SettingsPage(
                                             activeTickColor = SliderDefaults.colors().inactiveTickColor,
                                         )
                                         Slider(
-                                            state = rememberSliderState(
-                                                value = when (Density.valueOf(selectedDensity)) {
-                                                    Density.COMFY -> 0f
-                                                    Density.COZY -> 1f
-                                                    Density.COMPACT -> 2f
-                                                },
-                                                steps = 1,
-                                                trackRange = 0f..2f
-                                            ),
+                                            value = when (Density.valueOf(selectedDensity)) {
+                                                Density.COMFY -> 0f
+                                                Density.COZY -> 1f
+                                                Density.COMPACT -> 2f
+                                            },
                                             onValueChange = {
                                                 haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                                 viewModel.setDensity(Density.entries[it.fastRoundToInt()])
                                             },
                                             colors = colors,
+                                            steps = 1,
+                                            valueRange = 0f..2f,
                                             thumb = {
                                                 SliderDefaults.Thumb(
                                                     interactionSource = interactionSource,
@@ -483,7 +480,7 @@ fun SettingsPage(
                                                     Media.Language.DEFAULT -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                                     else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                                 },
-                                                colors = ToggleButtonDefaults.colors(
+                                                colors = ToggleButtonDefaults.toggleButtonColors(
                                                     containerColor = MaterialTheme.colorScheme.background
                                                 ),
                                                 modifier = Modifier.weight(1f)
@@ -496,11 +493,7 @@ fun SettingsPage(
 
                                 2 -> {
                                     Slider(
-                                        state = rememberSliderState(
-                                            value = listSize.toFloat(),
-                                            steps = 46,
-                                            trackRange = 5f..50f
-                                        ),
+                                        value = listSize.toFloat(),
                                         onValueChange = {
                                             haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                                             viewModel.setListSize(it.fastRoundToInt())
@@ -509,6 +502,8 @@ fun SettingsPage(
                                             activeTickColor = SliderDefaults.colors().activeTrackColor,
                                             inactiveTickColor = SliderDefaults.colors().inactiveTrackColor
                                         ),
+                                        steps = 46,
+                                        valueRange = 5f..50f,
                                         thumb = {
                                             AnimatedContent(
                                                 targetState = listSize,
@@ -632,7 +627,7 @@ fun SettingsPage(
                                                             else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                                         },
                                                         enabled = useProfileColor,
-                                                        colors = ToggleButtonDefaults.colors(
+                                                        colors = ToggleButtonDefaults.toggleButtonColors(
                                                             containerColor = entry.color,
                                                             contentColor = entry.color.darken(4f),
                                                             checkedContainerColor = entry.color,
@@ -795,7 +790,7 @@ fun SettingsPage(
                                                         ScoreFormat.POINT_3 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                                                         else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
                                                     },
-                                                    colors = ToggleButtonDefaults.colors(
+                                                    colors = ToggleButtonDefaults.toggleButtonColors(
                                                         containerColor = MaterialTheme.colorScheme.background
                                                     ),
                                                     modifier = Modifier.weight(1f)
@@ -890,14 +885,12 @@ fun SettingsPage(
                                 when (index) {
                                     0 -> {
                                         Slider(
-                                            state = rememberSliderState(
-                                                value = timeContext.dayProgress,
-                                                trackRange = 0f..1f
-                                            ),
+                                            value = timeContext.dayProgress,
                                             onValueChange = {
                                                 haptic.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                                                 viewModel.setDayHour(it * 23f)
                                             },
+                                            valueRange = 0f..1f,
                                         )
                                     }
                                     1 -> {
