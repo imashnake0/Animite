@@ -11,7 +11,6 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-apollo-cache = { id = "com.apollographql.cache:normalized-cache-apollo-compiler-plugin", version.ref = "apolloCache" }
 apollo-kotlin = { id = "com.apollographql.apollo", version.ref = "apollo" }
 
 
