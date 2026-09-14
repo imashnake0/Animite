@@ -13,7 +13,6 @@ import com.imashnake.animite.core.resource.Resource.Companion.asResource
 import com.imashnake.animite.core.ui.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -50,8 +48,6 @@ class MediaPageViewModel @Inject constructor(
         flow3 = preferencesRepository.listSize.filterNotNull(),
         transform = ::Triple
     ).flatMapLatest { (_, language, listSize) ->
-        // TODO: Remove after loading states are working.
-        delay(3.seconds)
         mediaRepository.fetchMedia(
             id = navArgs.id,
             mediaType = MediaType.safeValueOf(navArgs.mediaType),

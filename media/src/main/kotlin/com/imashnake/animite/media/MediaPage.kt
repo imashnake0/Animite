@@ -6,7 +6,6 @@ import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
@@ -89,7 +88,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
@@ -148,6 +146,7 @@ import com.imashnake.animite.navigation.SharedContentKey
 import com.imashnake.animite.navigation.SharedContentKey.Component.Card
 import com.imashnake.animite.navigation.SharedContentKey.Component.Image
 import com.imashnake.animite.navigation.SharedContentKey.Component.Page
+import com.materialkolor.ktx.animateColorScheme
 import com.materialkolor.ktx.blend
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -155,6 +154,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlin.collections.orEmpty
 import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -197,6 +197,13 @@ fun MediaPage(
     var selectedTimeSpanIndex by remember { mutableIntStateOf(0) }
     val haptic = LocalHapticFeedback.current
 
+    var showCharacterSheet by remember { mutableStateOf(false) }
+    var showStaffSheet by remember { mutableStateOf(false) }
+
+    val creditPagerState = rememberPagerState(pageCount = { listSize })
+    val creditSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
+    val coroutineScope = rememberCoroutineScope()
+
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
@@ -204,24 +211,18 @@ fun MediaPage(
     }
 
     MaterialTheme(
-        colorScheme = rememberColorSchemeFor(
-            // TODO: See if this can be animated?
-            color = if (media is Resource.Success) media.data?.color?.toColorInt() else null,
-            useDarkTheme = useDarkTheme,
-            isAmoled = isAmoled
+        colorScheme = animateColorScheme(
+            rememberColorSchemeFor(
+                color = if (media is Resource.Success) media.data?.color?.toColorInt() else null,
+                useDarkTheme = useDarkTheme,
+                isAmoled = isAmoled
+            ),
         )
     ) {
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
-            var showCharacterSheet by remember { mutableStateOf(false) }
-            var showStaffSheet by remember { mutableStateOf(false) }
-
-            val creditPagerState = rememberPagerState(pageCount = { listSize })
-            val creditSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
-            val coroutineScope = rememberCoroutineScope()
-
             with(sharedTransitionScope) {
                 Box(
                     Modifier
@@ -243,11 +244,11 @@ fun MediaPage(
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                 ) {
-                    BannerLayout(
-                        banner = { bannerModifier ->
-                            Crossfade(media) {
-                                when (it) {
-                                    is Resource.Success -> {
+                    Crossfade(media) { resource ->
+                        when(resource) {
+                            is Resource.Success -> {
+                                BannerLayout(
+                                    banner = { bannerModifier ->
                                         media.data?.let { media ->
                                             MediaBanner(
                                                 imageUrl = media.bannerImage,
@@ -255,185 +256,56 @@ fun MediaPage(
                                                 modifier = bannerModifier.bannerParallax(scrollState)
                                             )
                                         }
-                                    }
-
-                                    is Resource.Loading -> {
-                                        Box(
-                                            bannerModifier.background(
-                                                MaterialTheme.colorScheme.onBackground.copy(
-                                                    alpha = 0.035f
-                                                )
-                                            )
-                                        )
-                                    }
-                                    // TODO: Error state.
-                                    is Resource.Error -> {}
-                                }
-                            }
-                        },
-                        content = {
-                            Crossfade(media, animationSpec = tween(durationMillis = 250)) {
-                                when (it) {
-                                    is Resource.Success -> {
+                                    },
+                                    content = {
                                         media.data?.let { media ->
                                             MediaDetails(
                                                 title = media.title,
                                                 otherTitles = media.otherTitles,
                                                 nextAiring = media.nextAiring,
                                                 description = media.description,
+                                                textModifier = Modifier.skipToLookaheadSize(),
+                                                isSheetOpen = showDetailsSheet,
+                                                onClick = { showDetailsSheet = true },
                                                 modifier = Modifier
                                                     .skipToLookaheadSize()
                                                     .padding(horizontal = LocalPaddings.current.large / 2)
                                                     .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
                                                     .padding(horizontalInsets)
-                                                    .height(
-                                                        dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2
-                                                    ),
-                                                textModifier = Modifier.skipToLookaheadSize(),
-                                                isSheetOpen = showDetailsSheet,
-                                                onClick = { showDetailsSheet = true },
-                                            )
-                                        }
-                                    }
-
-                                    is Resource.Loading -> {
-                                        Column(
-                                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                            modifier = Modifier
-                                                .padding(horizontal = LocalPaddings.current.large / 2)
-                                                .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
-                                                .padding(horizontalInsets)
-                                                .fillMaxWidth()
-                                                .height(dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2)
-                                        ) {
-                                            // TODO: Reuse this from Anime/Manga screen's loading states.
-                                            Text(
-                                                text = " ",
-                                                color = MaterialTheme.colorScheme.onBackground,
-                                                style = MaterialTheme.typography.titleMedium,
-                                                modifier = Modifier
-                                                    .padding(top = LocalPaddings.current.small)
-                                                    .clip(CircleShape)
-                                                    .requiredWidth(140.dp)
-                                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+                                                    .height(dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2),
                                             )
 
-                                            Box(
-                                                Modifier
-                                                    .clip(RoundedCornerShape(LocalPaddings.current.small))
-                                                    .fillMaxSize()
-                                                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
-                                            )
-                                        }
-                                    }
-                                    // TODO: Handle error state.
-                                    is Resource.Error -> {}
-                                }
-                            }
-
-                            Column(verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium)) {
-                                AnimatedVisibility(visible = media is Resource.Loading || media.data?.info?.isNotEmpty() == true) {
-                                    MediaInfo(
-                                        info = (if (media is Resource.Success) {
-                                            media.data?.info.orEmpty()
-                                        } else {
-                                            List(10) { Media.Info.Loading }
-                                        }).toImmutableList(),
-                                        isScrollEnabled = media !is Resource.Loading,
-                                        contentPadding = PaddingValues(
-                                            horizontal = LocalPaddings.current.large
-                                        ) + horizontalInsets,
-                                        modifier = Modifier.animateContentSize()
-                                    )
-                                }
-
-                                Crossfade(media, animationSpec = tween(durationMillis = 500)) { resource ->
-                                    when (resource) {
-                                        is Resource.Success -> {
-                                            media.data?.let { media ->
-                                                if (media.rankings.isNotEmpty()) {
-                                                    MediaRankings(
-                                                        selectedTimeSpanIndex = selectedTimeSpanIndex,
-                                                        onCheckedChange = {
-                                                            selectedTimeSpanIndex = it
-                                                            haptic.performHapticFeedback(
-                                                                HapticFeedbackType.SegmentTick
-                                                            )
-                                                        },
-                                                        rankings = media.rankings,
-                                                        year = media.year,
-                                                        season = media.season,
-                                                        modifier = Modifier
-                                                            .skipToLookaheadSize()
-                                                            .fillMaxWidth()
-                                                            .padding(horizontal = LocalPaddings.current.large)
-                                                            .padding(horizontalInsets)
-                                                    )
-                                                }
+                                            if (media.info.isNotEmpty()) {
+                                                MediaInfo(
+                                                    info = media.info,
+                                                    isScrollEnabled = true,
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = LocalPaddings.current.large
+                                                    ) + horizontalInsets,
+                                                    modifier = Modifier.animateContentSize()
+                                                )
                                             }
-                                        }
 
-                                        is Resource.Loading -> {
-                                            Column(
-                                                verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = LocalPaddings.current.large)
-                                                    .padding(horizontalInsets)
-                                            ) {
-                                                Row(
-                                                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-                                                ) {
-                                                    repeat(3) {
-                                                        ToggleButton(
-                                                            checked = false,
-                                                            onCheckedChange = {},
-                                                            enabled = false,
-                                                            shapes = when (it) {
-                                                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                                                2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                                                            },
-                                                            modifier = Modifier.weight(1f)
-                                                        ) {}
-                                                    }
-                                                }
-                                                StatsRow(
-                                                    stats = persistentListOf(0, 1, 2),
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    Text(
-                                                        text = "POPULAR",
-                                                        color = Transparent,
-                                                        style = MaterialTheme.typography.labelSmall,
-                                                        modifier = Modifier
-                                                            .clip(CircleShape)
-                                                            .graphicsLayer { scaleY = 0.9f }
-                                                            .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
-                                                    )
-
-                                                    Text(
-                                                        text = "#100",
-                                                        color = Transparent,
-                                                        style = MaterialTheme.typography.displaySmall,
-                                                        modifier = Modifier
-                                                            .clip(CircleShape)
-                                                            .graphicsLayer { scaleY = 0.9f }
-                                                            .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
-                                                    )
-                                                }
+                                            if (media.rankings.isNotEmpty()) {
+                                                MediaRankings(
+                                                    selectedTimeSpanIndex = selectedTimeSpanIndex,
+                                                    onCheckedChange = {
+                                                        selectedTimeSpanIndex = it
+                                                        haptic.performHapticFeedback(
+                                                            HapticFeedbackType.SegmentTick
+                                                        )
+                                                    },
+                                                    rankings = media.rankings,
+                                                    year = media.year,
+                                                    season = media.season,
+                                                    modifier = Modifier
+                                                        .skipToLookaheadSize()
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = LocalPaddings.current.large)
+                                                        .padding(horizontalInsets)
+                                                )
                                             }
-                                        }
-                                        // TODO: Error state.
-                                        is Resource.Error -> {}
-                                    }
-                                }
-                            }
 
-                            AnimatedContent(media) { resource ->
-                                when (resource) {
-                                    is Resource.Success -> {
-                                        media.data?.let { media ->
                                             if (media.genres.isNotEmpty()) {
                                                 MediaGenres(
                                                     genres = media.genres,
@@ -445,35 +317,8 @@ fun MediaPage(
                                                     ) + horizontalInsets,
                                                 )
                                             }
-                                        }
-                                    }
 
-                                    is Resource.Loading -> {
-                                        MediaGenres(
-                                            // sus way of making different size loading genre chips
-                                            genres = persistentListOf(
-                                                "               ",
-                                                "                    ",
-                                                "         ",
-                                                "             ",
-                                            ),
-                                            onGenreClick = {},
-                                            contentPadding = PaddingValues(
-                                                horizontal = LocalPaddings.current.large
-                                            ) + horizontalInsets,
-                                        )
-                                    }
-
-                                    // TODO: Error state.
-                                    is Resource.Error -> {}
-                                }
-                            }
-
-                            Crossfade(media) { resource ->
-                                when (resource) {
-                                    is Resource.Success -> {
-                                        media.data?.let { media ->
-                                            if (!media.characters.isEmpty()) {
+                                            if (media.characters.isNotEmpty()) {
                                                 MediaCredits(
                                                     title = stringResource(R.string.characters),
                                                     credits = media.characters,
@@ -488,31 +333,8 @@ fun MediaPage(
                                                     ) + horizontalInsets,
                                                 )
                                             }
-                                        }
-                                    }
 
-                                    is Resource.Loading -> {
-                                        LoadingMediaSmallRow(
-                                            count = 10,
-                                            imageHeight = 137.dp,
-                                            cardWidth = 96.dp,
-                                            // TODO: Not removing baseline shift causes misalignment, figure out why.
-                                            titleStyle = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-                                            contentPadding = PaddingValues(
-                                                horizontal = LocalPaddings.current.large
-                                            ) + horizontalInsets,
-                                        )
-                                    }
-                                    // TODO: Error state.
-                                    is Resource.Error -> {}
-                                }
-                            }
-
-                            Crossfade(media) { resource ->
-                                when (resource) {
-                                    is Resource.Success -> {
-                                        media.data?.let { media ->
-                                            if (!media.characters.isEmpty()) {
+                                            if (media.staff.isNotEmpty()) {
                                                 MediaCredits(
                                                     title = stringResource(R.string.staff),
                                                     credits = media.staff,
@@ -528,98 +350,95 @@ fun MediaPage(
                                                     ) + horizontalInsets,
                                                 )
                                             }
-                                        }
-                                    }
 
-                                    is Resource.Loading -> {
-                                        LoadingMediaSmallRow(
-                                            count = 10,
-                                            imageHeight = 137.dp,
-                                            cardWidth = 96.dp,
-                                            // TODO: Not removing baseline shift causes misalignment, figure out why.
-                                            titleStyle = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
-                                            contentPadding = PaddingValues(
-                                                horizontal = LocalPaddings.current.large
-                                            ) + horizontalInsets,
+                                            if (media.trailer != null || media.streamingEpisodes.isNotEmpty()) {
+                                                MediaWatch(
+                                                    trailer = media.trailer,
+                                                    streamingEpisodes = media.streamingEpisodes,
+                                                    modifier = Modifier
+                                                        .skipToLookaheadSize()
+                                                        .padding(horizontal = LocalPaddings.current.large)
+                                                        .padding(horizontalInsets)
+                                                )
+                                            }
+
+                                            if (media.relations.isNotEmpty()) {
+                                                MediaRelations(
+                                                    relations = media.relations,
+                                                    onItemClicked = {
+                                                        onNavigateToMediaItem(
+                                                            MediaPage(
+                                                                id = it.id,
+                                                                source = RELATIONS,
+                                                                mediaType = it.type.name,
+                                                            )
+                                                        )
+                                                    },
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = LocalPaddings.current.large
+                                                    ) + horizontalInsets,
+                                                )
+                                            }
+
+                                            if (media.recommendations.isNotEmpty()) {
+                                                MediaRecommendations(
+                                                    recommendations = media.recommendations,
+                                                    onItemClicked = {
+                                                        onNavigateToMediaItem(
+                                                            MediaPage(
+                                                                id = it.id,
+                                                                source = RECOMMENDATIONS,
+                                                                mediaType = it.type.name,
+                                                            )
+                                                        )
+                                                    },
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = LocalPaddings.current.large
+                                                    ) + horizontalInsets,
+                                                )
+                                            }
+                                        }
+                                    },
+                                    contentPadding = PaddingValues(
+                                        top = LocalPaddings.current.medium / 2,
+                                        bottom = LocalPaddings.current.large +
+                                                insetPaddingValues.calculateBottomPadding()
+                                    )
+                                )
+                            }
+
+                            is Resource.Loading -> {
+                                BannerLayout(
+                                    banner = { bannerModifier ->
+                                        Box(bannerModifier.background(
+                                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.035f))
                                         )
-                                    }
-                                    // TODO: Error state.
-                                    is Resource.Error -> {}
-                                }
+                                    },
+                                    content = {
+                                        LoadingBannerLayoutContent(
+                                            horizontalInsets = horizontalInsets,
+                                            modifier = Modifier.skipToLookaheadSize()
+                                        )
+                                    },
+                                    contentPadding = PaddingValues(
+                                        top = LocalPaddings.current.medium / 2,
+                                        bottom = LocalPaddings.current.large +
+                                                insetPaddingValues.calculateBottomPadding()
+                                    )
+                                )
                             }
 
-                            when(media) {
-                                is Resource.Success -> {
-                                    media.data?.let { media ->
-                                        if (media.trailer != null || media.streamingEpisodes.isNotEmpty()) {
-                                            MediaWatch(
-                                                trailer = media.trailer,
-                                                streamingEpisodes = media.streamingEpisodes,
-                                                modifier = Modifier
-                                                    .skipToLookaheadSize()
-                                                    .padding(horizontal = LocalPaddings.current.large)
-                                                    .padding(horizontalInsets)
-                                            )
-                                        }
-
-                                        if (media.relations.isNotEmpty()) {
-                                            MediaRelations(
-                                                relations = media.relations,
-                                                onItemClicked = {
-                                                    onNavigateToMediaItem(
-                                                        MediaPage(
-                                                            id = it.id,
-                                                            source = RELATIONS,
-                                                            mediaType = it.type.name,
-                                                        )
-                                                    )
-                                                },
-                                                contentPadding = PaddingValues(
-                                                    horizontal = LocalPaddings.current.large
-                                                ) + horizontalInsets,
-                                            )
-                                        }
-
-                                        if (media.recommendations.isNotEmpty()) {
-                                            MediaRecommendations(
-                                                recommendations = media.recommendations,
-                                                onItemClicked = {
-                                                    onNavigateToMediaItem(
-                                                        MediaPage(
-                                                            id = it.id,
-                                                            source = RECOMMENDATIONS,
-                                                            mediaType = it.type.name,
-                                                        )
-                                                    )
-                                                },
-                                                contentPadding = PaddingValues(
-                                                    horizontal = LocalPaddings.current.large
-                                                ) + horizontalInsets,
-                                            )
-                                        }
-                                    }
-                                }
-
-                                // TODO: Create loading and error states.
-                                is Resource.Loading -> {}
-                                is Resource.Error -> {}
-                            }
-                        },
-                        contentPadding = PaddingValues(
-                            top = LocalPaddings.current.medium / 2,
-                            bottom = LocalPaddings.current.large +
-                                    insetPaddingValues.calculateBottomPadding()
-                        )
-                    )
+                            // TODO: Error state.
+                            is Resource.Error -> {}
+                        }
+                    }
 
                     val isAtTop by remember { derivedStateOf { scrollState.value == 0 } }
                     val offset by animateDpAsState(
                         targetValue = if (isAtTop)
                             0.dp
                         else
-                            dimensionResource(R.dimen.media_image_height) - dimensionResource(
-                                R.dimen.media_details_height
-                            ),
+                            dimensionResource(R.dimen.media_image_height) - dimensionResource(R.dimen.media_details_height),
                         animationSpec = tween(durationMillis = 750),
                         label = "media_card_height"
                     )
@@ -639,23 +458,45 @@ fun MediaPage(
                             .padding(horizontalInsets)
                             .height(dimensionResource(R.dimen.media_image_height) - offset)
                     ) {
-                        MediaCard(
-                            image = if (media is Resource.Success) media.data?.coverImage else null,
-                            tag = null,
-                            label = null,
-                            onClick = {},
-                            modifier = Modifier.sharedBounds(
-                                rememberSharedContentState(
-                                    SharedContentKey(
-                                        id = id,
-                                        source = source,
-                                        sharedComponents = Image to Image,
+                        Crossfade(media is Resource.Success && media.data?.coverImage != null) {
+                            if (it) {
+                                MediaCard(
+                                    image = media.data?.coverImage,
+                                    tag = null,
+                                    label = null,
+                                    onClick = {},
+                                    modifier = Modifier.sharedBounds(
+                                        rememberSharedContentState(
+                                            SharedContentKey(
+                                                id = id,
+                                                source = source,
+                                                sharedComponents = Image to Image,
+                                            )
+                                        ),
+                                        animatedVisibilityScope,
+                                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
                                     )
-                                ),
-                                animatedVisibilityScope,
-                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-                            )
-                        )
+                                )
+                            } else {
+                                MediaCard(
+                                    image = null,
+                                    tag = null,
+                                    label = null,
+                                    onClick = {},
+                                    modifier = Modifier.sharedBounds(
+                                        rememberSharedContentState(
+                                            SharedContentKey(
+                                                id = id,
+                                                source = source,
+                                                sharedComponents = Image to Image,
+                                            )
+                                        ),
+                                        animatedVisibilityScope,
+                                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+                                    )
+                                )
+                            }
+                        }
                     }
 
                     Icon(
@@ -1564,6 +1405,128 @@ private fun MediaRecommendations(
             tag = null,
             label = media.title,
             onClick = { onItemClicked(media) },
+        )
+    }
+}
+
+@Composable
+private fun LoadingBannerLayoutContent(
+    horizontalInsets: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier
+            .padding(horizontal = LocalPaddings.current.large / 2)
+            .padding(start = dimensionResource(R.dimen.media_card_width) + LocalPaddings.current.large)
+            .padding(horizontalInsets)
+            .fillMaxWidth()
+            .height(dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2)
+    ) {
+        // TODO: Reuse this from Anime/Manga screen's loading states.
+        Text(
+            text = "",
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .padding(top = LocalPaddings.current.small)
+                .clip(CircleShape)
+                .requiredWidth(140.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+        )
+
+        Box(
+            Modifier
+                .clip(RoundedCornerShape(LocalPaddings.current.small))
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+        )
+    }
+
+    MediaInfo(
+        info = List(10) { Media.Info.Loading }.toImmutableList(),
+        isScrollEnabled = false,
+        contentPadding = PaddingValues(
+            horizontal = LocalPaddings.current.large
+        ) + horizontalInsets,
+        modifier = Modifier.animateContentSize()
+    )
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = LocalPaddings.current.large)
+            .padding(horizontalInsets)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
+        ) {
+            // TODO: Replace with boxes.
+            repeat(3) {
+                ToggleButton(
+                    checked = false,
+                    onCheckedChange = {},
+                    enabled = false,
+                    shapes = when (it) {
+                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {}
+            }
+        }
+        StatsRow(
+            stats = persistentListOf(0, 1, 2),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "POPULAR",
+                color = Color.Transparent,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .graphicsLayer { scaleY = 0.9f }
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+            )
+
+            Text(
+                text = "#100",
+                color = Color.Transparent,
+                style = MaterialTheme.typography.displaySmall,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .graphicsLayer { scaleY = 0.9f }
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+            )
+        }
+    }
+
+    MediaGenres(
+        // sus way of making different size loading genre chips
+        genres = persistentListOf(
+            "               ",
+            "                    ",
+            "         ",
+            "             ",
+        ),
+        onGenreClick = {},
+        contentPadding = PaddingValues(
+            horizontal = LocalPaddings.current.large
+        ) + horizontalInsets,
+    )
+
+    repeat(2) {
+        LoadingMediaSmallRow(
+            count = 10,
+            imageHeight = 137.dp,
+            cardWidth = 96.dp,
+            // TODO: Not removing baseline shift causes misalignment, figure out why.
+            titleStyle = MaterialTheme.typography.titleMedium.copy(baselineShift = null),
+            contentPadding = PaddingValues(
+                horizontal = LocalPaddings.current.large
+            ) + horizontalInsets,
         )
     }
 }
