@@ -11,7 +11,6 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-apollo-cache = { id = "com.apollographql.cache:normalized-cache-apollo-compiler-plugin", version.ref = "apolloCache" }
 apollo-kotlin = { id = "com.apollographql.apollo", version.ref = "apollo" }
 
 
@@ -33,12 +32,12 @@ coreSplashscreen = "1.2.0"
 lifecycle = "2.11.0"
 extJunit = "1.3.0"
 espresso = "3.7.0"
-navigation = "2.10.0"
+navigation = "2.10.1"
 
 # Apollo Kotlin
 # https://github.com/apollographql/apollo-kotlin/releases
-apollo = "5.0.1"
-apolloCache = "1.0.6"
+apollo = "5.1.0"
+apolloCache = "1.0.7"
 
 # DataStore
 # https://developer.android.com/jetpack/androidx/releases/datastore
@@ -50,12 +49,12 @@ coil = "3.6.2"
 
 # Compose
 # https://developer.android.com/jetpack/androidx/releases/compose
-composeAnimation = "1.12.0"
-composeFoundation = "1.12.0"
-composeMaterial = "1.12.0"
-composeMaterial3 = "1.5.0-alpha24"
-composeRuntime = "1.12.0"
-composeUi = "1.12.0"
+composeAnimation = "1.12.1"
+composeFoundation = "1.12.1"
+composeMaterial = "1.12.1"
+composeMaterial3 = "1.5.0-alpha28"
+composeRuntime = "1.12.1"
+composeUi = "1.12.1"
 composeIcons = "1.7.8"
 
 # Dagger
@@ -68,7 +67,7 @@ hilt = "1.4.0"
 
 # Kotlin
 # https://kotlinlang.org/docs/releases.html#release-details
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 kotlinxTime = "0.8.0"
 kotlinxCollectionsImmutable = "0.5.2"
 coroutines = "1.11.0"
@@ -80,7 +79,7 @@ composeMultiplatform = "1.12.0"
 
 # KSP
 # https://github.com/google/ksp/releases
-ksp = "2.3.11"
+ksp = "2.3.12"
 
 # Ktor
 # https://ktor.io/docs/releases.html#release-details
@@ -100,7 +99,7 @@ composeMarkdown = "0.45.0"
 
 # MaterialKolor
 # https://github.com/jordond/MaterialKolor
-materialKolor = "5.0.0"
+materialKolor = "5.0.1"
 
 # Cascade
 # https://github.com/saket/cascade/releases

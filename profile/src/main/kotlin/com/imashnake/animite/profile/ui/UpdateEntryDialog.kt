@@ -51,6 +51,7 @@ import androidx.compose.material3.SliderDefaults.colors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -793,16 +794,18 @@ private fun SetScore(
             LocalMinimumInteractiveComponentSize provides 0.dp,
         ) {
             Slider(
-                value = score.value,
+                state = rememberSliderState(
+                    value = score.value,
+                    trackRange = when (score.format) {
+                        ScoreFormat.POINT_100 -> 0f..100f
+                        ScoreFormat.POINT_10_DECIMAL -> 0f..10f
+                        ScoreFormat.POINT_10 -> 0f..10f
+                        ScoreFormat.POINT_5 -> 0f..5f
+                        ScoreFormat.POINT_3 -> 0f..3f
+                        else -> 0f..0f
+                    },
+                ),
                 onValueChange = { onScoreSet(it, score.format) },
-                valueRange = when (score.format) {
-                    ScoreFormat.POINT_100 -> 0f..100f
-                    ScoreFormat.POINT_10_DECIMAL -> 0f..10f
-                    ScoreFormat.POINT_10 -> 0f..10f
-                    ScoreFormat.POINT_5 -> 0f..5f
-                    ScoreFormat.POINT_3 -> 0f..3f
-                    else -> 0f..0f
-                },
                 track = { state ->
                     val trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
                     SliderDefaults.Track(
@@ -825,8 +828,8 @@ private fun SetScore(
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.padding(
-                            start = (1f - (state.value / state.valueRange.endInclusive)) * 16.dp,
-                            end = (state.value / state.valueRange.endInclusive) * 16.dp
+                            start = (1f - (state.value / state.trackRange.endInclusive)) * 16.dp,
+                            end = (state.value / state.trackRange.endInclusive) * 16.dp
                         ).size(16.dp)
                     ) {
                         Box(
