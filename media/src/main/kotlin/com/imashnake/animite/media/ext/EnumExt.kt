@@ -14,7 +14,8 @@ val Media.InfoItem.title get() = when(this) {
     Media.InfoItem.SEASON -> R.string.season
     Media.InfoItem.STUDIO -> R.string.studios
     Media.InfoItem.SOURCE -> R.string.source
-    Media.InfoItem.DIVIDER -> null
+    Media.InfoItem.DIVIDER,
+    Media.InfoItem.LOADING -> null
 }
 
 val Media.Format.res get() = when(this) {
@@ -116,7 +117,7 @@ val Media.Ranking.TimeSpan.res get() = when(this) {
 val Media.Ranking.Type.res get() = when(this) {
     Media.Ranking.Type.RATED -> R.string.rated
     Media.Ranking.Type.POPULAR -> R.string.popular
-    Media.Ranking.Type.SCORE -> R.string.score
+    Media.Ranking.Type.SCORE -> R.string.ranking_score
 }
 
 val Media.Sort.res get() = when (this) {

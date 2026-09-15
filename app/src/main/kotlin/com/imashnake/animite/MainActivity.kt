@@ -249,13 +249,12 @@ fun MainScreen(
                         ExploreScreen(
                             listState = exploreScrollState,
                             deviceScreenCornerRadius = deviceScreenCornerRadius,
-                            onItemClick = { id, mediaType, title ->
+                            onItemClick = { id, mediaType ->
                                 navController.navigate(
                                     MediaPage(
                                         id = id,
                                         source = "Search",
                                         mediaType = mediaType.rawValue,
-                                        title = title,
                                     )
                                 )
                             }
@@ -304,13 +303,12 @@ fun MainScreen(
         SearchFrontDrop(
             hasExtraPadding = isNavBarVisible &&
                     LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT,
-            onItemClick = { id, mediaType, title ->
+            onItemClick = { id, mediaType ->
                 navController.navigate(
                     MediaPage(
                         id = id,
                         source = "Quick Search",
                         mediaType = mediaType.rawValue,
-                        title = title,
                     )
                 )
             },

@@ -127,7 +127,6 @@ fun MangaScreen(
                                                             id = media.id,
                                                             source = index.toString(),
                                                             mediaType = MediaType.MANGA.rawValue,
-                                                            title = media.title,
                                                         )
                                                     )
                                                 },
@@ -144,6 +143,8 @@ fun MangaScreen(
                                     is Resource.Loading -> {
                                         LoadingMediaSmallRow(
                                             count = 10,
+                                            imageHeight = 200.dp,
+                                            cardWidth = 140.dp,
                                             contentPadding = PaddingValues(
                                                 horizontal = LocalPaddings.current.large,
                                                 vertical = LocalPaddings.current.large / 2,

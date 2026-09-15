@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -167,14 +168,14 @@ class ProfileViewModel @Inject constructor(
     private fun refreshAnimeLists() = viewModelScope.launch(Dispatchers.IO) {
         useNetwork = true
         animeListsRefreshTrigger.emit(Unit)
-        delay(250)
+        delay(250.milliseconds)
         useNetwork = false
     }
 
     private fun refreshMangaLists() = viewModelScope.launch(Dispatchers.IO) {
         useNetwork = true
         mangaListsRefreshTrigger.emit(Unit)
-        delay(250)
+        delay(250.milliseconds)
         useNetwork = false
     }
 
@@ -184,7 +185,7 @@ class ProfileViewModel @Inject constructor(
         refreshTrigger.emit(Unit)
         animeListsRefreshTrigger.emit(Unit)
         mangaListsRefreshTrigger.emit(Unit)
-        delay(1500L)
+        delay(1500.milliseconds)
         useNetwork = false
         setIsRefreshing(false)
     }

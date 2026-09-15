@@ -34,6 +34,7 @@ tasks.withType<KotlinCompile>().configureEach {
 dependencies {
     implementation(projects.banner)
     implementation(projects.navigation)
+    implementation(projects.core.resource)
     implementation(projects.core.ui)
     implementation(projects.api.anilist)
     implementation(projects.api.preferences)
