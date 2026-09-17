@@ -148,7 +148,7 @@ import com.imashnake.animite.navigation.R as navigationR
 )
 @Composable
 fun ExploreScreen(
-    onItemClick: (Int, MediaType, String?) -> Unit,
+    onItemClick: (Int, MediaType) -> Unit,
     listState: LazyListState,
     deviceScreenCornerRadius: Int,
     modifier: Modifier = Modifier,
@@ -309,13 +309,7 @@ fun ExploreScreen(
                             mediaMediumList = explorePage?.data?.list
                                 .orEmpty()
                                 .toImmutableList(),
-                            onItemClick = { id, title ->
-                                onItemClick(
-                                    id,
-                                    MediaType.valueOf(mediaType),
-                                    title
-                                )
-                            },
+                            onItemClick = { id -> onItemClick(id, MediaType.valueOf(mediaType)) },
                             pageInfo = explorePage?.data?.info,
                             onPageChanged = viewModel::setPage,
                             shouldShowRank = true,

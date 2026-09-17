@@ -29,6 +29,7 @@ import org.jetbrains.compose.resources.StringResource
 import javax.inject.Inject
 import kotlin.collections.mapNotNull
 import kotlin.collections.orEmpty
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -134,7 +135,7 @@ class MangaViewModel @Inject constructor(
         setIsRefreshing(true)
         useNetwork = true
         refreshTrigger.emit(Unit)
-        delay(1500L)
+        delay(1500.milliseconds)
         useNetwork = false
         setIsRefreshing(false)
     }

@@ -59,7 +59,7 @@ import com.imashnake.animite.navigation.R as navigationR
 fun SearchFrontDrop(
     hasExtraPadding: Boolean,
     isFabVisible: Boolean,
-    onItemClick: (Int, MediaType, String?) -> Unit,
+    onItemClick: (Int, MediaType) -> Unit,
     modifier: Modifier = Modifier,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
     viewModel: SearchViewModel = viewModel()
@@ -102,10 +102,10 @@ fun SearchFrontDrop(
         ) {
             MediaMediumList(
                 mediaMediumList = it,
-                onItemClick = { id, title ->
+                onItemClick = { id ->
                     isExpanded = false
                     viewModel.setQuery(null)
-                    onItemClick(id, searchMediaType, title)
+                    onItemClick(id, searchMediaType)
                 },
                 shouldShowRank = false,
                 modifier = Modifier

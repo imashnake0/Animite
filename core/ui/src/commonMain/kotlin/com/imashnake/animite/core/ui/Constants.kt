@@ -21,4 +21,7 @@ object Constants {
     const val YEAR = "year"
     const val PAGE = "page"
     const val IS_ADULT = "is_adult"
+
+    const val SOURCE = "source"
+    const val ID = "id"
 }

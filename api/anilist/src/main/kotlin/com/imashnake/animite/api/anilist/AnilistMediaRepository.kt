@@ -20,8 +20,8 @@ private const val HENTAI = "Hentai"
  * Repository for fetching [MediaQuery.Media] or a list of [MediaListQuery.Medium].
  *
  * @param apolloClient Default apollo client.
- * @property fetchMediaList Fetches a list of [MediaListQuery.Medium].
- * @property fetchMedia Fetches detailed media: [MediaQuery.Media].
+ * [fetchMediaList] - Fetches a list of [MediaListQuery.Medium].
+ * [fetchMedia] - Fetches detailed media: [MediaQuery.Media].
  */
 @Suppress("LongParameterList")
 class AnilistMediaRepository(
@@ -120,7 +120,7 @@ class AnilistMediaRepository(
                 perPage = Optional.presentIfNotNull(perPage)
             )
         )
-        .fetchPolicy(FetchPolicy.CacheAndNetwork)
+        .fetchPolicy(FetchPolicy.CacheFirst)
         .toFlow()
         .filter { it.exception == null }
         .asResult { Media(it.media!!, language) }
