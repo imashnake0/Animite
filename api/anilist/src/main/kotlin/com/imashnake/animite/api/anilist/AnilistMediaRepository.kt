@@ -120,7 +120,7 @@ class AnilistMediaRepository(
                 perPage = Optional.presentIfNotNull(perPage)
             )
         )
-        .fetchPolicy(FetchPolicy.CacheAndNetwork)
+        .fetchPolicy(FetchPolicy.CacheFirst)
         .toFlow()
         .filter { it.exception == null }
         .asResult { Media(it.media!!, language) }
