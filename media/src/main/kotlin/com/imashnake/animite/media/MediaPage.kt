@@ -107,6 +107,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -1380,7 +1381,6 @@ private fun LoadingBannerLayoutContent(
             .fillMaxWidth()
             .height(dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2)
     ) {
-        // TODO: Reuse this from Anime/Manga screen's loading states.
         Text(
             text = "",
             color = MaterialTheme.colorScheme.onBackground,
@@ -1409,18 +1409,12 @@ private fun LoadingBannerLayoutContent(
 
     LoadingMediaRankings(modifier.padding(horizontalInsets))
 
-    MediaGenres(
-        // sus way of making different size loading genre chips
-        genres = persistentListOf(
-            "               ",
-            "                    ",
-            "         ",
-            "             ",
-        ),
-        onGenreClick = {},
-        contentPadding = PaddingValues(
-            horizontal = LocalPaddings.current.large
-        ) + horizontalInsets,
+    LoadingMediaGenres(
+        modifier = modifier.padding(
+            PaddingValues(
+                horizontal = LocalPaddings.current.large
+            ) + horizontalInsets
+        )
     )
 
     repeat(2) {
@@ -1516,6 +1510,30 @@ private fun LoadingMediaRankings(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+            )
+        }
+    }
+}
+
+@Composable
+private fun LoadingMediaGenres(modifier: Modifier = Modifier) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        persistentListOf(
+            "               ", "                    ", "         ", "             "
+        ).fastForEach {
+            Text(
+                text = it,
+                color = Color.Transparent,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(0.2f))
+                    .padding(horizontal = LocalPaddings.current.small)
             )
         }
     }
