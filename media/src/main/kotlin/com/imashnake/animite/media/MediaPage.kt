@@ -253,7 +253,9 @@ fun MediaPage(
                                             MediaBanner(
                                                 imageUrl = media.bannerImage,
                                                 color = Color(media.color.toColorInt()).copy(alpha = 0.5f),
-                                                modifier = bannerModifier.bannerParallax(scrollState)
+                                                modifier = bannerModifier
+                                                    .skipToLookaheadSize()
+                                                    .bannerParallax(scrollState)
                                             )
                                         }
                                     },
