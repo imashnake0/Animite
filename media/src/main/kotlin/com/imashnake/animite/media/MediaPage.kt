@@ -315,6 +315,7 @@ fun MediaPage(
                                                     contentPadding = PaddingValues(
                                                         horizontal = LocalPaddings.current.large
                                                     ) + horizontalInsets,
+                                                    modifier = Modifier.skipToLookaheadSize()
                                                 )
                                             }
 
