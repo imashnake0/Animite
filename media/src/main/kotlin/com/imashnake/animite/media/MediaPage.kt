@@ -1387,6 +1387,7 @@ private fun MediaRecommendations(
     }
 }
 
+// TODO: These can probably just be boxes to improve perf.
 @Composable
 private fun LoadingBannerLayoutContent(
     horizontalInsets: PaddingValues,
