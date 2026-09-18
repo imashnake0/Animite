@@ -278,11 +278,9 @@ fun MediaPage(
                                             if (media.info.isNotEmpty()) {
                                                 MediaInfo(
                                                     info = media.info,
-                                                    isScrollEnabled = true,
                                                     contentPadding = PaddingValues(
                                                         horizontal = LocalPaddings.current.large
                                                     ) + horizontalInsets,
-                                                    modifier = Modifier.animateContentSize()
                                                 )
                                             }
 
@@ -869,7 +867,6 @@ private fun MediaDescription(
 @Composable
 private fun MediaInfo(
     info: ImmutableList<Media.Info>,
-    isScrollEnabled: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -887,10 +884,7 @@ private fun MediaInfo(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
-                .horizontalScroll(
-                    state = rememberScrollState(),
-                    enabled = isScrollEnabled
-                )
+                .horizontalScroll(state = rememberScrollState())
                 .padding(contentPadding)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -911,28 +905,6 @@ private fun MediaInfo(
                                     shape = MaterialShapes.Cookie4Sided.toShape()
                                 )
                         )
-                    }
-
-                    is Media.Info.Loading -> {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            modifier = Modifier
-                                .padding(
-                                    vertical = LocalPaddings.current.medium,
-                                    horizontal = LocalPaddings.current.large / 2,
-                                )
-                                .graphicsLayer { alpha = 0f }
-                        ) {
-                            Text(
-                                text = "                   ",
-                                style = MaterialTheme.typography.labelSmallEmphasized
-                            )
-                            Text(
-                                text = "                   ",
-                                style = MaterialTheme.typography.labelSmallEmphasized
-                            )
-                        }
                     }
 
                     else -> {
@@ -1387,7 +1359,6 @@ private fun MediaRecommendations(
     }
 }
 
-// TODO: These can probably just be boxes to improve perf.
 @Composable
 private fun LoadingBannerLayoutContent(
     horizontalInsets: PaddingValues,
@@ -1422,13 +1393,11 @@ private fun LoadingBannerLayoutContent(
         )
     }
 
-    MediaInfo(
-        info = List(10) { Media.Info.Loading }.toImmutableList(),
-        isScrollEnabled = false,
+    LoadingMediaInfo(
         contentPadding = PaddingValues(
-            horizontal = LocalPaddings.current.large
+            start = LocalPaddings.current.large
         ) + horizontalInsets,
-        modifier = Modifier.animateContentSize()
+        modifier = modifier
     )
 
     Column(
@@ -1507,6 +1476,34 @@ private fun LoadingBannerLayoutContent(
                 horizontal = LocalPaddings.current.large
             ) + horizontalInsets,
         )
+    }
+}
+
+@Composable
+private fun LoadingMediaInfo(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier
+            .padding(contentPadding)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                shape = RoundedCornerShape(
+                    topStart = LocalPaddings.current.large,
+                    bottomStart = LocalPaddings.current.large
+                ),
+            )
+            .fillMaxWidth()
+            .padding(vertical = LocalPaddings.current.medium)
+    ) {
+        repeat(2) {
+            Text(
+                text = " ",
+                style = MaterialTheme.typography.labelSmallEmphasized
+            )
+        }
     }
 }
 
