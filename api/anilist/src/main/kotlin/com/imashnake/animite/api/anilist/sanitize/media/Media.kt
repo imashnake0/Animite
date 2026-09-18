@@ -429,8 +429,6 @@ data class Media(
         ) : Info(item)
 
         data object Divider : Info(InfoItem.DIVIDER)
-
-        data object Loading : Info(InfoItem.LOADING)
     }
 
     enum class InfoItem {
@@ -444,7 +442,6 @@ data class Media(
         STUDIO,
         SOURCE,
         DIVIDER,
-        LOADING
     }
 
     @Stable

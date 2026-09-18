@@ -9,7 +9,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -63,16 +62,19 @@ import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -105,6 +107,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.LinkInteractionListener
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -154,7 +157,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlin.collections.orEmpty
 import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -280,11 +282,9 @@ fun MediaPage(
                                             if (media.info.isNotEmpty()) {
                                                 MediaInfo(
                                                     info = media.info,
-                                                    isScrollEnabled = true,
                                                     contentPadding = PaddingValues(
                                                         horizontal = LocalPaddings.current.large
                                                     ) + horizontalInsets,
-                                                    modifier = Modifier.animateContentSize()
                                                 )
                                             }
 
@@ -317,6 +317,7 @@ fun MediaPage(
                                                     contentPadding = PaddingValues(
                                                         horizontal = LocalPaddings.current.large
                                                     ) + horizontalInsets,
+                                                    modifier = Modifier.skipToLookaheadSize()
                                                 )
                                             }
 
@@ -871,7 +872,6 @@ private fun MediaDescription(
 @Composable
 private fun MediaInfo(
     info: ImmutableList<Media.Info>,
-    isScrollEnabled: Boolean,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues()
 ) {
@@ -889,10 +889,7 @@ private fun MediaInfo(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
-                .horizontalScroll(
-                    state = rememberScrollState(),
-                    enabled = isScrollEnabled
-                )
+                .horizontalScroll(state = rememberScrollState())
                 .padding(contentPadding)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -913,28 +910,6 @@ private fun MediaInfo(
                                     shape = MaterialShapes.Cookie4Sided.toShape()
                                 )
                         )
-                    }
-
-                    is Media.Info.Loading -> {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-                            modifier = Modifier
-                                .padding(
-                                    vertical = LocalPaddings.current.medium,
-                                    horizontal = LocalPaddings.current.large / 2,
-                                )
-                                .graphicsLayer { alpha = 0f }
-                        ) {
-                            Text(
-                                text = "                   ",
-                                style = MaterialTheme.typography.labelSmallEmphasized
-                            )
-                            Text(
-                                text = "                   ",
-                                style = MaterialTheme.typography.labelSmallEmphasized
-                            )
-                        }
                     }
 
                     else -> {
@@ -994,47 +969,53 @@ private fun MediaRankings(
         modifier = modifier
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(
-                ButtonGroupDefaults.ConnectedSpaceBetween
-            )
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            modifier = Modifier.padding(vertical = LocalPaddings.current.tiny)
         ) {
             Media.Ranking.TimeSpan.entries.fastForEach { timeSpan ->
-                ToggleButton(
-                    checked = selectedTimeSpanIndex == timeSpan.index,
-                    onCheckedChange = { onCheckedChange(timeSpan.index) },
-                    shapes = when (timeSpan.index) {
-                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                    },
-                    modifier = Modifier.weight(1f)
+                CompositionLocalProvider(
+                    // Remove default M3 padding
+                    LocalMinimumInteractiveComponentSize provides 0.dp,
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.Bottom,
-                        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
+                    ToggleButton(
+                        checked = selectedTimeSpanIndex == timeSpan.index,
+                        onCheckedChange = { onCheckedChange(timeSpan.index) },
+                        shapes = when (timeSpan.index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Text(text = stringResource(timeSpan.res), Modifier.alignByBaseline())
-                        when (timeSpan.index) {
-                            1 -> year?.let {
-                                Text(
-                                    text = it,
-                                    fontSize = 10.sp,
-                                    modifier = Modifier
-                                        .graphicsLayer { alpha = 0.5f }
-                                        .alignByBaseline()
-                                )
+                        Row(
+                            verticalAlignment = Alignment.Bottom,
+                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.tiny)
+                        ) {
+                            Text(text = stringResource(timeSpan.res), Modifier.alignByBaseline())
+                            when (timeSpan.index) {
+                                1 -> year?.let {
+                                    Text(
+                                        text = it,
+                                        fontSize = 10.sp,
+                                        modifier = Modifier
+                                            .graphicsLayer { alpha = 0.5f }
+                                            .alignByBaseline()
+                                    )
+                                }
+
+                                2 -> season?.let {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(it.icon),
+                                        contentDescription = stringResource(it.res),
+                                        modifier = Modifier
+                                            .graphicsLayer { alpha = 0.5f }
+                                            .height(14.dp)
+                                            .align(Alignment.CenterVertically)
+                                    )
+                                }
+
+                                else -> {}
                             }
-                            2 -> season?.let {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(it.icon),
-                                    contentDescription = stringResource(it.res),
-                                    modifier = Modifier
-                                        .graphicsLayer { alpha = 0.5f }
-                                        .height(14.dp)
-                                        .align(Alignment.CenterVertically)
-                                )
-                            }
-                            else -> {}
                         }
                     }
                 }
@@ -1403,7 +1384,6 @@ private fun LoadingBannerLayoutContent(
             .fillMaxWidth()
             .height(dimensionResource(R.dimen.media_details_height) + LocalPaddings.current.medium / 2)
     ) {
-        // TODO: Reuse this from Anime/Manga screen's loading states.
         Text(
             text = "",
             color = MaterialTheme.colorScheme.onBackground,
@@ -1423,78 +1403,21 @@ private fun LoadingBannerLayoutContent(
         )
     }
 
-    MediaInfo(
-        info = List(10) { Media.Info.Loading }.toImmutableList(),
-        isScrollEnabled = false,
+    LoadingMediaInfo(
         contentPadding = PaddingValues(
-            horizontal = LocalPaddings.current.large
+            start = LocalPaddings.current.large
         ) + horizontalInsets,
-        modifier = Modifier.animateContentSize()
+        modifier = modifier
     )
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = LocalPaddings.current.large)
-            .padding(horizontalInsets)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-        ) {
-            // TODO: Replace with boxes.
-            repeat(3) {
-                ToggleButton(
-                    checked = false,
-                    onCheckedChange = {},
-                    enabled = false,
-                    shapes = when (it) {
-                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        2 -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {}
-            }
-        }
-        StatsRow(
-            stats = persistentListOf(0, 1, 2),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "POPULAR",
-                color = Color.Transparent,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .graphicsLayer { scaleY = 0.9f }
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
-            )
+    LoadingMediaRankings(modifier.padding(horizontalInsets))
 
-            Text(
-                text = "#100",
-                color = Color.Transparent,
-                style = MaterialTheme.typography.displaySmall,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .graphicsLayer { scaleY = 0.9f }
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
-            )
-        }
-    }
-
-    MediaGenres(
-        // sus way of making different size loading genre chips
-        genres = persistentListOf(
-            "               ",
-            "                    ",
-            "         ",
-            "             ",
-        ),
-        onGenreClick = {},
-        contentPadding = PaddingValues(
-            horizontal = LocalPaddings.current.large
-        ) + horizontalInsets,
+    LoadingMediaGenres(
+        modifier = modifier.padding(
+            PaddingValues(
+                horizontal = LocalPaddings.current.large
+            ) + horizontalInsets
+        )
     )
 
     repeat(2) {
@@ -1508,6 +1431,114 @@ private fun LoadingBannerLayoutContent(
                 horizontal = LocalPaddings.current.large
             ) + horizontalInsets,
         )
+    }
+}
+
+@Composable
+private fun LoadingMediaInfo(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues()
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier
+            .padding(contentPadding)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                shape = RoundedCornerShape(
+                    topStart = LocalPaddings.current.large,
+                    bottomStart = LocalPaddings.current.large
+                ),
+            )
+            .fillMaxWidth()
+            .padding(vertical = LocalPaddings.current.medium)
+    ) {
+        repeat(2) {
+            Text(
+                text = " ",
+                style = MaterialTheme.typography.labelSmallEmphasized
+            )
+        }
+    }
+}
+
+@Composable
+private fun LoadingMediaRankings(modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = LocalPaddings.current.large)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+            modifier = Modifier.padding(vertical = LocalPaddings.current.tiny)
+        ) {
+            repeat(3) {
+                Box(
+                    modifier = Modifier
+                        .clip(
+                            when(it) {
+                                0 -> ButtonGroupDefaults.connectedLeadingButtonShape
+                                1 -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
+                                else -> ButtonGroupDefaults.connectedTrailingButtonShape
+                            }
+                        )
+                        .background(MaterialTheme.colorScheme.onSurface.copy(0.1f))
+                        .height(ToggleButtonDefaults.MinHeight)
+                        .weight(1f)
+                ) {
+                    Text(" ", style = MaterialTheme.typography.labelLarge)
+                }
+            }
+        }
+        StatsRow(
+            stats = persistentListOf(0, 1, 2),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "POPULAR",
+                color = Color.Transparent,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier
+                    .graphicsLayer { scaleX = 0.8f; scaleY = 0.8f }
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+            )
+
+            Text(
+                text = "#100",
+                color = Color.Transparent,
+                style = MaterialTheme.typography.displaySmall,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.5f))
+            )
+        }
+    }
+}
+
+@Composable
+private fun LoadingMediaGenres(modifier: Modifier = Modifier) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        persistentListOf(
+            "               ", "                    ", "         ", "             "
+        ).fastForEach {
+            Text(
+                text = it,
+                color = Color.Transparent,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(0.2f))
+                    .padding(horizontal = LocalPaddings.current.small)
+            )
+        }
     }
 }
 
