@@ -27,7 +27,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            optimization { enable = true }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName(
                 if (System.getenv("Animite") == "true") "release" else "debug"
