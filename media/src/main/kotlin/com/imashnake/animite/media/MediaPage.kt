@@ -2,6 +2,7 @@
 
 package com.imashnake.animite.media
 
+import android.app.DownloadManager
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -195,6 +196,8 @@ fun MediaPage(
     val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val scrollState = rememberScrollState()
+
+    val context = LocalContext.current
 
     val media by viewModel.media.collectAsState()
     val source by viewModel.source.collectAsState()
@@ -489,8 +492,10 @@ fun MediaPage(
                         )
                     }
 
-                    BackIcon(
-                        onBack = onBack,
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        onClick = onBack,
+                        contentDescription = stringResource(R.string.back),
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(insetPaddingValues)
@@ -515,8 +520,10 @@ fun MediaPage(
                                 .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f))
                         )
 
-                        BackIcon(
-                            onBack = { setZoomableMediaImage(null) },
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            onClick = { setZoomableMediaImage(null) },
+                            contentDescription = stringResource(R.string.back),
                             modifier = Modifier
                                 .align(Alignment.TopStart)
                                 .padding(insetPaddingValues)
@@ -525,6 +532,38 @@ fun MediaPage(
                                     top = LocalPaddings.current.small
                                 )
                         )
+
+                        var isDownloadQueued by remember { mutableStateOf(false) }
+                        AnimatedContent(
+                            targetState = isDownloadQueued,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(insetPaddingValues)
+                                .padding(
+                                    end = LocalPaddings.current.medium,
+                                    bottom = LocalPaddings.current.small
+                                )
+                        ) {
+                            if (!it) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.download),
+                                    onClick = {
+                                        zoomableMediaImage?.let { image ->
+                                            val downloadManager =
+                                                context.getSystemService(DownloadManager::class.java)
+                                            val request = viewModel.requestDownloadImage(image)
+                                            val downloadId = downloadManager.enqueue(request)
+
+                                            if (downloadId != -1L) {
+                                                isDownloadQueued = true
+                                            }
+                                        }
+                                    },
+                                )
+                            } else {
+                                Icon(imageVector = ImageVector.vectorResource(R.drawable.download_done))
+                            }
+                        }
                     }
                 }
             }
@@ -743,16 +782,18 @@ fun MediaPage(
 }
 
 @Composable
-private fun BackIcon(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
+private fun Icon(
+    imageVector: ImageVector,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    contentDescription: String? = null,
 ) {
     Icon(
-        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-        contentDescription = stringResource(R.string.back),
+        imageVector = imageVector,
+        contentDescription = contentDescription,
         modifier = modifier
             .clip(CircleShape)
-            .clickable { onBack() }
+            .clickable(enabled = onClick != null) { onClick?.invoke() }
             .padding(LocalPaddings.current.small),
         tint = if (isSystemInDarkTheme()) Color.White else Color.Black
     )
