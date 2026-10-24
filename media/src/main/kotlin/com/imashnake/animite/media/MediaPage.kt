@@ -533,15 +533,9 @@ fun MediaPage(
                                 )
                         )
 
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.download),
-                            onClick = {
-                                zoomableMediaImage?.let { image ->
-                                    val downloadManager = context.getSystemService(DownloadManager::class.java)
-                                    val request = viewModel.requestDownloadImage(image)
-                                    downloadManager.enqueue(request)
-                                }
-                            },
+                        var isDownloadQueued by remember { mutableStateOf(false) }
+                        AnimatedContent(
+                            targetState = isDownloadQueued,
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(insetPaddingValues)
@@ -549,7 +543,27 @@ fun MediaPage(
                                     end = LocalPaddings.current.medium,
                                     bottom = LocalPaddings.current.small
                                 )
-                        )
+                        ) {
+                            if (!it) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.download),
+                                    onClick = {
+                                        zoomableMediaImage?.let { image ->
+                                            val downloadManager =
+                                                context.getSystemService(DownloadManager::class.java)
+                                            val request = viewModel.requestDownloadImage(image)
+                                            val downloadId = downloadManager.enqueue(request)
+
+                                            if (downloadId != -1L) {
+                                                isDownloadQueued = true
+                                            }
+                                        }
+                                    },
+                                )
+                            } else {
+                                Icon(imageVector = ImageVector.vectorResource(R.drawable.download_done))
+                            }
+                        }
                     }
                 }
             }
@@ -770,8 +784,8 @@ fun MediaPage(
 @Composable
 private fun Icon(
     imageVector: ImageVector,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     contentDescription: String? = null,
 ) {
     Icon(
@@ -779,7 +793,7 @@ private fun Icon(
         contentDescription = contentDescription,
         modifier = modifier
             .clip(CircleShape)
-            .clickable { onClick() }
+            .clickable(enabled = onClick != null) { onClick?.invoke() }
             .padding(LocalPaddings.current.small),
         tint = if (isSystemInDarkTheme()) Color.White else Color.Black
     )
