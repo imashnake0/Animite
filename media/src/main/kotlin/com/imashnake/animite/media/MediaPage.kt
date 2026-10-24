@@ -184,8 +184,8 @@ fun MediaPage(
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
     isAmoled: Boolean,
-    isMediaCardExpanded: Boolean,
-    setIsMediaCardExpanded: (Boolean) -> Unit,
+    zoomableMediaImage: String?,
+    setZoomableMediaImage: (imageUrl: String?) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -264,6 +264,9 @@ fun MediaPage(
                                                 modifier = bannerModifier
                                                     .skipToLookaheadSize()
                                                     .bannerParallax(scrollState)
+                                                    .clickable {
+                                                        setZoomableMediaImage(media.bannerImage)
+                                                    }
                                             )
                                         }
                                     },
@@ -471,7 +474,7 @@ fun MediaPage(
                             image = media.data?.coverImage,
                             tag = null,
                             label = null,
-                            onClick = { setIsMediaCardExpanded(true) },
+                            onClick = { setZoomableMediaImage(media.data?.coverImage) },
                             modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(
                                     SharedContentKey(
@@ -499,13 +502,13 @@ fun MediaPage(
                 }
 
                 AnimatedVisibility(
-                    visible = isMediaCardExpanded,
+                    visible = zoomableMediaImage != null,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
                     Box {
                         ZoomableAsyncImage(
-                            model = media.data?.coverImage,
+                            model = zoomableMediaImage,
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -513,7 +516,7 @@ fun MediaPage(
                         )
 
                         BackIcon(
-                            onBack = { setIsMediaCardExpanded(false) },
+                            onBack = { setZoomableMediaImage(null) },
                             modifier = Modifier
                                 .align(Alignment.TopStart)
                                 .padding(insetPaddingValues)
@@ -734,8 +737,8 @@ fun MediaPage(
         }
     }
 
-    BackHandler(enabled = isMediaCardExpanded) {
-        setIsMediaCardExpanded(false)
+    BackHandler(enabled = zoomableMediaImage != null) {
+        setZoomableMediaImage(null)
     }
 }
 

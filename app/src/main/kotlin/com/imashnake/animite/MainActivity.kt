@@ -172,7 +172,7 @@ fun MainScreen(
         } else false
     }
 
-    var isMediaCardExpanded by remember { mutableStateOf(false) }
+    var zoomableMediaImage by remember { mutableStateOf<String?>(null) }
 
     // TODO: Refactor to use Scaffold once AnimatedVisibility issues are fixed;
     //  see https://issuetracker.google.com/issues/258270139.
@@ -218,8 +218,8 @@ fun MainScreen(
                             onBack = navController::navigateUp,
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToExplore = navController::navigate,
-                            isMediaCardExpanded = isMediaCardExpanded,
-                            setIsMediaCardExpanded = { isMediaCardExpanded = it },
+                            zoomableMediaImage = zoomableMediaImage,
+                            setZoomableMediaImage = { zoomableMediaImage = it },
                             useDarkTheme = useDarkTheme,
                             isAmoled = isAmoled,
                             deviceScreenCornerRadius = deviceScreenCornerRadius,
@@ -321,7 +321,7 @@ fun MainScreen(
             },
             isFabVisible = currentBackStackEntry?.destination?.hasRoute<SettingsPage>() == false
                     && currentBackStackEntry?.destination?.hasRoute<ExploreRoute>() == false
-                    && !isMediaCardExpanded,
+                    && zoomableMediaImage == null,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
