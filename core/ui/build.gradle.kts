@@ -26,6 +26,7 @@ kotlin {
 
             // Coil
             implementation(libs.bundles.coil)
+            implementation(libs.saket.telephoto.zoomableImage)
 
             // Kotlin
             implementation(libs.kotlinx.collectionsImmutable)

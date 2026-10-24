@@ -70,6 +70,9 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     implementation(libs.materialKolor)
+
+    implementation(libs.saket.telephoto.zoomableImage)
+    implementation(libs.saket.telephoto.flick)
 }
 
 detekt {

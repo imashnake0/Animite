@@ -3,9 +3,11 @@
 package com.imashnake.animite.media
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Down
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Up
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SharedTransitionScope
@@ -157,6 +159,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import me.saket.telephoto.ExperimentalTelephotoApi
+import me.saket.telephoto.zoomable.coil3.ZoomableAsyncImage
 import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -165,7 +169,9 @@ import kotlin.time.Duration.Companion.seconds
 private const val RECOMMENDATIONS = "Recommendations"
 private const val RELATIONS = "Relations"
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalTelephotoApi::class
+)
 @Composable
 @Suppress(
     "CognitiveComplexMethod",
@@ -178,6 +184,8 @@ fun MediaPage(
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
     isAmoled: Boolean,
+    zoomableMediaImage: String?,
+    setZoomableMediaImage: (imageUrl: String?) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -205,8 +213,6 @@ fun MediaPage(
     val creditPagerState = rememberPagerState(pageCount = { listSize })
     val creditSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
-
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
         deviceScreenCornerRadius.toDp()
@@ -258,6 +264,9 @@ fun MediaPage(
                                                 modifier = bannerModifier
                                                     .skipToLookaheadSize()
                                                     .bannerParallax(scrollState)
+                                                    .clickable {
+                                                        setZoomableMediaImage(media.bannerImage)
+                                                    }
                                             )
                                         }
                                     },
@@ -465,7 +474,7 @@ fun MediaPage(
                             image = media.data?.coverImage,
                             tag = null,
                             label = null,
-                            onClick = {},
+                            onClick = { setZoomableMediaImage(media.data?.coverImage) },
                             modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(
                                     SharedContentKey(
@@ -480,9 +489,8 @@ fun MediaPage(
                         )
                     }
 
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = stringResource(R.string.back),
+                    BackIcon(
+                        onBack = onBack,
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(insetPaddingValues)
@@ -490,11 +498,34 @@ fun MediaPage(
                                 start = LocalPaddings.current.medium,
                                 top = LocalPaddings.current.small
                             )
-                            .clip(CircleShape)
-                            .clickable(enabled = !isExpanded) { onBack() }
-                            .padding(LocalPaddings.current.small),
-                        tint = if (isSystemInDarkTheme()) Color.White else Color.Black
                     )
+                }
+
+                AnimatedVisibility(
+                    visible = zoomableMediaImage != null,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Box {
+                        ZoomableAsyncImage(
+                            model = zoomableMediaImage,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f))
+                        )
+
+                        BackIcon(
+                            onBack = { setZoomableMediaImage(null) },
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(insetPaddingValues)
+                                .padding(
+                                    start = LocalPaddings.current.medium,
+                                    top = LocalPaddings.current.small
+                                )
+                        )
+                    }
                 }
             }
 
@@ -705,6 +736,26 @@ fun MediaPage(
             }
         }
     }
+
+    BackHandler(enabled = zoomableMediaImage != null) {
+        setZoomableMediaImage(null)
+    }
+}
+
+@Composable
+private fun BackIcon(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+        contentDescription = stringResource(R.string.back),
+        modifier = modifier
+            .clip(CircleShape)
+            .clickable { onBack() }
+            .padding(LocalPaddings.current.small),
+        tint = if (isSystemInDarkTheme()) Color.White else Color.Black
+    )
 }
 
 @Composable
@@ -1478,7 +1529,7 @@ private fun LoadingMediaRankings(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .clip(
-                            when(it) {
+                            when (it) {
                                 0 -> ButtonGroupDefaults.connectedLeadingButtonShape
                                 1 -> ButtonGroupDefaults.connectedMiddleButtonShapes().shape
                                 else -> ButtonGroupDefaults.connectedTrailingButtonShape

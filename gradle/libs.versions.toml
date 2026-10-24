@@ -106,6 +106,10 @@ materialKolor = "5.0.1"
 # https://github.com/saket/cascade/releases
 saketCascade = "2.3.0"
 
+# Telephoto
+# https://github.com/saket/telephoto/releases
+saketTelephoto = "0.19.0"
+
 # Reorderable
 # https://github.com/Calvin-LL/Reorderable/releases
 reorderable = "3.1.0"
@@ -162,6 +166,8 @@ ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-contentNegotation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 saket-cascade = { group = "me.saket.cascade", name = "cascade-compose", version.ref = "saketCascade" }
+saket-telephoto-zoomableImage = { group = "me.saket.telephoto", name = "zoomable-image-coil3", version.ref = "saketTelephoto" }
+saket-telephoto-flick = { group = "me.saket.telephoto", name = "flick", version.ref = "saketTelephoto" }
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 mikepenz-composeMarkdown = { group = "com.mikepenz", name = "multiplatform-markdown-renderer-m3-android", version.ref = "composeMarkdown" }
 mikepenz-composeMarkdown-coil = { group = "com.mikepenz", name = "multiplatform-markdown-renderer-coil3", version.ref = "composeMarkdown" }
