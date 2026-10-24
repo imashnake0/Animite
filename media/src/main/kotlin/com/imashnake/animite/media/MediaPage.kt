@@ -489,8 +489,10 @@ fun MediaPage(
                         )
                     }
 
-                    BackIcon(
-                        onBack = onBack,
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        onClick = onBack,
+                        contentDescription = stringResource(R.string.back),
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(insetPaddingValues)
@@ -515,14 +517,28 @@ fun MediaPage(
                                 .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f))
                         )
 
-                        BackIcon(
-                            onBack = { setZoomableMediaImage(null) },
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            onClick = { setZoomableMediaImage(null) },
+                            contentDescription = stringResource(R.string.back),
                             modifier = Modifier
                                 .align(Alignment.TopStart)
                                 .padding(insetPaddingValues)
                                 .padding(
                                     start = LocalPaddings.current.medium,
                                     top = LocalPaddings.current.small
+                                )
+                        )
+
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.download),
+                            onClick = {  },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(insetPaddingValues)
+                                .padding(
+                                    end = LocalPaddings.current.medium,
+                                    bottom = LocalPaddings.current.small
                                 )
                         )
                     }
@@ -743,16 +759,18 @@ fun MediaPage(
 }
 
 @Composable
-private fun BackIcon(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier
+private fun Icon(
+    imageVector: ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
 ) {
     Icon(
-        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-        contentDescription = stringResource(R.string.back),
+        imageVector = imageVector,
+        contentDescription = contentDescription,
         modifier = modifier
             .clip(CircleShape)
-            .clickable { onBack() }
+            .clickable { onClick() }
             .padding(LocalPaddings.current.small),
         tint = if (isSystemInDarkTheme()) Color.White else Color.Black
     )
