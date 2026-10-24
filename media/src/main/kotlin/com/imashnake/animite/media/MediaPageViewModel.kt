@@ -1,5 +1,8 @@
 package com.imashnake.animite.media
 
+import android.app.DownloadManager
+import android.os.Environment
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -59,4 +62,11 @@ class MediaPageViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(1000),
         initialValue = Resource.loading()
     )
+
+    fun requestDownloadImage(imageUrl: String): DownloadManager.Request =
+        DownloadManager.Request(imageUrl.toUri())
+            .setMimeType("image/jpeg")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setTitle("image.jpg")
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "image.jpg")
 }

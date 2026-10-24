@@ -2,6 +2,7 @@
 
 package com.imashnake.animite.media
 
+import android.app.DownloadManager
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -195,6 +196,8 @@ fun MediaPage(
     val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val scrollState = rememberScrollState()
+
+    val context = LocalContext.current
 
     val media by viewModel.media.collectAsState()
     val source by viewModel.source.collectAsState()
@@ -532,7 +535,13 @@ fun MediaPage(
 
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.download),
-                            onClick = {  },
+                            onClick = {
+                                zoomableMediaImage?.let { image ->
+                                    val downloadManager = context.getSystemService(DownloadManager::class.java)
+                                    val request = viewModel.requestDownloadImage(image)
+                                    downloadManager.enqueue(request)
+                                }
+                            },
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(insetPaddingValues)
