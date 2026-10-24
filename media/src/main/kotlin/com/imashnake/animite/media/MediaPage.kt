@@ -537,6 +537,7 @@ fun MediaPage(
                         )
 
                         Row(
+                            verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
@@ -546,6 +547,14 @@ fun MediaPage(
                                     bottom = LocalPaddings.current.small
                                 )
                         ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.open),
+                                onClick = {
+                                    val appIntent = Intent(Intent.ACTION_VIEW, zoomableMediaImage?.toUri())
+                                    context.startActivity(appIntent)
+                                },
+                            )
+
                             val clipboard = LocalClipboard.current
                             val scope = rememberCoroutineScope()
                             Icon(
@@ -557,7 +566,6 @@ fun MediaPage(
                                         clipboard.setClipEntry(clipEntry)
                                     }
                                 },
-                                contentDescription = stringResource(R.string.back),
                             )
 
                             var isDownloadQueued by remember { mutableStateOf(false) }
