@@ -3,6 +3,7 @@
 package com.imashnake.animite.media
 
 import android.app.DownloadManager
+import android.content.ClipData
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -99,6 +100,8 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -533,9 +536,8 @@ fun MediaPage(
                                 )
                         )
 
-                        var isDownloadQueued by remember { mutableStateOf(false) }
-                        AnimatedContent(
-                            targetState = isDownloadQueued,
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.medium),
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(insetPaddingValues)
@@ -544,24 +546,41 @@ fun MediaPage(
                                     bottom = LocalPaddings.current.small
                                 )
                         ) {
-                            if (!it) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.download),
-                                    onClick = {
-                                        zoomableMediaImage?.let { image ->
-                                            val downloadManager =
-                                                context.getSystemService(DownloadManager::class.java)
-                                            val request = viewModel.requestDownloadImage(image)
-                                            val downloadId = downloadManager.enqueue(request)
+                            val clipboard = LocalClipboard.current
+                            val scope = rememberCoroutineScope()
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.link),
+                                onClick = {
+                                    val clipData = ClipData.newPlainText("Image URL", zoomableMediaImage)
+                                    val clipEntry = ClipEntry(clipData)
+                                    scope.launch {
+                                        clipboard.setClipEntry(clipEntry)
+                                    }
+                                },
+                                contentDescription = stringResource(R.string.back),
+                            )
 
-                                            if (downloadId != -1L) {
-                                                isDownloadQueued = true
+                            var isDownloadQueued by remember { mutableStateOf(false) }
+                            AnimatedContent(targetState = isDownloadQueued) {
+                                if (!it) {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(R.drawable.download),
+                                        onClick = {
+                                            zoomableMediaImage?.let { image ->
+                                                val downloadManager =
+                                                    context.getSystemService(DownloadManager::class.java)
+                                                val request = viewModel.requestDownloadImage(image)
+                                                val downloadId = downloadManager.enqueue(request)
+
+                                                if (downloadId != -1L) {
+                                                    isDownloadQueued = true
+                                                }
                                             }
-                                        }
-                                    },
-                                )
-                            } else {
-                                Icon(imageVector = ImageVector.vectorResource(R.drawable.download_done))
+                                        },
+                                    )
+                                } else {
+                                    Icon(imageVector = ImageVector.vectorResource(R.drawable.download_done))
+                                }
                             }
                         }
                     }
