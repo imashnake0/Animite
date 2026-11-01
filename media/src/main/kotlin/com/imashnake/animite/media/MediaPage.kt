@@ -480,7 +480,11 @@ fun MediaPage(
                             image = media.data?.coverImage,
                             tag = null,
                             label = null,
-                            onClick = { setZoomableMediaImage(media.data?.coverImage) },
+                            onClick = {
+                                if (!isTransitionActive) {
+                                    setZoomableMediaImage(media.data?.coverImage)
+                                }
+                            },
                             modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(
                                     SharedContentKey(
