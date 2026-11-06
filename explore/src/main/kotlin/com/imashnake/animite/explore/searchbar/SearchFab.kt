@@ -2,6 +2,7 @@ package com.imashnake.animite.explore.searchbar
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -53,10 +54,12 @@ fun SearchFab(
     isExpanded: Boolean,
     setExpanded: (expanded: Boolean) -> Unit,
     onSearched: (query: String?) -> Unit,
+    color: Color,
     modifier: Modifier = Modifier,
 ) {
+    val animatedColor by animateColorAsState(color)
     Surface(
-        color = MaterialTheme.colorScheme.primary,
+        color = animatedColor,
         modifier = modifier,
         shape = CircleShape
     ) {

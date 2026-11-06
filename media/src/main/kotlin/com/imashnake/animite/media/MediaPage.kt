@@ -190,6 +190,7 @@ fun MediaPage(
     isAmoled: Boolean,
     zoomableMediaImage: String?,
     setZoomableMediaImage: (imageUrl: String?) -> Unit,
+    setSearchFabColor: (Color) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -233,6 +234,11 @@ fun MediaPage(
             ),
         )
     ) {
+        val primary = MaterialTheme.colorScheme.primary
+        LaunchedEffect(primary) {
+            setSearchFabColor(primary)
+        }
+
         TranslucentStatusBarLayout(
             scrollState = scrollState,
             modifier = Modifier.background(MaterialTheme.colorScheme.background)

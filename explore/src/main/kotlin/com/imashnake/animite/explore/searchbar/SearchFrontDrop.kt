@@ -72,6 +72,7 @@ fun SearchFrontDrop(
     val searchMediaType = MediaType.ANIME
     viewModel.setMediaType(searchMediaType)
     val searchList by viewModel.searchList.collectAsState()
+    val searchFabColor by viewModel.searchFabColor.collectAsState()
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val searchBarBottomPadding by animateDpAsState(
@@ -142,6 +143,7 @@ fun SearchFrontDrop(
             isExpanded = isExpanded,
             setExpanded = { isExpanded = it },
             onSearched = viewModel::setQuery,
+            color = searchFabColor,
         )
     }
 }

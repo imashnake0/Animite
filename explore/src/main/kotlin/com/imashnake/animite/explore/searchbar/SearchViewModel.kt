@@ -1,5 +1,6 @@
 package com.imashnake.animite.explore.searchbar
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +16,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterNotNull
@@ -34,6 +37,9 @@ class SearchViewModel @Inject constructor(
 ): ViewModel() {
     private val mediaType = savedStateHandle.getStateFlow<MediaType?>(Constants.MEDIA_TYPE, null)
     private val query = savedStateHandle.getStateFlow<String?>(QUERY, null)
+
+    val searchFabColor: StateFlow<Color>
+        field = MutableStateFlow(Color(0))
 
     val prefs = combine(
         flow = preferencesRepository.isNsfwEnabled.filterNotNull(),
@@ -75,6 +81,10 @@ class SearchViewModel @Inject constructor(
 
     fun setQuery(query: String?) {
         savedStateHandle[QUERY] = query
+    }
+
+    fun setSearchFabColor(color: Color) {
+        searchFabColor.value = color
     }
 
     companion object {

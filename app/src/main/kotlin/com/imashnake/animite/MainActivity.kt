@@ -37,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -54,8 +55,7 @@ import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.rememberDefaultPaddings
 import com.imashnake.animite.explore.ExploreScreen
 import com.imashnake.animite.explore.searchbar.SearchFrontDrop
-import com.imashnake.animite.theme.AnimiteTheme
-import com.imashnake.animite.theme.manropeFontFamily
+import com.imashnake.animite.explore.searchbar.SearchViewModel
 import com.imashnake.animite.manga.MangaScreen
 import com.imashnake.animite.media.MediaPage
 import com.imashnake.animite.navigation.AnimeRoute
@@ -73,6 +73,8 @@ import com.imashnake.animite.settings.SettingsPage
 import com.imashnake.animite.settings.SettingsViewModel
 import com.imashnake.animite.settings.Theme
 import com.imashnake.animite.social.SocialScreen
+import com.imashnake.animite.theme.AnimiteTheme
+import com.imashnake.animite.theme.manropeFontFamily
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -82,6 +84,7 @@ private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
+    private val searchViewModel: SearchViewModel by viewModels()
     var showSplashScreen = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +101,11 @@ class MainActivity : ComponentActivity() {
                     Log.e(TAG, "onCreate: Failed to load font: ${e.cause}: ${e.message}")
                 }
                 showSplashScreen = false
+            }
+
+            val primary = MaterialTheme.colorScheme.primary
+            LaunchedEffect(primary) {
+                searchViewModel.setSearchFabColor(primary)
             }
 
             val theme by settingsViewModel.theme.collectAsState(initial = Theme.DEVICE_THEME.name)
@@ -129,6 +137,7 @@ class MainActivity : ComponentActivity() {
                     isAmoled = isAmoled,
                     avatar = avatar,
                     showUserDescription = showUserDescription,
+                    setSearchFabColor = searchViewModel::setSearchFabColor,
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.background)
@@ -156,6 +165,7 @@ fun MainScreen(
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
     isAmoled: Boolean,
+    setSearchFabColor: (Color) -> Unit,
     avatar: String?,
     showUserDescription: Boolean,
     modifier: Modifier = Modifier,
@@ -195,6 +205,10 @@ fun MainScreen(
                     }
                 ) {
                     composable<AnimeRoute> {
+                        val primary = MaterialTheme.colorScheme.primary
+                        LaunchedEffect(primary) {
+                            setSearchFabColor(primary)
+                        }
                         AnimeScreen(
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToExplore = navController::navigate,
@@ -204,6 +218,10 @@ fun MainScreen(
                         )
                     }
                     composable<MangaRoute> {
+                        val primary = MaterialTheme.colorScheme.primary
+                        LaunchedEffect(primary) {
+                            setSearchFabColor(primary)
+                        }
                         MangaScreen(
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToExplore = navController::navigate,
@@ -219,6 +237,7 @@ fun MainScreen(
                             onNavigateToExplore = navController::navigate,
                             zoomableMediaImage = zoomableMediaImage,
                             setZoomableMediaImage = { zoomableMediaImage = it },
+                            setSearchFabColor = setSearchFabColor,
                             useDarkTheme = useDarkTheme,
                             isAmoled = isAmoled,
                             deviceScreenCornerRadius = deviceScreenCornerRadius,
@@ -234,6 +253,10 @@ fun MainScreen(
                             }
                         )
                     ) {
+                        val primary = MaterialTheme.colorScheme.primary
+                        LaunchedEffect(primary) {
+                            setSearchFabColor(primary)
+                        }
                         ProfileScreen(
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToSettings = navController::navigate,
@@ -246,9 +269,17 @@ fun MainScreen(
                         )
                     }
                     composable<SettingsPage> {
+                        val primary = MaterialTheme.colorScheme.primary
+                        LaunchedEffect(primary) {
+                            setSearchFabColor(primary)
+                        }
                         SettingsPage(versionName = BuildConfig.VERSION_NAME)
                     }
                     composable<SocialRoute> {
+                        val primary = MaterialTheme.colorScheme.primary
+                        LaunchedEffect(primary) {
+                            setSearchFabColor(primary)
+                        }
                         SocialScreen()
                     }
                     composable<ExploreRoute> {
