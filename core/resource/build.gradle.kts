@@ -6,7 +6,7 @@ plugins {
 
 kotlin {
     explicitApi()
-    jvmToolchain(21)
+    jvmToolchain(25)
 
     android {
         namespace = "com.imashnake.animite.core.resource"
