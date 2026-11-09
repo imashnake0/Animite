@@ -65,6 +65,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -129,6 +130,7 @@ fun ProfileScreen(
     deviceScreenCornerRadius: Int,
     useDarkTheme: Boolean,
     isAmoled: Boolean,
+    setSearchFabColor: (Color) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     contentWindowInsets: WindowInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout),
@@ -183,6 +185,11 @@ fun ProfileScreen(
                             )
                         } else MaterialTheme.colorScheme
                     ) {
+                        val primary = MaterialTheme.colorScheme.primary
+                        LaunchedEffect(primary) {
+                            if (useProfileColor) setSearchFabColor(primary)
+                        }
+
                         LaunchedEffect(avatar) {
                             if (viewerAvatar != avatar) viewModel.saveViewerAvatar(avatar)
                         }
@@ -708,7 +715,7 @@ fun UserDescriptionMarkdown(
         colors = markdownColor(text = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.74f)),
         // TODO: Impl `AnilistFlavourDescriptor` and pass it here to handle custom stuff.
         //   https://github.com/JetBrains/markdown#extending-the-parser ->
-        //   implement your own markdown flavour.
+        //   implement your own Markdown flavour.
         flavour = GFMFlavourDescriptor(),
         annotator = markdownAnnotator(markdownAnnotatorConfig(eolAsNewLine = true)),
         typography = markdownTypography(

@@ -253,10 +253,6 @@ fun MainScreen(
                             }
                         )
                     ) {
-                        val primary = MaterialTheme.colorScheme.primary
-                        LaunchedEffect(primary) {
-                            setSearchFabColor(primary)
-                        }
                         ProfileScreen(
                             onNavigateToMediaItem = navController::navigate,
                             onNavigateToSettings = navController::navigate,
@@ -264,6 +260,7 @@ fun MainScreen(
                             deviceScreenCornerRadius = deviceScreenCornerRadius,
                             useDarkTheme = useDarkTheme,
                             isAmoled = isAmoled,
+                            setSearchFabColor = setSearchFabColor,
                             sharedTransitionScope = this@SharedTransitionLayout,
                             animatedVisibilityScope = this,
                         )
