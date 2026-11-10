@@ -352,9 +352,9 @@ fun MainScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(
-                    start = LocalPaddings.current.large,
-                    end = LocalPaddings.current.large,
-                    bottom = LocalPaddings.current.large,
+                    start = LocalPaddings.current.medium,
+                    end = LocalPaddings.current.medium,
+                    bottom = LocalPaddings.current.medium,
                 )
         )
     }

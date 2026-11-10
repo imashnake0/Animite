@@ -25,6 +25,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,6 +45,7 @@ import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.requiredSize
@@ -119,9 +122,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastDistinctBy
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
+import androidx.compose.ui.zIndex
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -200,6 +205,7 @@ fun MediaPage(
     val horizontalInsets = insetPaddingValues.horizontalOnly
 
     val scrollState = rememberScrollState()
+    val isAtTop by remember { derivedStateOf { scrollState.value == 0 } }
 
     val context = LocalContext.current
 
@@ -457,7 +463,6 @@ fun MediaPage(
                         }
                     }
 
-                    val isAtTop by remember { derivedStateOf { scrollState.value == 0 } }
                     val offset by animateDpAsState(
                         targetValue = if (isAtTop)
                             0.dp
@@ -602,6 +607,16 @@ fun MediaPage(
                             }
                         }
                     }
+                }
+
+
+                AnimatedVisibility(
+                    visible = !isTransitionActive && (scrollState.lastScrolledBackward || isAtTop),
+                    enter = fadeIn() + slideInVertically { it },
+                    exit = fadeOut() + slideOutVertically { it },
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                ) {
+                    BottomToolbar(Modifier.navigationBarsPadding())
                 }
             }
 
@@ -816,6 +831,26 @@ fun MediaPage(
     BackHandler(enabled = zoomableMediaImage != null) {
         setZoomableMediaImage(null)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BottomToolbar(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .zIndex(1f)
+            .padding(
+                start = LocalPaddings.current.medium,
+                end = 2 * LocalPaddings.current.medium + dimensionResource(R.dimen.bottom_toolbar_height),
+                bottom = LocalPaddings.current.medium
+            )
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .height(dimensionResource(R.dimen.bottom_toolbar_height))
+            .fillMaxWidth()
+    ) {}
 }
 
 @Composable
