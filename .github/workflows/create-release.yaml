@@ -24,7 +24,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Prepare signing keystore
-        uses: mobiledevops/secret-to-file-action@v1
+        uses: mobiledevops/secret-to-file-action@v2
         with:
           base64-encoded-secret: ${{ secrets.KEYSTORE_CONTENT }}
           filename: "keystore.jks"
