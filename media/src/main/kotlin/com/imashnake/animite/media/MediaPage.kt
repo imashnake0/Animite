@@ -233,9 +233,13 @@ fun MediaPage(
     }
 
     var isBottomBarVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        delay(500.milliseconds)
-        isBottomBarVisible = true
+    LaunchedEffect(zoomableMediaImage) {
+        if (zoomableMediaImage != null) {
+            isBottomBarVisible = false
+        } else {
+            delay(500.milliseconds)
+            isBottomBarVisible = true
+        }
     }
 
     MaterialTheme(
