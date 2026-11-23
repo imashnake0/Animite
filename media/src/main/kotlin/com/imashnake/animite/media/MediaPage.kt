@@ -41,6 +41,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -625,7 +626,9 @@ fun MediaPage(
                     visible = !isTransitionActive && (scrollState.lastScrolledBackward || isAtTop) && isBottomBarVisible,
                     enter = fadeIn() + slideInVertically { it },
                     exit = fadeOut() + slideOutVertically { it },
-                    modifier = Modifier.align(Alignment.BottomCenter).renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
                 ) {
                     BottomToolbar(Modifier.navigationBarsPadding())
                 }
@@ -850,6 +853,7 @@ private fun BottomToolbar(
     modifier: Modifier = Modifier
 ) {
     Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .zIndex(1f)
             .padding(
@@ -860,14 +864,20 @@ private fun BottomToolbar(
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer)
             .height(dimensionResource(R.dimen.bottom_toolbar_height))
-            .fillMaxWidth()
-    ) {}
+            .defaultMinSize(minWidth = dimensionResource(R.dimen.bottom_toolbar_height))
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.add),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
 }
 
 @Composable
 private fun Icon(
     imageVector: ImageVector,
     modifier: Modifier = Modifier,
+    tint: Color = if (isSystemInDarkTheme()) Color.White else Color.Black,
     onClick: (() -> Unit)? = null,
     contentDescription: String? = null,
 ) {
@@ -878,7 +888,7 @@ private fun Icon(
             .clip(CircleShape)
             .clickable(enabled = onClick != null) { onClick?.invoke() }
             .padding(LocalPaddings.current.small),
-        tint = if (isSystemInDarkTheme()) Color.White else Color.Black
+        tint = tint
     )
 }
 
