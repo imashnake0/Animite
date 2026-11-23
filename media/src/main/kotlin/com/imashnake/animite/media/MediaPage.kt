@@ -38,10 +38,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -65,10 +65,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
@@ -121,13 +128,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastDistinctBy
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.lerp
-import androidx.compose.ui.zIndex
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -238,7 +244,7 @@ fun MediaPage(
         if (zoomableMediaImage != null) {
             isBottomBarVisible = false
         } else {
-            delay(500.milliseconds)
+            delay(250.milliseconds)
             isBottomBarVisible = true
         }
     }
@@ -521,19 +527,6 @@ fun MediaPage(
                             )
                         )
                     }
-
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        onClick = onBack,
-                        contentDescription = stringResource(R.string.back),
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(insetPaddingValues)
-                            .padding(
-                                start = LocalPaddings.current.medium,
-                                top = LocalPaddings.current.small
-                            )
-                    )
                 }
 
                 AnimatedVisibility(
@@ -627,7 +620,7 @@ fun MediaPage(
                     enter = fadeIn() + slideInVertically { it },
                     exit = fadeOut() + slideOutVertically { it },
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
+                        .align(Alignment.BottomCenter)
                         .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
                 ) {
                     BottomToolbar(Modifier.navigationBarsPadding())
@@ -852,31 +845,82 @@ fun MediaPage(
 private fun BottomToolbar(
     modifier: Modifier = Modifier
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
+    HorizontalFloatingToolbar(
+        expanded = true,
+        leadingContent = {
+            AppBarRow {
+                clickableItem(
+                    onClick = {},
+                    icon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            size = 20.dp,
+                            onClick = {}
+                        )
+                    },
+                    label = "Back"
+                )
+                clickableItem(
+                    onClick = {},
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Rounded.Share,
+                            size = 20.dp,
+                            onClick = {}
+                        )
+                    },
+                    label = "Share"
+                )
+            }
+            Spacer(Modifier.size(LocalPaddings.current.small))
+        },
+        trailingContent = {
+            Spacer(Modifier.size(LocalPaddings.current.small))
+            AppBarRow {
+                clickableItem(
+                    onClick = {},
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Rounded.FavoriteBorder,
+                            size = 20.dp,
+                            onClick = {}
+                        )
+                    },
+                    label = "Favourite"
+                )
+                clickableItem(
+                    onClick = {},
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Rounded.MoreVert,
+                            size = 20.dp,
+                            onClick = {}
+                        )
+                    },
+                    label = "More"
+                )
+            }
+        },
+        content = {
+            FilledIconButton(
+                modifier = Modifier.width(64.dp),
+                onClick = {},
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        },
         modifier = modifier
-            .zIndex(1f)
-            .padding(
-                start = LocalPaddings.current.medium,
-                end = 2 * LocalPaddings.current.medium + dimensionResource(R.dimen.bottom_toolbar_height),
-                bottom = LocalPaddings.current.medium
-            )
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .height(dimensionResource(R.dimen.bottom_toolbar_height))
-            .defaultMinSize(minWidth = dimensionResource(R.dimen.bottom_toolbar_height))
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.add),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    }
+    )
 }
 
 @Composable
 private fun Icon(
     imageVector: ImageVector,
     modifier: Modifier = Modifier,
+    size: Dp? = null,
     tint: Color = if (isSystemInDarkTheme()) Color.White else Color.Black,
     onClick: (() -> Unit)? = null,
     contentDescription: String? = null,
@@ -886,8 +930,17 @@ private fun Icon(
         contentDescription = contentDescription,
         modifier = modifier
             .clip(CircleShape)
-            .clickable(enabled = onClick != null) { onClick?.invoke() }
-            .padding(LocalPaddings.current.small),
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable { onClick.invoke() }
+                } else Modifier
+            )
+            .padding(LocalPaddings.current.small)
+            .then(
+                if (size != null) {
+                    Modifier.size(size)
+                } else Modifier
+            ),
         tint = tint
     )
 }

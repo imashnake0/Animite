@@ -348,6 +348,7 @@ fun MainScreen(
             },
             isFabVisible = currentBackStackEntry?.destination?.hasRoute<SettingsPage>() == false
                     && currentBackStackEntry?.destination?.hasRoute<ExploreRoute>() == false
+                    && currentBackStackEntry?.destination?.hasRoute<MediaPage>() == false
                     && zoomableMediaImage == null,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
