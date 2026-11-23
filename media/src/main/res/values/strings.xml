@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="back">Back</string>
+    <string name="share">Share</string>
+    <string name="favourite">Favourite</string>
+    <string name="more">More</string>
 
     <string name="format">Format</string>
     <string name="episodes">Episodes</string>

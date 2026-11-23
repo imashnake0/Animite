@@ -71,6 +71,7 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.AppBarRow
+import androidx.compose.material3.AppBarRowScope
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -623,7 +624,10 @@ fun MediaPage(
                         .align(Alignment.BottomCenter)
                         .renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
                 ) {
-                    BottomToolbar(Modifier.navigationBarsPadding())
+                    BottomToolbar(
+                        onBack = onBack,
+                        modifier = Modifier.navigationBarsPadding()
+                    )
                 }
             }
 
@@ -843,61 +847,43 @@ fun MediaPage(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomToolbar(
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     HorizontalFloatingToolbar(
         expanded = true,
         leadingContent = {
+            val back = stringResource(R.string.back)
+            val share = stringResource(R.string.share)
             AppBarRow {
-                clickableItem(
-                    onClick = {},
-                    icon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            size = 20.dp,
-                            onClick = {}
-                        )
-                    },
-                    label = "Back"
+                clickableIcon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    onClick = onBack,
+                    label = back
                 )
-                clickableItem(
+                clickableIcon(
+                    imageVector = Icons.Rounded.Share,
                     onClick = {},
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Share,
-                            size = 20.dp,
-                            onClick = {}
-                        )
-                    },
-                    label = "Share"
+                    label = share
                 )
             }
             Spacer(Modifier.size(LocalPaddings.current.small))
         },
         trailingContent = {
             Spacer(Modifier.size(LocalPaddings.current.small))
+
+            val favourite = stringResource(R.string.favourite)
+            val more = stringResource(R.string.more)
             AppBarRow {
-                clickableItem(
+                clickableIcon(
+                    imageVector = Icons.Rounded.FavoriteBorder,
                     onClick = {},
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.FavoriteBorder,
-                            size = 20.dp,
-                            onClick = {}
-                        )
-                    },
-                    label = "Favourite"
+                    label = favourite
                 )
-                clickableItem(
+                clickableIcon(
+                    imageVector = Icons.Rounded.MoreVert,
                     onClick = {},
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Rounded.MoreVert,
-                            size = 20.dp,
-                            onClick = {}
-                        )
-                    },
-                    label = "More"
+                    label = more
                 )
             }
         },
@@ -916,6 +902,24 @@ private fun BottomToolbar(
     )
 }
 
+private fun AppBarRowScope.clickableIcon(
+    imageVector: ImageVector,
+    onClick: () -> Unit,
+    label: String,
+) {
+    clickableItem(
+        onClick = onClick,
+        icon = {
+            Icon(
+                imageVector = imageVector,
+                size = dimensionResource(R.dimen.bottom_toolbar_icon_size)
+            )
+        },
+        label = label
+    )
+}
+
+// TODO: Move this to core:ui or remove it.
 @Composable
 private fun Icon(
     imageVector: ImageVector,
