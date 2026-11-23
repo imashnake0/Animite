@@ -334,7 +334,18 @@ fun ProfileScreen(
                     }
                 }
 
-                else -> ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
+                else -> {
+                    Box {
+                        ProgressIndicatorScreen(Modifier.padding(allPaddingValues))
+                        SettingsIcon(
+                            onNavigateToSettings = onNavigateToSettings,
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(LocalPaddings.current.large)
+                                .padding(allPaddingValues.copy(bottom = 0.dp)),
+                        )
+                    }
+                }
             }
 
             else -> {
