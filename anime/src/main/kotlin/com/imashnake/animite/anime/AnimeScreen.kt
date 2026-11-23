@@ -93,7 +93,7 @@ fun AnimeScreen(
     }
     val insetAndNavigationPaddingValues = insetPaddingValues + navigationComponentPaddingValues
 
-    val lists by viewModel.lists.collectAsState()
+    val lists by viewModel.orderedLists.collectAsState()
 
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()

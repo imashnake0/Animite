@@ -173,6 +173,7 @@ import me.saket.telephoto.zoomable.coil3.ZoomableAsyncImage
 import kotlin.math.absoluteValue
 import kotlin.time.Clock
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 private const val RECOMMENDATIONS = "Recommendations"
@@ -229,6 +230,12 @@ fun MediaPage(
 
     val deviceScreenCornerRadiusDp = with(LocalDensity.current) {
         deviceScreenCornerRadius.toDp()
+    }
+
+    var isBottomBarVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(500.milliseconds)
+        isBottomBarVisible = true
     }
 
     MaterialTheme(
@@ -611,10 +618,10 @@ fun MediaPage(
 
 
                 AnimatedVisibility(
-                    visible = !isTransitionActive && (scrollState.lastScrolledBackward || isAtTop),
+                    visible = !isTransitionActive && (scrollState.lastScrolledBackward || isAtTop) && isBottomBarVisible,
                     enter = fadeIn() + slideInVertically { it },
                     exit = fadeOut() + slideOutVertically { it },
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                    modifier = Modifier.align(Alignment.BottomCenter).renderInSharedTransitionScopeOverlay(zIndexInOverlay = 1f)
                 ) {
                     BottomToolbar(Modifier.navigationBarsPadding())
                 }

@@ -160,17 +160,15 @@ class AnimeViewModel @Inject constructor(
         upcomingMediaNextSeason,
         allTimePopular,
         newlyAdded,
+        ::listOf
+    )
+
+    val orderedLists = combine(
+        lists,
         preferencesRepository.animeListsIndices,
-    ) { trendingNow, popularThisSeason, upcomingNextSeason, allTimePopular, newlyAdded, indices ->
+    ) { lists, indices ->
         indices?.toMutableList().orEmpty().mapNotNull {
-            when (it.toInt()) {
-                1 -> trendingNow
-                2 -> popularThisSeason
-                3 -> upcomingNextSeason
-                4 -> allTimePopular
-                5 -> newlyAdded
-                else -> null
-            }
+            lists.getOrNull(it.toInt() - 1)
         }
     }.stateIn(
         scope = viewModelScope,
