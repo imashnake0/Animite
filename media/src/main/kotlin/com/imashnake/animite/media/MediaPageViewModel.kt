@@ -1,6 +1,9 @@
 package com.imashnake.animite.media
 
 import android.app.DownloadManager
+import android.content.Context
+import android.content.Intent
+import android.content.Intent.ACTION_SEND
 import android.os.Environment
 import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
@@ -69,4 +72,18 @@ class MediaPageViewModel @Inject constructor(
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setTitle("image.jpg")
             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "image.jpg")
+
+    fun shareText(
+        linkUrl: String?,
+        context: Context,
+    ) {
+        val sendIntent: Intent = Intent().apply {
+            action = ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, linkUrl)
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        context.startActivity(shareIntent)
+    }
 }

@@ -91,6 +91,8 @@ query MediaQuery(
                 }
             }
         }
+
+        siteUrl
     }
 }
 

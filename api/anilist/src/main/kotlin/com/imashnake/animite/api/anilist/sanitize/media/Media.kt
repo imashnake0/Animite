@@ -82,6 +82,8 @@ data class Media(
     val relations: ImmutableList<Pair<Relation?, Small>>,
     /** @see MediaQuery.Media.recommendations */
     val recommendations: ImmutableList<Small>,
+    /** @see MediaQuery.Media.siteUrl */
+    val siteUrl: String?,
 ) {
     companion object {
         fun getFormattedDate(
@@ -655,7 +657,8 @@ data class Media(
         }.toImmutableList(),
         recommendations = query.recommendations?.nodes.orEmpty().mapNotNull { node ->
             node?.mediaRecommendation?.mediaSmall?.let { Small(it, language) }
-        }.toImmutableList()
+        }.toImmutableList(),
+        siteUrl = query.siteUrl
     )
 
     @Immutable

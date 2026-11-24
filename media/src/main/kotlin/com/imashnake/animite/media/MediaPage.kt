@@ -626,6 +626,12 @@ fun MediaPage(
                 ) {
                     BottomToolbar(
                         onBack = onBack,
+                        onShare = {
+                            viewModel.shareText(
+                                linkUrl = media.data?.siteUrl,
+                                context = context
+                            )
+                        },
                         modifier = Modifier.navigationBarsPadding()
                     )
                 }
@@ -848,6 +854,7 @@ fun MediaPage(
 @Composable
 private fun BottomToolbar(
     onBack: () -> Unit,
+    onShare: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     HorizontalFloatingToolbar(
@@ -863,7 +870,7 @@ private fun BottomToolbar(
                 )
                 clickableIcon(
                     imageVector = Icons.Rounded.Share,
-                    onClick = {},
+                    onClick = onShare,
                     label = share
                 )
             }
