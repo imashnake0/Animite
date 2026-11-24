@@ -17,4 +17,15 @@
     <dimen name="media_type_selector_round">32dp</dimen>
 
     <dimen name="trailer_corner_radius">30dp</dimen>
+
+    <dimen name="favourite_icon_size">20dp</dimen>
+
+    <dimen name="date_picker_chip_height">60dp</dimen>
+    <dimen name="date_picker_chip_icon_size">20dp</dimen>
+
+    <dimen name="tracking_list_header_height">60dp</dimen>
+    <dimen name="tracking_list_header_icon_size">20dp</dimen>
+
+    <dimen name="dialog_star_icon_size">24dp</dimen>
+    <dimen name="smiley_icon_size">24dp</dimen>
 </resources>

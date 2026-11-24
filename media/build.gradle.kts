@@ -73,6 +73,7 @@ dependencies {
 
     implementation(libs.saket.telephoto.zoomableImage)
     implementation(libs.saket.telephoto.flick)
+    implementation(libs.saket.cascade)
 }
 
 detekt {

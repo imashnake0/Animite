@@ -24,4 +24,9 @@ object Constants {
 
     const val SOURCE = "source"
     const val ID = "id"
+
+    const val RATING_RED = 0xffff7770
+    const val RATING_ORANGE = 0xffffc863
+    const val RATING_LIME = 0xffb8ff70
+    const val RATING_GREEN = 0xff63ff88
 }

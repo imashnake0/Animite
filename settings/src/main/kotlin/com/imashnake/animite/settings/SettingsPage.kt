@@ -110,6 +110,7 @@ import com.materialkolor.ktx.darken
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.Serializable
+import com.imashnake.animite.media.R as mediaR
 
 private const val DISCORD_URL = "https://discord.gg/HEB7duYdqe"
 private const val GITHUB_URL = "https://github.com/imashnake0/Animite/"
@@ -803,14 +804,14 @@ fun SettingsPage(
                                                         when(format) {
                                                             ScoreFormat.POINT_5 -> {
                                                                 Icon(
-                                                                    imageVector = ImageVector.vectorResource(R.drawable.star),
+                                                                    imageVector = ImageVector.vectorResource(mediaR.drawable.star),
                                                                     contentDescription = null,
                                                                     modifier = Modifier.size(16.dp).padding(bottom = 1.dp),
                                                                 )
                                                             }
                                                             ScoreFormat.POINT_3 -> {
                                                                 Icon(
-                                                                    imageVector = ImageVector.vectorResource(R.drawable.smile),
+                                                                    imageVector = ImageVector.vectorResource(mediaR.drawable.smile),
                                                                     contentDescription = null,
                                                                     modifier = Modifier.size(16.dp).padding(bottom = 1.dp),
                                                                 )

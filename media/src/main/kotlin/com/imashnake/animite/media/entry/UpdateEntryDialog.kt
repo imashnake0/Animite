@@ -1,13 +1,15 @@
-package com.imashnake.animite.profile.ui
+package com.imashnake.animite.media.entry
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +44,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -91,6 +95,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.util.fastCoerceIn
@@ -104,6 +109,10 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.media.Media.Companion.getFormattedDate
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.type.ScoreFormat
+import com.imashnake.animite.core.ui.Constants.RATING_GREEN
+import com.imashnake.animite.core.ui.Constants.RATING_LIME
+import com.imashnake.animite.core.ui.Constants.RATING_ORANGE
+import com.imashnake.animite.core.ui.Constants.RATING_RED
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.ConfirmButton
 import com.imashnake.animite.core.ui.component.Divider
@@ -111,22 +120,15 @@ import com.imashnake.animite.core.ui.component.DropDownIcon
 import com.imashnake.animite.core.ui.component.MediaMediumCard
 import com.imashnake.animite.core.ui.component.RejectButton
 import com.imashnake.animite.core.ui.ext.crossfadeModel
+import com.imashnake.animite.media.R
 import com.imashnake.animite.media.ext.res
-import com.imashnake.animite.profile.R
-import com.imashnake.animite.profile.dev.GREEN
-import com.imashnake.animite.profile.dev.LIME
-import com.imashnake.animite.profile.dev.ORANGE
-import com.imashnake.animite.profile.dev.RED
-import com.imashnake.animite.profile.dev.res
-import com.imashnake.animite.profile.dev.title
+import com.imashnake.animite.media.ext.title
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import me.saket.cascade.CascadeDropdownMenu
 import me.saket.cascade.rememberCascadeState
 import kotlin.time.Instant
-import com.imashnake.animite.media.R as mediaR
-import com.imashnake.animite.settings.R as settingsR
 
 private const val FAVOURITE_COLOR = 0xFFF14F4F
 private const val HALF_DAY_MILLIS = 86400000L
@@ -512,8 +514,8 @@ private fun Header(
                 AsyncImage(
                     model = crossfadeModel(bannerImage),
                     contentDescription = null,
-                    error = painterResource(mediaR.drawable.background),
-                    fallback = painterResource(mediaR.drawable.background),
+                    error = painterResource(R.drawable.background),
+                    fallback = painterResource(R.drawable.background),
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center,
                     colorFilter = ColorFilter.tint(
@@ -734,10 +736,10 @@ private fun SetScore(
         val scoreColor by animateColorAsState(
             targetValue = Color(
                 when {
-                    score.normalizedValue < 0.3f -> RED
-                    score.normalizedValue < 0.6f -> ORANGE
-                    score.normalizedValue < 0.8f -> LIME
-                    else -> GREEN
+                    score.normalizedValue < 0.3f -> RATING_RED
+                    score.normalizedValue < 0.6f -> RATING_ORANGE
+                    score.normalizedValue < 0.8f -> RATING_LIME
+                    else -> RATING_GREEN
                 }
             )
         )
@@ -871,7 +873,7 @@ private fun SetStars(
         repeat(5) {
             val alpha by animateFloatAsState(if (!(it + 1f <= score.value)) 0.2f else 1f)
             Icon(
-                imageVector = ImageVector.vectorResource(settingsR.drawable.star),
+                imageVector = ImageVector.vectorResource(R.drawable.star),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
                 modifier = modifier
@@ -897,11 +899,11 @@ private fun SetSmileys(
         repeat(4) {
             val color by animateColorAsState(
                 targetValue = Color(
-                    when(it) {
-                        0 -> RED
-                        1 -> ORANGE
-                        2 -> LIME
-                        else -> GREEN
+                    when (it) {
+                        0 -> RATING_RED
+                        1 -> RATING_ORANGE
+                        2 -> RATING_LIME
+                        else -> RATING_GREEN
                     }
                 )
             )
@@ -916,7 +918,7 @@ private fun SetSmileys(
                         0 -> R.drawable.dead
                         1 -> R.drawable.weary
                         2 -> R.drawable.neutral
-                        else -> settingsR.drawable.smile
+                        else -> R.drawable.smile
                     }
                 ),
                 contentDescription = null,
@@ -1088,3 +1090,84 @@ fun rememberFuzzyDate(fuzzyDate: Media.FuzzyDate?) = rememberSaveable(
         },
     )
 ) { mutableStateOf(fuzzyDate) }
+
+@Composable
+fun ProgressBar(
+    progress: Int,
+    segments: Int,
+    listName: User.TrackingStatus,
+    useExpressiveProgressIndicator: Boolean,
+    modifier: Modifier= Modifier,
+    enabled: Boolean,
+    onProgressChanged: ((Float) -> Unit)? = null,
+) {
+    val formattedProgress = progress
+        .takeUnless { progress == segments }
+        ?.let { "$it/$segments" }
+        ?: "$segments"
+
+    val normalizedProgress = progress.toFloat() / segments
+    val animatedNormalizedProgress by animateFloatAsState(normalizedProgress)
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Text(
+            text = formattedProgress,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.animateContentSize()
+        )
+
+        CompositionLocalProvider(
+            // Remove default M3 padding
+            LocalMinimumInteractiveComponentSize provides 0.dp,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                when (listName) {
+                    User.TrackingStatus.WATCHING,
+                    User.TrackingStatus.REWATCHING,
+                    User.TrackingStatus.READING,
+                    User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
+                        LinearWavyProgressIndicator(
+                            progress = { animatedNormalizedProgress },
+                            amplitude = {
+                                if (it <= 0.1f || it >= 0.95f) 0f else 0.5f
+                            },
+                            waveSpeed = 15.dp,
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                        )
+                    } else {
+                        LinearProgressIndicator(
+                            progress = { animatedNormalizedProgress },
+                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                        )
+                    }
+
+                    else -> LinearProgressIndicator(
+                        progress = { animatedNormalizedProgress },
+                        modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
+                    )
+                }
+                if (enabled) {
+                    Slider(
+                        value = progress.toFloat(),
+                        valueRange = 0f..segments.toFloat(),
+                        onValueChange = { onProgressChanged?.invoke(it) },
+                        thumb = {
+                            SliderDefaults.Thumb(
+                                interactionSource = remember { MutableInteractionSource() },
+                                thumbSize = DpSize(4.dp, 20.dp)
+                            )
+                        },
+                        modifier = Modifier.graphicsLayer { alpha = 0f }
+                    )
+                }
+            }
+        }
+    }
+}

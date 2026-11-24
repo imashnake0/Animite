@@ -1,8 +1,10 @@
 package com.imashnake.animite.media.ext
 
 import com.imashnake.animite.api.anilist.sanitize.media.Media
+import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus
 import com.imashnake.animite.api.anilist.type.MediaType
 import com.imashnake.animite.media.R
+import com.imashnake.animite.navigation.R as navigationR
 
 val Media.InfoItem.title get() = when(this) {
     Media.InfoItem.FORMAT -> R.string.format
@@ -152,4 +154,37 @@ val MediaType.res get() = when (this) {
 val MediaType.icon get() = when (this) {
     MediaType.ANIME -> R.drawable.media_type_anime
     else -> R.drawable.media_type_manga
+}
+
+val TrackingStatus.res get() = when(this) {
+    TrackingStatus.WATCHING -> navigationR.drawable.anime
+    TrackingStatus.COMPLETED -> R.drawable.finished
+    TrackingStatus.PAUSED -> R.drawable.hiatus
+    TrackingStatus.DROPPED -> R.drawable.cancelled
+    TrackingStatus.REWATCHING -> R.drawable.rewatch_list
+    TrackingStatus.PLAN_TO_WATCH -> R.drawable.not_yet_released
+
+    TrackingStatus.READING -> R.drawable.reading_list
+    TrackingStatus.REREADING -> R.drawable.rewatch_list
+    TrackingStatus.PLAN_TO_READ -> R.drawable.not_yet_released
+
+    TrackingStatus.PLANNING -> R.drawable.not_yet_released
+
+    TrackingStatus.CUSTOM_OR_UNKNOWN -> R.drawable.custom_list
+}
+
+val TrackingStatus.title get() = when(this) {
+    TrackingStatus.WATCHING -> R.string.watching
+    TrackingStatus.COMPLETED -> R.string.completed
+    TrackingStatus.PAUSED -> R.string.paused
+    TrackingStatus.DROPPED -> R.string.dropped
+    TrackingStatus.REWATCHING -> R.string.rewatching
+    TrackingStatus.PLAN_TO_WATCH -> R.string.plan_to_watch
+
+    TrackingStatus.READING -> R.string.reading
+    TrackingStatus.REREADING -> R.string.rereading
+    TrackingStatus.PLAN_TO_READ -> R.string.plan_to_read
+
+    TrackingStatus.PLANNING,
+    TrackingStatus.CUSTOM_OR_UNKNOWN -> R.string.unknown
 }

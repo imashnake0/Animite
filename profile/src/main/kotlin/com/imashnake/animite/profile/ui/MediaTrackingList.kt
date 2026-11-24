@@ -3,12 +3,10 @@ package com.imashnake.animite.profile.ui
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,17 +31,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.LinearWavyProgressIndicator
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,7 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
@@ -66,7 +57,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMapNotNull
@@ -75,23 +65,24 @@ import com.imashnake.animite.api.anilist.sanitize.media.Media
 import com.imashnake.animite.api.anilist.sanitize.profile.User
 import com.imashnake.animite.api.anilist.sanitize.profile.User.TrackingStatus.Companion.sanitize
 import com.imashnake.animite.api.anilist.type.ScoreFormat
+import com.imashnake.animite.core.ui.Constants.RATING_GREEN
+import com.imashnake.animite.core.ui.Constants.RATING_LIME
+import com.imashnake.animite.core.ui.Constants.RATING_ORANGE
+import com.imashnake.animite.core.ui.Constants.RATING_RED
 import com.imashnake.animite.core.ui.LocalPaddings
 import com.imashnake.animite.core.ui.component.Divider
 import com.imashnake.animite.core.ui.component.DropDownIcon
 import com.imashnake.animite.core.ui.component.MediaTrackingCard
 import com.imashnake.animite.media.MediaPage
+import com.imashnake.animite.media.entry.ProgressBar
+import com.imashnake.animite.media.entry.UpdateEntryDialog
 import com.imashnake.animite.media.ext.res
 import com.imashnake.animite.profile.R
-import com.imashnake.animite.profile.dev.GREEN
-import com.imashnake.animite.profile.dev.LIME
-import com.imashnake.animite.profile.dev.ORANGE
-import com.imashnake.animite.profile.dev.RED
-import com.imashnake.animite.profile.dev.res
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
-import com.imashnake.animite.settings.R as settingsR
+import com.imashnake.animite.media.R as mediaR
 
 private const val TOTAL_STARS = 5
 
@@ -185,7 +176,7 @@ fun MediaTrackingLists(
                             useExpressiveProgressIndicator = useExpressiveProgressIndicator,
                             favouriteEntry = favouriteEntry,
                             modifier = Modifier
-                                .padding(horizontal = dimensionResource(R.dimen.tracking_list_header_height) / 2)
+                                .padding(horizontal = dimensionResource(mediaR.dimen.tracking_list_header_height) / 2)
                                 .height(dimensionResource(R.dimen.tracking_list_item_height))
                                 .fillMaxWidth()
                                 .clip(
@@ -310,7 +301,7 @@ private fun HeaderPill(
     val haptic = LocalHapticFeedback.current
     Box(
         modifier = modifier
-            .defaultMinSize(minHeight = dimensionResource(R.dimen.tracking_list_header_height))
+            .defaultMinSize(minHeight = dimensionResource(mediaR.dimen.tracking_list_header_height))
             .fillMaxWidth()
             .clip(CircleShape)
             .clickable {
@@ -330,8 +321,8 @@ private fun HeaderPill(
             )
     ) {
         val iconPadding =
-            (dimensionResource(R.dimen.tracking_list_header_height)
-                    - dimensionResource(R.dimen.tracking_list_header_icon_size)) / 2
+            (dimensionResource(mediaR.dimen.tracking_list_header_height)
+                    - dimensionResource(mediaR.dimen.tracking_list_header_icon_size)) / 2
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
@@ -343,7 +334,7 @@ private fun HeaderPill(
                 imageVector = ImageVector.vectorResource(name.sanitize().res),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(dimensionResource(R.dimen.tracking_list_header_icon_size))
+                modifier = Modifier.size(dimensionResource(mediaR.dimen.tracking_list_header_icon_size))
             )
             Text(
                 text = name,
@@ -518,10 +509,10 @@ fun RowScope.Score(
     val scoreColor by animateColorAsState(
         targetValue = Color(
             when {
-                score.normalizedValue < 0.3f -> RED
-                score.normalizedValue < 0.6f -> ORANGE
-                score.normalizedValue < 0.8f -> LIME
-                else -> GREEN
+                score.normalizedValue < 0.3f -> RATING_RED
+                score.normalizedValue < 0.6f -> RATING_ORANGE
+                score.normalizedValue < 0.8f -> RATING_LIME
+                else -> RATING_GREEN
             }
         )
     )
@@ -552,15 +543,15 @@ fun RowScope.Score(
                 Icon(
                     imageVector = ImageVector.vectorResource(
                         when (score.value.toInt()) {
-                            0 -> R.drawable.dead
-                            1 -> R.drawable.weary
-                            2 -> R.drawable.neutral
-                            else -> settingsR.drawable.smile
+                            0 -> mediaR.drawable.dead
+                            1 -> mediaR.drawable.weary
+                            2 -> mediaR.drawable.neutral
+                            else -> mediaR.drawable.smile
                         }
                     ),
                     contentDescription = null,
                     tint = scoreColor.copy(alpha = 0.6f),
-                    modifier = modifier.size(dimensionResource(R.dimen.smiley_icon_size))
+                    modifier = modifier.size(dimensionResource(mediaR.dimen.smiley_icon_size))
                 )
             }
 
@@ -575,90 +566,9 @@ private fun Star(
     modifier: Modifier = Modifier
 ) {
     Icon(
-        imageVector = ImageVector.vectorResource(settingsR.drawable.star),
+        imageVector = ImageVector.vectorResource(mediaR.drawable.star),
         contentDescription = null,
         tint = MaterialTheme.colorScheme.primary.copy(alpha = if (!filled) 0.2f else 1f),
         modifier = modifier.size(dimensionResource(R.dimen.star_icon_size))
     )
-}
-
-@Composable
-fun ProgressBar(
-    progress: Int,
-    segments: Int,
-    listName: User.TrackingStatus,
-    useExpressiveProgressIndicator: Boolean,
-    modifier: Modifier= Modifier,
-    enabled: Boolean,
-    onProgressChanged: ((Float) -> Unit)? = null,
-) {
-    val formattedProgress = progress
-        .takeUnless { progress == segments }
-        ?.let { "$it/$segments" }
-        ?: "$segments"
-
-    val normalizedProgress = progress.toFloat() / segments
-    val animatedNormalizedProgress by animateFloatAsState(normalizedProgress)
-
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(LocalPaddings.current.small),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Text(
-            text = formattedProgress,
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
-            style = MaterialTheme.typography.labelSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.animateContentSize()
-        )
-
-        CompositionLocalProvider(
-            // Remove default M3 padding
-            LocalMinimumInteractiveComponentSize provides 0.dp,
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                when (listName) {
-                    User.TrackingStatus.WATCHING,
-                    User.TrackingStatus.REWATCHING,
-                    User.TrackingStatus.READING,
-                    User.TrackingStatus.REREADING -> if (useExpressiveProgressIndicator) {
-                        LinearWavyProgressIndicator(
-                            progress = { animatedNormalizedProgress },
-                            amplitude = {
-                                if (it <= 0.1f || it >= 0.95f) 0f else 0.5f
-                            },
-                            waveSpeed = 15.dp,
-                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                        )
-                    } else {
-                        LinearProgressIndicator(
-                            progress = { animatedNormalizedProgress },
-                            modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                        )
-                    }
-
-                    else -> LinearProgressIndicator(
-                        progress = { animatedNormalizedProgress },
-                        modifier = Modifier.fillMaxWidth().graphicsLayer { alpha = 0.6f }
-                    )
-                }
-                if (enabled) {
-                    Slider(
-                        value = progress.toFloat(),
-                        valueRange = 0f..segments.toFloat(),
-                        onValueChange = { onProgressChanged?.invoke(it) },
-                        thumb = {
-                            SliderDefaults.Thumb(
-                                interactionSource = remember { MutableInteractionSource() },
-                                thumbSize = DpSize(4.dp, 20.dp)
-                            )
-                        },
-                        modifier = Modifier.graphicsLayer { alpha = 0f }
-                    )
-                }
-            }
-        }
-    }
 }

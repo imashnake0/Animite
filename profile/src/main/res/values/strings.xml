@@ -21,17 +21,6 @@
 
     <string name="genres">Genres</string>
 
-    <string name="watching">Watching</string>
-    <string name="completed">Completed</string>
-    <string name="paused">Paused</string>
-    <string name="dropped">Dropped</string>
-    <string name="rewatching">Rewatching</string>
-    <string name="plan_to_watch">Plan to watch</string>
-    <string name="reading">Reading</string>
-    <string name="rereading">Rereading</string>
-    <string name="plan_to_read">Plan to read</string>
-    <string name="unknown">Unknown</string>
-
     <string name="expand_all">Expand All</string>
     <string name="collapse_all">Collapse All</string>
     <string name="reorder">Reorder</string>
@@ -41,20 +30,6 @@
         <item quantity="one">%1$d ep</item>
         <item quantity="other">%1$d eps</item>
     </plurals>
-
-    <string name="status">Status</string>
-    <string name="score">Score</string>
-    <string name="progress">Progress</string>
-    <string name="started_at">Started at</string>
-    <string name="completed_at">Completed at</string>
-
-    <string name="add_date">Add date</string>
-
-    <string name="save">Save</string>
-    <string name="close">Close</string>
-
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
 
     <string name="no_anime">No Anime</string>
     <string name="no_manga">No Manga</string>
